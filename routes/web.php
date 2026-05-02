@@ -7,5 +7,12 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->get('/dashboard', function () {
-    return view('layouts.app', ['title' => 'Dashboard']);
+    $user = auth()->user();
+    $organizations = $user->organizations()->with('owner')->get();
+    $plan = $user->plan;
+    
+    $maxOrganizations = $plan?->max_organizations_per_user;
+    $canCreateMore = $maxOrganizations === null || $organizations->count() < $maxOrganizations;
+    
+    return view('dashboard', compact('organizations', 'canCreateMore', 'plan'));
 })->name('dashboard');

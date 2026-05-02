@@ -42,7 +42,7 @@ class RegisterForm extends Component
 
             auth()->login($user);
 
-            $this->redirect(route('organizations.create'));
+            $this->redirect(route('dashboard'));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {
