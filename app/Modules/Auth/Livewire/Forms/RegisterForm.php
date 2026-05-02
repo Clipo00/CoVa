@@ -36,7 +36,6 @@ class RegisterForm extends Component
                 name: $validated['name'],
                 email: $validated['email'],
                 password: $validated['password'],
-                passwordConfirmation: $validated['password_confirmation'],
             );
 
             $user = $registerUser->execute($data);

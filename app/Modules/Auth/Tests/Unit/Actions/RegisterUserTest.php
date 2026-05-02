@@ -8,6 +8,7 @@ use App\Modules\Auth\Actions\RegisterUser;
 use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class RegisterUserTest extends TestCase
@@ -21,7 +22,6 @@ class RegisterUserTest extends TestCase
             name: 'John Doe',
             email: 'john@example.com',
             password: 'password123',
-            passwordConfirmation: 'password123',
         );
 
         $user = $action->execute($data);
@@ -31,7 +31,7 @@ class RegisterUserTest extends TestCase
             'name' => 'John Doe',
             'email' => 'john@example.com',
         ]);
-        $this->assertTrue(password_verify('password123', $user->password));
+        $this->assertTrue(Hash::check('password123', $user->password));
     }
 
     public function test_it_hashes_password(): void
@@ -41,12 +41,11 @@ class RegisterUserTest extends TestCase
             name: 'Jane Doe',
             email: 'jane@example.com',
             password: 'securepass123',
-            passwordConfirmation: 'securepass123',
         );
 
         $user = $action->execute($data);
 
         $this->assertNotEquals('securepass123', $user->password);
-        $this->assertTrue(password_verify('securepass123', $user->password));
+        $this->assertTrue(Hash::check('securepass123', $user->password));
     }
 }

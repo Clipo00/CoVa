@@ -17,18 +17,16 @@ class RegisterUserData
     public function __construct(
         string $name,
         string $email,
-        string $password,
-        string $passwordConfirmation
+        string $password
     ) {
         $validator = Validator::make([
             'name' => $name,
             'email' => $email,
             'password' => $password,
-            'password_confirmation' => $passwordConfirmation,
         ], [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
 
         if ($validator->fails()) {
