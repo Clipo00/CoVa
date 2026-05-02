@@ -49,4 +49,14 @@ class User extends Authenticatable
             ->withPivot('role')
             ->withTimestamps();
     }
+
+    public function favorites()
+    {
+        return $this->hasMany(\App\Modules\Blueprint\Models\BlueprintFavorite::class);
+    }
+
+    public function favoriteBlueprints()
+    {
+        return $this->belongsToMany(\App\Modules\Blueprint\Models\Blueprint::class, 'blueprint_favorites');
+    }
 }
