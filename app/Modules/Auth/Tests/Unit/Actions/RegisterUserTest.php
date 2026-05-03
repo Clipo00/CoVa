@@ -15,6 +15,12 @@ class RegisterUserTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(\Database\Seeders\PlanSeeder::class);
+    }
+
     public function test_it_creates_a_user(): void
     {
         $action = new RegisterUser();
@@ -32,6 +38,7 @@ class RegisterUserTest extends TestCase
             'email' => 'john@example.com',
         ]);
         $this->assertTrue(Hash::check('password123', $user->password));
+        $this->assertNotNull($user->plan_id);
     }
 
     public function test_it_hashes_password(): void
@@ -47,5 +54,20 @@ class RegisterUserTest extends TestCase
 
         $this->assertNotEquals('securepass123', $user->password);
         $this->assertTrue(Hash::check('securepass123', $user->password));
+    }
+
+    public function test_it_assigns_free_plan_by_default(): void
+    {
+        $action = new RegisterUser();
+        $data = new RegisterUserData(
+            name: 'Free User',
+            email: 'free@example.com',
+            password: 'password123',
+        );
+
+        $user = $action->execute($data);
+
+        $this->assertNotNull($user->plan);
+        $this->assertEquals('free', $user->plan->slug);
     }
 }
