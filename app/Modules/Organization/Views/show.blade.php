@@ -16,14 +16,21 @@
 
         {{-- Header --}}
         <div class="bg-white shadow rounded-lg p-6 mb-6">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">{{ $organization->name }}</h1>
                     <p class="mt-1 text-sm text-gray-500">{{ $organization->slug }}</p>
                 </div>
-                <span class="px-3 py-1 text-sm font-medium rounded-full bg-purple-100 text-purple-800">
-                    {{ ucfirst($organization->owner_id === auth()->id() ? 'Owner' : $organization->members->find(auth()->id())?->pivot->role ?? 'Member') }}
-                </span>
+                <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+                    @can('update', $organization)
+                        <a href="{{ route('organizations.edit', $organization->slug) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Editar
+                        </a>
+                    @endcan
+                    <span class="px-3 py-1 text-sm font-medium rounded-full bg-purple-100 text-purple-800">
+                        {{ ucfirst($organization->owner_id === auth()->id() ? 'Owner' : $organization->members->find(auth()->id())?->pivot->role ?? 'Member') }}
+                    </span>
+                </div>
             </div>
         </div>
 

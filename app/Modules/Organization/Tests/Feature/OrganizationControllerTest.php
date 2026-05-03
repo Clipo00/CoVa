@@ -64,4 +64,70 @@ class OrganizationControllerTest extends TestCase
 
         $response->assertRedirect('/login');
     }
+
+    public function test_owner_can_access_edit_page(): void
+    {
+        $user = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $user->id,
+            'plan_id' => $user->plan_id,
+        ]);
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $response = $this->actingAs($user)->get('/organizations/' . $organization->slug . '/edit');
+
+        $response->assertStatus(200);
+        $response->assertSee('Editar Organización');
+    }
+
+    public function test_owner_can_update_organization(): void
+    {
+        $user = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $user->id,
+            'plan_id' => $user->plan_id,
+        ]);
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $response = $this->actingAs($user)
+            ->post('/organizations/' . $organization->slug . '/update', [
+                'name' => 'Updated Org',
+                'slug' => 'updated-org',
+            ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('organizations', [
+            'id' => $organization->id,
+            'name' => 'Updated Org',
+            'slug' => 'updated-org',
+        ]);
+    }
+
+    public function test_developer_cannot_access_edit_page(): void
+    {
+        $owner = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($owner->id, ['role' => 'owner']);
+
+        $developer = User::create([
+            'name' => 'Dev',
+            'email' => 'dev@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $response = $this->actingAs($developer)->get('/organizations/' . $organization->slug . '/edit');
+
+        $response->assertForbidden();
+    }
 }
