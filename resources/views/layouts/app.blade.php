@@ -61,6 +61,9 @@
                                 <a href="{{ route('blueprints.index') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.*') ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
                                     Blueprints
                                 </a>
+                                <a href="{{ route('blueprints.deleted') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.deleted') ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                                    Eliminados
+                                </a>
                             </div>
                         @endauth
                     </div>

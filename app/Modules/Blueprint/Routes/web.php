@@ -7,6 +7,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/blueprints', [BlueprintController::class, 'index'])->name('blueprints.index');
     Route::get('/blueprints/create', [BlueprintController::class, 'create'])->name('blueprints.create');
     Route::get('/blueprints/favorites', [BlueprintController::class, 'favorites'])->name('blueprints.favorites');
+    Route::get('/blueprints/deleted', [BlueprintController::class, 'deleted'])->name('blueprints.deleted');
     Route::get('/blueprints/{uuid}', [BlueprintController::class, 'show'])->name('blueprints.show');
     Route::get('/blueprints/{uuid}/edit', [BlueprintController::class, 'edit'])->name('blueprints.edit');
+    Route::post('/blueprints/{uuid}/delete', [BlueprintController::class, 'destroy'])->name('blueprints.destroy');
+    Route::post('/blueprints/{uuid}/restore', [BlueprintController::class, 'restore'])->name('blueprints.restore');
 });

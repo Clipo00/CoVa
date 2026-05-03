@@ -83,4 +83,130 @@ class BlueprintControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Test Blueprint');
     }
+
+    public function test_owner_can_delete_blueprint(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440001',
+            'organization_id' => $organization->id,
+            'slug' => 'delete-me',
+            'title' => 'Delete Me',
+            'description' => 'To be deleted',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->post('/blueprints/' . $blueprint->uuid . '/delete');
+
+        $response->assertRedirect();
+        $this->assertSoftDeleted($blueprint);
+    }
+
+    public function test_non_owner_cannot_delete_blueprint(): void
+    {
+        [$owner, $organization] = $this->createUserWithOrg();
+
+        $developer = User::create([
+            'name' => 'Dev',
+            'email' => 'dev@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $organization->plan_id,
+        ]);
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440002',
+            'organization_id' => $organization->id,
+            'slug' => 'no-delete',
+            'title' => 'No Delete',
+            'description' => 'Cannot delete',
+            'tabs_config' => [],
+            'created_by' => $owner->id,
+        ]);
+
+        $response = $this->actingAs($developer)
+            ->post('/blueprints/' . $blueprint->uuid . '/delete');
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('blueprints', ['uuid' => $blueprint->uuid, 'deleted_at' => null]);
+    }
+
+    public function test_deleted_page_shows_trashed_blueprints(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440003',
+            'organization_id' => $organization->id,
+            'slug' => 'trashed',
+            'title' => 'Trashed Blueprint',
+            'description' => 'Deleted blueprint',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+        $blueprint->delete();
+
+        $response = $this->actingAs($user)->get('/blueprints/deleted');
+
+        $response->assertStatus(200);
+        $response->assertSee('Trashed Blueprint');
+    }
+
+    public function test_owner_can_restore_blueprint(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440004',
+            'organization_id' => $organization->id,
+            'slug' => 'restore-me',
+            'title' => 'Restore Me',
+            'description' => 'To be restored',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+        $blueprint->delete();
+
+        $response = $this->actingAs($user)
+            ->post('/blueprints/' . $blueprint->uuid . '/restore');
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('blueprints', [
+            'uuid' => $blueprint->uuid,
+            'deleted_at' => null,
+        ]);
+    }
+
+    public function test_non_owner_cannot_restore_blueprint(): void
+    {
+        [$owner, $organization] = $this->createUserWithOrg();
+
+        $maintainer = User::create([
+            'name' => 'Maintainer',
+            'email' => 'maintainer@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $organization->plan_id,
+        ]);
+        $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440005',
+            'organization_id' => $organization->id,
+            'slug' => 'no-restore',
+            'title' => 'No Restore',
+            'description' => 'Cannot restore',
+            'tabs_config' => [],
+            'created_by' => $owner->id,
+        ]);
+        $blueprint->delete();
+
+        $response = $this->actingAs($maintainer)
+            ->post('/blueprints/' . $blueprint->uuid . '/restore');
+
+        $response->assertForbidden();
+        $this->assertSoftDeleted($blueprint);
+    }
 }
