@@ -4,31 +4,111 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto">
-        <div class="mb-6">
-            <h1 class="text-3xl font-bold">{{ $blueprint->title }}</h1>
-            <p class="mt-2 text-gray-600">{{ $blueprint->description }}</p>
+        {{-- Breadcrumb --}}
+        <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500">
+            <a href="{{ route('dashboard') }}" class="hover:text-gray-700">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('organizations.show', $blueprint->organization->slug) }}" class="hover:text-gray-700">{{ $blueprint->organization->name }}</a>
+            <span>/</span>
+            <span class="text-gray-900">{{ $blueprint->title }}</span>
         </div>
 
-        <div class="bg-white shadow rounded-lg p-6">
-            <div class="mb-4">
-                <span class="text-sm text-gray-500">UUID: {{ $blueprint->uuid }}</span>
+        {{-- Header --}}
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">{{ $blueprint->title }}</h1>
+                    @if($blueprint->category)
+                        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ $blueprint->category->name }}
+                        </span>
+                    @endif
+                </div>
+                <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+                    <livewire:shared.copy-to-clipboard 
+                        :text="$blueprint->uuid" 
+                        label="Copiar UUID"
+                        success-message="UUID copiado al portapapeles"
+                    />
+                    <a href="{{ route('blueprints.edit', $blueprint->uuid) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Editar
+                    </a>
+                </div>
             </div>
 
-            <div class="border-t pt-4">
-                <h2 class="text-lg font-semibold mb-4">Variables</h2>
-                @if($blueprint->variables->isEmpty())
-                    <p class="text-gray-500">No hay variables configuradas.</p>
-                @else
-                    <ul class="space-y-2">
-                        @foreach($blueprint->variables as $variable)
-                            <li class="flex justify-between items-center p-3 bg-gray-50 rounded">
-                                <span class="font-mono">{{ $variable->key }}</span>
-                                <span class="text-sm text-gray-600">{{ $variable->type }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
+            @if($blueprint->description)
+                <p class="text-gray-600 mt-2">{{ $blueprint->description }}</p>
+            @endif
+
+            <div class="mt-4 flex items-center space-x-2 text-sm text-gray-500">
+                <span>UUID:</span>
+                <code class="bg-gray-100 px-2 py-1 rounded font-mono text-xs">{{ $blueprint->uuid }}</code>
             </div>
         </div>
+
+        {{-- Variables Section --}}
+        <div class="bg-white shadow rounded-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Variables de Entorno</h2>
+                <span class="text-sm text-gray-500">{{ $blueprint->variables->count() }} variables</span>
+            </div>
+
+            @if($blueprint->variables->isEmpty())
+                <div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    <p>No hay variables configuradas.</p>
+                    <p class="text-sm mt-1">Las variables se definen al crear o editar el blueprint.</p>
+                </div>
+            @else
+                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Key</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Interactivo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @foreach($blueprint->variables as $variable)
+                                <tr>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900">{{ $variable->key }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                            {{ $variable->type }}
+                                        </span>
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        @if($variable->is_secret)
+                                            <span class="text-gray-400">••••••••</span>
+                                        @else
+                                            {{ $variable->default_value ?? '-' }}
+                                        @endif
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                        @if($variable->is_interactive)
+                                            <span class="text-indigo-600 font-medium">Sí</span>
+                                        @else
+                                            <span class="text-gray-400">No</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+
+        {{-- Tabs Config JSON Preview --}}
+        @if(!empty($blueprint->tabs_config))
+            <div class="bg-white shadow rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Configuración de Pestañas</h2>
+                <pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm font-mono text-gray-700">{{ json_encode($blueprint->tabs_config, JSON_PRETTY_PRINT) }}</pre>
+            </div>
+        @endif
     </div>
 @endsection

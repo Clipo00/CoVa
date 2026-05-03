@@ -13,6 +13,9 @@ class ModuleServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->register(SharedServiceProvider::class);
+        $this->app->register(RouteServiceProvider::class);
+
         $modules = config('modules.enabled', []);
 
         foreach ($modules as $module) {
