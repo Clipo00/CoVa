@@ -59,4 +59,62 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(\App\Modules\Blueprint\Models\Blueprint::class, 'blueprint_favorites');
     }
+
+    /**
+     * Check if user has a specific role in an organization
+     */
+    public function hasRoleInOrganization(Organization $organization, string|array $roles): bool
+    {
+        $member = $this->organizations()
+            ->where('organization_id', $organization->id)
+            ->first();
+
+        if (!$member) {
+            return false;
+        }
+
+        $userRole = $member->pivot->role;
+
+        if (is_array($roles)) {
+            return in_array($userRole, $roles, true);
+        }
+
+        return $userRole === $roles;
+    }
+
+    /**
+     * Check if user is owner of an organization
+     */
+    public function isOwnerOf(Organization $organization): bool
+    {
+        return $organization->owner_id === $this->id;
+    }
+
+    /**
+     * Check if user can manage members in an organization
+     * Owner and Maintainer can manage members
+     */
+    public function canManageMembers(Organization $organization): bool
+    {
+        return $this->isOwnerOf($organization) 
+            || $this->hasRoleInOrganization($organization, ['owner', 'maintainer']);
+    }
+
+    /**
+     * Check if user can create blueprints in an organization
+     * All roles can create blueprints
+     */
+    public function canCreateBlueprints(Organization $organization): bool
+    {
+        return $this->hasRoleInOrganization($organization, ['owner', 'maintainer', 'developer']);
+    }
+
+    /**
+     * Check if user can delete an organization
+     * Only owner can delete
+     */
+    public function canDeleteOrganization(Organization $organization): bool
+    {
+        return $this->isOwnerOf($organization);
+    }
 }
