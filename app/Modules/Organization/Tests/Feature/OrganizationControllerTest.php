@@ -130,4 +130,75 @@ class OrganizationControllerTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function test_members_page_lists_members(): void
+    {
+        $user = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $user->id,
+            'plan_id' => $user->plan_id,
+        ]);
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $response = $this->actingAs($user)->get('/organizations/' . $organization->slug . '/members');
+
+        $response->assertStatus(200);
+        $response->assertSee('Miembros');
+        $response->assertSee('John Doe');
+    }
+
+    public function test_owner_can_invite_member(): void
+    {
+        $user = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $user->id,
+            'plan_id' => $user->plan_id,
+        ]);
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $response = $this->actingAs($user)
+            ->post('/organizations/' . $organization->slug . '/invite', [
+                'email' => 'newdev@example.com',
+                'role' => 'developer',
+            ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('organization_invitations', [
+            'organization_id' => $organization->id,
+            'email' => 'newdev@example.com',
+            'role' => 'developer',
+        ]);
+    }
+
+    public function test_developer_cannot_invite_member(): void
+    {
+        $owner = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org',
+            'name' => 'Test Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($owner->id, ['role' => 'owner']);
+
+        $developer = User::create([
+            'name' => 'Dev',
+            'email' => 'dev@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $response = $this->actingAs($developer)
+            ->post('/organizations/' . $organization->slug . '/invite', [
+                'email' => 'newdev@example.com',
+                'role' => 'developer',
+            ]);
+
+        $response->assertForbidden();
+    }
 }

@@ -47,7 +47,7 @@
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Miembros</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->members()->count() }}</p>
-                <a href="{{ route('organizations.index') }}" class="mt-4 inline-block text-sm text-indigo-600 hover:text-indigo-800">
+                <a href="{{ route('organizations.members', $organization->slug) }}" class="mt-4 inline-block text-sm text-indigo-600 hover:text-indigo-800">
                     Gestionar miembros →
                 </a>
             </div>

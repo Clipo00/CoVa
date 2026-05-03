@@ -1,0 +1,103 @@
+@extends('layouts.app')
+
+@section('title', 'Miembros - ' . $organization->name)
+
+@section('content')
+    <div class="max-w-4xl mx-auto">
+        {{-- Breadcrumb --}}
+        <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500">
+            <a href="{{ route('dashboard') }}" class="hover:text-gray-700">Dashboard</a>
+            <span>/</span>
+            <a href="{{ route('organizations.show', $organization->slug) }}" class="hover:text-gray-700">{{ $organization->name }}</a>
+            <span>/</span>
+            <span class="text-gray-900">Miembros</span>
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-900">Miembros</h1>
+            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                {{ $organization->members->count() }} miembros
+            </span>
+        </div>
+
+        @can('invite', $organization)
+            {{-- Invite Form --}}
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Invitar miembro</h2>
+                <form method="POST" action="{{ route('organizations.invite', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4">
+                    @csrf
+                    <div class="flex-1">
+                        <input type="email" name="email" placeholder="email@ejemplo.com" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="w-full sm:w-48">
+                        <select name="role" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="developer">Developer</option>
+                            <option value="maintainer">Maintainer</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Invitar
+                    </button>
+                </form>
+            </div>
+        @endcan
+
+        {{-- Members List --}}
+        <div class="bg-white shadow overflow-hidden sm:rounded-md mb-6">
+            <ul class="divide-y divide-gray-200">
+                @foreach($organization->members as $member)
+                    <li class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center min-w-0">
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
+                                    {{ strtoupper(substr($member->name, 0, 2)) }}
+                                </div>
+                                <div class="ml-4 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">{{ $member->name }}</p>
+                                    <p class="text-sm text-gray-500 truncate">{{ $member->email }}</p>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-shrink-0">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    {{ $member->pivot->role === 'owner' ? 'bg-purple-100 text-purple-800' : ($member->pivot->role === 'maintainer' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
+                                    {{ ucfirst($member->pivot->role) }}
+                                </span>
+                                @if($member->id === $organization->owner_id)
+                                    <span class="ml-2 text-xs text-gray-400">Owner</span>
+                                @endif
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        {{-- Pending Invitations --}}
+        @php
+            $pendingInvitations = $organization->invitations->whereNull('used_at')->where('expires_at', '>', now());
+        @endphp
+        @if($pendingInvitations->count() > 0)
+            <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Invitaciones pendientes</h3>
+                </div>
+                <ul class="divide-y divide-gray-200">
+                    @foreach($pendingInvitations as $invitation)
+                        <li class="px-4 py-4 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ $invitation->email }}</p>
+                                    <p class="text-sm text-gray-500">Rol: {{ ucfirst($invitation->role) }} · Expira {{ $invitation->expires_at->diffForHumans() }}</p>
+                                </div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Pendiente
+                                </span>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+    </div>
+@endsection
