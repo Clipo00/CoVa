@@ -84,6 +84,27 @@ class BlueprintControllerTest extends TestCase
         $response->assertSee('Test Blueprint');
     }
 
+    public function test_edit_page_is_accessible_to_authorized_user(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440006',
+            'organization_id' => $organization->id,
+            'slug' => 'edit-me',
+            'title' => 'Edit Me',
+            'description' => 'To be edited',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/blueprints/' . $blueprint->uuid . '/edit');
+
+        $response->assertStatus(200);
+        $response->assertSee('Editar Blueprint');
+        $response->assertSee('Edit Me');
+    }
+
     public function test_owner_can_delete_blueprint(): void
     {
         [$user, $organization] = $this->createUserWithOrg();
