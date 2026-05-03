@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Livewire\Forms;
 
 use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
+use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -67,6 +68,8 @@ class BlueprintCreateForm extends Component
             $this->redirect(route('blueprints.show', $blueprint->uuid));
         } catch (MaxBlueprintsReachedException $e) {
             $this->addError('title', $e->getMessage());
+        } catch (MaxVariablesReachedException $e) {
+            $this->addError('variables', $e->getMessage());
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {

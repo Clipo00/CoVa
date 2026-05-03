@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Actions;
 
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
+use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\ValueObjects\Uuid;
@@ -25,6 +26,13 @@ class CreateBlueprint
 
         if ($maxBlueprints !== null && $organization->blueprints()->count() >= $maxBlueprints) {
             throw new MaxBlueprintsReachedException($maxBlueprints, $plan->name);
+        }
+
+        $maxVariables = $plan->max_variables_per_blueprint;
+        $variableCount = count(array_filter($variables, fn($v) => !empty($v['key'])));
+
+        if ($maxVariables !== null && $variableCount > $maxVariables) {
+            throw new MaxVariablesReachedException($maxVariables, $plan->name);
         }
 
         $blueprint = Blueprint::create([

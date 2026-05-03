@@ -7,6 +7,7 @@ namespace App\Modules\Blueprint\Tests\Unit\Actions;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
+use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
@@ -76,5 +77,32 @@ class CreateBlueprintTest extends TestCase
 
         $this->expectException(MaxBlueprintsReachedException::class);
         $action->execute($organization, 'BP 4', 'bp-4');
+    }
+
+    public function test_it_respects_variable_limit(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $user = User::create([
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($user, 'Test Org', 'test-org');
+
+        $this->actingAs($user);
+
+        $action = new CreateBlueprint();
+        
+        // Free plan allows 20 variables
+        $variables = [];
+        for ($i = 1; $i <= 21; $i++) {
+            $variables[] = ['key' => "VAR_{$i}", 'type' => 'fixed'];
+        }
+
+        $this->expectException(MaxVariablesReachedException::class);
+        $action->execute($organization, 'Too Many Vars', 'too-many-vars', variables: $variables);
     }
 }
