@@ -17,6 +17,7 @@ class BlueprintCreateForm extends Component
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
+    public array $variables = [];
 
     protected function rules(): array
     {
@@ -25,6 +26,12 @@ class BlueprintCreateForm extends Component
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'variables' => ['nullable', 'array'],
+            'variables.*.key' => ['required', 'string', 'max:255'],
+            'variables.*.type' => ['required', 'in:fixed,empty'],
+            'variables.*.default_value' => ['nullable', 'string'],
+            'variables.*.is_interactive' => ['boolean'],
+            'variables.*.is_secret' => ['boolean'],
         ];
     }
 
@@ -38,6 +45,14 @@ class BlueprintCreateForm extends Component
         $validated = $this->validate();
         $organization = Organization::findOrFail($this->organizationId);
 
+        // Validar keys únicas
+        $keys = array_column($this->variables, 'key');
+        $keys = array_filter($keys);
+        if (count($keys) !== count(array_unique($keys))) {
+            $this->addError('variables', 'Las keys de las variables deben ser únicas.');
+            return;
+        }
+
         try {
             $blueprint = $createBlueprint->execute(
                 organization: $organization,
@@ -46,6 +61,7 @@ class BlueprintCreateForm extends Component
                 description: $validated['description'] ?: null,
                 categoryId: $validated['categoryId'],
                 tabsConfig: [],
+                variables: $this->variables,
             );
 
             $this->redirect(route('blueprints.show', $blueprint->uuid));

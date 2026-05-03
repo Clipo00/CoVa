@@ -17,7 +17,8 @@ class CreateBlueprint
         string $slug,
         ?string $description = null,
         ?int $categoryId = null,
-        array $tabsConfig = []
+        array $tabsConfig = [],
+        array $variables = [],
     ): Blueprint {
         $plan = $organization->plan;
         $maxBlueprints = $plan->max_blueprints_per_org;
@@ -26,7 +27,7 @@ class CreateBlueprint
             throw new MaxBlueprintsReachedException($maxBlueprints, $plan->name);
         }
 
-        return Blueprint::create([
+        $blueprint = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $organization->id,
             'category_id' => $categoryId,
@@ -37,5 +38,24 @@ class CreateBlueprint
             'tabs_config' => $tabsConfig,
             'created_by' => auth()->id(),
         ]);
+
+        // Crear variables asociadas
+        foreach ($variables as $variableData) {
+            if (empty($variableData['key'])) {
+                continue;
+            }
+
+            $blueprint->variables()->create([
+                'key' => $variableData['key'],
+                'type' => $variableData['type'] ?? 'fixed',
+                'default_value' => $variableData['default_value'] ?: null,
+                'is_interactive' => $variableData['is_interactive'] ?? false,
+                'is_secret' => $variableData['is_secret'] ?? false,
+                'section' => $variableData['section'] ?? null,
+                'sort_order' => 0,
+            ]);
+        }
+
+        return $blueprint;
     }
 }
