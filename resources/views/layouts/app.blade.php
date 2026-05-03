@@ -21,20 +21,36 @@
         <nav class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <a href="/" class="text-xl font-bold text-gray-800">
+                    <div class="flex items-center space-x-8">
+                        <a href="{{ route('dashboard') }}" class="text-xl font-bold text-gray-800 hover:text-indigo-600">
                             {{ config('app.name', 'CoVa') }}
                         </a>
+
+                        @auth
+                            <div class="hidden sm:flex sm:space-x-6">
+                                <a href="{{ route('dashboard') }}" class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                                    Dashboard
+                                </a>
+                                <a href="{{ route('organizations.index') }}" class="text-sm font-medium {{ request()->routeIs('organizations.*') ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                                    Organizaciones
+                                </a>
+                                <a href="{{ route('blueprints.index') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.*') ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700' }}">
+                                    Blueprints
+                                </a>
+                            </div>
+                        @endauth
                     </div>
                     <div class="flex items-center space-x-4">
                         @auth
-                            <span class="text-gray-600">{{ auth()->user()->name }}</span>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-sm text-red-600 hover:text-red-800">
-                                    Cerrar sesión
-                                </button>
-                            </form>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>
+                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-sm text-red-600 hover:text-red-800">
+                                        Salir
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-800">Login</a>
                             <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-gray-800">Registro</a>
