@@ -88,6 +88,7 @@ class BlueprintCreateForm extends Component
 
     public function render()
     {
-        return view('blueprint::livewire.forms.blueprint-create-form');
+        $categories = \App\Modules\Shared\Models\Category::all();
+        return view('blueprint::livewire.forms.blueprint-create-form', compact('categories'));
     }
 }

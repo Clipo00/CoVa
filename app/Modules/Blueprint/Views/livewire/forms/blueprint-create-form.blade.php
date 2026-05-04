@@ -18,6 +18,17 @@
             </div>
 
             <div>
+                <label for="categoryId" class="block text-sm font-medium text-gray-700">Categoría</label>
+                <select wire:model="categoryId" id="categoryId" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="">Sin categoría</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                @error('categoryId') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
                 <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
                 <textarea wire:model="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Describe el propósito de este blueprint..."></textarea>
                 @error('description') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
