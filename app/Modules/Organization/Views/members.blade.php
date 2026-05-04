@@ -21,9 +21,37 @@
         </div>
 
         @can('invite', $organization)
+            {{-- Create Member Direct Form --}}
+            <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Crear miembro directo</h2>
+                <form method="POST" action="{{ route('organizations.members.store', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4 items-end">
+                    @csrf
+                    <div class="flex-1">
+                        <label for="name" class="block text-xs font-medium text-gray-500 mb-1">Nombre</label>
+                        <input type="text" name="name" id="name" placeholder="Juan Pérez" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="flex-1">
+                        <label for="email" class="block text-xs font-medium text-gray-500 mb-1">Email</label>
+                        <input type="email" name="email" id="email" placeholder="juan@ejemplo.com" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="w-full sm:w-40">
+                        <label for="role" class="block text-xs font-medium text-gray-500 mb-1">Rol</label>
+                        <select name="role" id="role" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="developer">Developer</option>
+                            <option value="maintainer">Maintainer</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Crear
+                    </button>
+                </form>
+            </div>
+
             {{-- Invite Form --}}
             <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Invitar miembro</h2>
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Invitar por email</h2>
                 <form method="POST" action="{{ route('organizations.invite', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4">
                     @csrf
                     <div class="flex-1">
@@ -36,7 +64,7 @@
                             <option value="maintainer">Maintainer</option>
                         </select>
                     </div>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Invitar
                     </button>
                 </form>
@@ -58,13 +86,26 @@
                                     <p class="text-sm text-gray-500 truncate">{{ $member->email }}</p>
                                 </div>
                             </div>
-                            <div class="ml-4 flex-shrink-0">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $member->pivot->role === 'owner' ? 'bg-purple-100 text-purple-800' : ($member->pivot->role === 'maintainer' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800') }}">
-                                    {{ ucfirst($member->pivot->role) }}
-                                </span>
+                            <div class="ml-4 flex-shrink-0 flex items-center space-x-3">
                                 @if($member->id === $organization->owner_id)
-                                    <span class="ml-2 text-xs text-gray-400">Owner</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        Owner
+                                    </span>
+                                @else
+                                    @can('manageMembers', $organization)
+                                        <form method="POST" action="{{ route('organizations.members.role', [$organization->slug, $member->id]) }}" class="flex items-center space-x-2">
+                                            @csrf
+                                            <select name="role" onchange="this.form.submit()" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1">
+                                                <option value="developer" {{ $member->pivot->role === 'developer' ? 'selected' : '' }}>Developer</option>
+                                                <option value="maintainer" {{ $member->pivot->role === 'maintainer' ? 'selected' : '' }}>Maintainer</option>
+                                            </select>
+                                        </form>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                            {{ $member->pivot->role === 'maintainer' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                                            {{ ucfirst($member->pivot->role) }}
+                                        </span>
+                                    @endcan
                                 @endif
                             </div>
                         </div>

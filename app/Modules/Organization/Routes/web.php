@@ -10,5 +10,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/organizations/{slug}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
     Route::post('/organizations/{slug}/update', [OrganizationController::class, 'update'])->name('organizations.update');
     Route::get('/organizations/{slug}/members', [OrganizationController::class, 'members'])->name('organizations.members');
+    Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])->name('organizations.members.store');
+    Route::post('/organizations/{slug}/members/{user_id}/role', [OrganizationController::class, 'updateMemberRole'])->name('organizations.members.role');
     Route::post('/organizations/{slug}/invite', [OrganizationController::class, 'invite'])->name('organizations.invite');
+    Route::post('/organizations/{slug}/delete', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
+    Route::post('/organizations/{slug}/restore', [OrganizationController::class, 'restore'])->name('organizations.restore');
+    Route::post('/organizations/{slug}/force-delete', [OrganizationController::class, 'forceDestroy'])->name('organizations.force-destroy');
 });
