@@ -48,6 +48,9 @@ class VariableManager extends Component
 
         if (empty($this->variables)) {
             $this->addVariable();
+        } else {
+            // Emitir evento si hay variables iniciales (ej: al editar)
+            $this->dispatch('variables-updated', variables: $this->variables);
         }
     }
 

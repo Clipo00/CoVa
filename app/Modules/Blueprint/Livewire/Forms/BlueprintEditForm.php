@@ -7,6 +7,7 @@ namespace App\Modules\Blueprint\Livewire\Forms;
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BlueprintEditForm extends Component
@@ -16,6 +17,7 @@ class BlueprintEditForm extends Component
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
+    public array $variables = [];
 
     public function mount(Blueprint $blueprint): void
     {
@@ -24,6 +26,18 @@ class BlueprintEditForm extends Component
         $this->slug = $blueprint->slug;
         $this->description = $blueprint->description ?? '';
         $this->categoryId = $blueprint->category_id;
+
+        // Cargar variables existentes
+        $this->variables = $blueprint->variables->map(function ($variable) {
+            return [
+                'key' => $variable->key,
+                'type' => $variable->type,
+                'default_value' => $variable->default_value ?? '',
+                'is_interactive' => (bool) $variable->is_interactive,
+                'is_secret' => (bool) $variable->is_secret,
+                'section' => $variable->section,
+            ];
+        })->toArray();
     }
 
     protected function rules(): array
@@ -34,6 +48,12 @@ class BlueprintEditForm extends Component
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
         ];
+    }
+
+    #[On('variables-updated')]
+    public function updateVariables(array $variables): void
+    {
+        $this->variables = $variables;
     }
 
     public function updatedTitle(): void
@@ -59,7 +79,8 @@ class BlueprintEditForm extends Component
                     'slug' => $validated['slug'],
                     'description' => $validated['description'] ?: null,
                     'category_id' => $validated['categoryId'],
-                ]
+                ],
+                variables: $this->variables,
             );
 
             $this->redirect(route('blueprints.show', $this->blueprint->uuid));
