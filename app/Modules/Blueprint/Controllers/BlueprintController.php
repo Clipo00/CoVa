@@ -7,8 +7,11 @@ namespace App\Modules\Blueprint\Controllers;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
+use App\Modules\Blueprint\Actions\TransferBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BlueprintController
@@ -91,5 +94,26 @@ class BlueprintController
         return redirect()
             ->route('blueprints.show', $blueprint->uuid)
             ->with('success', 'Blueprint restaurado correctamente.');
+    }
+
+    public function transfer(string $uuid, Request $request, TransferBlueprint $transferBlueprint): RedirectResponse
+    {
+        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+
+        $validated = $request->validate([
+            'target_organization_id' => ['required', 'integer', 'exists:organizations,id'],
+        ]);
+
+        $targetOrganization = Organization::findOrFail($validated['target_organization_id']);
+
+        $transferBlueprint->execute(
+            blueprint: $blueprint,
+            targetOrganization: $targetOrganization,
+            user: auth()->user(),
+        );
+
+        return redirect()
+            ->route('blueprints.show', $blueprint->fresh()->uuid)
+            ->with('success', 'Blueprint transferido correctamente.');
     }
 }

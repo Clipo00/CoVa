@@ -30,6 +30,23 @@
                         label="Copiar UUID"
                         success-message="UUID copiado al portapapeles"
                     />
+                    @php
+                        $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
+                    @endphp
+                    @if($userOrgsWhereOwner->count() > 0)
+                        <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" class="inline flex items-center space-x-2">
+                            @csrf
+                            <select name="target_organization_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2">
+                                <option value="">Transferir a...</option>
+                                @foreach($userOrgsWhereOwner as $org)
+                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" onclick="return this.previousElementSibling.value !== '' || confirm('Selecciona una organización destino');">
+                                Transferir
+                            </button>
+                        </form>
+                    @endif
                     <a href="{{ route('blueprints.edit', $blueprint->uuid) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                         Editar
                     </a>
