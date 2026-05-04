@@ -9,6 +9,7 @@ use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BlueprintCreateForm extends Component
@@ -34,6 +35,12 @@ class BlueprintCreateForm extends Component
             'variables.*.is_interactive' => ['boolean'],
             'variables.*.is_secret' => ['boolean'],
         ];
+    }
+
+    #[On('variables-updated')]
+    public function updateVariables(array $variables): void
+    {
+        $this->variables = $variables;
     }
 
     public function updatedTitle(): void

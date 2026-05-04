@@ -20,12 +20,14 @@ class VariableManager extends Component
             'is_secret' => false,
             'section' => null,
         ];
+        $this->dispatch('variables-updated', variables: $this->variables);
     }
 
     public function removeVariable(int $index): void
     {
         unset($this->variables[$index]);
         $this->variables = array_values($this->variables);
+        $this->dispatch('variables-updated', variables: $this->variables);
     }
 
     public function updatedVariables($value, $key): void
@@ -33,16 +35,17 @@ class VariableManager extends Component
         // Validar que no haya keys duplicadas
         $keys = array_column($this->variables, 'key');
         $keys = array_filter($keys);
-        
+
         if (count($keys) !== count(array_unique($keys))) {
             $this->addError('variables', 'Las keys de las variables deben ser únicas.');
         }
+        $this->dispatch('variables-updated', variables: $this->variables);
     }
 
     public function mount(array $initialVariables = []): void
     {
         $this->variables = $initialVariables;
-        
+
         if (empty($this->variables)) {
             $this->addVariable();
         }
