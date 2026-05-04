@@ -20,6 +20,7 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Key</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Grupo</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Tipo</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
                     <th scope="col" class="px-3 py-3.5 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">Interactivo</th>
@@ -34,6 +35,9 @@
                     <tr wire:key="variable-{{ $index }}">
                         <td class="py-3 pl-4 pr-3">
                             <input type="text" wire:model="variables.{{ $index }}.key" placeholder="DB_HOST" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
+                        </td>
+                        <td class="px-3 py-3">
+                            <input type="text" wire:model="variables.{{ $index }}.section" placeholder=".env" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
                         </td>
                         <td class="px-3 py-3">
                             <select wire:model="variables.{{ $index }}.type" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">

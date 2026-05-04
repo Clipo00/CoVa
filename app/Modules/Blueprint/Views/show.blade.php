@@ -73,44 +73,58 @@
                     <p class="text-sm mt-1">Las variables se definen al crear o editar el blueprint.</p>
                 </div>
             @else
-                <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-300">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Key</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Interactivo</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 bg-white">
-                            @foreach($blueprint->variables as $variable)
-                                <tr>
-                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900">{{ $variable->key }}</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                            {{ $variable->type }}
-                                        </span>
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        @if($variable->is_secret)
-                                            <span class="text-gray-400">••••••••</span>
-                                        @else
-                                            {{ $variable->default_value ?? '-' }}
-                                        @endif
-                                    </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                        @if($variable->is_interactive)
-                                            <span class="text-indigo-600 font-medium">Sí</span>
-                                        @else
-                                            <span class="text-gray-400">No</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @php
+                    $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
+                @endphp
+
+                @foreach($groupedVars as $section => $vars)
+                    <div class="mb-6 last:mb-0">
+                        <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs">
+                                {{ $section }}
+                            </span>
+                            <span class="ml-2 text-xs text-gray-400">{{ $vars->count() }} variable{{ $vars->count() > 1 ? 's' : '' }}</span>
+                        </h3>
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Key</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Interactivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    @foreach($vars as $variable)
+                                        <tr>
+                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900">{{ $variable->key }}</td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                    {{ $variable->type }}
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                @if($variable->is_secret)
+                                                    <span class="text-gray-400">••••••••</span>
+                                                @else
+                                                    {{ $variable->default_value ?? '-' }}
+                                                @endif
+                                            </td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                @if($variable->is_interactive)
+                                                    <span class="text-indigo-600 font-medium">Sí</span>
+                                                @else
+                                                    <span class="text-gray-400">No</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endforeach
             @endif
         </div>
 
