@@ -35,6 +35,12 @@
             </div>
         </div>
 
+        {{-- Variables --}}
+        <div class="bg-white p-6 rounded-lg shadow">
+            <livewire:blueprint.components.variable-manager :initial-variables="$variables" />
+            @error('variables') <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span> @enderror
+        </div>
+
         {{-- Submit --}}
         <div class="flex justify-between items-center">
             <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="text-sm text-gray-500 hover:text-gray-700">
