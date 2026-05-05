@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Controllers;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
+use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
@@ -26,10 +27,15 @@ class BlueprintController
         return view('blueprint::create');
     }
 
-    public function show(string $uuid): View
+    public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        return view('blueprint::show', compact('blueprint'));
+        $output = $resolveBlueprint->execute($blueprint);
+
+        return view('blueprint::show', [
+            'blueprint' => $blueprint,
+            'blueprintOutput' => $output,
+        ]);
     }
 
     public function edit(string $uuid): View

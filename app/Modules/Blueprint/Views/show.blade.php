@@ -145,11 +145,74 @@
             @endif
         </div>
 
-        {{-- Tabs Config JSON Preview --}}
-        @if(!empty($blueprint->tabs_config))
-            <div class="bg-white shadow rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Configuración de Pestañas</h2>
-                <pre class="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm font-mono text-gray-700">{{ json_encode($blueprint->tabs_config, JSON_PRETTY_PRINT) }}</pre>
+        {{-- VSCode Extensions Section --}}
+        @if($agentMd = $blueprintOutput->getAgentMdContent())
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Agent Context</h2>
+                    <livewire:shared.copy-to-clipboard
+                        :text="$agentMd"
+                        label="Copiar agent.md"
+                        success-message="agent.md copiado al portapapeles"
+                    />
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                    <pre class="text-sm text-gray-700 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
+                </div>
+            </div>
+        @endif
+
+        {{-- VSCode Extensions Section --}}
+        @php
+            $extensions = $blueprintOutput->getVscodeExtensions();
+        @endphp
+        @if(count($extensions) > 0)
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">VSCode Extensions</h2>
+                    <livewire:shared.copy-to-clipboard
+                        :text="implode(',', $extensions)"
+                        label="Copiar extensiones"
+                        success-message="Extensiones copiadas al portapapeles"
+                    />
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($extensions as $ext)
+                        <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono bg-gray-100 text-gray-800">
+                            {{ $ext }}
+                        </span>
+                    @endforeach
+                </div>
+                <div class="mt-4">
+                    <code class="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded block">
+                        code --install-extension {{ implode(' --install-extension ', $extensions) }}
+                    </code>
+                </div>
+            </div>
+        @endif
+
+        {{-- MCP Servers Section --}}
+        @php
+            $mcpServers = $blueprintOutput->getMcpServers();
+        @endphp
+        @if(!empty($mcpServers))
+            <div class="bg-white shadow rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">MCP Servers</h2>
+                <div class="space-y-3">
+                    @foreach($mcpServers['mcp_servers'] ?? [] as $server)
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-gray-900">{{ $server['name'] }}</span>
+                            </div>
+                            <code class="text-sm text-gray-600 block font-mono">
+                                {{ $server['command'] }}
+                                @if(!empty($server['args']))
+                                    {{ implode(' ', array_map(fn($a) => "'" . $a . "'", $server['args'])) }}
+                                @endif
+                            </code>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
     </div>

@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Livewire\Forms;
 
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
+use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -19,6 +20,7 @@ class BlueprintEditForm extends Component
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
+    public array $tabsConfig = [];
 
     public function mount(Blueprint $blueprint): void
     {
@@ -27,6 +29,7 @@ class BlueprintEditForm extends Component
         $this->slug = $blueprint->slug;
         $this->description = $blueprint->description ?? '';
         $this->categoryId = $blueprint->category_id;
+        $this->tabsConfig = $blueprint->tabs_config ?? [];
 
         $this->variables = $blueprint->variables->map(function ($variable) {
             return [
@@ -51,7 +54,20 @@ class BlueprintEditForm extends Component
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());
+    }
+
+    protected function getListeners(): array
+    {
+        return [
+            'tabs-updated' => 'onTabsUpdated',
+        ];
+    }
+
+    public function onTabsUpdated(array $tabs): void
+    {
+        $this->tabsConfig = $tabs;
     }
 
     public function updatingCategoryId($value): void
@@ -88,6 +104,7 @@ class BlueprintEditForm extends Component
                     'slug' => $validated['slug'],
                     'description' => $validated['description'] ?: null,
                     'category_id' => $validated['categoryId'],
+                    'tabs_config' => $this->tabsConfig,
                 ],
                 variables: $this->variables,
             );

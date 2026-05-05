@@ -48,6 +48,14 @@
             @endforeach
         </div>
 
+        {{-- Tabs --}}
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Pestañas</h2>
+            <livewire:blueprint.components.tab-manager
+                :tabs-config="$tabsConfig"
+            />
+        </div>
+
         {{-- Submit --}}
         <div class="flex justify-between items-center">
             <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="text-sm text-gray-500 hover:text-gray-700">
