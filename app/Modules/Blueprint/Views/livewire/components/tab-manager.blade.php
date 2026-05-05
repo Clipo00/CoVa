@@ -87,7 +87,7 @@
                                 <input
                                     type="text"
                                     wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'args', $event.target.value)"
-                                    value="{{ implode(' ', $server['args'] ?? []) }}"
+                                    value="{{ implode(' ', is_array($server['args'] ?? []) ? $server['args'] : []) }}"
                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="-y @modelcontextprotocol/server-filesystem"
                                 />

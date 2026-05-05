@@ -156,6 +156,14 @@ class TabManager extends Component
             return;
         }
 
+        // Args field: convert space-separated string to array
+        if ($field === 'args') {
+            $value = array_values(array_filter(
+                array_map('trim', explode(' ', $value)),
+                fn($arg) => $arg !== ''
+            ));
+        }
+
         $this->tabs[$tabIndex]['config']['servers'][$serverIndex][$field] = $value;
 
         $this->syncToParent();
