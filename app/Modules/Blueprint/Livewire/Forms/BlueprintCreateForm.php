@@ -7,40 +7,40 @@ namespace App\Modules\Blueprint\Livewire\Forms;
 use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
+use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
+use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BlueprintCreateForm extends Component
 {
+    use ManagesVariables;
+
     public int $organizationId;
     public string $title = '';
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
-    public array $variables = [];
+
+    public function mount(): void
+    {
+        $this->addVariable();
+    }
 
     protected function rules(): array
     {
-        return [
+        return array_merge([
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
-            'variables' => ['nullable', 'array'],
-            'variables.*.key' => ['required', 'string', 'max:255'],
-            'variables.*.type' => ['required', 'in:fixed,empty'],
-            'variables.*.default_value' => ['nullable', 'string'],
-            'variables.*.is_interactive' => ['boolean'],
-            'variables.*.is_secret' => ['boolean'],
-        ];
+        ], $this->variableRules());
     }
 
-    #[On('variables-updated')]
-    public function updateVariables(array $variables): void
+    public function updatingCategoryId($value): void
     {
-        $this->variables = $variables;
+        $this->categoryId = $value === '' ? null : $value;
     }
 
     public function updatedTitle(): void
@@ -50,14 +50,19 @@ class BlueprintCreateForm extends Component
 
     public function submit(CreateBlueprint $createBlueprint): void
     {
+        $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
+        $this->cleanEmptyVariables();
+
         $validated = $this->validate();
+
         $organization = Organization::findOrFail($this->organizationId);
 
-        // Validar keys únicas
-        $keys = array_column($this->variables, 'key');
-        $keys = array_filter($keys);
-        if (count($keys) !== count(array_unique($keys))) {
-            $this->addError('variables', 'Las keys de las variables deben ser únicas.');
+        if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
+            $this->addError('title', 'No tienes permisos para crear blueprints en esta organización.');
+            return;
+        }
+
+        if (!$this->validateUniqueKeys()) {
             return;
         }
 

@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Livewire\Forms;
 
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
+use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 class BlueprintEditForm extends Component
 {
+    use ManagesVariables;
+
     public Blueprint $blueprint;
     public string $title = '';
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
-    public array $variables = [];
 
     public function mount(Blueprint $blueprint): void
     {
@@ -27,7 +28,6 @@ class BlueprintEditForm extends Component
         $this->description = $blueprint->description ?? '';
         $this->categoryId = $blueprint->category_id;
 
-        // Cargar variables existentes
         $this->variables = $blueprint->variables->map(function ($variable) {
             return [
                 'key' => $variable->key,
@@ -38,22 +38,25 @@ class BlueprintEditForm extends Component
                 'section' => $variable->section,
             ];
         })->toArray();
+
+        if (empty($this->variables)) {
+            $this->addVariable();
+        }
     }
 
     protected function rules(): array
     {
-        return [
+        return array_merge([
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
-        ];
+        ], $this->variableRules());
     }
 
-    #[On('variables-updated')]
-    public function updateVariables(array $variables): void
+    public function updatingCategoryId($value): void
     {
-        $this->variables = $variables;
+        $this->categoryId = $value === '' ? null : $value;
     }
 
     public function updatedTitle(): void
@@ -63,11 +66,17 @@ class BlueprintEditForm extends Component
 
     public function submit(UpdateBlueprint $updateBlueprint): void
     {
+        $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
+        $this->cleanEmptyVariables();
+
         $validated = $this->validate();
 
-        // Authorize
         if (!auth()->user()->can('update', $this->blueprint)) {
             $this->addError('title', 'No tienes permisos para editar este blueprint.');
+            return;
+        }
+
+        if (!$this->validateUniqueKeys()) {
             return;
         }
 

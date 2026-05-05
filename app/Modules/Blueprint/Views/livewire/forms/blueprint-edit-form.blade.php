@@ -37,8 +37,15 @@
 
         {{-- Variables --}}
         <div class="bg-white p-6 rounded-lg shadow">
-            <livewire:blueprint.components.variable-manager :initial-variables="$variables" />
+            @include('blueprint::livewire.components.variable-manager')
             @error('variables') <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span> @enderror
+            @foreach($errors->messages() as $key => $messages)
+                @if(str_starts_with($key, 'variables.'))
+                    @foreach($messages as $message)
+                        <span class="text-red-500 text-sm block">{{ $message }}</span>
+                    @endforeach
+                @endif
+            @endforeach
         </div>
 
         {{-- Submit --}}

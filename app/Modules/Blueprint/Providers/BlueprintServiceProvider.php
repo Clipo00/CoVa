@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Providers;
 
-use App\Modules\Blueprint\Livewire\Components\VariableManager;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
 use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
@@ -30,6 +29,5 @@ class BlueprintServiceProvider extends ServiceProvider
         Livewire::component('blueprint.forms.blueprint-create-form', BlueprintCreateForm::class);
         Livewire::component('blueprint.forms.blueprint-edit-form', BlueprintEditForm::class);
         Livewire::component('blueprint.tables.blueprint-list', BlueprintList::class);
-        Livewire::component('blueprint.components.variable-manager', VariableManager::class);
     }
 }
