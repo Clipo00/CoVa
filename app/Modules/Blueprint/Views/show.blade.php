@@ -25,8 +25,8 @@
                     @endif
                 </div>
                 <div class="mt-4 sm:mt-0 flex items-center space-x-3">
-                    <livewire:shared.copy-to-clipboard 
-                        :text="$blueprint->uuid" 
+                    <livewire:shared.copy-to-clipboard
+                        :text="$blueprint->uuid"
                         label="Copiar UUID"
                         success-message="UUID copiado al portapapeles"
                     />
@@ -74,144 +74,183 @@
             </div>
         </div>
 
-        {{-- Variables Section --}}
-        <div class="bg-white shadow rounded-lg p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-900">Variables de Entorno</h2>
-                <span class="text-sm text-gray-500">{{ $blueprint->variables->count() }} variables</span>
-            </div>
-
-            @if($blueprint->variables->isEmpty())
-                <div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                    </svg>
-                    <p>No hay variables configuradas.</p>
-                    <p class="text-sm mt-1">Las variables se definen al crear o editar el blueprint.</p>
+        {{-- Variables Section (collapsible) --}}
+        <div x-data="{ open: true }" class="bg-white shadow rounded-lg mb-6">
+            <button type="button" @click="open = !open" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div class="flex items-center space-x-3">
+                    <h2 class="text-lg font-semibold text-gray-900">Variables de Entorno</h2>
+                    <span class="text-sm text-gray-500">{{ $blueprint->variables->count() }} variable{{ $blueprint->variables->count() !== 1 ? 's' : '' }}</span>
                 </div>
-            @else
-                @php
-                    $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
-                @endphp
+                <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
 
-                @foreach($groupedVars as $section => $vars)
-                    <div class="mb-6 last:mb-0">
-                        <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs">
-                                {{ $section }}
-                            </span>
-                            <span class="ml-2 text-xs text-gray-400">{{ $vars->count() }} variable{{ $vars->count() > 1 ? 's' : '' }}</span>
-                        </h3>
-                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                            <table class="min-w-full divide-y divide-gray-300">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Key</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Interactivo</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    @foreach($vars as $variable)
-                                        <tr>
-                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900">{{ $variable->key }}</td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                                    {{ $variable->type }}
-                                                </span>
-                                            </td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                @if($variable->is_secret)
-                                                    <span class="text-gray-400">••••••••</span>
-                                                @else
-                                                    {{ $variable->default_value ?? '-' }}
-                                                @endif
-                                            </td>
-                                            <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                                @if($variable->is_interactive)
-                                                    <span class="text-indigo-600 font-medium">Sí</span>
-                                                @else
-                                                    <span class="text-gray-400">No</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+            <div x-show="open" x-collapse class="px-6 pb-6">
+                @if($blueprint->variables->isEmpty())
+                    <div class="text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        <p>No hay variables configuradas.</p>
+                        <p class="text-sm mt-1">Las variables se definen al crear o editar el blueprint.</p>
                     </div>
-                @endforeach
-            @endif
+                @else
+                    @php
+                        $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
+                    @endphp
+
+                    @foreach($groupedVars as $section => $vars)
+                        <div class="mb-6 last:mb-0">
+                            <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs">
+                                    {{ $section }}
+                                </span>
+                                <span class="ml-2 text-xs text-gray-400">{{ $vars->count() }} variable{{ $vars->count() > 1 ? 's' : '' }}</span>
+                            </h3>
+                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Key</th>
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
+                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Interactivo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach($vars as $variable)
+                                            <tr>
+                                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900">{{ $variable->key }}</td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                        {{ $variable->type }}
+                                                    </span>
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                    @if($variable->is_secret)
+                                                        <span class="text-gray-400">••••••••</span>
+                                                    @else
+                                                        {{ $variable->default_value ?? '-' }}
+                                                    @endif
+                                                </td>
+                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    @if($variable->is_interactive)
+                                                        <span class="text-indigo-600 font-medium">Sí</span>
+                                                    @else
+                                                        <span class="text-gray-400">No</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
         </div>
 
-        {{-- VSCode Extensions Section --}}
-        @if($agentMd = $blueprintOutput->getAgentMdContent())
-            <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">Agent Context</h2>
-                    <livewire:shared.copy-to-clipboard
-                        :text="$agentMd"
-                        label="Copiar agent.md"
-                        success-message="agent.md copiado al portapapeles"
-                    />
-                </div>
-                <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
-                    <pre class="text-sm text-gray-700 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
-                </div>
-            </div>
-        @endif
-
-        {{-- VSCode Extensions Section --}}
         @php
             $extensions = $blueprintOutput->getVscodeExtensions();
+            $installCommand = $blueprintOutput->getVscodeInstallCommand();
+            $mcpServers = $blueprintOutput->getMcpServers();
+            $agentMd = $blueprintOutput->getAgentMdContent();
         @endphp
-        @if(count($extensions) > 0)
-            <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">VSCode Extensions</h2>
-                    <livewire:shared.copy-to-clipboard
-                        :text="implode(',', $extensions)"
-                        label="Copiar extensiones"
-                        success-message="Extensiones copiadas al portapapeles"
-                    />
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    @foreach($extensions as $ext)
-                        <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono bg-gray-100 text-gray-800">
-                            {{ $ext }}
-                        </span>
-                    @endforeach
-                </div>
-                <div class="mt-4">
-                    <code class="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded block">
-                        code --install-extension {{ implode(' --install-extension ', $extensions) }}
-                    </code>
+
+        {{-- Agent Context Section (collapsible) --}}
+        @if($agentMd)
+            <div x-data="{ open: true }" class="bg-white shadow rounded-lg mb-6">
+                <button type="button" @click="open = !open" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-lg font-semibold text-gray-900">Agent Context</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">agent.md</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <livewire:shared.copy-to-clipboard
+                            :text="$agentMd"
+                            label="Copiar"
+                            success-message="agent.md copiado al portapapeles"
+                        />
+                        <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+
+                <div x-show="open" x-collapse class="px-6 pb-6">
+                    <div class="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+                        <pre class="text-sm text-gray-700 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
+                    </div>
                 </div>
             </div>
         @endif
 
-        {{-- MCP Servers Section --}}
-        @php
-            $mcpServers = $blueprintOutput->getMcpServers();
-        @endphp
+        {{-- VSCode Extensions Section (collapsible) --}}
+        @if(count($extensions) > 0)
+            <div x-data="{ open: true }" class="bg-white shadow rounded-lg mb-6">
+                <button type="button" @click="open = !open" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-lg font-semibold text-gray-900">VSCode Extensions</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ count($extensions) }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <livewire:shared.copy-to-clipboard
+                            :text="$installCommand"
+                            label="Copiar install command"
+                            success-message="Comando copiado al portapapeles"
+                        />
+                        <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+                </button>
+
+                <div x-show="open" x-collapse class="px-6 pb-6">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        @foreach($extensions as $ext)
+                            <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono bg-gray-100 text-gray-800">
+                                {{ $ext }}
+                            </span>
+                        @endforeach
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <code class="text-sm text-gray-600 font-mono break-all">{{ $installCommand }}</code>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- MCP Servers Section (collapsible) --}}
         @if(!empty($mcpServers))
-            <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">MCP Servers</h2>
-                <div class="space-y-3">
-                    @foreach($mcpServers['mcp_servers'] ?? [] as $server)
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium text-gray-900">{{ $server['name'] }}</span>
+            <div x-data="{ open: true }" class="bg-white shadow rounded-lg mb-6">
+                <button type="button" @click="open = !open" class="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-lg font-semibold text-gray-900">MCP Servers</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">{{ count($mcpServers['mcp_servers'] ?? []) }}</span>
+                    </div>
+                    <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div x-show="open" x-collapse class="px-6 pb-6">
+                    <div class="space-y-3">
+                        @foreach($mcpServers['mcp_servers'] ?? [] as $server)
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium text-gray-900">{{ $server['name'] }}</span>
+                                </div>
+                                <code class="text-sm text-gray-600 block font-mono">
+                                    {{ $server['command'] }}
+                                    @if(!empty($server['args']))
+                                        {{ implode(' ', array_map(fn($a) => "'" . $a . "'", is_array($server['args']) ? $server['args'] : [])) }}
+                                    @endif
+                                </code>
                             </div>
-                            <code class="text-sm text-gray-600 block font-mono">
-                                {{ $server['command'] }}
-                                @if(!empty($server['args']))
-                                    {{ implode(' ', array_map(fn($a) => "'" . $a . "'", $server['args'])) }}
-                                @endif
-                            </code>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 </div>
             </div>
         @endif

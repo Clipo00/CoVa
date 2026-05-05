@@ -83,6 +83,20 @@ final class BlueprintOutput
     }
 
     /**
+     * Get VSCode extensions install command.
+     */
+    public function getVscodeInstallCommand(): string
+    {
+        $extensions = $this->getVscodeExtensions();
+
+        if (empty($extensions)) {
+            return '';
+        }
+
+        return 'code --install-extension ' . implode(' --install-extension ', $extensions);
+    }
+
+    /**
      * Get MCP servers configuration.
      *
      * @return array<string, mixed>
