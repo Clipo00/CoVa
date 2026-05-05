@@ -97,6 +97,12 @@ class BlueprintEditForm extends Component
         }
 
         try {
+            // Normalize tabsConfig: ensure each tab has type and config
+            $tabsForDb = array_values(array_map(fn($tab) => [
+                'type' => $tab['type'],
+                'config' => $tab['config'] ?? [],
+            ], $this->tabsConfig));
+
             $updateBlueprint->execute(
                 blueprint: $this->blueprint,
                 data: [
@@ -104,7 +110,7 @@ class BlueprintEditForm extends Component
                     'slug' => $validated['slug'],
                     'description' => $validated['description'] ?: null,
                     'category_id' => $validated['categoryId'],
-                    'tabs_config' => $this->tabsConfig,
+                    'tabs_config' => $tabsForDb,
                 ],
                 variables: $this->variables,
             );

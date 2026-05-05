@@ -4,34 +4,24 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Livewire\Components;
 
-use App\Modules\Blueprint\DTOs\TabConfig;
 use App\Modules\Blueprint\Enums\TabType;
-use App\Modules\Blueprint\Tabs\TabRegistry;
 use Livewire\Component;
 
 /**
  * Livewire component for managing blueprint tabs.
  *
- * Usage:
- * <livewire:blueprint.components.tab-manager
- *     :blueprint="$blueprint"
- *     :tabs-config="$existingTabs"
- * />
+ * Communicates with parent via wire:model on $tabs.
  *
- * Events emitted:
- * - tabs-updated: when tabs change (payload: array tabs_config)
+ * Usage:
+ * <livewire:blueprint.components.tab-manager wire:model="tabsConfig" />
  */
 class TabManager extends Component
 {
     /** @var array<int, array{type: string, config: array<string, mixed>}> */
     public array $tabs = [];
 
-    public $blueprint = null;
-
     /** @var array<string, string> */
     public array $availableTabTypes = [];
-
-    private ?TabRegistry $registry = null;
 
     public function mount(?array $tabsConfig = null): void
     {
@@ -64,7 +54,7 @@ class TabManager extends Component
             'config' => $defaultConfig,
         ];
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
@@ -79,7 +69,7 @@ class TabManager extends Component
         unset($this->tabs[$index]);
         $this->tabs = array_values($this->tabs);
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
@@ -100,91 +90,141 @@ class TabManager extends Component
 
         $this->tabs = $tabs;
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
      * Update extensions for VSCode Extensions tab.
-     *
-     * @param string[] $extensions
      */
-    public function updateVscodeExtensions(int $tabIndex, array $extensions): void
+    public function updateVscodeExtensions(int $tabIndex, string $extensionsText): void
     {
         if (!isset($this->tabs[$tabIndex])) {
             return;
         }
+
+        $extensions = array_values(array_filter(
+            array_map('trim', explode("\n", $extensionsText)),
+            fn($ext) => $ext !== ''
+        ));
 
         $this->tabs[$tabIndex]['config']['extensions'] = $extensions;
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
-     * Update MCP servers configuration.
-     *
-     * @param array<int, array{name: string, command: string, args: array<string>}> $servers
+     * Add an empty MCP server entry to a tab.
      */
-    public function updateMcpServers(int $tabIndex, array $servers): void
+    public function addMcpServer(int $tabIndex): void
     {
         if (!isset($this->tabs[$tabIndex])) {
             return;
         }
 
-        $this->tabs[$tabIndex]['config']['servers'] = $servers;
+        $this->tabs[$tabIndex]['config']['servers'][] = [
+            'name' => '',
+            'command' => '',
+            'args' => [],
+        ];
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
-     * Update AI Context configuration.
-     *
-     * @param string[] $presets
-     * @param string[] $skills
+     * Remove an MCP server entry from a tab.
      */
-    public function updateAiContext(int $tabIndex, array $presets, array $skills, string $customRules): void
+    public function removeMcpServer(int $tabIndex, int $serverIndex): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
+            return;
+        }
+
+        unset($this->tabs[$tabIndex]['config']['servers'][$serverIndex]);
+        $this->tabs[$tabIndex]['config']['servers'] = array_values(
+            $this->tabs[$tabIndex]['config']['servers']
+        );
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update an MCP server field.
+     */
+    public function updateMcpServerField(int $tabIndex, int $serverIndex, string $field, string $value): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['servers'][$serverIndex][$field] = $value;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Toggle a preset for AI Context tab.
+     */
+    public function togglePreset(int $tabIndex, string $preset): void
     {
         if (!isset($this->tabs[$tabIndex])) {
             return;
+        }
+
+        $presets = $this->tabs[$tabIndex]['config']['presets'] ?? [];
+
+        if (in_array($preset, $presets, true)) {
+            $presets = array_values(array_filter($presets, fn($p) => $p !== $preset));
+        } else {
+            $presets[] = $preset;
         }
 
         $this->tabs[$tabIndex]['config']['presets'] = $presets;
-        $this->tabs[$tabIndex]['config']['skills'] = $skills;
-        $this->tabs[$tabIndex]['config']['custom_rules'] = $customRules;
 
-        $this->dispatch('tabs-updated', tabs: $this->tabs);
+        $this->syncToParent();
     }
 
     /**
-     * Get available presets from registry.
-     *
-     * @return string[]
+     * Toggle a skill for AI Context tab.
      */
-    public function getAvailablePresets(): array
+    public function toggleSkill(int $tabIndex, string $skill): void
     {
-        return $this->getRegistry()->has('ai_context')
-            ? ['psr12', 'solid', 'clean-architecture']
-            : [];
-    }
-
-    /**
-     * Get available skills from registry.
-     *
-     * @return string[]
-     */
-    public function getAvailableSkills(): array
-    {
-        return $this->getRegistry()->has('ai_context')
-            ? ['stripe', 'tailwind']
-            : [];
-    }
-
-    private function getRegistry(): TabRegistry
-    {
-        if ($this->registry === null) {
-            $this->registry = app(TabRegistry::class);
+        if (!isset($this->tabs[$tabIndex])) {
+            return;
         }
 
-        return $this->registry;
+        $skills = $this->tabs[$tabIndex]['config']['skills'] ?? [];
+
+        if (in_array($skill, $skills, true)) {
+            $skills = array_values(array_filter($skills, fn($s) => $s !== $skill));
+        } else {
+            $skills[] = $skill;
+        }
+
+        $this->tabs[$tabIndex]['config']['skills'] = $skills;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update custom rules for AI Context tab.
+     */
+    public function updateCustomRules(int $tabIndex, string $rules): void
+    {
+        if (!isset($this->tabs[$tabIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['custom_rules'] = $rules;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Sync state to parent component via Livewire dispatch.
+     */
+    private function syncToParent(): void
+    {
+        $this->dispatch('tabs-updated', tabs: $this->tabs);
     }
 
     public function render()

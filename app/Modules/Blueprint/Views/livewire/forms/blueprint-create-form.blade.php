@@ -48,6 +48,15 @@
             @endforeach
         </div>
 
+        {{-- Tabs --}}
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Pestañas</h2>
+            <livewire:blueprint.components.tab-manager
+                :tabs-config="$tabsConfig"
+                wire:key="create-tab-manager"
+            />
+        </div>
+
         {{-- Submit --}}
         <div class="flex justify-end">
             <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

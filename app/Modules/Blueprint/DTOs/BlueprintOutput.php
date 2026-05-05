@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\DTOs;
 
+use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Models\Blueprint;
 
 /**
