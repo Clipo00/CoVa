@@ -5,7 +5,7 @@
 
     @if($blueprints->isEmpty())
         <div class="text-center py-12 text-gray-500">
-            No hay blueprints. <a href="{{ route('blueprints.create', ['org' => $organizationId]) }}" class="text-indigo-600 hover:text-indigo-800">Crea el primero</a>
+            No hay blueprints. <a href="{{ route('blueprints.create') }}" class="text-indigo-600 hover:text-indigo-800">Crea el primero</a>
         </div>
     @else
         <div class="bg-white shadow overflow-hidden sm:rounded-md">
@@ -16,11 +16,14 @@
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium text-indigo-600 truncate">{{ $blueprint->title }}</p>
-                                    @if($blueprint->category)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            {{ $blueprint->category->name }}
-                                        </span>
-                                    @endif
+                                    <div class="flex items-center space-x-2">
+                                        @if($blueprint->category)
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                                {{ $blueprint->category->name }}
+                                            </span>
+                                        @endif
+                                        <span class="text-xs text-gray-400">{{ $blueprint->organization->name }}</span>
+                                    </div>
                                 </div>
                                 <p class="mt-2 text-sm text-gray-500 truncate">{{ $blueprint->description }}</p>
                             </div>
