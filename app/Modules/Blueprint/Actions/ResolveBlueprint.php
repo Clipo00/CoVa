@@ -8,6 +8,7 @@ use App\Modules\Blueprint\DTOs\BlueprintOutput;
 use App\Modules\Blueprint\DTOs\TabConfig;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Tabs\TabRegistry;
+use Illuminate\Support\Facades\Log;
 
 class ResolveBlueprint
 {
@@ -40,12 +41,20 @@ class ResolveBlueprint
 
             try {
                 $tabConfig = TabConfig::fromArray($tabData);
-            } catch (\InvalidArgumentException) {
-                // Skip invalid tab configs
+            } catch (\InvalidArgumentException $e) {
+                Log::warning('Invalid tab config in blueprint', [
+                    'blueprint_uuid' => $blueprint->uuid,
+                    'tab_data' => $tabData,
+                    'error' => $e->getMessage(),
+                ]);
                 continue;
             }
 
             if (!$this->registry->has($tabConfig->type->value)) {
+                Log::warning('Unknown tab type in blueprint', [
+                    'blueprint_uuid' => $blueprint->uuid,
+                    'tab_type' => $tabConfig->type->value,
+                ]);
                 continue;
             }
 
@@ -53,8 +62,14 @@ class ResolveBlueprint
 
             try {
                 $outputs[] = $tab->generate($tabConfig->config);
-            } catch (\Throwable) {
-                // Skip tabs that fail to generate
+            } catch (\Throwable $e) {
+                Log::error('Failed to generate tab output', [
+                    'blueprint_uuid' => $blueprint->uuid,
+                    'tab_type' => $tabConfig->type->value,
+                    'config' => $tabConfig->config,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
                 continue;
             }
         }

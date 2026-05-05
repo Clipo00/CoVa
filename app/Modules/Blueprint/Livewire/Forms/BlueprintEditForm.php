@@ -6,7 +6,6 @@ namespace App\Modules\Blueprint\Livewire\Forms;
 
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
-use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -29,7 +28,10 @@ class BlueprintEditForm extends Component
         $this->slug = $blueprint->slug;
         $this->description = $blueprint->description ?? '';
         $this->categoryId = $blueprint->category_id;
-        $this->tabsConfig = $blueprint->tabs_config ?? [];
+
+        // Ensure tabs_config is a proper array (not null)
+        $raw = $blueprint->tabs_config;
+        $this->tabsConfig = is_array($raw) ? $raw : [];
 
         $this->variables = $blueprint->variables->map(function ($variable) {
             return [
@@ -58,6 +60,11 @@ class BlueprintEditForm extends Component
         ], $this->variableRules());
     }
 
+    /**
+     * Sync tabs from TabManager child component.
+     * In Livewire 3, dispatched events from child components are
+     * received via the #[On] attribute or getListeners().
+     */
     protected function getListeners(): array
     {
         return [

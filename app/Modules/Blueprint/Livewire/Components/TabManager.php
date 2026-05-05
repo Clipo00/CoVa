@@ -228,7 +228,12 @@ class TabManager extends Component
     }
 
     /**
-     * Sync state to parent component via Livewire dispatch.
+     * Sync state to parent component.
+     *
+     * In Livewire 3, we use $this->dispatch() with a named event that
+     * the parent component listens to via getListeners().
+     * The parent (BlueprintEditForm/BlueprintCreateForm) has
+     * 'tabs-updated' => 'onTabsUpdated' in its getListeners().
      */
     private function syncToParent(): void
     {

@@ -25,10 +25,13 @@ final class AiContextConfig
 
     public static function fromArray(array $data): self
     {
+        // Livewire may convert snake_case to camelCase, so check both keys
+        $customRules = $data['custom_rules'] ?? $data['customRules'] ?? '';
+
         return new self(
             presets: self::filterStringArray($data['presets'] ?? []),
             skills: self::filterStringArray($data['skills'] ?? []),
-            customRules: trim($data['custom_rules'] ?? ''),
+            customRules: trim((string) $customRules),
         );
     }
 

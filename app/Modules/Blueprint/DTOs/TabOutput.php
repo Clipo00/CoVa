@@ -28,7 +28,7 @@ final class TabOutput
 
     public function isMarkdown(): bool
     {
-        return $this->content instanceof string;
+        return is_string($this->content);
     }
 
     public function isArray(): bool
