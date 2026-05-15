@@ -21,6 +21,21 @@
             </span>
         </div>
 
+        @if(session('error'))
+            <div class="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if($deletedBlueprints->isEmpty())
             <div class="bg-white shadow rounded-lg p-12 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,6 +48,14 @@
             <div class="bg-white shadow overflow-hidden sm:rounded-md">
                 <ul class="divide-y divide-gray-200">
                     @foreach($deletedBlueprints as $blueprint)
+                        @php
+                            $organization = $blueprint->organization;
+                            $plan = $organization->plan;
+                            $maxBlueprints = $plan->max_blueprints_per_org;
+                            $activeCount = $activeBlueprintCounts[$organization->id] ?? 0;
+                            $canRestore = auth()->user()->isOwnerOf($organization) && ($maxBlueprints === null || $activeCount < $maxBlueprints);
+                            $limitReached = auth()->user()->isOwnerOf($organization) && $maxBlueprints !== null && $activeCount >= $maxBlueprints;
+                        @endphp
                         <li class="px-4 py-4 sm:px-6">
                             <div class="flex items-center justify-between">
                                 <div class="min-w-0 flex-1">
@@ -40,20 +63,34 @@
                                         {{ $blueprint->title }}
                                     </p>
                                     <p class="mt-1 text-sm text-gray-500">
-                                        {{ $blueprint->organization->name }} · Eliminado {{ $blueprint->deleted_at->diffForHumans() }}
+                                        {{ $organization->name }} · Eliminado {{ $blueprint->deleted_at->diffForHumans() }}
                                     </p>
+                                    @if($limitReached)
+                                        <p class="mt-1 text-xs text-red-600">
+                                            Límite de {{ $maxBlueprints }} blueprints alcanzado. Elimina un blueprint activo para poder recuperar este.
+                                        </p>
+                                    @endif
                                 </div>
                                 <div class="ml-4 flex-shrink-0">
-                                    @if(auth()->user()->isOwnerOf($blueprint->organization))
-                                        <form method="POST" action="{{ route('blueprints.restore', $blueprint->uuid) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    @if(auth()->user()->isOwnerOf($organization))
+                                        @if($canRestore)
+                                            <form method="POST" action="{{ route('blueprints.restore', $blueprint->uuid) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Restaurar
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded text-gray-500 bg-gray-100 cursor-not-allowed">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                                                 </svg>
-                                                Restaurar
-                                            </button>
-                                        </form>
+                                                No disponible
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="text-xs text-gray-400">Solo el owner puede restaurar</span>
                                     @endif

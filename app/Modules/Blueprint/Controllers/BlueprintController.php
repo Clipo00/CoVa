@@ -9,6 +9,7 @@ use App\Modules\Blueprint\Actions\DeleteBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
+use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
@@ -57,17 +58,24 @@ class BlueprintController
     {
         /** @var User $user */
         $user = auth()->user();
-        
+
         // Obtener blueprints eliminados de organizaciones donde el user es miembro
         $organizationIds = $user->organizations()->pluck('organizations.id');
-        
+
         $deletedBlueprints = Blueprint::onlyTrashed()
             ->whereIn('organization_id', $organizationIds)
-            ->with('organization')
+            ->with('organization.plan')
             ->orderBy('deleted_at', 'desc')
             ->get();
-        
-        return view('blueprint::deleted', compact('deletedBlueprints'));
+
+        // Precargar conteo de blueprints activos por organización (evita N+1)
+        $activeBlueprintCounts = Blueprint::whereIn('organization_id', $organizationIds)
+            ->whereNull('deleted_at')
+            ->selectRaw('organization_id, COUNT(*) as count')
+            ->groupBy('organization_id')
+            ->pluck('count', 'organization_id');
+
+        return view('blueprint::deleted', compact('deletedBlueprints', 'activeBlueprintCounts'));
     }
 
     public function destroy(string $uuid, DeleteBlueprint $deleteBlueprint): RedirectResponse
@@ -89,14 +97,20 @@ class BlueprintController
     public function restore(string $uuid, RestoreBlueprint $restoreBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::withTrashed()->where('uuid', $uuid)->firstOrFail();
-        
+
         // Authorize - only owner can restore
         if (!auth()->user()->isOwnerOf($blueprint->organization)) {
             abort(403, 'No tienes permisos para restaurar este blueprint.');
         }
-        
-        $restoreBlueprint->execute($blueprint);
-        
+
+        try {
+            $restoreBlueprint->execute($blueprint);
+        } catch (MaxBlueprintsReachedException $e) {
+            return redirect()
+                ->route('blueprints.deleted')
+                ->with('error', $e->getMessage() . ' Elimina un blueprint activo para poder recuperar este.');
+        }
+
         return redirect()
             ->route('blueprints.show', $blueprint->uuid)
             ->with('success', 'Blueprint restaurado correctamente.');
