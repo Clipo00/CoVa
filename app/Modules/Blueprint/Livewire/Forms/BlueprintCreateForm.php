@@ -22,6 +22,7 @@ class BlueprintCreateForm extends Component
     public string $slug = '';
     public string $description = '';
     public ?int $categoryId = null;
+    public array $tabsConfig = [];
 
     public function mount(): void
     {
@@ -35,6 +36,7 @@ class BlueprintCreateForm extends Component
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());
     }
 
@@ -46,6 +48,18 @@ class BlueprintCreateForm extends Component
     public function updatedTitle(): void
     {
         $this->slug = \Illuminate\Support\Str::slug($this->title);
+    }
+
+    protected function getListeners(): array
+    {
+        return [
+            'tabs-updated' => 'onTabsUpdated',
+        ];
+    }
+
+    public function onTabsUpdated(array $tabs): void
+    {
+        $this->tabsConfig = $tabs;
     }
 
     public function submit(CreateBlueprint $createBlueprint): void
@@ -66,6 +80,12 @@ class BlueprintCreateForm extends Component
             return;
         }
 
+        // Convert tabsConfig to the format expected by tabs_config column
+        $tabsForDb = array_values(array_map(fn($tab) => [
+            'type' => $tab['type'],
+            'config' => $tab['config'] ?? [],
+        ], $this->tabsConfig));
+
         try {
             $blueprint = $createBlueprint->execute(
                 organization: $organization,
@@ -73,7 +93,7 @@ class BlueprintCreateForm extends Component
                 slug: $validated['slug'],
                 description: $validated['description'] ?: null,
                 categoryId: $validated['categoryId'],
-                tabsConfig: [],
+                tabsConfig: $tabsForDb,
                 variables: $this->variables,
             );
 

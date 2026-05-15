@@ -8,6 +8,8 @@ CoVa es una plataforma SaaS desarrollada en Laravel 13 que centraliza la lógica
 
 ## Arquitectura
 
+> Para profundizar en patrones, flujo de request, y guía de módulos, ver [`ARCHITECTURE.md`](ARCHITECTURE.md).
+
 ### Monolito Modular
 
 El proyecto sigue una arquitectura de **monolito modular** donde cada dominio de negocio está autocontenido:
@@ -65,6 +67,70 @@ Cada módulo contiene:
 
 ---
 
+### Módulo Organization
+
+**Responsabilidad**: Tenancy, colaboración, roles, invitaciones.
+
+#### Roles por Organización
+
+| Rol | Permisos |
+|-----|----------|
+| **Owner** | Todo: CRUD org, miembros, blueprints, invitaciones |
+| **Maintainer** | CRUD blueprints, gestionar miembros (no eliminar org) |
+| **Developer** | CRUD blueprints, ver org y miembros |
+
+#### Modelo de Datos
+
+```
+organizations (id, slug, name, owner_id, plan_id, softDeletes)
+organization_user (id, organization_id, user_id, role, timestamps)
+organization_invitations (id, organization_id, email, token, role, expires_at, used_at)
+```
+
+#### Actions
+
+| Action | Descripción |
+|--------|-------------|
+| `CreateOrganization` | Valida límite de plan, asigna plan heredado |
+| `UpdateOrganization` | Actualiza nombre/slug |
+| `DeleteOrganization` | Soft delete |
+| `RestoreOrganization` | Recupera del soft delete |
+| `ForceDeleteOrganization` | Eliminación permanente |
+| `InviteUser` | Genera token de invitación con expiración |
+| `AcceptInvitation` | Valida token, añade usuario a org |
+| `CreateOrganizationUser` | Crea usuario directo por Owner |
+| `UpdateOrganizationUserRole` | Actualiza rol de un miembro |
+
+#### Livewire Components
+
+| Componente | Descripción |
+|------------|-------------|
+| `CreateOrganizationForm` | Formulario de creación con validación de límite de plan |
+| `OrganizationList` | Tabla de organizaciones del usuario |
+
+#### Middleware
+
+| Middleware | Uso |
+|------------|-----|
+| `EnsureOrganizationAccess` | Verifica membresía |
+| `EnsureRole` | Verifica rol específico |
+
+**Rutas**:
+- `GET /organizations` — Listado
+- `GET /organizations/create` — Crear org
+- `GET /organizations/{slug}` — Detalle de org
+- `GET /organizations/{slug}/edit` — Editar org
+- `POST /organizations/{slug}/update` — Actualizar org
+- `GET /organizations/{slug}/members` — Gestión de miembros
+- `POST /organizations/{slug}/members/store` — Añadir miembro directo
+- `POST /organizations/{slug}/members/{user_id}/role` — Cambiar rol
+- `POST /organizations/{slug}/invite` — Enviar invitación
+- `POST /organizations/{slug}/delete` — Soft delete
+- `POST /organizations/{slug}/restore` — Restaurar
+- `POST /organizations/{slug}/force-delete` — Eliminación permanente
+
+---
+
 ### Módulo Shared
 
 **Responsabilidad**: Infraestructura transversal, planes, categorías, Value Objects.
@@ -101,54 +167,9 @@ Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del
 
 ---
 
-### Módulo Organization
-
-**Responsabilidad**: Tenancy, colaboración, roles, invitaciones.
-
-#### Roles por Organización
-
-| Rol | Permisos |
-|-----|----------|
-| **Owner** | Todo: CRUD org, miembros, blueprints, invitaciones |
-| **Maintainer** | CRUD blueprints, gestionar miembros (no eliminar org) |
-| **Developer** | CRUD blueprints, ver org y miembros |
-
-#### Modelo de Datos
-
-```
-organizations (id, slug, name, owner_id, plan_id, softDeletes)
-organization_user (id, organization_id, user_id, role, timestamps)
-organization_invitations (id, organization_id, email, token, role, expires_at, used_at)
-```
-
-#### Actions
-
-| Action | Descripción |
-|--------|-------------|
-| `CreateOrganization` | Valida límite de plan, asigna plan heredado |
-| `UpdateOrganization` | Actualiza nombre/slug |
-| `DeleteOrganization` | Soft delete |
-| `InviteUser` | Genera token de invitación con expiración |
-| `AcceptInvitation` | Valida token, añade usuario a org |
-| `CreateOrganizationUser` | Crea usuario directo por Owner |
-
-#### Middleware
-
-| Middleware | Uso |
-|------------|-----|
-| `EnsureOrganizationAccess` | Verifica membresía |
-| `EnsureRole` | Verifica rol específico |
-
-**Rutas**:
-- `GET /organizations` — Listado
-- `GET /organizations/create` — Crear org
-- `GET /organizations/{slug}` — Detalle de org
-
----
-
 ### Módulo Blueprint
 
-**Responsabilidad**: CRUD de blueprints, variables .env, favoritos, soft delete.
+**Responsabilidad**: CRUD de blueprints, variables .env, favoritos, soft delete, tabs dinámicas, resolución de configuración.
 
 #### Modelo de Datos
 
@@ -169,15 +190,40 @@ Flags adicionales:
 - `is_interactive`: El CLI pregunta al usuario por el valor
 - `is_secret`: Valor encriptado en BD, solo visible para Owner
 
+#### Tabs Dinámicas (Plugin Architecture)
+
+Cada blueprint puede tener N tabs configurables de 3 tipos, guardadas en `tabs_config` JSON:
+
+| Tab Type | Descripción | Configuración |
+|----------|-------------|---------------|
+| **VSCode Extensions** | Lista de extensiones recomendadas | Array de strings (`extensions`) |
+| **MCP Servers** | Servidores MCP para contexto AI | Array de servidores (`name`, `command`, `args[]`) |
+| **AI Context** | Contexto para agentes AI | `presets[]`, `skills[]`, `custom_rules` |
+
+Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicación padre-hijo por eventos `tabs-updated`.
+
 #### Actions
 
 | Action | Descripción |
 |--------|-------------|
 | `CreateBlueprint` | Genera UUID, valida límite de plan |
-| `UpdateBlueprint` | Actualiza datos |
+| `UpdateBlueprint` | Actualiza datos y tabs |
 | `DeleteBlueprint` | Soft delete |
 | `RestoreBlueprint` | Recupera del soft delete |
 | `ToggleFavorite` | Agrega/elimina favorito |
+| `TransferBlueprint` | Transfiere blueprint a otra organización |
+| `ResolveBlueprint` | Procesa tabs_config y genera outputs estructurados (`TabOutput[]`, `BlueprintOutput`) incluyendo `agent.md` |
+
+#### Livewire Components
+
+| Componente | Descripción |
+|------------|-------------|
+| `BlueprintCreateForm` | Wizard de creación con variables y tabs |
+| `BlueprintEditForm` | Edición completa con sincronización de tabs |
+| `TabManager` | Gestión dinámica de tabs (add/remove/reorder/config) |
+| `VariableManager` | CRUD de variables .env con secciones y ordenamiento |
+| `BlueprintList` | Tabla de blueprints con filtros |
+| `CopyToClipboard` | Componente reutilizable para copiar al portapapeles |
 
 #### Policies
 
@@ -187,13 +233,18 @@ Flags adicionales:
 | Editar blueprint | ✅ (cualquiera) | ✅ (cualquiera) | ✅ (solo suyo) |
 | Eliminar blueprint | ✅ (cualquiera) | ❌ | ❌ |
 | Favorito | ✅ | ✅ | ✅ |
+| Transferir blueprint | ✅ | ❌ | ❌ |
 
 **Rutas**:
 - `GET /blueprints` — Listado
 - `GET /blueprints/create` — Crear blueprint
-- `GET /blueprints/{uuid}` — Detalle
-- `GET /blueprints/{uuid}/edit` — Editar
 - `GET /blueprints/favorites` — Favoritos
+- `GET /blueprints/deleted` — Papelera (soft deleted)
+- `GET /blueprints/{uuid}` — Detalle (resuelve tabs y muestra agent.md)
+- `GET /blueprints/{uuid}/edit` — Editar
+- `POST /blueprints/{uuid}/transfer` — Transferir a otra org
+- `POST /blueprints/{uuid}/delete` — Soft delete
+- `POST /blueprints/{uuid}/restore` — Restaurar
 
 ---
 
@@ -261,11 +312,12 @@ Los límites de planes no están hardcodeados. Esto permite:
 - A/B testing de límites
 - Herencia cascada (usuario cambia de plan → todas sus orgs se actualizan)
 
-### 4. JSON para Pestañas Custom
-Las pestañas 2-4 del blueprint (Extensions, AI Context, Post-Install) se guardan en `tabs_config` JSON. Esto permite:
-- Añadir nuevas pestañas sin alterar el schema
+### 4. JSON para Tabs Dinámicas
+Las tabs configurables del blueprint (VSCode Extensions, MCP Servers, AI Context) se guardan en `tabs_config` JSON. Esto permite:
+- Añadir nuevos tipos de tab sin alterar el schema (solo el enum `TabType`)
 - Escalar para Fase 4 (Marketplace)
-- Cada pestaña es una estructura libre
+- Cada tab tiene config estructurada según su tipo
+- Plugin architecture: el `TabManager` no conoce los tipos hardcodeados, usa el enum
 
 ### 5. Variables Normalizadas + Tabs en JSON
 Las variables .env (pestaña 1) están normalizadas (`blueprint_variables` tabla) porque necesitamos:
@@ -288,44 +340,57 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Auth (login/register/logout) | ✅ Completo |
 | Planes configurables | ✅ Completo |
 | CRUD Organizaciones | ✅ Completo |
-| Límites por plan (orgs/blueprints) | ✅ Completo |
+| Gestión de miembros (add/invite/roles) | ✅ Completo |
+| Límites por plan (orgs/blueprints/miembros/variables) | ✅ Completo |
 | Invitaciones por token | ✅ Completo |
 | Roles (Owner/Maintainer/Developer) | ✅ Completo |
 | CRUD Blueprints | ✅ Completo |
-| Variables .env | ✅ Estructura lista |
+| Variables .env (con secciones y orden) | ✅ Completo |
+| Tabs dinámicas (VSCode, MCP, AI Context) | ✅ Completo |
+| Resolución de blueprint + `agent.md` | ✅ Completo |
+| Transferencia de blueprints entre orgs | ✅ Completo |
 | Favoritos | ✅ Completo |
-| Soft deletes | ✅ Completo |
+| Soft deletes (blueprints + orgs) | ✅ Completo |
+| Papelera / restauración | ✅ Completo |
 | Dashboard | ✅ Completo |
 | Responsive UI | ✅ Completo |
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
-| Tests | ✅ 78 tests, 134 assertions |
+| Collapsible sections en UI | ✅ Completo |
+| Tests | ✅ 117 tests, 219 assertions |
+| **AI Agents / Skills config** | 🚧 En progreso |
+| **Marketplace** (`is_public`, `has_marketplace_publish`) | 🚧 Preparación |
 
 ## Próximas Fases
 
-### Fase 2: Wizard de Blueprints (Pestañas Custom)
-- Wizard de 4 pasos para crear blueprints
-- Editor de variables .env con tabla dinámica
-- JSON editors para pestañas 2, 3, 4
-- Preview de `agent.md` generado
+### Fase 2: Wizard de Blueprints (Pulido)
+> Estado: Parcialmente implementado. Tabs dinámicas, variables y preview de `agent.md` ya están en producción.
+
+- Refinar wizard de creación en pasos guiados (actualmente es formulario único)
+- Validación cross-tab (ej: AI Context requiere al menos un preset o skill)
+- Preview en tiempo real de la salida generada antes de guardar
+- Templates de tabs preconfigurados (ej: "Laravel + VSCode + MCP")
 
 ### Fase 3: API REST + CLI
 - Exponer endpoints API con Sanctum
 - Autenticación por API tokens
-- Endpoint `GET /api/v1/blueprints/{uuid}/download`
-- Paquete CLI en Node.js/Python que ejecute `vault fetch <uuid>`
+- Endpoint `GET /api/v1/blueprints/{uuid}/download` (resuelve tabs y devuelve archivos)
+- Paquete CLI en Node.js/Python que ejecute `cova fetch <uuid>`
+- Rate limiting por plan
 
 ### Fase 4: Marketplace
-- Blueprints públicos (`is_public = true`)
+- Blueprints públicos (`is_public = true`, controlado por `has_marketplace_publish` del plan)
 - Rating y reviews
 - Templates estándar de la comunidad
 - Landing page para no autenticados
+- Búsqueda y filtros por categoría/tab type
 
 ### Fase 5: Billing
 - Integración con Stripe/PayPal
 - Suscripciones mensuales/anuales
-- Upgrade/downgrade de planes
+- Upgrade/downgrade de planes con migración de límites
 - Facturación automática
+- Webhooks para sincronización de estado de suscripción
 
 ---
 
@@ -358,6 +423,6 @@ php artisan serve
 
 ---
 
-**Documento generado**: 2026-05-03  
-**Versión**: MVP Fase 1  
-**Commits**: 12 en rama `develop`
+**Documento actualizado**: 2026-05-15  
+**Versión**: MVP Fase 1 + Tabs Dinámicas  
+**Commits**: 25+ en rama `develop`

@@ -1,58 +1,119 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CoVa — The Config Vault
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Zero-latency environment setup for modern developers.
 
-## About Laravel
+CoVa es una plataforma SaaS desarrollada en **Laravel 13** que centraliza la lógica de configuración de entornos de desarrollo. Permite a equipos crear, compartir y ejecutar **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos desde `git clone` hasta productivo en segundos.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Stack Tecnológico
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Capa | Tecnología |
+|------|------------|
+| **Framework** | Laravel 13 (PHP 8.3+) |
+| **Frontend** | Blade + Livewire 3 + Tailwind CSS |
+| **Auth** | Laravel Breeze-like (custom) + Sanctum (listo para API) |
+| **BD** | SQLite (dev) / MySQL (prod) |
+| **Tests** | PHPUnit 12.5 |
+| **Build** | Vite |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Arquitectura
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Monolito Modular
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+El proyecto sigue una arquitectura de **monolito modular** donde cada dominio de negocio está autocontenido bajo `app/Modules/`:
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+app/Modules/
+├── Auth/              # Autenticación y usuarios
+├── Organization/      # Organizaciones, roles, invitaciones
+├── Blueprint/         # Blueprints, variables, tabs dinámicas, favoritos
+└── Shared/            # Código transversal (planes, categorías, VO)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Cada módulo contiene: **Actions**, **Controllers**, **DTOs**, **Livewire**, **Models**, **Policies**, **Routes**, **Views** y **Tests**.
 
-## Contributing
+### Patrones Aplicados
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Actions**: Casos de uso encapsulados, reutilizables fuera de HTTP
+- **DTOs**: Objetos de transferencia entre capas
+- **Policies**: Autorización granular por recurso y rol
+- **Value Objects**: `Email`, `Uuid`, `Slug` con validación inline
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Quickstart
 
-## Security Vulnerabilities
+```bash
+# 1. Clonar
+git clone <repo-url> cova && cd cova
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 2. Dependencias
+composer install
+npm install && npm run build
 
-## License
+# 3. Entorno
+cp .env.example .env
+php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 4. Base de datos
+php artisan migrate:fresh --seed
+
+# 5. Servidor
+php artisan serve
+```
+
+Accedé a `http://localhost:8000` y registrate. El seeder crea planes (Free/Pro/Enterprise) y categorías predefinidas.
+
+---
+
+## Testing
+
+```bash
+# Toda la suite
+php artisan test
+
+# Con coverage (requiere XDebug/PCOV)
+php artisan test --coverage
+```
+
+**Estado actual**: 117 tests, 219 assertions.
+
+---
+
+## Estructura de Documentación
+
+Toda la documentación vive en `docs/`. Si no sabés por dónde empezar, andá a [`docs/README.md`](docs/README.md) que te guía según tu rol.
+
+| Documento | Contenido |
+|-----------|-----------|
+| [`docs/README.md`](docs/README.md) | **Centro de navegación** — ¿Quién sos? ¿Qué necesitás? |
+| [`docs/PROJECT_SUMMARY.md`](docs/PROJECT_SUMMARY.md) | Arquitectura, módulos, decisiones técnicas, estado actual |
+| [`docs/FUNCTIONAL.md`](docs/FUNCTIONAL.md) | Especificación funcional y flujos de usuario |
+| [`docs/UI_SPECIFICATION.md`](docs/UI_SPECIFICATION.md) | Especificación de interfaz, componentes, decisiones de UX |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Arquitectura modular, flujo de request, patrones, cómo agregar módulos |
+| [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) | Setup de entorno, convenciones de código, flujo de trabajo Git |
+| [`docs/TESTING.md`](docs/TESTING.md) | Pirámide de tests, patrones por capa, cobertura, anti-patrones |
+| [`CHANGELOG.md`](CHANGELOG.md) | Historial de cambios por versión (Keep a Changelog) |
+| [`docs/FEATURE_HISTORY.md`](docs/FEATURE_HISTORY.md) | Narrativa de evolución, decisiones, lecciones aprendidas |
+
+> Nota: Los documentos marcados como "próximamente" se generan en las siguientes fases del plan de documentación.
+
+---
+
+## Decisiones Técnicas Clave
+
+1. **Módulos autocontenidos**: Se puede extraer `Auth` a un package sin refactorizar 40 archivos.
+2. **Lógica en Actions, no en Controllers**: Permite testear negocio sin simular HTTP y reemplazar la UI sin tocar reglas.
+3. **Planes en BD**: Límites configurables sin deploy. Herencia en cascada usuario → organizaciones.
+4. **Tabs en JSON + Plugin Architecture**: Nuevos tipos de tab sin alterar schema. `TabManager` desacoplado de tipos concretos.
+5. **Variables normalizadas**: Tabla propia para filtrar, buscar y ordenar. Tabs en JSON por ser estructuras libres.
+6. **Soft Deletes**: Recuperación accidental y referencias históricas preservadas.
+
+---
+
+## Licencia
+
+Proprietary — Todos los derechos reservados.

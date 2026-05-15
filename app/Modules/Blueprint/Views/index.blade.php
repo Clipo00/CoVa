@@ -11,6 +11,6 @@
             </a>
         </div>
 
-        <livewire:blueprint.tables.blueprint-list :organization-id="request('org', 1)" />
+        <livewire:blueprint.tables.blueprint-list />
     </div>
 @endsection
