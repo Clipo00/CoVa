@@ -114,6 +114,15 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
    - `authenticate` / `LoginUser` → `covar-laravel-action` (Auth context)
    - soft deletes → `covar-laravel-model`
 
+4. **Por idioma**:
+   - Detectar el idioma del mensaje del usuario (español o inglés) y adaptar las preguntas y prompts en el mismo idioma.
+   - Cuando el usuario "pida features" —palabras clave como `feature`, `feature request`, `funcionalidad`, `pedir features`, `pedir funcionalidades`— el agente debe:
+     - Identificar si el texto está en español o en inglés usando simples heurísticos de palabras clave.
+     - Formular las preguntas de aclaración y los mensajes de seguimiento en el idioma detectado.
+   - Ejemplos:
+     - "¿Puedes añadir esta feature?" → Detecta español, responde en español.
+     - "I want a new feature for blueprints" → Detecta inglés, responde en English.
+
 ---
 
 ## Project Skills
