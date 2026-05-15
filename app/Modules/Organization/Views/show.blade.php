@@ -14,6 +14,21 @@
             </a>
         </div>
 
+        @if(session('error'))
+            <div class="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         {{-- Header --}}
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -67,26 +82,57 @@
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Plan</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->plan->name }}</p>
                 <p class="mt-4 text-sm text-gray-400">
-                    {{ $organization->plan->max_blueprints_per_org }} blueprints máx.
+                    {{ $maxBlueprints }} blueprints máx.
                 </p>
             </div>
         </div>
+
+        @if(!$canCreateBlueprint)
+            <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700">
+                            Has alcanzado el límite de <strong>{{ $maxBlueprints }} blueprints</strong> de tu plan <strong>{{ $organization->plan->name }}</strong>.
+                            Elimina un blueprint existente para poder crear uno nuevo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         {{-- Recent Blueprints --}}
         <div class="bg-white shadow rounded-lg p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold">Blueprints recientes</h2>
-                <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
-                    + Nuevo Blueprint
-                </a>
+                @if($canCreateBlueprint)
+                    <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
+                        + Nuevo Blueprint
+                    </a>
+                @else
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                            </svg>
+                            Límite alcanzado
+                        </span>
+                    </div>
+                @endif
             </div>
 
             @if($organization->blueprints()->count() === 0)
                 <div class="text-center py-8 text-gray-500">
                     <p>No hay blueprints todavía.</p>
-                    <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="mt-2 inline-block text-indigo-600 hover:text-indigo-800">
-                        Crea el primer blueprint
-                    </a>
+                    @if($canCreateBlueprint)
+                        <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="mt-2 inline-block text-indigo-600 hover:text-indigo-800">
+                            Crea el primer blueprint
+                        </a>
+                    @endif
                 </div>
             @else
                 <ul class="divide-y divide-gray-200">

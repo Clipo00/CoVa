@@ -23,8 +23,23 @@ class BlueprintController
         return view('blueprint::index');
     }
 
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
+        $organizationId = request('org');
+
+        if ($organizationId) {
+            $organization = Organization::findOrFail($organizationId);
+            $plan = $organization->plan;
+            $maxBlueprints = $plan->max_blueprints_per_org;
+            $activeCount = $organization->blueprints()->count();
+
+            if ($maxBlueprints !== null && $activeCount >= $maxBlueprints) {
+                return redirect()
+                    ->route('organizations.show', $organization->slug)
+                    ->with('error', "Límite de {$maxBlueprints} blueprints alcanzado. Elimina un blueprint existente para crear uno nuevo.");
+            }
+        }
+
         return view('blueprint::create');
     }
 
