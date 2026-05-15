@@ -8,6 +8,7 @@ use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -16,6 +17,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'avatar',
         'password',
         'plan_id',
         'is_system',
@@ -59,6 +61,37 @@ class User extends Authenticatable
     public function favoriteBlueprints()
     {
         return $this->belongsToMany(\App\Modules\Blueprint\Models\Blueprint::class, 'blueprint_favorites');
+    }
+
+    /**
+     * Get avatar URL or default initials avatar
+     *
+     * Usa Storage facade para soportar múltiples discos (local, s3, etc.)
+     * Configurar en config/filesystems.php: disks.avatars
+     */
+    public function avatarUrl(): string
+    {
+        if ($this->avatar) {
+            $disk = config('filesystems.disks.avatars.driver') === 's3' ? 's3' : 'avatars';
+            return Storage::disk($disk)->url($this->avatar);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=4f46e5&color=fff';
+    }
+
+    /**
+     * Get initials for avatar fallback
+     */
+    public function initials(): string
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+
+        foreach (array_slice($words, 0, 2) as $word) {
+            $initials .= strtoupper($word[0] ?? '');
+        }
+
+        return $initials;
     }
 
     /**
