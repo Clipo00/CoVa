@@ -27,4 +27,9 @@ class AuthController
 
         return redirect()->route('login');
     }
+
+    public function showProfile(): View
+    {
+        return view('auth::profile');
+    }
 }

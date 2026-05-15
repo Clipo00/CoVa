@@ -38,7 +38,7 @@
                     <div class="flex items-center">
                         <!-- Mobile menu button -->
                         <div class="flex items-center sm:hidden">
-                            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Abrir menú" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                                 <span class="sr-only">Abrir menú</span>
                                 <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -69,18 +69,7 @@
                     </div>
                     <div class="flex items-center space-x-4">
                         @auth
-                            <div class="flex items-center space-x-3">
-                                <span class="hidden sm:block text-sm text-gray-600">{{ auth()->user()->name }}</span>
-                                <form method="POST" action="{{ route('logout') }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="text-sm text-red-600 hover:text-red-800">
-                                        <span class="hidden sm:inline">Salir</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="sm:hidden h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414l-5-5H3zm7 5a1 1 0 10-2 0v4.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L10 12.586V8z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
+                            <livewire:auth.components.user-dropdown />
                         @else
                             <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-800">Login</a>
                             <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-gray-800">Registro</a>
