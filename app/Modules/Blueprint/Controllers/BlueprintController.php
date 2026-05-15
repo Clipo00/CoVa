@@ -20,27 +20,85 @@ class BlueprintController
 {
     public function index(): View
     {
-        return view('blueprint::index');
+        /** @var User $user */
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene al menos 1 organización con cupo para blueprints
+        $hasAvailableOrg = $user->organizations()
+            ->with('plan')
+            ->get()
+            ->contains(function ($organization) {
+                $maxBlueprints = $organization->plan->max_blueprints_per_org;
+                $activeCount = $organization->blueprints()->count();
+
+                return $maxBlueprints === null || $activeCount < $maxBlueprints;
+            });
+
+        return view('blueprint::index', compact('hasAvailableOrg'));
     }
 
     public function create(): View|RedirectResponse
     {
-        $organizationId = request('org');
+        /** @var User $user */
+        $user = auth()->user();
 
-        if ($organizationId) {
-            $organization = Organization::findOrFail($organizationId);
-            $plan = $organization->plan;
-            $maxBlueprints = $plan->max_blueprints_per_org;
-            $activeCount = $organization->blueprints()->count();
+        // Obtener organizaciones del usuario con info de disponibilidad
+        $userOrganizations = $user->organizations()
+            ->with('plan')
+            ->get()
+            ->map(function ($organization) {
+                $maxBlueprints = $organization->plan->max_blueprints_per_org;
+                $activeCount = $organization->blueprints()->count();
 
-            if ($maxBlueprints !== null && $activeCount >= $maxBlueprints) {
+                return [
+                    'id' => $organization->id,
+                    'name' => $organization->name,
+                    'slug' => $organization->slug,
+                    'hasAvailableSlots' => $maxBlueprints === null || $activeCount < $maxBlueprints,
+                ];
+            })
+            ->values()
+            ->all();
+
+        $requestedOrgId = request('org');
+        $preselectedOrg = null;
+        $lockOrganization = false;
+
+        if ($requestedOrgId) {
+            // Validar que la org solicitada pertenece al usuario
+            $requestedOrg = collect($userOrganizations)->firstWhere('id', (int) $requestedOrgId);
+
+            if (!$requestedOrg) {
+                abort(403, 'Organización no autorizada.');
+            }
+
+            // Si la org específica no tiene cupo, redirigir a esa org con mensaje de error
+            if (!$requestedOrg['hasAvailableSlots']) {
                 return redirect()
-                    ->route('organizations.show', $organization->slug)
-                    ->with('error', "Límite de {$maxBlueprints} blueprints alcanzado. Elimina un blueprint existente para crear uno nuevo.");
+                    ->route('organizations.show', $requestedOrg['slug'])
+                    ->with('error', 'Esta organización ha alcanzado el límite de blueprints. Elimina un blueprint existente para crear uno nuevo.');
+            }
+
+            $preselectedOrg = $requestedOrg['id'];
+            $lockOrganization = true;
+        }
+
+        // Si no se pidió org específica, verificar que al menos tiene 1 org con cupo
+        if (!$requestedOrgId) {
+            $hasAnyAvailable = collect($userOrganizations)->contains('hasAvailableSlots', true);
+
+            if (!$hasAnyAvailable) {
+                return redirect()
+                    ->route('dashboard')
+                    ->with('error', 'No tienes ninguna organización con cupo disponible para crear blueprints. Elimina un blueprint existente o actualiza tu plan.');
             }
         }
 
-        return view('blueprint::create');
+        return view('blueprint::create', compact(
+            'userOrganizations',
+            'preselectedOrg',
+            'lockOrganization'
+        ));
     }
 
     public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
