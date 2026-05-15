@@ -60,6 +60,24 @@ return [
             'report' => false,
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Avatar Storage Disk
+        |--------------------------------------------------------------------------
+        |
+        | Dedicated disk for user avatars. Defaults to 'public' (local storage).
+        | In production, change AVATAR_DISK to 's3' to use cloud storage.
+        |
+        */
+        'avatars' => [
+            'driver' => env('AVATAR_DISK_DRIVER', 'local'),
+            'root' => storage_path('app/public/avatars'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage/avatars',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
