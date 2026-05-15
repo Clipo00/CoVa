@@ -66,14 +66,19 @@ class User extends Authenticatable
     /**
      * Get avatar URL or default initials avatar
      *
-     * Usa Storage facade para soportar múltiples discos (local, s3, etc.)
-     * Configurar en config/filesystems.php: disks.avatars
+     * Para archivos locales: usa URL relativa /storage/avatars/...
+     * Para S3: usa Storage::disk('s3')->url()
      */
     public function avatarUrl(): string
     {
         if ($this->avatar) {
-            $disk = config('filesystems.disks.avatars.driver') === 's3' ? 's3' : 'avatars';
-            return Storage::disk($disk)->url($this->avatar);
+            $isS3 = config('filesystems.disks.avatars.driver') === 's3';
+
+            if ($isS3) {
+                return Storage::disk('s3')->url($this->avatar);
+            }
+
+            return asset('storage/avatars/' . $this->avatar);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=4f46e5&color=fff';
