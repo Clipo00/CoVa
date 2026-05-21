@@ -12,7 +12,7 @@
                 </a>
             @else
                 <div class="relative group">
-                    <span class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed">
+                    <span class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                         </svg>
@@ -26,7 +26,7 @@
         </div>
 
         @if(session('error'))
-            <div class="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+            <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -34,7 +34,7 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm text-red-700">{{ session('error') }}</p>
+                        <p class="text-sm text-red-700 dark:text-red-300">{{ session('error') }}</p>
                     </div>
                 </div>
             </div>

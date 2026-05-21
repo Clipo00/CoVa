@@ -7,7 +7,7 @@
         <h1 class="text-2xl font-bold mb-6">Crear Blueprint</h1>
 
         @if(session('error'))
-            <div class="mb-6 bg-red-50 border-l-4 border-red-400 p-4">
+            <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -15,7 +15,7 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <p class="text-sm text-red-700">{{ session('error') }}</p>
+                        <p class="text-sm text-red-700 dark:text-red-300">{{ session('error') }}</p>
                     </div>
                 </div>
             </div>
