@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class EnsureSecurityHeaders
 {
+    private const STYLE_SRC_EXTRA = 'https://fonts.bunny.net';
+
     /**
      * Handle an incoming request.
      *
@@ -21,14 +23,29 @@ class EnsureSecurityHeaders
         /** @var Response $response */
         $response = $next($request);
 
+        // En local, relajar CSP para permitir el dev server de Vite (IPv4 e IPv6)
+        $isLocal = app()->environment('local');
+
+        $scriptSrc = "'self' 'unsafe-inline' 'unsafe-eval'";
+        $styleSrc = "'self' 'unsafe-inline' " . self::STYLE_SRC_EXTRA;
+        $connectSrc = "'self'";
+
+        if ($isLocal) {
+            $viteHttp = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+            $viteWs = ['ws://localhost:5173', 'ws://127.0.0.1:5173'];
+            $scriptSrc .= ' ' . implode(' ', $viteHttp);
+            $styleSrc .= ' ' . implode(' ', $viteHttp);
+            $connectSrc .= ' ' . implode(' ', array_merge($viteHttp, $viteWs));
+        }
+
         // Content-Security-Policy
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-            "style-src 'self' 'unsafe-inline'",
+            "script-src $scriptSrc",
+            "style-src $styleSrc",
             "img-src 'self' data:",
             "font-src 'self' https://fonts.bunny.net",
-            "connect-src 'self'",
+            "connect-src $connectSrc",
             "frame-ancestors 'none'",
             "form-action 'self'",
             "base-uri 'self'",

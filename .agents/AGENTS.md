@@ -239,7 +239,7 @@ Flags: `is_interactive`, `is_secret`
 | Prioridad | OWASP | Tarea | Estado |
 |-----------|-------|-------|--------|
 | 🔴 Alta | A02 | **Deploy config**: cachear config (`php artisan config:cache`), generar `APP_KEY`, verificar `APP_DEBUG=false` en producción | Pendiente |
-| 🟡 Media | A02 | **CSP fine-tuning**: monitorear reportes de violaciones CSP en producción y ajustar directivas | Pendiente |
+| ✅ Hecho | A02 | **CSP fine-tuning (dev)**: Vite IPv6 no soportado por CSP — se forzó IPv4 en `server.host` y se actualizaron origenes CSP a `127.0.0.1:5173` | Hecho en `fix/csp-vite-ipv6` |
 | 🟡 Media | A09 | **Audit logging**: implementar logging estructurado de operaciones sensibles (login, delete, invite, role changes) con canal separado `audit` | Pendiente |
 | 🟡 Media | A08 | **Implementar signed URLs** para invitaciones y password reset si no existen | Pendiente |
 | 🟢 Baja | A06 | **Revisar rate limits**: ajustar thresholds según uso real en producción | Pendiente |
