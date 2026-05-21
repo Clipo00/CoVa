@@ -64,6 +64,62 @@ class BlueprintControllerTest extends TestCase
         $response->assertSee('Crear Blueprint');
     }
 
+    public function test_create_page_redirects_when_plan_limit_reached(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        // Crear blueprints hasta el límite del plan free (3)
+        for ($i = 1; $i <= 3; $i++) {
+            Blueprint::create([
+                'uuid' => '550e8400-e29b-41d4-a716-4466554400' . $i,
+                'organization_id' => $organization->id,
+                'slug' => 'bp-' . $i,
+                'title' => 'BP ' . $i,
+                'tabs_config' => [],
+                'created_by' => $user->id,
+            ]);
+        }
+
+        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->id);
+
+        $response->assertRedirect(route('organizations.show', $organization->slug));
+        $response->assertSessionHas('error');
+    }
+
+    public function test_create_page_without_org_shows_selector(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/blueprints/create');
+
+        $response->assertStatus(200);
+        $response->assertSee('Organización');
+        $response->assertSee($organization->name);
+    }
+
+    public function test_create_page_redirects_when_no_orgs_available(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        // Llenar la org hasta el límite
+        for ($i = 1; $i <= 3; $i++) {
+            Blueprint::create([
+                'uuid' => '550e8400-e29b-41d4-a716-4466554400' . $i,
+                'organization_id' => $organization->id,
+                'slug' => 'bp-' . $i,
+                'title' => 'BP ' . $i,
+                'tabs_config' => [],
+                'created_by' => $user->id,
+            ]);
+        }
+
+        // Acceder sin parámetro de org
+        $response = $this->actingAs($user)->get('/blueprints/create');
+
+        $response->assertRedirect(route('dashboard'));
+        $response->assertSessionHas('error');
+    }
+
     public function test_show_page_displays_blueprint(): void
     {
         [$user, $organization] = $this->createUserWithOrg();

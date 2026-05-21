@@ -3,7 +3,37 @@
         {{-- Información básica --}}
         <div class="bg-white p-6 rounded-lg shadow space-y-6">
             <h2 class="text-lg font-medium text-gray-900 border-b pb-2">Información General</h2>
-            
+
+            {{-- Selector de Organización --}}
+            <div>
+                <label for="organizationId" class="block text-sm font-medium text-gray-700">Organización *</label>
+                @if($lockOrganization)
+                    <div class="mt-1 relative">
+                        <input type="text" disabled
+                            value="{{ collect($userOrganizations)->firstWhere('id', $organizationId)['name'] ?? '' }}"
+                            class="block w-full rounded-md border-gray-300 bg-gray-100 text-gray-500 shadow-sm cursor-not-allowed"
+                        >
+                        <input type="hidden" wire:model="organizationId">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Organización preseleccionada desde la página anterior.</p>
+                @else
+                    <select wire:model="organizationId" id="organizationId"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        @foreach($userOrganizations as $org)
+                            @if($org['hasAvailableSlots'])
+                                <option value="{{ $org['id'] }}">{{ $org['name'] }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                @endif
+                @error('organizationId') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+            </div>
+
             <div>
                 <label for="title" class="block text-sm font-medium text-gray-700">Título *</label>
                 <input wire:model.live="title" type="text" id="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="Mi Proyecto Laravel">

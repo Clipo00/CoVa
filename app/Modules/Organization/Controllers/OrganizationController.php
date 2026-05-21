@@ -31,7 +31,18 @@ class OrganizationController
     public function show(string $slug): View
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
-        return view('organization::show', compact('organization'));
+
+        $plan = $organization->plan;
+        $maxBlueprints = $plan->max_blueprints_per_org;
+        $activeBlueprintsCount = $organization->blueprints()->count();
+        $canCreateBlueprint = $maxBlueprints === null || $activeBlueprintsCount < $maxBlueprints;
+
+        return view('organization::show', compact(
+            'organization',
+            'activeBlueprintsCount',
+            'maxBlueprints',
+            'canCreateBlueprint'
+        ));
     }
 
     public function edit(string $slug): View

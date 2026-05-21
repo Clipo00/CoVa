@@ -9,6 +9,7 @@ use App\Modules\Blueprint\Actions\DeleteBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
+use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
@@ -19,12 +20,85 @@ class BlueprintController
 {
     public function index(): View
     {
-        return view('blueprint::index');
+        /** @var User $user */
+        $user = auth()->user();
+
+        // Verificar si el usuario tiene al menos 1 organización con cupo para blueprints
+        $hasAvailableOrg = $user->organizations()
+            ->with('plan')
+            ->get()
+            ->contains(function ($organization) {
+                $maxBlueprints = $organization->plan->max_blueprints_per_org;
+                $activeCount = $organization->blueprints()->count();
+
+                return $maxBlueprints === null || $activeCount < $maxBlueprints;
+            });
+
+        return view('blueprint::index', compact('hasAvailableOrg'));
     }
 
-    public function create(): View
+    public function create(): View|RedirectResponse
     {
-        return view('blueprint::create');
+        /** @var User $user */
+        $user = auth()->user();
+
+        // Obtener organizaciones del usuario con info de disponibilidad
+        $userOrganizations = $user->organizations()
+            ->with('plan')
+            ->get()
+            ->map(function ($organization) {
+                $maxBlueprints = $organization->plan->max_blueprints_per_org;
+                $activeCount = $organization->blueprints()->count();
+
+                return [
+                    'id' => $organization->id,
+                    'name' => $organization->name,
+                    'slug' => $organization->slug,
+                    'hasAvailableSlots' => $maxBlueprints === null || $activeCount < $maxBlueprints,
+                ];
+            })
+            ->values()
+            ->all();
+
+        $requestedOrgId = request('org');
+        $preselectedOrg = null;
+        $lockOrganization = false;
+
+        if ($requestedOrgId) {
+            // Validar que la org solicitada pertenece al usuario
+            $requestedOrg = collect($userOrganizations)->firstWhere('id', (int) $requestedOrgId);
+
+            if (!$requestedOrg) {
+                abort(403, 'Organización no autorizada.');
+            }
+
+            // Si la org específica no tiene cupo, redirigir a esa org con mensaje de error
+            if (!$requestedOrg['hasAvailableSlots']) {
+                return redirect()
+                    ->route('organizations.show', $requestedOrg['slug'])
+                    ->with('error', 'Esta organización ha alcanzado el límite de blueprints. Elimina un blueprint existente para crear uno nuevo.');
+            }
+
+            $preselectedOrg = $requestedOrg['id'];
+            $lockOrganization = true;
+        }
+
+        // Si no se pidió org específica, verificar que al menos tiene 1 org con cupo
+        if (!$requestedOrgId) {
+            $hasAnyAvailable = collect($userOrganizations)->contains('hasAvailableSlots', true);
+
+            if (!$hasAnyAvailable) {
+                return redirect()
+                    ->route('dashboard')
+                    ->with('error', 'No tienes ninguna organización con cupo disponible para crear blueprints. Elimina un blueprint existente o actualiza tu plan.');
+            }
+        }
+
+        return view('blueprint::create', compact(
+            'userOrganizations',
+            'preselectedOrg',
+            'lockOrganization'
+        ));
     }
 
     public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
@@ -57,17 +131,24 @@ class BlueprintController
     {
         /** @var User $user */
         $user = auth()->user();
-        
+
         // Obtener blueprints eliminados de organizaciones donde el user es miembro
         $organizationIds = $user->organizations()->pluck('organizations.id');
-        
+
         $deletedBlueprints = Blueprint::onlyTrashed()
             ->whereIn('organization_id', $organizationIds)
-            ->with('organization')
+            ->with('organization.plan')
             ->orderBy('deleted_at', 'desc')
             ->get();
-        
-        return view('blueprint::deleted', compact('deletedBlueprints'));
+
+        // Precargar conteo de blueprints activos por organización (evita N+1)
+        $activeBlueprintCounts = Blueprint::whereIn('organization_id', $organizationIds)
+            ->whereNull('deleted_at')
+            ->selectRaw('organization_id, COUNT(*) as count')
+            ->groupBy('organization_id')
+            ->pluck('count', 'organization_id');
+
+        return view('blueprint::deleted', compact('deletedBlueprints', 'activeBlueprintCounts'));
     }
 
     public function destroy(string $uuid, DeleteBlueprint $deleteBlueprint): RedirectResponse
@@ -89,14 +170,20 @@ class BlueprintController
     public function restore(string $uuid, RestoreBlueprint $restoreBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::withTrashed()->where('uuid', $uuid)->firstOrFail();
-        
+
         // Authorize - only owner can restore
         if (!auth()->user()->isOwnerOf($blueprint->organization)) {
             abort(403, 'No tienes permisos para restaurar este blueprint.');
         }
-        
-        $restoreBlueprint->execute($blueprint);
-        
+
+        try {
+            $restoreBlueprint->execute($blueprint);
+        } catch (MaxBlueprintsReachedException $e) {
+            return redirect()
+                ->route('blueprints.deleted')
+                ->with('error', $e->getMessage() . ' Elimina un blueprint activo para poder recuperar este.');
+        }
+
         return redirect()
             ->route('blueprints.show', $blueprint->uuid)
             ->with('success', 'Blueprint restaurado correctamente.');
