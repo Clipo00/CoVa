@@ -60,13 +60,13 @@ class BlueprintController
             ->values()
             ->all();
 
-        $requestedOrgId = request('org');
+        $requestedOrgSlug = request('org');
         $preselectedOrg = null;
         $lockOrganization = false;
 
-        if ($requestedOrgId) {
+        if ($requestedOrgSlug) {
             // Validar que la org solicitada pertenece al usuario
-            $requestedOrg = collect($userOrganizations)->firstWhere('id', (int) $requestedOrgId);
+            $requestedOrg = collect($userOrganizations)->firstWhere('slug', $requestedOrgSlug);
 
             if (!$requestedOrg) {
                 abort(403, 'Organización no autorizada.');
@@ -84,7 +84,7 @@ class BlueprintController
         }
 
         // Si no se pidió org específica, verificar que al menos tiene 1 org con cupo
-        if (!$requestedOrgId) {
+        if (!$requestedOrgSlug) {
             $hasAnyAvailable = collect($userOrganizations)->contains('hasAvailableSlots', true);
 
             if (!$hasAnyAvailable) {

@@ -65,7 +65,7 @@
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">Blueprints</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->blueprints()->count() }}</p>
-                <a href="{{ route('blueprints.index', ['org' => $organization->id]) }}" class="mt-4 inline-block text-sm text-indigo-600 hover:text-indigo-800">
+                <a href="{{ route('blueprints.index', ['org' => $organization->slug]) }}" class="mt-4 inline-block text-sm text-indigo-600 hover:text-indigo-800">
                     Ver blueprints →
                 </a>
             </div>
@@ -110,7 +110,7 @@
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold">Blueprints recientes</h2>
                 @if($canCreateBlueprint)
-                    <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
+                    <a href="{{ route('blueprints.create', ['org' => $organization->slug]) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
                         + Nuevo Blueprint
                     </a>
                 @else
@@ -129,7 +129,7 @@
                 <div class="text-center py-8 text-gray-500">
                     <p>No hay blueprints todavía.</p>
                     @if($canCreateBlueprint)
-                        <a href="{{ route('blueprints.create', ['org' => $organization->id]) }}" class="mt-2 inline-block text-indigo-600 hover:text-indigo-800">
+                        <a href="{{ route('blueprints.create', ['org' => $organization->slug]) }}" class="mt-2 inline-block text-indigo-600 hover:text-indigo-800">
                             Crea el primer blueprint
                         </a>
                     @endif
