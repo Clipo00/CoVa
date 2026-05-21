@@ -1,31 +1,33 @@
 <div>
     @if($organizations->isEmpty())
         <div class="text-center py-12">
-            <p class="text-gray-500 mb-4">No tienes organizaciones todavía.</p>
-            <a href="{{ route('organizations.create') }}" class="text-indigo-600 hover:text-indigo-800">
+            <p class="text-gray-500 dark:text-gray-400 mb-4">No tienes organizaciones todavía.</p>
+            <a href="{{ route('organizations.create') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
                 Crea tu primera organización
             </a>
         </div>
     @else
-        <div class="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul class="divide-y divide-gray-200">
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($organizations as $organization)
                     <li>
-                        <a href="{{ route('organizations.show', $organization->slug) }}" class="block hover:bg-gray-50">
+                        <a href="{{ route('organizations.show', $organization->slug) }}" class="block hover:bg-gray-50 dark:hover:bg-gray-700">
                             <div class="px-4 py-4 sm:px-6">
                                 <div class="flex items-center justify-between">
-                                    <p class="text-sm font-medium text-indigo-600 truncate">
+                                    <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
                                         {{ $organization->name }}
                                     </p>
                                     <div class="ml-2 flex-shrink-0 flex">
-                                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            {{ $organization->pivot->role }}
+                                        @php $role = $organization->pivot->role; @endphp
+                                        <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                            {{ $role === 'owner' ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200' : ($role === 'maintainer' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200' : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200') }}">
+                                            {{ ucfirst($role) }}
                                         </p>
                                     </div>
                                 </div>
                                 <div class="mt-2 sm:flex sm:justify-between">
                                     <div class="sm:flex">
-                                        <p class="flex items-center text-sm text-gray-500">
+                                        <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                                             slug: {{ $organization->slug }}
                                         </p>
                                     </div>

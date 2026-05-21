@@ -52,7 +52,17 @@
   - User dropdown (abajo): Perfil, Settings, Logout
 - **Topbar** (mobile): Hamburger menu + logo
 - **Main Content Area**: Contenido dinámico con padding consistente
-- **Toast Container**: Esquina inferior derecha (desktop), inferior centrado (mobile)
+- **Toast Container**: Esquina superior derecha (z-50, fixed top-4 right-4)
+  - Sistema de notificaciones vía `dispatch('notify', message: '...')`
+  - Auto-dismiss a los 3s con animación slideIn/slideOut
+  - Soporte dark mode
+- **Confirmation Dialog**: Modal Alpine.js global (`Alpine.store('confirm')`)
+  - Backdrop con blur + x-transition
+  - Texto multilinea, botón de acción configurable
+  - Soporte dark mode completo
+- **Theme Toggle**: Componente Livewire `shared.theme-toggle`
+  - Icono sun/moon con animación CSS (700ms rotate+translate)
+  - Persistencia en localStorage, anti-flash en `<head>`
 - Responsive:
   - Desktop (>1024px): Sidebar visible
   - Tablet (768-1024px): Sidebar colapsable
@@ -244,7 +254,7 @@
 
 - **Header**:
   - Nombre de org + slug (badge)
-  - Rol del usuario actual (badge color: Owner=rojo, Maintainer=amarillo, Developer=azul)
+  - Rol del usuario actual (badge color: Owner=🟣 purple, Maintainer=🔵 blue, Developer=🟢 green)
   - Acciones:
     - Owner: Editar, Eliminar, Gestionar miembros
     - Maintainer: Gestionar miembros
@@ -475,5 +485,5 @@
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 2 del plan de documentación
+**Versión**: 1.1  
+**Última actualización**: 2026-05-21 — Modo oscuro, confirm dialog Alpine, badges de roles, ThemeToggle

@@ -10,7 +10,19 @@
 ## [Unreleased]
 
 ### Added
-- Sistema de documentación del proyecto (Fase 1-4)
+- **Modo oscuro/nocturno** completo con ThemeToggle (`feat(ui): add dark mode with theme toggle and WCAG AA contrast`)
+  - Componente `ThemeToggle` Alpine.js con animación sun/moon (700ms rotate+translate)
+  - Anti-flash script en `<head>` para evitar flash blanco en carga
+  - Persistencia en localStorage con detección de preferencia del sistema
+  - Tailwind v4 `@custom-variant dark` en `app.css`
+- **Modal de confirmación** Alpine.js (`feat(ui): replace native confirm() with Alpine.js confirmation dialog`)
+  - Alpine.store('confirm') global con soporte dark/light mode
+  - Backdrop con blur, animaciones x-transition, ícono de warning
+  - Mensajes multilinea con `whitespace-pre-line`
+  - Texto de botón configurable (Eliminar / Entendido)
+- **Badge de categoría** en blueprints recientes de Organization show
+- **Botón eliminar** en listado de blueprints con Policy y confirmación
+- Documentación del proyecto (Fase 1-4)
 - `docs/FUNCTIONAL.md` — Especificación funcional completa
 - `docs/UI_SPECIFICATION.md` — Especificación de interfaz
 - `docs/ARCHITECTURE.md` — Arquitectura y patrones
@@ -20,6 +32,20 @@
 
 ### Changed
 - `docs/PROJECT_SUMMARY.md` actualizado con estado real del código (117 tests, tabs dinámicas, transferencia, etc.)
+- **Esquema de colores de badges por rol unificado** en todas las pantallas:
+  - Owner → 🟣 purple, Maintainer → 🔵 blue, Developer → 🟢 green
+  - Afecta: dashboard, org show, org list, org members (antes usaban colores inconsistentes)
+- **Badge de categoría**: blueprint-list y favorites ahora muestran badge consistente (gray neutral)
+- **Toast handler**: timeout ahora captura `id` local en vez de `$event.detail.id` inexistente
+
+### Fixed
+- **Toasts que nunca se borraban**: `setTimeout` filtraba por `$event.detail.id` (undefined) en vez del `id` local del toast — los toasts se acumulaban para siempre
+- **Badge Owner en dashboard** sin `dark:bg-*-900/40`: en modo oscuro quedaba fondo lila claro con texto lila claro (1.15:1 de contraste)
+- **Badge Developer en members** sin `dark:bg-*-900/40` y color gray incorrecto
+- **Cards de tab-manager** con `bg-white` sin `dark:bg-gray-800`
+- **Botones de presets/skills activos** sin variante dark (se veían en modo claro sobre fondo oscuro)
+- **Hover de delete** en tab-manager: `text-red-600` sobre `bg-gray-800` daba solo 2.82:1
+- **Contraste WCAG AA** en Org show, Org list, Blueprint-list: badges de rol usaban colores incorrectos según el rol
 
 ---
 
