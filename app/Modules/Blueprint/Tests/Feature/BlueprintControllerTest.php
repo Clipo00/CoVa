@@ -48,7 +48,7 @@ class BlueprintControllerTest extends TestCase
     {
         [$user, $organization] = $this->createUserWithOrg();
 
-        $response = $this->actingAs($user)->get('/blueprints?org=' . $organization->id);
+        $response = $this->actingAs($user)->get('/blueprints?org=' . $organization->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Blueprints');
@@ -58,7 +58,7 @@ class BlueprintControllerTest extends TestCase
     {
         [$user, $organization] = $this->createUserWithOrg();
 
-        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->id);
+        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Crear Blueprint');
@@ -80,7 +80,7 @@ class BlueprintControllerTest extends TestCase
             ]);
         }
 
-        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->id);
+        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->slug);
 
         $response->assertRedirect(route('organizations.show', $organization->slug));
         $response->assertSessionHas('error');

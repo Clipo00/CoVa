@@ -10,6 +10,15 @@
 ## [Unreleased]
 
 ### Added
+- **OWASP Top 10:2025 — Security Sprint**:
+  - 🛡️ `covar-security` skill con las 10 categorías OWASP (SIEMPRE cargada)
+  - 🛡️ CSP Middleware (`EnsureSecurityHeaders`) con headers de seguridad globales
+  - 🛡️ Páginas de error custom (403, 404, 419, 429, 500, 503) sin stack traces
+  - 🛡️ Manejo de excepciones con logging completo + JSON API response
+  - 🛡️ Rate limiting en rutas POST de Blueprint (30/min) y Organization (30/5/min)
+  - 🛡️ `SESSION_ENCRYPT=true` y `SESSION_SECURE_COOKIE=true` por defecto
+  - 🛡️ `SESSION_SECURE_COOKIE` agregado a `.env.example`
+  - 🛡️ Security Roadmap documentado en `.agents/AGENTS.md`
 - **Modo oscuro/nocturno** completo con ThemeToggle (`feat(ui): add dark mode with theme toggle and WCAG AA contrast`)
   - Componente `ThemeToggle` Alpine.js con animación sun/moon (700ms rotate+translate)
   - Anti-flash script en `<head>` para evitar flash blanco en carga
@@ -31,6 +40,11 @@
 - `README.md` reemplazado por documentación real del proyecto
 
 ### Changed
+- **OWASP A01 — Broken Access Control**: IDs auto-incrementales reemplazados por slugs en URLs GET de Organization show y BlueprintController
+- `docs/PROJECT_SUMMARY.md` actualizado con estado real del código (125 tests, 237 assertions, seguridad)
+
+### Fixed
+- Excepción `TypeError` en `setTimeout` del toast por filtrar con `$event.detail.id` (undefined) — ahora captura `Date.now()` local
 - `docs/PROJECT_SUMMARY.md` actualizado con estado real del código (117 tests, tabs dinámicas, transferencia, etc.)
 - **Esquema de colores de badges por rol unificado** en todas las pantallas:
   - Owner → 🟣 purple, Maintainer → 🔵 blue, Developer → 🟢 green

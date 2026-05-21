@@ -284,12 +284,12 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 
 | Suite | Tests | Assertions |
 |-------|-------|------------|
-| Auth | 9 | 22 |
+| Auth | 18 | 22 |
+| Blueprint | 49 | 57 |
+| Organization | 23 | 58 |
 | Shared | 34 | 44 |
-| Organization | 11 | 30 |
-| Blueprint | 7 | 16 |
-| Roles/Policies | 14 | 22 |
-| **Total** | **78** | **134** |
+| Feature (cross-module) | 1 | 56 |
+| **Total** | **125** | **237** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -357,7 +357,8 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 117 tests, 219 assertions |
+| Tests | ✅ 125 tests, 237 assertions |
+| **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
 | **AI Agents / Skills config** | 🚧 En progreso |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | 🚧 Preparación |
 

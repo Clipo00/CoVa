@@ -92,6 +92,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 | **Laravel Routes & Controllers** | `covar-laravel-controller` |
 | **Laravel Tests** | `covar-laravel-test` |
 | **Laravel Value Objects & DTOs** | `covar-laravel-dto` |
+| **Laravel Security / OWASP** | `covar-security` |
 | **SDD workflow (spec-driven)** | `sdd-*` (auto-detectado por prefijo) |
 
 ### Skill Auto-Detection Rules
@@ -114,7 +115,20 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
    - `authenticate` / `LoginUser` → `covar-laravel-action` (Auth context)
    - soft deletes → `covar-laravel-model`
 
-4. **Por idioma**:
+4. **Por consideración de seguridad (SIEMPRE)**:
+   - `covar-security` se carga AUTOMÁTICAMENTE en toda sesión de edición de código
+   - Se combina con cualquier otra skill que aplique (seguridad es transversal)
+   - No requiere un trigger específico — es parte del contexto base del proyecto
+
+5. **Por archivos/patrones de seguridad**:
+   - `bootstrap/app.php` (exceptions handler, middleware) → también `covar-security`
+   - `config/session.php`, `config/sanctum.php`, `config/cors.php` → también `covar-security`
+   - `Middleware/*` → también `covar-security` (configuraciones de seguridad)
+   - rutas con `throttle` o middleware restrictivo → también `covar-security`
+   - operaciones de eliminación/restauración → también `covar-security`
+   - manejo de errores, páginas 403/404/500/419 → también `covar-security`
+
+6. **Por idioma**:
    - Detectar el idioma del mensaje del usuario (español o inglés) y adaptar las preguntas y prompts en el mismo idioma.
    - Cuando el usuario "pida features" —palabras clave como `feature`, `feature request`, `funcionalidad`, `pedir features`, `pedir funcionalidades`— el agente debe:
      - Identificar si el texto está en español o en inglés usando simples heurísticos de palabras clave.
@@ -136,6 +150,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 | `covar-laravel-controller` | Patrones para Controllers en CoVa | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
 | `covar-laravel-test` | Patrones para Tests en CoVa | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
 | `covar-laravel-dto` | Patrones para DTOs y Value Objects | [.agents/skills/covar-laravel-dto/SKILL.md](.agents/skills/covar-laravel-dto/SKILL.md) |
+| `covar-security` | OWASP Top 10:2025 — Seguridad integral en CoVa (SIEMPRE activa) | [.agents/skills/covar-security/SKILL.md](.agents/skills/covar-security/SKILL.md) |
 | `skill-creator` | Crear nuevas skills para CoVa | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
 | `sdd-init` | Inicializar SDD en el proyecto | [~/.config/opencode/skills/sdd-init/SKILL.md](../../.config/opencode/skills/sdd-init/SKILL.md) |
 | `sdd-propose` | Crear propuesta de cambio | [~/.config/opencode/skills/sdd-propose/SKILL.md](../../.config/opencode/skills/sdd-propose/SKILL.md) |
@@ -216,6 +231,33 @@ Flags: `is_interactive`, `is_secret`
 - `PasswordHasher`: Wrapper sobre `password_hash/verify`
 - `UuidGenerator`: Genera instancias de Uuid VO
 - `JsonValidator`: Valida, decodifica, codifica JSON
+
+---
+
+## Security Roadmap (Next Steps)
+
+| Prioridad | OWASP | Tarea | Estado |
+|-----------|-------|-------|--------|
+| 🔴 Alta | A02 | **Deploy config**: cachear config (`php artisan config:cache`), generar `APP_KEY`, verificar `APP_DEBUG=false` en producción | Pendiente |
+| 🟡 Media | A02 | **CSP fine-tuning**: monitorear reportes de violaciones CSP en producción y ajustar directivas | Pendiente |
+| 🟡 Media | A09 | **Audit logging**: implementar logging estructurado de operaciones sensibles (login, delete, invite, role changes) con canal separado `audit` | Pendiente |
+| 🟡 Media | A08 | **Implementar signed URLs** para invitaciones y password reset si no existen | Pendiente |
+| 🟢 Baja | A06 | **Revisar rate limits**: ajustar thresholds según uso real en producción | Pendiente |
+| 🟢 Baja | A07 | **MFA**: evaluar implementación de autenticación de dos factores para organizations Enterprise | Pendiente |
+| 🟢 Baja | A03 | **Dependency audit automático**: agregar `composer audit` y `npm audit` al pipeline CI/CD | Pendiente |
+
+### Ya implementado (v1.0)
+
+| OWASP | Medida | Archivos |
+|-------|--------|----------|
+| A01 | Slugs en URLs, no IDs auto-incrementales | Organization show, BlueprintController |
+| A01 | Policies por modelo (BlueprintPolicy, OrganizationPolicy) | `app/Modules/*/Policies/` |
+| A02 | CSP + HSTS + Referrer-Policy + security headers | `EnsureSecurityHeaders` middleware global |
+| A04 | `SESSION_ENCRYPT=true`, `SESSION_SECURE_COOKIE=true` | `config/session.php`, `.env.example` |
+| A05 | Blade escaping (`{{ }}`), Alpine `x-text`, Eloquent ORM | Transversal |
+| A06 | Rate limiting en POST routes CRUD | Blueprint (30/min), Organization (30/5 min) |
+| A07 | Session regeneration on login, CSRF, httpOnly cookies | Laravel built-in |
+| A10 | Custom error pages + exception logging + JSON API handler | `resources/views/errors/*`, `bootstrap/app.php` |
 
 ---
 

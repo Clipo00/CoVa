@@ -279,6 +279,43 @@ Generar este changelog tomó 30 minutos gracias a conventional commits. Sin ello
 
 ---
 
+## Fase 6: Seguridad — OWASP Top 10:2025 (21 May 2026)
+
+### Contexto
+Se identificaron gaps de seguridad durante la creación de la skill `covar-security`. Los 4 gaps críticos se corrigieron en este sprint.
+
+### Bugs Corregidos
+
+1. **A10 — Sin manejo de excepciones**: `bootstrap/app.php` tenía el bloque `withExceptions` completamente vacío. Cualquier error no capturado mostraba stack trace en dev y podía filtrar información interna.
+2. **A02 — Sin CSP ni headers de seguridad**: No existía Content-Security-Policy, HSTS, ni Referrer-Policy. La aplicación era vulnerable a XSS, clickjacking, y ataques MITM.
+3. **A06 — Sin rate limiting**: Solo Livewire upload tenía throttle. Las rutas POST de Blueprint y Organization no tenían límites, permitiendo abuso de API.
+4. **A04 — SESSION_ENCRYPT=false**: Los datos de sesión se almacenaban en texto plano en la DB.
+
+### Decisiones Técnicas
+
+| Decisión | Alternativa | Por qué |
+|----------|-------------|---------|
+| CSP con `'unsafe-inline'` y `'unsafe-eval'` | CSP estricto con nonces | Alpine.js requiere inline scripts y Livewire requiere eval. Nonces son más seguros pero inviables con el stack actual |
+| Una skill de seguridad integral | 10 skills separadas por OWASP | La seguridad es transversal — un archivo puede tener A01 + A05 + A09. 10 skills sería insostenible |
+| `EnsureSecurityHeaders` como middleware GLOBAL | Por ruta | Los headers de seguridad deben aplicarse a TODAS las respuestas, incluyendo errores |
+| Rate limiting: 30/min CRUD, 5/min sensible | Un solo rate para todos | Operaciones destructivas (force-delete, invite, role change) merecen límite más restrictivo |
+
+### Aprendizajes Clave
+
+1. **El route cache miente**: Después de modificar rutas, siempre hacer `php artisan optimize:clear` antes de verificar. El route cache mantenía referencias viejas con throttles duplicados.
+2. **Error pages sin Livewire**: Las páginas de error deben funcionar SIN Livewire porque los errores ocurren antes de que los componentes booteen. Usar `@vite()` directo, no layouts que dependan de `@livewireScripts`.
+3. **CSP y Alpine.js**: Alpine.js usa `eval()` internamente para evaluar expresiones en atributos `x-*`. Sin `'unsafe-eval'` en CSP, las expresiones de Alpine no funcionan.
+4. **Slug vs ID en URLs**: Los IDs auto-incrementales NUNCA deben aparecer en URLs GET. El slug resuelve la org, el ID se usa internamente en POST (protegido por CSRF + server-side validation).
+
+### Próximos Pasos (Postergados)
+- Deploy config: `config:cache`, `APP_KEY` generation, verificar `APP_DEBUG=false`
+- CSP monitoring: ajustar directivas según reportes de producción
+- Audit logging: canal separado para operaciones sensibles
+- Signed URLs para invitaciones
+- MFA para organizations Enterprise
+
+---
+
 **Documento generado**: 2026-05-15  
 **Versión**: 1.0  
 **Última actualización**: Fase 4 del plan de documentación
