@@ -44,6 +44,7 @@
 - `docs/PROJECT_SUMMARY.md` actualizado con estado real del código (125 tests, 237 assertions, seguridad)
 
 ### Fixed
+- **CSP bloqueaba assets de Vite en local**: el middleware `EnsureSecurityHeaders` usaba `http://[::1]:5173` (IPv6) en las directivas CSP, pero CSP no soporta IPv6 como source expression — el browser ignoraba la regla y bloqueaba scripts/styles. Se reemplazó por `http://127.0.0.1:5173` (IPv4 explícito) y se configuró Vite con `server.host: '127.0.0.1'`.
 - Excepción `TypeError` en `setTimeout` del toast por filtrar con `$event.detail.id` (undefined) — ahora captura `Date.now()` local
 - `docs/PROJECT_SUMMARY.md` actualizado con estado real del código (117 tests, tabs dinámicas, transferencia, etc.)
 - **Esquema de colores de badges por rol unificado** en todas las pantallas:
