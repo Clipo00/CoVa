@@ -23,6 +23,15 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->append(EnsureSecurityHeaders::class);
+
+        // La cookie 'locale' NO debe encriptarse — la leemos en SetLocaleFromCookie
+        // y queremos que sea legible en el frontend si es necesario
+        $middleware->encryptCookies(except: [
+            'locale',
+        ]);
+
+        // Locale — corre DENTRO del grupo web, después de EncryptCookies y StartSession
+        $middleware->appendToGroup('web', \App\Modules\Shared\Http\Middleware\SetLocaleFromCookie::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Loggear excepciones no capturadas con contexto completo

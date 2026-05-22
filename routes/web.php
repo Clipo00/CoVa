@@ -3,6 +3,25 @@
 use App\Modules\Auth\Models\User;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Locale Switcher (sin auth — disponible para guests en login/register)
+|--------------------------------------------------------------------------
+*/
+Route::get('/locale/{locale}', function (string $locale) {
+    if (!in_array($locale, ['es', 'en'], true)) {
+        abort(404);
+    }
+
+    // Si está autenticado, persiste en BD como preferencia permanente
+    if (auth()->check()) {
+        auth()->user()->update(['locale' => $locale]);
+    }
+
+    // Cookie forever (5 años) adjuntada DIRECTAMENTE a la respuesta de redirección
+    return redirect()->back()->withCookie(cookie()->forever('locale', $locale));
+})->name('locale.set');
+
 Route::middleware('auth')->get('/dashboard', function () {
     $user = auth()->user();
     $organizations = $user->organizations()->with('owner')->get();
