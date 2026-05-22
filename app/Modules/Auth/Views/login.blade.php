@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
-@section('subtitle', 'Inicia sesión en tu cuenta')
+@section('title', __('auth.login_title'))
+@section('subtitle', __('auth.login_subtitle'))
 
 @section('content')
     <livewire:auth.forms.login-form />

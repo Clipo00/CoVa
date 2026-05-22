@@ -55,7 +55,7 @@ class UserProfileForm extends Component
 
         // Verify current password if changing password
         if ($this->newPassword && !\Hash::check($this->currentPassword, auth()->user()->password)) {
-            $this->addError('currentPassword', 'La contraseña actual es incorrecta');
+            $this->addError('currentPassword', __('auth.wrong_password'));
             return;
         }
 
@@ -75,7 +75,7 @@ class UserProfileForm extends Component
         $this->newPasswordConfirmation = null;
         $this->avatar = null;
 
-        $this->dispatch('notify', message: 'Perfil actualizado correctamente');
+        $this->dispatch('notify', message: __('auth.profile_updated'));
     }
 
     public function render()
