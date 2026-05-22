@@ -111,7 +111,7 @@ class BlueprintList extends Component
             ->when($this->search, function ($query) {
                 $query->where('title', 'like', "%{$this->search}%");
             })
-            ->when($this->filters['organizations'], function ($query) {
+            ->when($this->filters['organizations'], function ($query) use ($organizationIds) {
                 // Security: only filter by orgs the user actually belongs to
                 $validIds = array_intersect(
                     $this->filters['organizations'],
