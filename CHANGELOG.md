@@ -10,6 +10,27 @@
 ## [Unreleased]
 
 ### Added
+- **🌐 Internacionalización (i18n) completa** — sistema multi-idioma español/inglés:
+  - 339 keys de traducción en ES (español rioplatense con voseo) y EN (inglés)
+  - Archivos lang organizados por módulo: `auth`, `blueprint`, `organization`, `dashboard`, `layouts`, `errors`, `shared`, `welcome`
+  - `config/app.php` con `supported_locales` y locale por defecto `es`
+  - Todas las vistas Blade (36 archivos) reemplazadas con `{{ __('module.key') }}`
+  - Todos los mensajes PHP (Controllers, Actions, Livewire, Exceptions) reemplazados con `__()`
+  - Strings con interpolación (`:name`, `:count`, `:max`, `:plan`) mediante placeholders
+  - Manejo de HTML en traducciones con `{!! __() !!}`
+  - Alpine.js store de confirmación con strings traducidas via Blade pre-render
+- **🌐 Selector de idioma en UI** — LocaleSwitcher componente Alpine.js:
+  - Middleware `SetLocaleFromCookie` en grupo `web` (después de `EncryptCookies`)
+  - Ruta `GET /locale/{es|en}` que persiste elección en cookie + BD si está autenticado
+  - Cookie `locale` excluida de cifrado de Laravel via `encryptCookies(except: ['locale'])`
+  - Dropdown minimalista con indicador de idioma activo
+  - Visible en auth layout (fixed top-right) y app layout (topbar junto a ThemeToggle)
+- **💾 Persistencia de idioma en BD** — preferencia de usuario guardada en `users.locale`:
+  - Migración `add_locale_to_users_table` — columna `locale` nullable
+  - `SetLocaleFromCookie` prioriza: BD > cookie > config default
+  - Al cambiar idioma autenticado → se guarda en BD
+  - Al registrarse → hereda locale de la cookie
+  - Al loguearse → si no tiene locale en BD, lo hereda de la cookie
 - **OWASP Top 10:2025 — Security Sprint**:
   - 🛡️ `covar-security` skill con las 10 categorías OWASP (SIEMPRE cargada)
   - 🛡️ CSP Middleware (`EnsureSecurityHeaders`) con headers de seguridad globales

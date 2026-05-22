@@ -1,0 +1,177 @@
+<?php
+
+return [
+    // Index
+    'page_title' => 'Blueprints',
+    'heading' => 'Blueprints',
+    'new_button' => 'Nuevo Blueprint',
+    'all_orgs_limit' => 'Todas tus organizaciones han alcanzado el límite de blueprints. Eliminá uno existente o actualizá tu plan.',
+
+    // Create
+    'create_title' => 'Nuevo Blueprint',
+    'create_heading' => 'Crear Blueprint',
+
+    // Create/Edit form
+    'general_info' => 'Información General',
+    'org_label' => 'Organización *',
+    'org_locked_hint' => 'Organización preseleccionada desde la página anterior.',
+    'title_label' => 'Título *',
+    'title_placeholder' => 'Mi Proyecto Laravel',
+    'slug_label' => 'Slug *',
+    'slug_hint' => 'Identificador único para URLs. Se genera automáticamente desde el título.',
+    'category_label' => 'Categoría',
+    'category_none' => 'Sin categoría',
+    'description_label' => 'Descripción',
+    'description_placeholder' => 'Describe el propósito de este blueprint...',
+    'tabs_section' => 'Pestañas',
+    'create_blueprint_button' => 'Crear Blueprint',
+    'edit_blueprint_button' => 'Guardar Cambios',
+    'cancel_link' => '← Cancelar y volver',
+
+    // Edit
+    'edit_title' => 'Editar :title',
+    'edit_heading' => 'Editar Blueprint',
+    'edit_breadcrumb' => 'Editar',
+
+    // List
+    'search_placeholder' => 'Buscar blueprints...',
+    'list_empty' => 'No hay blueprints.',
+    'list_empty_link' => 'Crea el primero',
+    'delete_tooltip' => 'Eliminar blueprint',
+
+    // Show
+    'back_to_dashboard' => 'Volver al Dashboard',
+    'copy_uuid' => 'Copiar UUID',
+    'uuid_copied' => 'UUID copiado al portapapeles',
+    'transfer_select_org' => 'Seleccioná una organización destino',
+    'transfer_to' => 'Transferir a...',
+    'transfer_button' => 'Transferir',
+    'edit_button' => 'Editar',
+    'delete_confirm' => '¿Estás seguro de que querés eliminar este blueprint?',
+    'delete_button' => 'Eliminar',
+
+    // Variables
+    'env_variables' => 'Variables de Entorno',
+    'variable_count' => ':count variable(s)',
+    'variables_empty' => 'No hay variables configuradas.',
+    'variables_empty_hint' => 'Las variables se definen al crear o editar el blueprint.',
+    'var_key' => 'Key',
+    'var_group' => 'Grupo',
+    'var_type' => 'Tipo',
+    'var_value' => 'Valor',
+    'var_interactive' => 'Interactivo',
+    'var_secret' => 'Secreto',
+    'var_actions' => 'Acciones',
+    'var_key_placeholder' => 'DB_HOST',
+    'var_group_placeholder' => '.env',
+    'var_type_fixed' => 'Fijo',
+    'var_type_empty' => 'Vacío',
+    'var_value_placeholder' => 'Valor por defecto',
+    'var_delete_tooltip' => 'Eliminar variable',
+    'var_add_button' => 'Añadir Variable',
+    'var_none' => 'No hay variables configuradas.',
+    'var_add_first' => 'Añadir primera variable',
+    'secret_value' => '••••••••',
+    'yes' => 'Sí',
+    'no' => 'No',
+
+    // Agent Context
+    'agent_context' => 'Agent Context',
+    'agent_md_badge' => 'agent.md',
+    'copy_button' => 'Copiar',
+    'agent_md_copied' => 'agent.md copiado al portapapeles',
+
+    // VSCode Extensions
+    'vscode_extensions' => 'VSCode Extensions',
+    'copy_install_command' => 'Copiar install command',
+    'command_copied' => 'Comando copiado al portapapeles',
+
+    // MCP Servers
+    'mcp_servers' => 'MCP Servers',
+
+    // Tab Manager
+    'move_up' => 'Mover arriba',
+    'move_down' => 'Mover abajo',
+    'tab_delete' => 'Eliminar',
+    'extensions_label' => 'Extensiones (una por línea)',
+    'extensions_placeholder' => "esbenp.prettier-vscode\ndbaeumer.vscode-eslint",
+    'extensions_count' => ':count extensión/es configurada/s',
+    'mcp_servers_label' => 'Servidores MCP',
+    'server_label' => 'Server #:index',
+    'server_delete' => 'Eliminar',
+    'server_name_label' => 'Nombre',
+    'server_name_placeholder' => 'filesystem',
+    'server_command_label' => 'Comando',
+    'server_command_placeholder' => 'npx',
+    'server_args_label' => 'Argumentos (separados por espacio)',
+    'server_args_placeholder' => '-y @modelcontextprotocol/server-filesystem',
+    'server_add_button' => 'Agregar servidor',
+    'code_presets' => 'Presets de código',
+    'preset_psr12' => 'PSR-12',
+    'preset_solid' => 'SOLID',
+    'preset_clean_arch' => 'Clean Architecture',
+    'skills_label' => 'Skills',
+    'skill_stripe' => 'Stripe',
+    'skill_tailwind' => 'Tailwind CSS',
+    'custom_rules' => 'Reglas custom (Markdown)',
+    'custom_rules_placeholder' => 'Ej: Siempre usá declare(strict_types=1). Preferí DTOs sobre arrays.',
+    'tabs_empty' => 'No hay pestañas configuradas',
+    'tabs_empty_hint' => 'Agregá una pestaña para comenzar',
+    'add_tab' => 'Agregar',
+
+    // Favorites
+    'favorites_title' => 'Favoritos',
+    'favorites_heading' => 'Blueprints Favoritos',
+    'favorites_count' => ':count favoritos',
+    'favorites_empty' => 'No tenés favoritos',
+    'favorites_empty_desc' => 'Marcá blueprints como favoritos para acceder rápidamente a ellos.',
+    'explore_blueprints' => 'Explorar Blueprints',
+    'uuid_copied_short' => 'UUID copiado',
+    'uuid_label' => 'UUID',
+
+    // Deleted
+    'deleted_title' => 'Blueprints Eliminados',
+    'deleted_heading' => 'Blueprints Eliminados',
+    'deleted_count' => ':count eliminados',
+    'deleted_empty' => 'No hay blueprints eliminados',
+    'deleted_empty_desc' => 'Los blueprints eliminados aparecerán acá.',
+    'deleted_info' => ':organization · Eliminado :time',
+    'restore_limit' => 'Límite de :max blueprints alcanzado. Eliminá un blueprint activo para poder recuperar este.',
+    'restore_button' => 'Restaurar',
+    'restore_disabled' => 'No disponible',
+    'restore_permission_info' => 'Solo el owner puede restaurar',
+
+    // Tab types
+    'tab_type_vscode' => 'VSCode Extensions',
+    'tab_type_mcp' => 'MCP Servers',
+    'tab_type_ai' => 'AI Context',
+    'tab_type_unknown' => 'Desconocido',
+
+    // Messages
+    'deleted_success' => 'Blueprint eliminado correctamente.',
+    'restored_success' => 'Blueprint restaurado correctamente.',
+    'transferred_success' => 'Blueprint transferido correctamente.',
+
+    // Errors
+    'org_unauthorized' => 'Organización no autorizada.',
+    'org_limit' => 'Esta organización ha alcanzado el límite de blueprints. Eliminá un blueprint existente para crear uno nuevo.',
+    'no_capacity' => 'No tenés ninguna organización con cupo disponible para crear blueprints. Eliminá un blueprint existente o actualizá tu plan.',
+    'no_delete_permission' => 'No tenés permisos para eliminar este blueprint.',
+    'no_restore_permission' => 'No tenés permisos para restaurar este blueprint.',
+    'restore_limit_msg' => ':message Eliminá un blueprint activo para poder recuperar este.',
+    'no_edit_permission' => 'No tenés permisos para editar este blueprint.',
+    'unique_variable_keys' => 'Las keys de las variables deben ser únicas.',
+    'invalid_org_data' => 'Datos de organización inválidos.',
+
+    // Transfer errors
+    'transfer_not_owner' => 'Solo el owner puede transferir blueprints.',
+    'transfer_not_owner_target' => 'Solo podés transferir a organizaciones donde sos owner.',
+    'transfer_same_org' => 'No podés transferir un blueprint a la misma organización.',
+    'transfer_select_org' => 'Seleccioná una organización destino',
+    'transfer_slug_exists' => "Ya existe un blueprint con el slug ':slug' en la organización destino. Renombrá el blueprint antes de transferir.",
+
+    // Exception messages
+    'max_blueprints_reached' => 'Límite de :max blueprints por organización alcanzado en plan :plan.',
+    'max_variables_reached' => 'Límite de :max variables por blueprint alcanzado en plan :plan.',
+    'unknown_tab_type' => 'Unknown tab type: \':type\'.',
+];
