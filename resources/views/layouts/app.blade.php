@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CoVa') }} - @yield('title', 'Dashboard')</title>
+    <title>{{ config('app.name', 'CoVa') }} - @yield('title', __('layouts.site_title'))</title>
 
     <!-- Theme Anti-Flash -->
     <script>
@@ -51,8 +51,8 @@
                     <div class="flex items-center">
                         <!-- Mobile menu button -->
                         <div class="flex items-center sm:hidden">
-                            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="Abrir menú" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-                                <span class="sr-only">Abrir menú</span>
+                            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" aria-label="{{ __('layouts.nav_toggle') }}" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                                <span class="sr-only">{{ __('layouts.nav_toggle') }}</span>
                                 <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
@@ -66,27 +66,28 @@
                         @auth
                             <div class="hidden sm:ml-8 sm:flex sm:space-x-6">
                                 <a href="{{ route('dashboard') }}" class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
-                                    Dashboard
+                                    {{ __('layouts.dashboard') }}
                                 </a>
                                 <a href="{{ route('organizations.index') }}" class="text-sm font-medium {{ request()->routeIs('organizations.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
-                                    Organizaciones
+                                    {{ __('layouts.organizations') }}
                                 </a>
                                 <a href="{{ route('blueprints.index') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
-                                    Blueprints
+                                    {{ __('layouts.blueprints') }}
                                 </a>
                                 <a href="{{ route('blueprints.deleted') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.deleted') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
-                                    Eliminados
+                                    {{ __('layouts.deleted') }}
                                 </a>
                             </div>
                         @endauth
                     </div>
                     <div class="flex items-center space-x-4">
                         <livewire:shared.theme-toggle />
+                        <x-locale-switcher />
                         @auth
                             <livewire:auth.components.user-dropdown />
                         @else
-                            <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">Login</a>
-                            <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">Registro</a>
+                            <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">{{ __('layouts.login') }}</a>
+                            <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">{{ __('layouts.register') }}</a>
                         @endauth
                     </div>
                 </div>
@@ -97,13 +98,13 @@
                 <div id="mobile-menu" class="hidden sm:hidden border-t border-gray-200 dark:border-gray-700">
                     <div class="pt-2 pb-3 space-y-1">
                         <a href="{{ route('dashboard') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('dashboard') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
-                            Dashboard
+                            {{ __('layouts.dashboard') }}
                         </a>
                         <a href="{{ route('organizations.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('organizations.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
-                            Organizaciones
+                            {{ __('layouts.organizations') }}
                         </a>
                         <a href="{{ route('blueprints.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('blueprints.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
-                            Blueprints
+                            {{ __('layouts.blueprints') }}
                         </a>
                     </div>
                 </div>
@@ -177,7 +178,7 @@
                     </svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirmar acción</h3>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('layouts.confirm_title') }}</h3>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-line" x-text="$store.confirm.message"></p>
                 </div>
             </div>
@@ -186,7 +187,7 @@
                     @click="$store.confirm.cancel()"
                     class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400"
                 >
-                    Cancelar
+                    {{ __('layouts.confirm_cancel') }}
                 </button>
                 <button
                     @click="$store.confirm.confirm()"
@@ -202,7 +203,7 @@
         document.addEventListener('livewire:init', () => {
             Livewire.on('copy-to-clipboard', ({ text }) => {
                 navigator.clipboard.writeText(text).catch(err => {
-                    console.error('Error al copiar:', err);
+                    console.error('{{ __('shared.copy_error') }}', err);
                     // Fallback para navegadores que no soportan clipboard API
                     const textarea = document.createElement('textarea');
                     textarea.value = text;
@@ -221,10 +222,10 @@
             Alpine.store('confirm', {
                 show: false,
                 message: '',
-                confirmText: 'Eliminar',
+                confirmText: '{{ __('layouts.confirm_delete') }}',
                 onConfirm: null,
 
-                ask({ message, confirmText = 'Eliminar', onConfirm }) {
+                ask({ message, confirmText = '{{ __('layouts.confirm_delete') }}', onConfirm }) {
                     this.message = message;
                     this.confirmText = confirmText;
                     this.show = true;
