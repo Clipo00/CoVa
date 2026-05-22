@@ -35,7 +35,7 @@ trait ManagesVariables
     {
         $keys = array_column($this->variables, 'key');
         if (count($keys) !== count(array_unique($keys))) {
-            $this->addError('variables', 'Las keys de las variables deben ser únicas.');
+            $this->addError('variables', __('blueprint.unique_variable_keys'));
             return false;
         }
         return true;

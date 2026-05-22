@@ -20,13 +20,13 @@ class EnsureRole
         }
 
         if (!$organization) {
-            abort(404, 'Organización no encontrada.');
+            abort(404, __('organization.not_found'));
         }
 
         $allowedRoles = explode('|', $roles);
 
         if (!auth()->user()->hasRoleInOrganization($organization, $allowedRoles)) {
-            abort(403, 'No tienes permisos para realizar esta acción.');
+            abort(403, __('organization.no_permission'));
         }
 
         return $next($request);

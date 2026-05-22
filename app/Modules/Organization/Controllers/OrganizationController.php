@@ -50,7 +50,7 @@ class OrganizationController
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->can('update', $organization)) {
-            abort(403, 'No tienes permisos para editar esta organización.');
+            abort(403, __('organization.no_edit_permission'));
         }
 
         return view('organization::edit', compact('organization'));
@@ -61,7 +61,7 @@ class OrganizationController
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->can('update', $organization)) {
-            abort(403, 'No tienes permisos para editar esta organización.');
+            abort(403, __('organization.no_edit_permission'));
         }
 
         $validated = $request->validate([
@@ -77,7 +77,7 @@ class OrganizationController
 
         return redirect()
             ->route('organizations.show', $organization->fresh()->slug)
-            ->with('success', 'Organización actualizada correctamente.');
+            ->with('success', __('organization.updated'));
     }
 
     public function members(string $slug): View
@@ -87,7 +87,7 @@ class OrganizationController
             ->firstOrFail();
 
         if (!auth()->user()->can('view', $organization)) {
-            abort(403, 'No tienes permisos para ver esta organización.');
+            abort(403, __('organization.no_view_permission'));
         }
 
         return view('organization::members', compact('organization'));
@@ -98,7 +98,7 @@ class OrganizationController
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->can('manageMembers', $organization)) {
-            abort(403, 'No tienes permisos para gestionar miembros.');
+            abort(403, __('organization.no_manage_permission'));
         }
 
         $validated = $request->validate([
@@ -119,7 +119,7 @@ class OrganizationController
 
         return redirect()
             ->route('organizations.members', $organization->slug)
-            ->with('success', "Usuario {$user->name} agregado correctamente.");
+            ->with('success', __('organization.user_added', ['name' => $user->name]));
     }
 
     public function updateMemberRole(string $slug, int $userId, Request $request, UpdateOrganizationUserRole $updateRole): RedirectResponse
@@ -141,7 +141,7 @@ class OrganizationController
 
         return redirect()
             ->route('organizations.members', $organization->slug)
-            ->with('success', "Rol de {$targetUser->name} actualizado correctamente.");
+            ->with('success', __('organization.role_updated', ['name' => $targetUser->name]));
     }
 
     public function invite(string $slug, Request $request, InviteUser $inviteUser): RedirectResponse
@@ -149,7 +149,7 @@ class OrganizationController
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->can('invite', $organization)) {
-            abort(403, 'No tienes permisos para invitar miembros.');
+            abort(403, __('organization.no_invite_permission'));
         }
 
         $validated = $request->validate([
@@ -165,7 +165,7 @@ class OrganizationController
 
         return redirect()
             ->route('organizations.members', $organization->slug)
-            ->with('success', 'Invitación enviada correctamente.');
+            ->with('success', __('organization.invite_sent'));
     }
 
     public function destroy(string $slug, DeleteOrganization $deleteOrganization): RedirectResponse
@@ -173,7 +173,7 @@ class OrganizationController
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->can('delete', $organization)) {
-            abort(403, 'No tienes permisos para eliminar esta organización.');
+            abort(403, __('organization.no_delete_permission'));
         }
 
         // Soft delete de blueprints en cascada
@@ -183,7 +183,7 @@ class OrganizationController
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Organización eliminada. Puedes recuperarla desde el dashboard.');
+            ->with('success', __('organization.deleted'));
     }
 
     public function restore(string $slug): RedirectResponse
@@ -192,7 +192,7 @@ class OrganizationController
 
         // Verificar que el usuario es owner de la org
         if (!auth()->user()->isOwnerOf($organization)) {
-            abort(403, 'No tienes permisos para restaurar esta organización.');
+            abort(403, __('organization.no_restore_permission'));
         }
 
         // Verificar límite de organizaciones del plan
@@ -203,7 +203,7 @@ class OrganizationController
         if ($plan->max_organizations_per_user !== null && $activeOrgsCount >= $plan->max_organizations_per_user) {
             return redirect()
                 ->route('dashboard')
-                ->with('error', "Límite de {$plan->max_organizations_per_user} organizaciones alcanzado. Elimina una organización activa para poder recuperar esta.");
+                ->with('error', __('organization.restore_limit', ['max' => $plan->max_organizations_per_user]));
         }
 
         // Restaurar org y sus blueprints
@@ -212,7 +212,7 @@ class OrganizationController
 
         return redirect()
             ->route('organizations.show', $organization->slug)
-            ->with('success', 'Organización restaurada correctamente.');
+            ->with('success', __('organization.restored'));
     }
 
     public function forceDestroy(string $slug): RedirectResponse
@@ -220,7 +220,7 @@ class OrganizationController
         $organization = Organization::withTrashed()->where('slug', $slug)->firstOrFail();
 
         if (!auth()->user()->isOwnerOf($organization)) {
-            abort(403, 'No tienes permisos para eliminar permanentemente esta organización.');
+            abort(403, __('organization.no_force_delete_permission'));
         }
 
         // Hard delete de blueprints
@@ -234,6 +234,6 @@ class OrganizationController
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Organización eliminada permanentemente.');
+            ->with('success', __('organization.force_deleted'));
     }
 }
