@@ -11,7 +11,7 @@ class MaxVariablesReachedException extends Exception
     public function __construct(int $maxVariables, string $planName)
     {
         parent::__construct(
-            "Límite de {$maxVariables} variables por blueprint alcanzado en plan {$planName}."
+            __('blueprint.max_variables_reached', ['max' => $maxVariables, 'plan' => $planName])
         );
     }
 }

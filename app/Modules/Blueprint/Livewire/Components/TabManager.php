@@ -27,9 +27,9 @@ class TabManager extends Component
     {
         $this->tabs = $tabsConfig ?? [];
         $this->availableTabTypes = [
-            TabType::VSCODE_EXTENSIONS->value => 'VSCode Extensions',
-            TabType::MCP_SERVERS->value => 'MCP Servers',
-            TabType::AI_CONTEXT->value => 'AI Context',
+            TabType::VSCODE_EXTENSIONS->value => __('blueprint.tab_type_vscode'),
+            TabType::MCP_SERVERS->value => __('blueprint.tab_type_mcp'),
+            TabType::AI_CONTEXT->value => __('blueprint.tab_type_ai'),
         ];
     }
 

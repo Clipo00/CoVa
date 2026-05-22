@@ -252,9 +252,12 @@ Flags: `is_interactive`, `is_secret`
 |-------|--------|----------|
 | A01 | Slugs en URLs, no IDs auto-incrementales | Organization show, BlueprintController |
 | A01 | Policies por modelo (BlueprintPolicy, OrganizationPolicy) | `app/Modules/*/Policies/` |
+| A01 | Open redirect protection en locale route | `routes/web.php` — `url()->previous()` con validación same-origin |
 | A02 | CSP + HSTS + Referrer-Policy + security headers | `EnsureSecurityHeaders` middleware global |
+| A02 | Locales desde config, no hardcodeados | `routes/web.php`, `SetLocaleFromCookie` — `config('app.supported_locales')` |
 | A04 | `SESSION_ENCRYPT=true`, `SESSION_SECURE_COOKIE=true` | `config/session.php`, `.env.example` |
 | A05 | Blade escaping (`{{ }}`), Alpine `x-text`, Eloquent ORM | Transversal |
+| A05 | XSS prevention: `e()` en raw output con interpolación | `dashboard.blade.php` — `{!! __() !!}` con parámetros escapados |
 | A06 | Rate limiting en POST routes CRUD | Blueprint (30/min), Organization (30/5 min) |
 | A07 | Session regeneration on login, CSRF, httpOnly cookies | Laravel built-in |
 | A10 | Custom error pages + exception logging + JSON API handler | `resources/views/errors/*`, `bootstrap/app.php` |

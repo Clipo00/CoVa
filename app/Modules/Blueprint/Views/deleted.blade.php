@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Blueprints Eliminados')
+@section('title', __('blueprint.deleted_title'))
 
 @section('content')
     <div class="max-w-4xl mx-auto">
@@ -10,14 +10,14 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
-                Volver al Dashboard
+                {{ __('blueprint.back_to_dashboard') }}
             </a>
         </div>
 
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Blueprints Eliminados</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('blueprint.deleted_heading') }}</h1>
             <span class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                {{ $deletedBlueprints->count() }} eliminados
+                {{ __('blueprint.deleted_count', ['count' => $deletedBlueprints->count()]) }}
             </span>
         </div>
 
@@ -41,8 +41,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No hay blueprints eliminados</h3>
-                <p class="text-gray-500">Los blueprints eliminados aparecerán aquí.</p>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('blueprint.deleted_empty') }}</h3>
+                <p class="text-gray-500">{{ __('blueprint.deleted_empty_desc') }}</p>
             </div>
         @else
             <div class=" bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
@@ -63,11 +63,11 @@
                                         {{ $blueprint->title }}
                                     </p>
                                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $organization->name }} · Eliminado {{ $blueprint->deleted_at->diffForHumans() }}
+                                        {{ __('blueprint.deleted_info', ['organization' => $organization->name, 'time' => $blueprint->deleted_at->diffForHumans()]) }}
                                     </p>
                                     @if($limitReached)
                                         <p class="mt-1 text-xs text-red-600 dark:text-red-400">
-                                            Límite de {{ $maxBlueprints }} blueprints alcanzado. Elimina un blueprint activo para poder recuperar este.
+                                            {{ __('blueprint.restore_limit', ['max' => $maxBlueprints]) }}
                                         </p>
                                     @endif
                                 </div>
@@ -80,7 +80,7 @@
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
                                                     </svg>
-                                                    Restaurar
+                                                    {{ __('blueprint.restore_button') }}
                                                 </button>
                                             </form>
                                         @else
@@ -88,11 +88,11 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                                                 </svg>
-                                                No disponible
+                                                {{ __('blueprint.restore_disabled') }}
                                             </span>
                                         @endif
                                     @else
-                                        <span class="text-xs text-gray-400">Solo el owner puede restaurar</span>
+                                        <span class="text-xs text-gray-400">{{ __('blueprint.restore_permission_info') }}</span>
                                     @endif
                                 </div>
                             </div>

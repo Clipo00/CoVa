@@ -14,17 +14,17 @@ class TransferBlueprint
     {
         // Validar que el user es owner de la org origen
         if (!$user->isOwnerOf($blueprint->organization)) {
-            abort(403, 'Solo el owner puede transferir blueprints.');
+            abort(403, __('blueprint.transfer_not_owner'));
         }
 
         // Validar que el user es owner de la org destino
         if (!$user->isOwnerOf($targetOrganization)) {
-            abort(403, 'Solo puedes transferir a organizaciones donde eres owner.');
+            abort(403, __('blueprint.transfer_not_owner_target'));
         }
 
         // Validar que la org destino es diferente a la origen
         if ($blueprint->organization_id === $targetOrganization->id) {
-            abort(422, 'No puedes transferir un blueprint a la misma organización.');
+            abort(422, __('blueprint.transfer_same_org'));
         }
 
         // Validar que el slug es único en la org destino
@@ -33,7 +33,7 @@ class TransferBlueprint
             ->exists();
 
         if ($existingBlueprint) {
-            abort(422, "Ya existe un blueprint con el slug '{$blueprint->slug}' en la organización destino. Renombra el blueprint antes de transferir.");
+            abort(422, __('blueprint.transfer_slug_exists', ['slug' => $blueprint->slug]));
         }
 
         $blueprint->update(['organization_id' => $targetOrganization->id]);

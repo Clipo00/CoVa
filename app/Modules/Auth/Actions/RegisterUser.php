@@ -19,9 +19,14 @@ class RegisterUser
             throw new \RuntimeException('Free plan does not exist. Run database seeders.');
         }
 
+        // Heredar locale de la cookie si el usuario eligió idioma antes de registrarse
+        $cookieLocale = request()->cookie('locale');
+        $locale = $cookieLocale && in_array($cookieLocale, ['es', 'en'], true) ? $cookieLocale : null;
+
         $user = User::create([
             'name' => $data->name,
             'email' => (string) $data->email,
+            'locale' => $locale,
             'password' => Hash::make($data->password),
             'plan_id' => $freePlan->id,
         ]);

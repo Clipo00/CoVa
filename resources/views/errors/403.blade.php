@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'CoVa') }} - Acceso denegado</title>
+    <title>{{ config('app.name', 'CoVa') }} - {{ __('errors.403_title') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css'])
@@ -12,23 +12,23 @@
     <div class="min-h-screen flex flex-col items-center justify-center px-4">
         <div class="max-w-md w-full text-center">
             <div class="text-8xl font-bold text-red-500 mb-4">403</div>
-            <h1 class="text-2xl font-semibold text-gray-800 mb-2">Acceso denegado</h1>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-2">{{ __('errors.403_heading') }}</h1>
             <p class="text-gray-600 mb-8">
-                No tenés permisos para acceder a esta página.
+                {{ __('errors.403_message') }}
                 @if($exception?->getMessage() && $exception->getMessage() !== 'Forbidden')
                     <br>{{ $exception->getMessage() }}
                 @endif
             </p>
             <div class="flex justify-center space-x-4">
                 <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition">
-                    Volver al Dashboard
+                    {{ __('errors.back_to_dashboard') }}
                 </a>
                 <button onclick="history.back()" class="inline-flex items-center px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition">
-                    Atrás
+                    {{ __('errors.403_back') }}
                 </button>
             </div>
         </div>
-        <p class="mt-12 text-sm text-gray-400">{{ config('app.name', 'CoVa') }} &mdash; Config Vault</p>
+        <p class="mt-12 text-sm text-gray-400">{{ config('app.name', 'CoVa') }} &mdash; {{ __('errors.footer') }}</p>
     </div>
 </body>
 </html>

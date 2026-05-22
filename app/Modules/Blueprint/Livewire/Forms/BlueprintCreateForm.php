@@ -40,7 +40,7 @@ class BlueprintCreateForm extends Component
             // Si viene preseleccionada, validar que esta en la lista permitida
             $allowedIds = array_column($this->userOrganizations, 'id');
             if (!in_array($this->preselectedOrg, $allowedIds, true)) {
-                abort(403, 'Organizacion no autorizada.');
+                abort(403, __('blueprint.org_unauthorized'));
             }
 
             $this->organizationId = $this->preselectedOrg;
@@ -66,7 +66,7 @@ class BlueprintCreateForm extends Component
 
         foreach ($this->userOrganizations as $org) {
             if (!isset($org['id']) || !in_array($org['id'], $userOrgIds, true)) {
-                abort(403, 'Datos de organizacion invalidos.');
+                abort(403, __('blueprint.invalid_org_data'));
             }
         }
     }
@@ -115,7 +115,7 @@ class BlueprintCreateForm extends Component
         // SEGURIDAD: Validar que la organizacion seleccionada esta en la lista permitida
         $allowedIds = array_column($this->userOrganizations, 'id');
         if (!in_array($this->organizationId, $allowedIds, true)) {
-            $this->addError('organizationId', 'Organizacion no autorizada.');
+            $this->addError('organizationId', __('blueprint.org_unauthorized'));
             return;
         }
 
@@ -124,7 +124,7 @@ class BlueprintCreateForm extends Component
             ->firstWhere('id', $this->organizationId);
 
         if (!$selectedOrgData || !$selectedOrgData['hasAvailableSlots']) {
-            $this->addError('organizationId', 'Esta organizacion ha alcanzado el limite de blueprints.');
+            $this->addError('organizationId', __('blueprint.org_limit'));
             return;
         }
 
@@ -132,7 +132,7 @@ class BlueprintCreateForm extends Component
 
         // SEGURIDAD: Validar permisos via Policy
         if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
-            $this->addError('title', 'No tienes permisos para crear blueprints en esta organizacion.');
+            $this->addError('title', __('blueprint.no_create_permission'));
             return;
         }
 

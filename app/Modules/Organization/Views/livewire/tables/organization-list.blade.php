@@ -1,9 +1,9 @@
 <div>
     @if($organizations->isEmpty())
         <div class="text-center py-12">
-            <p class="text-gray-500 dark:text-gray-400 mb-4">No tienes organizaciones todavía.</p>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">{{ __('organization.list_empty') }}</p>
             <a href="{{ route('organizations.create') }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
-                Crea tu primera organización
+                {{ __('organization.list_empty_link') }}
             </a>
         </div>
     @else
@@ -28,7 +28,7 @@
                                 <div class="mt-2 sm:flex sm:justify-between">
                                     <div class="sm:flex">
                                         <p class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                            slug: {{ $organization->slug }}
+                                            {{ __('organization.slug_prefix') }}{{ $organization->slug }}
                                         </p>
                                     </div>
                                 </div>

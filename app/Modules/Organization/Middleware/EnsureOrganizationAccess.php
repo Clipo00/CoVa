@@ -20,11 +20,11 @@ class EnsureOrganizationAccess
         }
 
         if (!$organization) {
-            abort(404, 'Organización no encontrada.');
+            abort(404, __('organization.not_found'));
         }
 
         if (!auth()->user()->hasRoleInOrganization($organization, ['owner', 'maintainer', 'developer'])) {
-            abort(403, 'No tienes acceso a esta organización.');
+            abort(403, __('organization.no_access'));
         }
 
         return $next($request);

@@ -16,20 +16,20 @@ class AcceptInvitation
 
         if (!$invitation) {
             throw ValidationException::withMessages([
-                'token' => ['Invitación no encontrada.'],
+                'token' => [__('organization.invitation_not_found')],
             ]);
         }
 
         if (!$invitation->isValid()) {
             throw ValidationException::withMessages([
-                'token' => ['La invitación ha expirado o ya fue utilizada.'],
+                'token' => [__('organization.invitation_expired')],
             ]);
         }
 
         if ($user === null) {
             if ($invitation->email === null) {
                 throw ValidationException::withMessages([
-                    'token' => ['Se requiere un usuario para aceptar esta invitación.'],
+                    'token' => [__('organization.invitation_user_required')],
                 ]);
             }
 
@@ -37,7 +37,7 @@ class AcceptInvitation
 
             if (!$user) {
                 throw ValidationException::withMessages([
-                    'email' => ['No existe un usuario con este email.'],
+                    'email' => [__('organization.invitation_no_user')],
                 ]);
             }
         }

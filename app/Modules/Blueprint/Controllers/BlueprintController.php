@@ -69,14 +69,14 @@ class BlueprintController
             $requestedOrg = collect($userOrganizations)->firstWhere('slug', $requestedOrgSlug);
 
             if (!$requestedOrg) {
-                abort(403, 'Organización no autorizada.');
+                abort(403, __('blueprint.org_unauthorized'));
             }
 
             // Si la org específica no tiene cupo, redirigir a esa org con mensaje de error
             if (!$requestedOrg['hasAvailableSlots']) {
                 return redirect()
                     ->route('organizations.show', $requestedOrg['slug'])
-                    ->with('error', 'Esta organización ha alcanzado el límite de blueprints. Elimina un blueprint existente para crear uno nuevo.');
+                    ->with('error', __('blueprint.org_limit'));
             }
 
             $preselectedOrg = $requestedOrg['id'];
@@ -90,7 +90,7 @@ class BlueprintController
             if (!$hasAnyAvailable) {
                 return redirect()
                     ->route('dashboard')
-                    ->with('error', 'No tienes ninguna organización con cupo disponible para crear blueprints. Elimina un blueprint existente o actualiza tu plan.');
+                    ->with('error', __('blueprint.no_capacity'));
             }
         }
 
@@ -157,14 +157,14 @@ class BlueprintController
         
         // Authorize
         if (!auth()->user()->can('delete', $blueprint)) {
-            abort(403, 'No tienes permisos para eliminar este blueprint.');
+            abort(403, __('blueprint.no_delete_permission'));
         }
         
         $deleteBlueprint->execute($blueprint);
         
         return redirect()
             ->route('organizations.show', $blueprint->organization->slug)
-            ->with('success', 'Blueprint eliminado correctamente.');
+            ->with('success', __('blueprint.deleted_success'));
     }
 
     public function restore(string $uuid, RestoreBlueprint $restoreBlueprint): RedirectResponse
@@ -173,7 +173,7 @@ class BlueprintController
 
         // Authorize - only owner can restore
         if (!auth()->user()->isOwnerOf($blueprint->organization)) {
-            abort(403, 'No tienes permisos para restaurar este blueprint.');
+            abort(403, __('blueprint.no_restore_permission'));
         }
 
         try {
@@ -181,12 +181,12 @@ class BlueprintController
         } catch (MaxBlueprintsReachedException $e) {
             return redirect()
                 ->route('blueprints.deleted')
-                ->with('error', $e->getMessage() . ' Elimina un blueprint activo para poder recuperar este.');
+                ->with('error', __('blueprint.restore_limit_msg', ['message' => $e->getMessage()]));
         }
 
         return redirect()
             ->route('blueprints.show', $blueprint->uuid)
-            ->with('success', 'Blueprint restaurado correctamente.');
+            ->with('success', __('blueprint.restored_success'));
     }
 
     public function transfer(string $uuid, Request $request, TransferBlueprint $transferBlueprint): RedirectResponse
@@ -207,6 +207,6 @@ class BlueprintController
 
         return redirect()
             ->route('blueprints.show', $blueprint->fresh()->uuid)
-            ->with('success', 'Blueprint transferido correctamente.');
+            ->with('success', __('blueprint.transferred_success'));
     }
 }

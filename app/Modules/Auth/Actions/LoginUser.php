@@ -20,12 +20,21 @@ class LoginUser
 
         if (!Auth::attempt($credentials, $data->remember)) {
             throw ValidationException::withMessages([
-                'email' => ['Las credenciales proporcionadas no son correctas.'],
+                'email' => [__('auth.login_failed')],
             ]);
         }
 
         /** @var User $user */
         $user = Auth::user();
+
+        // Si el usuario eligió idioma como invitado (cookie) y no tiene locale en BD,
+        // guardarlo como preferencia permanente al loguearse
+        if (!$user->locale) {
+            $cookieLocale = request()->cookie('locale');
+            if ($cookieLocale && in_array($cookieLocale, ['es', 'en'], true)) {
+                $user->update(['locale' => $cookieLocale]);
+            }
+        }
 
         return $user;
     }

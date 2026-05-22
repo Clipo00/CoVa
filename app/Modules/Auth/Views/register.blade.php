@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
-@section('title', 'Registro')
-@section('subtitle', 'Crea tu cuenta gratuita')
+@section('title', __('auth.register_title'))
+@section('subtitle', __('auth.register_subtitle'))
 
 @section('content')
     <livewire:auth.forms.register-form />

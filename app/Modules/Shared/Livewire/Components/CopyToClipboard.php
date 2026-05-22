@@ -9,14 +9,14 @@ use Livewire\Component;
 class CopyToClipboard extends Component
 {
     public string $text;
-    public string $label = 'Copiar';
+    public string $label = '';
     public ?string $successMessage = null;
 
-    public function mount(string $text, string $label = 'Copiar', ?string $successMessage = null): void
+    public function mount(string $text, string $label = '', ?string $successMessage = null): void
     {
         $this->text = $text;
         $this->label = $label;
-        $this->successMessage = $successMessage ?? '¡Copiado!';
+        $this->successMessage = $successMessage ?? __('shared.copied');
     }
 
     public function copy(): void

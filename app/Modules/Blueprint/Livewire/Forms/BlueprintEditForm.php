@@ -95,7 +95,7 @@ class BlueprintEditForm extends Component
         $validated = $this->validate();
 
         if (!auth()->user()->can('update', $this->blueprint)) {
-            $this->addError('title', 'No tienes permisos para editar este blueprint.');
+            $this->addError('title', __('blueprint.no_edit_permission'));
             return;
         }
 
