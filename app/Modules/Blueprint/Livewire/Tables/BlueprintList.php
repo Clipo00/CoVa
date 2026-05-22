@@ -125,6 +125,7 @@ class BlueprintList extends Component
 
         return view('blueprint::livewire.tables.blueprint-list', [
             'blueprints' => $blueprints,
+            'activeFilterCount' => $this->activeFilterCount,
         ]);
     }
 }
