@@ -10,7 +10,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                 </svg>
-                Volver al Dashboard
+                {{ __('organization.back_to_dashboard') }}
             </a>
         </div>
 
@@ -39,17 +39,17 @@
                 <div class="mt-4 sm:mt-0 flex items-center space-x-3">
                     @can('update', $organization)
                         <a href="{{ route('organizations.edit', $organization->slug) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                            Editar
+                            {{ __('organization.edit_link') }}
                         </a>
                     @endcan
                     @can('delete', $organization)
-                        <form method="POST" action="{{ route('organizations.destroy', $organization->slug) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message: '¿Estás seguro de que quieres eliminar esta organización?\n\nEsta acción es reversible desde el dashboard.\n\nPara eliminar permanentemente, ve al dashboard después de eliminar.', onConfirm(){ f.submit(); }})">
+                        <form method="POST" action="{{ route('organizations.destroy', $organization->slug) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message: '{{ __('organization.delete_confirm') }}', onConfirm(){ f.submit(); }})">
                             @csrf
                             <button type="submit" class="inline-flex items-center px-4 py-2 border border-red-300 dark:border-red-700 shadow-sm text-sm font-medium rounded-md text-red-700 dark:text-red-300 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                 </svg>
-                                Eliminar
+                                {{ __('organization.delete_button') }}
                             </button>
                         </form>
                     @endcan
@@ -64,7 +64,7 @@
                         };
                     @endphp
                     <span class="px-3 py-1 text-sm font-medium rounded-full {{ $roleBadgeColors }}">
-                        {{ ucfirst($currentUserRole) }}
+                        {{ __('organization.role_' . $currentUserRole) }}
                     </span>
                 </div>
             </div>
@@ -73,26 +73,26 @@
         {{-- Stats / Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div class="bg-white shadow rounded-lg p-6">
-                <h3 class="text-sm font-medium text-gray-500 mb-2">Blueprints</h3>
+                <h3 class="text-sm font-medium text-gray-500 mb-2">{{ __('organization.blueprints_count') }}</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->blueprints()->count() }}</p>
                 <a href="{{ route('blueprints.index', ['org' => $organization->slug]) }}" class="mt-4 inline-block text-sm text-indigo-600 hover:text-indigo-800">
-                    Ver blueprints →
+                    {{ __('organization.view_blueprints') }}
                 </a>
             </div>
 
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Miembros</h3>
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ __('organization.members_count') }}</h3>
                 <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $organization->members()->count() }}</p>
                 <a href="{{ route('organizations.members', $organization->slug) }}" class="mt-4 inline-block text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300">
-                    Gestionar miembros →
+                    {{ __('organization.manage_members') }}
                 </a>
             </div>
 
             <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Plan</h3>
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ __('organization.plan_label') }}</h3>
                 <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $organization->plan->name }}</p>
                 <p class="mt-4 text-sm text-gray-400">
-                    {{ $maxBlueprints }} blueprints máx.
+                    {{ __('organization.max_blueprints_text', ['max' => $maxBlueprints]) }}
                 </p>
             </div>
         </div>
@@ -107,8 +107,10 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm text-yellow-700 dark:text-yellow-300">
-                            Has alcanzado el límite de <strong>{{ $maxBlueprints }} blueprints</strong> de tu plan <strong>{{ $organization->plan->name }}</strong>.
-                            Elimina un blueprint existente para poder crear uno nuevo.
+                            {!! __('organization.limit_warning', ['max' => $maxBlueprints, 'plan' => '<strong>' . e($organization->plan->name) . '</strong>']) !!}
+                        </p>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-300">
+                            {{ __('organization.limit_hint') }}
                         </p>
                     </div>
                 </div>
@@ -118,10 +120,10 @@
         {{-- Recent Blueprints --}}
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Blueprints recientes</h2>
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('organization.recent_blueprints') }}</h2>
                 @if($canCreateBlueprint)
                     <a href="{{ route('blueprints.create', ['org' => $organization->slug]) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm hover:bg-indigo-700">
-                        + Nuevo Blueprint
+                        {{ __('organization.new_blueprint_button') }}
                     </a>
                 @else
                     <div class="text-right">
@@ -129,7 +131,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                             </svg>
-                            Límite alcanzado
+                            {{ __('organization.limit_reached') }}
                         </span>
                     </div>
                 @endif
@@ -137,10 +139,10 @@
 
             @if($organization->blueprints()->count() === 0)
                 <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                    <p>No hay blueprints todavía.</p>
+                    <p>{{ __('organization.no_blueprints') }}</p>
                     @if($canCreateBlueprint)
                         <a href="{{ route('blueprints.create', ['org' => $organization->slug]) }}" class="mt-2 inline-block text-indigo-600 hover:text-indigo-800">
-                            Crea el primer blueprint
+                            {{ __('organization.create_first_blueprint') }}
                         </a>
                     @endif
                 </div>
