@@ -81,7 +81,12 @@ class BlueprintList extends Component
 
     public function getCategoriesProperty()
     {
+        $userOrgIds = auth()->user()->organizations()->pluck('organizations.id');
+
         return Category::select('id', 'name')
+            ->whereHas('blueprints', function ($query) use ($userOrgIds) {
+                $query->whereIn('organization_id', $userOrgIds);
+            })
             ->orderBy('name')
             ->get();
     }
