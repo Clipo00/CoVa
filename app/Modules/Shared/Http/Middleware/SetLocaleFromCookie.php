@@ -8,8 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SetLocaleFromCookie
 {
-    private const SUPPORTED_LOCALES = ['es', 'en'];
-
     /**
      * Handle an incoming request.
      *
@@ -23,6 +21,7 @@ class SetLocaleFromCookie
     public function handle(Request $request, Closure $next): Response
     {
         $locale = null;
+        $supported = config('app.supported_locales', ['es', 'en']);
 
         // 1. Usuario autenticado → priorizar su preferencia en BD
         if ($request->user()?->locale) {
@@ -35,7 +34,7 @@ class SetLocaleFromCookie
         }
 
         // 3. Default de configuración
-        if (!$locale || !in_array($locale, self::SUPPORTED_LOCALES, true)) {
+        if (!$locale || !in_array($locale, $supported, true)) {
             $locale = config('app.locale', 'es');
         }
 

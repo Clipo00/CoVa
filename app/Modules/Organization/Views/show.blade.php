@@ -107,7 +107,7 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm text-yellow-700 dark:text-yellow-300">
-                            {!! __('organization.limit_warning', ['max' => $maxBlueprints, 'plan' => '<strong>' . e($organization->plan->name) . '</strong>']) !!}
+                            {!! __('organization.limit_warning', ['max' => $maxBlueprints, 'plan' => e($organization->plan->name)]) !!}
                         </p>
                         <p class="text-sm text-yellow-700 dark:text-yellow-300">
                             {{ __('organization.limit_hint') }}

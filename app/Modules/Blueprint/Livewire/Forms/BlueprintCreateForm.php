@@ -132,7 +132,7 @@ class BlueprintCreateForm extends Component
 
         // SEGURIDAD: Validar permisos via Policy
         if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
-            $this->addError('title', __('blueprint.no_edit_permission'));
+            $this->addError('title', __('blueprint.no_create_permission'));
             return;
         }
 

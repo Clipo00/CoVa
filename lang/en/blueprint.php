@@ -159,6 +159,7 @@ return [
     'no_restore_permission' => 'You do not have permission to restore this blueprint.',
     'restore_limit_msg' => ':message Delete an active blueprint to restore this one.',
     'no_edit_permission' => 'You do not have permission to edit this blueprint.',
+    'no_create_permission' => 'You do not have permission to create blueprints in this organization.',
     'unique_variable_keys' => 'Variable keys must be unique.',
     'invalid_org_data' => 'Invalid organization data.',
 
@@ -166,7 +167,6 @@ return [
     'transfer_not_owner' => 'Only the owner can transfer blueprints.',
     'transfer_not_owner_target' => 'You can only transfer to organizations where you are the owner.',
     'transfer_same_org' => 'You cannot transfer a blueprint to the same organization.',
-    'transfer_select_org' => 'Select a target organization',
     'transfer_select_org' => 'Select a target organization',
     'transfer_slug_exists' => "A blueprint with the slug ':slug' already exists in the target organization. Rename the blueprint before transferring.",
 

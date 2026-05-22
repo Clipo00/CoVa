@@ -73,6 +73,15 @@
   - Afecta: dashboard, org show, org list, org members (antes usaban colores inconsistentes)
 - **Badge de categoría**: blueprint-list y favorites ahora muestran badge consistente (gray neutral)
 - **Toast handler**: timeout ahora captura `id` local en vez de `$event.detail.id` inexistente
+- **Copilot Review fixes** (PR #8):
+  - **XSS en dashboard**: `$plan->name` escapado con `e()` en `{!! __('dashboard.plan_limit_warning') !!}` — raw output sin escape permitía inyección HTML si el nombre del plan contenía código malicioso
+  - **Nested `<strong>` en Organization show**: se pasaba `<strong>PlanName</strong>` como placeholder `:plan`, pero la traducción ya envolvía `:plan` en `<strong>` — resultado: `<strong><strong>PlanName</strong></strong>`. Se eliminó el `<strong>` del view, la traducción lo agrega
+  - **Blank toast en CopyToClipboard**: cuando no se pasaba `successMessage`, el componente enviaba `dispatch('notify', message: '')` → toast vacío. Ahora defaulta a `__('shared.copied')`
+  - **Misleading permission key en BlueprintCreateForm**: usaba `no_edit_permission` en un flujo de creación. Nueva key `no_create_permission` en EN y ES
+  - **Duplicate key `transfer_select_org`** en `lang/en/blueprint.php` — la segunda entrada sobrescribía silenciosamente a la primera
+  - **Open redirect en ruta locale**: `redirect()->back()` usaba header `Referer` directamente — permitía redirigir a URLs externas maliciosas. Se reemplazó por `url()->previous()` con validación same-origin
+  - **Hardcoded locales en ruta y middleware**: `['es', 'en']` hardcodeado en `routes/web.php` y `SetLocaleFromCookie::SUPPORTED_LOCALES` — ahora leen de `config('app.supported_locales')`
+  - **`free_plan_missing` en inglés en `lang/es/auth.php`**: traducido al español rioplatense
 
 ### Fixed
 - **Toasts que nunca se borraban**: `setTimeout` filtraba por `$event.detail.id` (undefined) en vez del `id` local del toast — los toasts se acumulaban para siempre

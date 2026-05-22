@@ -143,7 +143,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">
-                                {!! __('dashboard.plan_limit_warning', ['plan' => $plan->name]) !!}
+                                {!! __('dashboard.plan_limit_warning', ['plan' => e($plan->name)]) !!}
                                 <a href="#" class="font-medium underline text-yellow-700 hover:text-yellow-600">
                                     {{ __('dashboard.upgrade_plan') }}
                                 </a>

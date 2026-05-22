@@ -45,5 +45,5 @@ return [
     'login_failed' => 'Las credenciales proporcionadas no son correctas.',
     'wrong_password' => 'La contraseña actual es incorrecta',
     'profile_updated' => 'Perfil actualizado correctamente',
-    'free_plan_missing' => 'Free plan does not exist. Run database seeders.',
+    'free_plan_missing' => 'El plan gratuito no existe. Ejecutá los seeders de la base de datos.',
 ];

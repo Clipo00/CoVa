@@ -16,7 +16,7 @@ class CopyToClipboard extends Component
     {
         $this->text = $text;
         $this->label = $label;
-        $this->successMessage = $successMessage ?? '';
+        $this->successMessage = $successMessage ?? __('shared.copied');
     }
 
     public function copy(): void

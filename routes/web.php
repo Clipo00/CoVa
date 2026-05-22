@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/locale/{locale}', function (string $locale) {
-    if (!in_array($locale, ['es', 'en'], true)) {
+    if (!in_array($locale, config('app.supported_locales', ['es', 'en']), true)) {
         abort(404);
     }
 
@@ -18,8 +18,15 @@ Route::get('/locale/{locale}', function (string $locale) {
         auth()->user()->update(['locale' => $locale]);
     }
 
+    // Prevenir open redirect: solo redirigir a URLs del mismo origen
+    $back = url()->previous();
+    $baseUrl = url('/');
+    if (!str_starts_with($back, $baseUrl)) {
+        $back = $baseUrl;
+    }
+
     // Cookie forever (5 años) adjuntada DIRECTAMENTE a la respuesta de redirección
-    return redirect()->back()->withCookie(cookie()->forever('locale', $locale));
+    return redirect()->to($back)->withCookie(cookie()->forever('locale', $locale));
 })->name('locale.set');
 
 Route::middleware('auth')->get('/dashboard', function () {

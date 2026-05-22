@@ -160,6 +160,7 @@ return [
     'no_restore_permission' => 'No tenés permisos para restaurar este blueprint.',
     'restore_limit_msg' => ':message Eliminá un blueprint activo para poder recuperar este.',
     'no_edit_permission' => 'No tenés permisos para editar este blueprint.',
+    'no_create_permission' => 'No tenés permisos para crear blueprints en esta organización.',
     'unique_variable_keys' => 'Las keys de las variables deben ser únicas.',
     'invalid_org_data' => 'Datos de organización inválidos.',
 
