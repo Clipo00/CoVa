@@ -37,7 +37,18 @@ return [
     'search_placeholder' => 'Search blueprints...',
     'list_empty' => 'No blueprints.',
     'list_empty_link' => 'Create the first one',
+    'list_empty_filtered' => 'No blueprints match the current filters. Try adjusting or clearing them.',
     'delete_tooltip' => 'Delete blueprint',
+    'filter_button' => 'Filters',
+    'filter_organizations' => 'Organization',
+    'filter_categories' => 'Category',
+    'filter_marketplace' => 'Marketplace (coming soon)',
+    'filter_clear_all' => 'Clear all',
+    'filter_count' => ':count active',
+    'filter_preserve' => 'Save filters',
+    'filter_preserve_hint' => 'Remember filters for next time',
+    'filter_tag_org' => 'Org: :name',
+    'filter_tag_cat' => 'Cat: :name',
 
     // Show
     'back_to_dashboard' => 'Back to Dashboard',

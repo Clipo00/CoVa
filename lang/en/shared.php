@@ -8,6 +8,8 @@ return [
     'copy_error' => 'Error copying:',
     'clipboard_fallback' => 'Fallback for browsers that do not support clipboard API',
     'understood' => 'Got it',
+    'no_results' => 'No results',
+    'remove_filter' => 'Remove :filter filter',
 
     // Locale Switcher
     'locale' => 'Language',

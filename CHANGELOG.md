@@ -10,6 +10,17 @@
 ## [Unreleased]
 
 ### Added
+- **🔍 Blueprint filters** — sistema de filtros por organización y categoría en el listado de blueprints:
+  - Botón de filtro con icono de funnel y badge con cantidad de filtros activos
+  - Dropdown con checkboxes para seleccionar organizaciones y categorías
+  - Tags de filtros activos con botón individual para remover cada uno
+  - Botón "Clear all" para limpiar todos los filtros de una vez
+  - Checkbox "Save filters" que persiste los filtros activos en localStorage por usuario
+  - El buscador de texto funciona sobre el conjunto de resultados ya filtrados
+  - Mensaje diferenciado cuando no hay resultados vs. cuando no hay blueprints
+  - Dropdown con transiciones, cierre al hacer click fuera y tecla Escape
+  - Accesibilidad: `aria-label`, `aria-expanded`, `aria-controls`, `role="region"`, `aria-live="polite"` en tags
+  - Seguridad: IDs de organizaciones validados contra las organizaciones del usuario
 - **🌐 Internacionalización (i18n) completa** — sistema multi-idioma español/inglés:
   - 339 keys de traducción en ES (español rioplatense con voseo) y EN (inglés)
   - Archivos lang organizados por módulo: `auth`, `blueprint`, `organization`, `dashboard`, `layouts`, `errors`, `shared`, `welcome`
