@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Favoritos')
+@section('title', __('blueprint.favorites_title'))
 
 @section('content')
     <div class="max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Blueprints Favoritos</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('blueprint.favorites_heading') }}</h1>
             <span class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                {{ $favoriteBlueprints->count() }} favoritos
+                {{ __('blueprint.favorites_count', ['count' => $favoriteBlueprints->count()]) }}
             </span>
         </div>
 
@@ -16,10 +16,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No tienes favoritos</h3>
-                <p class="text-gray-500 mb-4">Marca blueprints como favoritos para acceder rápidamente a ellos.</p>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">{{ __('blueprint.favorites_empty') }}</h3>
+                <p class="text-gray-500 mb-4">{{ __('blueprint.favorites_empty_desc') }}</p>
                 <a href="{{ route('blueprints.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 hover:bg-indigo-200 dark:hover:bg-indigo-700">
-                    Explorar Blueprints
+                    {{ __('blueprint.explore_blueprints') }}
                 </a>
             </div>
         @else
@@ -52,8 +52,8 @@
                                 <div class="ml-4 flex-shrink-0 flex items-center space-x-3">
                                     <livewire:shared.copy-to-clipboard 
                                         :text="$blueprint->uuid" 
-                                        label="UUID"
-                                        success-message="UUID copiado"
+                                        :label="__('blueprint.uuid_label')"
+                                        :success-message="__('blueprint.uuid_copied_short')"
                                     />
                                     <span class="text-xs text-gray-400">
                                         {{ $blueprint->created_at->diffForHumans() }}

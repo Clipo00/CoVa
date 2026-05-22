@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Nuevo Blueprint')
+@section('title', __('blueprint.create_title'))
 
 @section('content')
     <div class="max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6">Crear Blueprint</h1>
+        <h1 class="text-2xl font-bold mb-6">{{ __('blueprint.create_heading') }}</h1>
 
         @if(session('error'))
             <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">

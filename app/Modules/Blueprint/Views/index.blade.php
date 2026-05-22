@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Blueprints')
+@section('title', __('blueprint.page_title'))
 
 @section('content')
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Blueprints</h1>
+            <h1 class="text-2xl font-bold">{{ __('blueprint.heading') }}</h1>
             @if($hasAvailableOrg)
                 <a href="{{ route('blueprints.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                    Nuevo Blueprint
+                    {{ __('blueprint.new_button') }}
                 </a>
             @else
                 <div class="relative group">
@@ -16,10 +16,10 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                         </svg>
-                        Nuevo Blueprint
+                        {{ __('blueprint.new_button') }}
                     </span>
                     <div class="absolute right-0 mt-2 w-64 bg-gray-800 text-white text-xs rounded py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                        Todas tus organizaciones han alcanzado el limite de blueprints. Elimina uno existente o actualiza tu plan.
+                        {{ __('blueprint.all_orgs_limit') }}
                     </div>
                 </div>
             @endif
