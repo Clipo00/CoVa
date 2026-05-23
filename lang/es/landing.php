@@ -8,9 +8,9 @@ return [
     'register' => 'Registrarse',
 
     // Hero
-    'hero_title' => 'Olvidate de copiar tus configuraciones de un lado a otro',
-    'hero_subtitle' => 'CoVa es tu vault de configuraciones. Definí, publicá y ejecutá <strong>vault fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
-    'cta_primary' => 'Comenzá Gratis',
+    'hero_title' => 'Olvídate de copiar tus configuraciones de un lado a otro',
+    'hero_subtitle' => 'CoVa es tu vault de configuraciones. Define, publica y ejecuta <strong>vault fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
+    'cta_primary' => 'Empieza gratis',
     'cta_secondary' => 'Ver cómo funciona',
 
     // Pain Point
@@ -25,14 +25,14 @@ return [
     // How it Works
     'how_title' => 'De la idea al entorno en 3 pasos',
     'step1_title' => 'Crea tu Blueprint',
-    'step1_desc' => 'Definí variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal.',
-    'step2_title' => 'Publicá o guardalo',
-    'step2_desc' => 'Mantenelo privado para tu organización o compartilo en el Marketplace para que la comunidad lo use.',
-    'step3_title' => 'Ejecutá vault fetch',
+    'step1_desc' => 'Define variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal.',
+    'step2_title' => 'Publícalo o guárdalo',
+    'step2_desc' => 'Mantenlo privado para tu organización o compártelo en el Marketplace para que la comunidad lo use.',
+    'step3_title' => 'Ejecuta vault fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar.',
 
     // Marketplace
-    'marketplace_title' => 'Empezá con una plantilla lista para usar',
+    'marketplace_title' => 'Empieza con una plantilla lista para usar',
     'marketplace_cta' => 'Explorar el Marketplace →',
 
     // Marketplace cards (mock data)
@@ -69,8 +69,8 @@ return [
     'badge_cova_team' => 'CoVa Team',
 
     // CTA Final
-    'cta_final_title' => 'Empezá a ahorrar tiempo hoy',
-    'cta_final_subtitle' => 'Registrate gratis y creá tu primer blueprint en menos de 5 minutos.',
+    'cta_final_title' => 'Empieza a ahorrar tiempo hoy',
+    'cta_final_subtitle' => 'Regístrate gratis y crea tu primer blueprint en menos de 5 minutos.',
     'cta_final_button' => 'Crear cuenta gratis',
     'cta_final_note' => 'No requiere tarjeta de crédito. Plan gratuito disponible.',
 
