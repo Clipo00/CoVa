@@ -69,11 +69,11 @@
             @endphp
 
             @foreach ($blueprints as $blueprint)
-                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200/60 dark:border-gray-700/60 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-default" x-data x-reveal>
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200/60 dark:border-gray-700/60 hover:shadow-lg hover:-translate-y-1 focus-visible:shadow-lg focus-visible:-translate-y-1 transition-all duration-200 cursor-default focus:outline-none" tabindex="0" role="article" x-data x-reveal>
                     {{-- Card header --}}
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-xl {{ $blueprint['icon_color'] }} flex items-center justify-center font-bold text-sm">
+                            <span class="w-10 h-10 rounded-xl {{ $blueprint['icon_color'] }} flex items-center justify-center font-bold text-sm" aria-hidden="true">
                                 {{ $blueprint['icon'] }}
                             </span>
                             <div>
@@ -88,14 +88,14 @@
                     </div>
 
                     {{-- Description --}}
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
                         {{ __("landing.{$blueprint['desc_key']}") }}
                     </p>
 
                     {{-- Footer stats --}}
-                    <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 pt-4 border-t border-gray-100 dark:border-gray-700/50">
+                    <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-4 border-t border-gray-100 dark:border-gray-700/50">
                         <span class="flex items-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                             </svg>
                             {{ __("landing.{$blueprint['downloads_key']}") }}
@@ -108,11 +108,11 @@
 
         {{-- Marketplace CTA --}}
         <div class="text-center mt-12" x-data x-reveal>
-            <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">
+            <p class="text-gray-600 dark:text-gray-400 mb-4 text-sm">
                 {{ __('landing.marketplace_more') }}
             </p>
             <a href="{{ route('register') }}"
-               class="inline-flex items-center px-6 py-3 text-base font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-xl transition-all">
+               class="inline-flex items-center px-6 py-3 text-base font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">
                 {{ __('landing.marketplace_cta') }}
             </a>
         </div>

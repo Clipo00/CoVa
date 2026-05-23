@@ -10,29 +10,29 @@
                     </svg>
                     <span>{{ config('app.name', 'CoVa') }}</span>
                 </a>
-                <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {{ __('landing.footer_tagline') }}
                 </p>
             </div>
 
             {{-- Links --}}
             <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-4">
                     {{ __('landing.footer_product') }}
                 </h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="#how-it-works" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        <a href="#how-it-works" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
                             {{ __('landing.cta_secondary') }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
                             {{ __('landing.footer_links_register') }}
                         </a>
                     </li>
                     <li>
-                        <span class="text-sm text-gray-400 dark:text-gray-500 cursor-default">
+                        <span class="text-sm text-gray-500 dark:text-gray-400 cursor-default">
                             {{ __('landing.footer_links_marketplace') }}
                         </span>
                     </li>
@@ -41,17 +41,17 @@
 
             {{-- Account --}}
             <div>
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-4">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-4">
                     {{ __('landing.footer_account') }}
                 </h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
                             {{ __('landing.footer_links_login') }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
                             {{ __('landing.footer_links_register') }}
                         </a>
                     </li>
