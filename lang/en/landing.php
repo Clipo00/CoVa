@@ -8,15 +8,15 @@ return [
     'register' => 'Register',
 
     // Hero
-    'hero_title' => "Stop copying .env files from one Slack to another",
-    'hero_subtitle' => "CoVa is your configuration vault. Define, publish, and run <strong>vault fetch</strong>. Your environment is ready in seconds.",
+    'hero_title' => "Stop copying your configs from one place to another",
+    'hero_subtitle' => "CoVa is your configuration vault. Define, publish, and run <strong>vault fetch</strong>. Your environment is ready in seconds, no matter the stack.",
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',
 
     // Pain Point
     'pain_title' => 'Does this sound familiar?',
-    'pain_env_title' => '.env chaos',
-    'pain_env_desc' => 'Sharing variables through Slack, losing track of history, never knowing which version is the right one…',
+    'pain_env_title' => 'Scattered configs',
+    'pain_env_desc' => 'Sharing configs through Slack, losing track of history, never knowing which version is the right one…',
     'pain_config_title' => 'Configuring from scratch',
     'pain_config_desc' => 'Every new project means hours setting up the same agent.md, the same Cursor rules, the same base files.',
     'pain_standards_title' => 'No standardization',
