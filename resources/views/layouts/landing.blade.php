@@ -98,6 +98,7 @@
 
                 <!-- Right side -->
                 <div class="flex items-center space-x-3">
+                    <livewire:shared.theme-toggle />
                     <x-locale-switcher />
 
                     @if (Route::has('login'))
