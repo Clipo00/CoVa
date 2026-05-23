@@ -11,10 +11,10 @@
 
 | Ruta | Nombre | Descripción | Layout |
 |------|--------|-------------|--------|
-| `/` | Home | Landing page (futuro, actualmente redirect a login) | Guest |
-| `/login` | Login | Formulario de inicio de sesión | Guest |
-| `/register` | Register | Formulario de registro | Guest |
-| `/invitations/{token}/accept` | Accept Invitation | Aceptar invitación a org | Guest |
+| `/` | Home | Landing page con hero, pain point, how it works, marketplace preview y CTA | Landing |
+| `/login` | Login | Formulario de inicio de sesión | Auth |
+| `/register` | Register | Formulario de registro | Auth |
+| `/invitations/{token}/accept` | Accept Invitation | Aceptar invitación a org | Auth |
 
 ### 1.2 Páginas Autenticadas (Auth Layout)
 

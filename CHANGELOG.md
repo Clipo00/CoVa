@@ -38,6 +38,18 @@
   - Visible en auth layout (fixed top-right) y app layout (topbar junto a ThemeToggle)
 - **💾 Persistencia de idioma en BD** — preferencia de usuario guardada en `users.locale`:
   - Migración `add_locale_to_users_table` — columna `locale` nullable
+- **🏠 Landing Page** — nueva home de alto impacto que comunica ahorro de tiempo y seguridad:
+  - Hero con terminal animada ejecutando `vault fetch` (Alpine.js typing animation)
+  - Sección "Pain Point": 3 cards sobre el caos de compartir .env por Slack
+  - Sección "How it Works": 3 pasos (Define → Publish → Fetch) con conectores visuales
+  - Marketplace Preview: grid con 6 plantillas populares (mock data)
+  - CTA final con botón "Create free account" hacia registro
+  - Layout dedicado `layouts/landing.blade.php` (sin nav de dashboard)
+  - Scroll reveal con IntersectionObserver + Alpine.js directive
+  - Respeto total de `prefers-reduced-motion`
+  - SEO meta tags y Open Graph
+  - 20 traducciones ES/EN en nuevo archivo `lang/{es,en}/landing.php`
+  - Bundle JS: 0.31KB (0.22KB gzipped)
   - `SetLocaleFromCookie` prioriza: BD > cookie > config default
   - Al cambiar idioma autenticado → se guarda en BD
   - Al registrarse → hereda locale de la cookie
