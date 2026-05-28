@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', __('landing.hero_title'))
+@section('title', __('landing.site_title'))
 
 @section('content')
     {{-- Hero Section --}}
