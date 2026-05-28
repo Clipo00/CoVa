@@ -70,7 +70,7 @@
                     {{-- Dashboard content --}}
                     <div class="flex-1 p-6 overflow-hidden">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Dashboard</h3>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ __('landing.demo_dash_title') }}</h3>
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
                                     <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400">AM</span>
@@ -81,15 +81,15 @@
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                                 <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">3</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Organizaciones</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_orgs') }}</p>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                                 <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">12</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Blueprints</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_blueprints') }}</p>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                                 <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">5</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">Variables</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_vars') }}</p>
                             </div>
                         </div>
                         {{-- Org cards --}}
@@ -98,21 +98,21 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-sm font-bold text-indigo-600 dark:text-indigo-400">M</div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Mi Empresa</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">8 blueprints</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('landing.demo_dash_org_name') }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_org_blueprints', ['count' => 8]) }}</p>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 text-xs rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">Pro</span>
+                                <span class="px-2 py-0.5 text-xs rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">{{ __('landing.demo_plan_pro') }}</span>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-sm font-bold text-emerald-600 dark:text-emerald-400">P</div>
                                     <div>
-                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Proyecto Personal</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">4 blueprints</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('landing.demo_dash_personal') }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_org_blueprints', ['count' => 4]) }}</p>
                                     </div>
                                 </div>
-                                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300">Free</span>
+                                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300">{{ __('landing.demo_plan_free') }}</span>
                             </div>
                         </div>
                     </div>
@@ -145,47 +145,47 @@
                     {{-- Form content --}}
                     <div class="flex-1 p-6 overflow-hidden">
                         <div class="max-w-md mx-auto">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Crear Organización</h3>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">{{ __('landing.demo_org_title') }}</h3>
 
                             <div class="space-y-4">
                                 {{-- Name field --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre de la organización</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_org_name_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
-                                        Mi Empresa
+                                        {{ __('landing.demo_org_name_placeholder') }}
                                     </div>
                                 </div>
 
                                 {{-- Slug field --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Slug (URL)</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_org_slug_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                        mi-empresa
+                                        {{ __('landing.demo_org_slug_placeholder') }}
                                     </div>
-                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Se genera automáticamente desde el nombre</p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_org_slug_help') }}</p>
                                 </div>
 
                                 {{-- Plan selector --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Plan</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('landing.demo_org_plan_label') }}</label>
                                     <div class="space-y-2">
                                         <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-700 border-2 border-indigo-500 rounded-lg">
                                             <div class="w-5 h-5 rounded-full border-2 border-indigo-500 flex items-center justify-center">
                                                 <div class="w-2.5 h-2.5 rounded-full bg-indigo-500"></div>
                                             </div>
                                             <div class="flex-1">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Pro</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">25 blueprints · 50 miembros</p>
+                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('landing.demo_plan_pro') }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_org_plan_pro_desc') }}</p>
                                             </div>
-                                            <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400">$19/mes</span>
+                                            <span class="text-xs font-medium text-indigo-600 dark:text-indigo-400">{{ __('landing.demo_org_plan_pro_price') }}</span>
                                         </div>
                                         <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg opacity-60">
                                             <div class="w-5 h-5 rounded-full border-2 border-gray-300"></div>
                                             <div class="flex-1">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">Free</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">3 blueprints · 5 miembros</p>
+                                                <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('landing.demo_plan_free') }}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_org_plan_free_desc') }}</p>
                                             </div>
-                                            <span class="text-xs font-medium text-gray-500">Gratis</span>
+                                            <span class="text-xs font-medium text-gray-500">{{ __('landing.demo_org_plan_free_price') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +193,7 @@
                                 {{-- Submit button --}}
                                 <div class="pt-4">
                                     <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg text-center opacity-90">
-                                        Crear Organización
+                                        {{ __('landing.demo_org_submit') }}
                                     </div>
                                 </div>
                             </div>
@@ -231,53 +231,53 @@
                             {{-- Left: Form --}}
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_title_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
-                                        Laravel + Inertia + Tailwind
+                                        {{ __('landing.demo_bp_title_placeholder') }}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_desc_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                        Stack completo para proyectos modernos...
+                                        {{ __('landing.demo_bp_desc_placeholder') }}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoría</label>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_cat_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                        Fullstack
+                                        {{ __('landing.demo_bp_cat_placeholder') }}
                                     </div>
                                 </div>
 
                                 <div class="pt-2">
                                     <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg text-center opacity-90">
-                                        Crear Blueprint
+                                        {{ __('landing.demo_bp_submit') }}
                                     </div>
                                 </div>
                             </div>
 
                             {{-- Right: Variables preview --}}
                             <div class="border-l border-gray-200 dark:border-gray-600 pl-6">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Variables de Entorno</h4>
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('landing.demo_bp_vars_title') }}</h4>
                                 
                                 {{-- Group: .env --}}
                                 <div class="mb-3">
                                     <div class="flex items-center gap-1.5 mb-1.5">
                                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">.env</span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_env') }}</span>
                                     </div>
                                     <div class="space-y-1 pl-3.5 border-l-2 border-emerald-200 dark:border-emerald-800/50">
                                         <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_HOST</span>
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_host') }}</span>
                                             <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">localhost</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_localhost') }}</span>
                                         </div>
                                         <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_DATABASE</span>
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_db') }}</span>
                                             <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">myapp</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_myapp') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -286,13 +286,13 @@
                                 <div class="mb-3">
                                     <div class="flex items-center gap-1.5 mb-1.5">
                                         <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">.env.testing</span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_testing') }}</span>
                                     </div>
                                     <div class="space-y-1 pl-3.5 border-l-2 border-blue-200 dark:border-blue-800/50">
                                         <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_DATABASE</span>
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_db') }}</span>
                                             <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">myapp_test</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_test') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -301,23 +301,23 @@
                                 <div class="mb-3">
                                     <div class="flex items-center gap-1.5 mb-1.5">
                                         <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">config/app.php</span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_config') }}</span>
                                     </div>
                                     <div class="space-y-1 pl-3.5 border-l-2 border-amber-200 dark:border-amber-800/50">
                                         <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">APP_NAME</span>
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_app_name') }}</span>
                                             <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">MyApp</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_app') }}</span>
                                         </div>
                                         <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">APP_KEY</span>
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_app_key') }}</span>
                                             <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-500">••••••••</span>
+                                            <span class="text-xs text-gray-500">{{ __('landing.demo_bp_var_value_hidden') }}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">5 variables en 3 ficheros</p>
+                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_bp_vars_count') }}</p>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
-@props(['class' => ''])
+@props(['class' => '', 'lines' => null])
 
 <div {{ $attributes->merge(['class' => 'bg-gray-900 dark:bg-gray-950 rounded-xl border border-gray-700/50 shadow-2xl overflow-hidden ' . $class]) }}
-     x-data="terminal"
+     x-data="terminal({{ $lines ?? 'null' }})"
      role="region"
      aria-label="{{ __('landing.terminal_aria_label') }}"
 >

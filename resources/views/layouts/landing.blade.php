@@ -168,13 +168,13 @@
     <script>
         document.addEventListener('alpine:init', () => {
             // Terminal component
-            Alpine.data('terminal', () => ({
+            Alpine.data('terminal', (customLines = null) => ({
                 lines: [],
                 currentLine: 0,
                 currentChar: 0,
                 finished: false,
                 running: false,
-                content: [
+                content: customLines || [
                     { text: '$ vault fetch cova-marketplace/laravel-inertia', cls: 'terminal-prompt' },
                     { text: '', cls: '' },
                     { text: '> Descargando blueprint...', cls: 'terminal-info' },

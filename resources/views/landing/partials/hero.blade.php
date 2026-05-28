@@ -51,7 +51,18 @@
 
             {{-- Right: Terminal animation --}}
             <div class="w-full max-w-lg mx-auto lg:mx-0" x-data x-cloak>
-                <x-animated-terminal class="w-full" />
+                <x-animated-terminal
+                    class="w-full"
+                    :lines="json_encode([
+                        ['text' => __('landing.terminal_cmd_fetch'), 'cls' => 'terminal-prompt'],
+                        ['text' => '', 'cls' => ''],
+                        ['text' => __('landing.terminal_downloading'), 'cls' => 'terminal-info'],
+                        ['text' => __('landing.terminal_variables'), 'cls' => 'terminal-info'],
+                        ['text' => __('landing.terminal_files'), 'cls' => 'terminal-info'],
+                        ['text' => '', 'cls' => ''],
+                        ['text' => __('landing.terminal_ready'), 'cls' => 'terminal-success'],
+                    ])"
+                />
 
                 {{-- Terminal caption --}}
                 <p class="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
