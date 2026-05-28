@@ -10,6 +10,17 @@
 ## [Unreleased]
 
 ### Added
+- **🎨 Rediseño de formularios de Blueprint** — create/edit ahora tienen UI moderna y amigable:
+  - Layout de dos columnas para título/slug y categoría/descripción
+  - Cards con bordes redondeados (rounded-2xl), sombras suaves y bordes sutiles
+  - Headers de sección con iconos coloridos (información, variables, tabs)
+  - Inputs con estilo rounded-xl y focus rings suaves
+  - Selects con flecha custom y apariencia mejorada
+  - Botón de submit con sombra y efecto hover scale
+  - Layout más amplio (max-w-4xl) para mejor aprovechamiento del espacio
+  - Breadcrumbs rediseñados con iconos de flecha
+  - Header con icono descriptivo y subtítulo
+  - Nueva traducción `blueprint.create_description`
 - **🖥️ Demo Section en Landing** — carousel de demostración con 3 pantallas rotatorias:
   - Dashboard con organizaciones y estadísticas
   - Formulario de crear organización con selector de plan

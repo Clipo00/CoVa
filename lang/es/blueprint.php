@@ -11,6 +11,7 @@ return [
     // Create
     'create_title' => 'Nuevo Blueprint',
     'create_heading' => 'Crear Blueprint',
+    'create_description' => 'Define las variables, archivos y configuraciones de tu entorno.',
 
     // Create/Edit form
     'general_info' => 'Información General',
