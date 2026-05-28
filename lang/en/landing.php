@@ -94,6 +94,40 @@ return [
     // Marketplace extra
     'marketplace_more' => 'and many more templates created by the community',
 
+    // Pricing
+    'nav_pricing' => 'Pricing',
+    'pricing_title' => 'Simple, transparent pricing',
+    'pricing_subtitle' => 'Start free and scale as your team grows. No surprises, no credit card required.',
+    'pricing_note' => 'All prices in euros (EUR). Enterprise plan requires prior contact.',
+
+    'plan_free_desc' => 'To get started with CoVa',
+    'plan_pro_desc' => 'For growing teams',
+    'plan_enterprise_desc' => 'For large organizations',
+    'plan_price_free' => 'free',
+    'plan_price_month' => '/month',
+    'plan_price_custom' => 'Contact us',
+
+    'plan_orgs' => ':count organizations',
+    'plan_orgs_unlimited' => 'Unlimited organizations',
+    'plan_blueprints' => ':count blueprints/org',
+    'plan_blueprints_unlimited' => 'Unlimited blueprints',
+    'plan_members' => ':count members/org',
+    'plan_members_unlimited' => 'Unlimited members',
+    'plan_variables' => ':count variables/blueprint',
+    'plan_variables_unlimited' => 'Unlimited variables',
+
+    'plan_marketplace_browse' => 'Browse Marketplace',
+    'plan_api_access' => 'API Access',
+    'plan_marketplace_publish' => 'Publish to Marketplace',
+    'plan_priority_support' => 'Priority Support',
+    'plan_dedicated_support' => 'Dedicated Support',
+    'plan_sso' => 'SSO / SAML',
+
+    'plan_cta_free' => 'Start for free',
+    'plan_cta_pro' => 'Try Pro 14 days',
+    'plan_cta_enterprise' => 'Contact sales',
+    'plan_popular' => 'Most popular',
+
     // Footer
     'footer_tagline' => 'Configurations that travel with you.',
     'footer_product' => 'Product',

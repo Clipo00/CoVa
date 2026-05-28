@@ -10,6 +10,22 @@
 ## [Unreleased]
 
 ### Added
+- **💰 Sección de Pricing en Landing** — página de precios con 3 planes (Free/Pro/Enterprise):
+  - Tarjetas comparativas con límites, features incluidos/excluidos, y CTAs
+  - Plan Free: 2 orgs, 3 BP, 5 members, 50 variables — €0
+  - Plan Pro: 5 orgs, 25 BP, 50 members, 150 variables — €9.99/mes
+  - Plan Enterprise: ilimitado todo — contactar
+  - Link "Precios" en nav superior y footer
+  - Badge "Más popular" en plan Pro con sombra destacada
+  - Traducciones ES/EN para todos los textos de pricing
+  - Actualización de docs: `PROJECT_SUMMARY.md` y `FUNCTIONAL.md` reflejan 50/150 variables
+  - Fix tests: límite de variables actualizado a 50 en Free
+- **🎨 Colores por sección en variables** — cada grupo/fichero de variables ahora tiene un color asignado:
+  - Nueva columna `section_color` en `blueprint_variables`
+  - Paleta de 10 colores predefinidos asignados automáticamente
+  - Color picker nativo en el formulario para que el usuario elija el color
+  - Variables agrupadas por sección con borde lateral del color correspondiente
+  - En la vista show: grupos con header coloreado, borde lateral, y badges para tipo/interactivo/secreto
 - **🎨 Rediseño de formularios de Blueprint** — create/edit ahora tienen UI moderna y amigable:
   - Layout de dos columnas para título/slug y categoría/descripción
   - Cards con bordes redondeados (rounded-2xl), sombras suaves y bordes sutiles

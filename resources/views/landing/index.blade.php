@@ -12,6 +12,9 @@
     {{-- How it Works Section --}}
     @include('landing.partials.how-it-works')
 
+    {{-- Pricing Section --}}
+    @include('landing.partials.pricing')
+
     {{-- Demo Section --}}
     @include('landing.partials.demo')
 

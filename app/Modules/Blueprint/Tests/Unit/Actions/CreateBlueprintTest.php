@@ -96,9 +96,9 @@ class CreateBlueprintTest extends TestCase
 
         $action = new CreateBlueprint();
         
-        // Free plan allows 20 variables
+        // Free plan allows 50 variables
         $variables = [];
-        for ($i = 1; $i <= 21; $i++) {
+        for ($i = 1; $i <= 51; $i++) {
             $variables[] = ['key' => "VAR_{$i}", 'type' => 'fixed'];
         }
 
