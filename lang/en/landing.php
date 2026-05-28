@@ -31,6 +31,15 @@ return [
     'step3_title' => 'Run vault fetch',
     'step3_desc' => 'A single command and your environment is ready. Variables loaded, files generated, everything in place.',
 
+    // Demo
+    'demo_title' => 'See how it works',
+    'demo_subtitle' => 'Create your first organization, define your blueprints, and run them with a single command.',
+    'demo_dashboard' => 'Dashboard',
+    'demo_org' => 'Create Organization',
+    'demo_blueprint' => 'Create Blueprint',
+    'demo_prev' => 'Previous',
+    'demo_next' => 'Next',
+
     // Marketplace
     'marketplace_title' => 'Start with a ready-to-use template',
     'marketplace_cta' => 'Explore the Marketplace →',

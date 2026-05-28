@@ -10,6 +10,12 @@
 ## [Unreleased]
 
 ### Added
+- **🖥️ Demo Section en Landing** — carousel de demostración con 3 pantallas rotatorias:
+  - Dashboard con organizaciones y estadísticas
+  - Formulario de crear organización con selector de plan
+  - Formulario de crear blueprint con preview de variables
+  - Navegación con dots y flechas, rotación automática cada 4 segundos
+  - Mockups estilizados tipo browser con diseño consistente de CoVa
 - **🔍 Blueprint filters** — sistema de filtros por organización y categoría en el listado de blueprints:
   - Botón de filtro con icono de funnel y badge con cantidad de filtros activos
   - Dropdown con checkboxes para seleccionar organizaciones y categorías
@@ -22,7 +28,7 @@
   - Accesibilidad: `aria-label`, `aria-expanded`, `aria-controls`, `role="region"`, `aria-live="polite"` en tags
   - Seguridad: IDs de organizaciones validados contra las organizaciones del usuario
 - **🌐 Internacionalización (i18n) completa** — sistema multi-idioma español/inglés:
-  - 339 keys de traducción en ES (español rioplatense con voseo) y EN (inglés)
+  - 339 keys de traducción en ES (castellano de España) y EN (inglés)
   - Archivos lang organizados por módulo: `auth`, `blueprint`, `organization`, `dashboard`, `layouts`, `errors`, `shared`, `welcome`
   - `config/app.php` con `supported_locales` y locale por defecto `es`
   - Todas las vistas Blade (36 archivos) reemplazadas con `{{ __('module.key') }}`

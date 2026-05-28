@@ -31,6 +31,15 @@ return [
     'step3_title' => 'Ejecuta vault fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar.',
 
+    // Demo
+    'demo_title' => 'Mira cómo funciona',
+    'demo_subtitle' => 'Crea tu primera organización, define tus blueprints y ejecutalos con un solo comando.',
+    'demo_dashboard' => 'Dashboard',
+    'demo_org' => 'Crear Organización',
+    'demo_blueprint' => 'Crear Blueprint',
+    'demo_prev' => 'Anterior',
+    'demo_next' => 'Siguiente',
+
     // Marketplace
     'marketplace_title' => 'Empieza con una plantilla lista para usar',
     'marketplace_cta' => 'Explorar el Marketplace →',

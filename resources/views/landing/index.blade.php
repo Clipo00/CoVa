@@ -12,6 +12,9 @@
     {{-- How it Works Section --}}
     @include('landing.partials.how-it-works')
 
+    {{-- Demo Section --}}
+    @include('landing.partials.demo')
+
     {{-- Marketplace Preview Section --}}
     @include('landing.partials.marketplace-preview')
 
