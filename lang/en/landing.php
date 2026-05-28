@@ -9,6 +9,7 @@ return [
 
     // Hero
     'hero_title' => "Stop copying your configs from one place to another",
+    'site_title' => 'CoVa, your own space',
     'hero_subtitle' => "CoVa is your configuration vault. Define, publish, and run <strong>vault fetch</strong>. Your environment is ready in seconds, no matter the stack.",
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',

@@ -5,21 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', __('landing.hero_title')) — {{ config('app.name', 'CoVa') }}</title>
+    <title>@yield('title', __('landing.site_title'))</title>
 
-    <meta name="description" content="@yield('meta_description', __('landing.hero_title'))">
+    <meta name="description" content="@yield('meta_description', __('landing.hero_subtitle'))">
     <meta name="keywords" content="vault, environment variables, developer tools, devops, blueprints, laravel, env">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="@yield('og_title', __('landing.hero_title'))">
+    <meta property="og:title" content="@yield('og_title', __('landing.site_title'))">
     <meta property="og:description" content="@yield('og_description', __('landing.hero_subtitle'))">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
     <meta property="og:image" content="{{ asset('images/og-image.png') }}">
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('og_title', __('landing.hero_title'))">
+    <meta name="twitter:title" content="@yield('og_title', __('landing.site_title'))">
     <meta name="twitter:description" content="@yield('og_description', __('landing.hero_subtitle'))">
 
     <!-- Theme Anti-Flash -->

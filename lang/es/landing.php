@@ -9,6 +9,7 @@ return [
 
     // Hero
     'hero_title' => 'Olvídate de copiar tus configuraciones de un lado a otro',
+    'site_title' => 'CoVa, tu propio espacio',
     'hero_subtitle' => 'CoVa es tu vault de configuraciones. Define, publica y ejecuta <strong>vault fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
     'cta_primary' => 'Empieza gratis',
     'cta_secondary' => 'Ver cómo funciona',
