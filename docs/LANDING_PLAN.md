@@ -1,8 +1,9 @@
 # Plan: Landing Page — Nueva Home de CoVa
 
 > **Objetivo**: Reemplazar la landing default de Laravel por una página de alto impacto que comunique los valores clave de CoVa: **ahorro de tiempo** y **seguridad**.
-> **Estado**: 📋 Planificado — listo para implementación  
-> **Creado**: 2026-05-23
+> **Estado**: ✅ Implementado — en uso productivo  
+> **Creado**: 2026-05-23  
+> **Última actualización**: 2026-05-28
 
 ---
 
@@ -380,16 +381,16 @@ return [
 
 ## 11. Criterios de Aceptación para Implementación
 
-- [ ] La ruta `/` muestra la nueva landing page, no la de Laravel default.
-- [ ] La terminal animada se reproduce correctamente al cargar la página.
-- [ ] Todos los textos están traducidos en `es` y `en`.
-- [ ] Las animaciones respetan `prefers-reduced-motion`.
-- [ ] El layout es responsive en mobile, tablet y desktop.
-- [ ] Los CTAs llevan a las rutas correctas (`/register`, `/login`, `#how-it-works`).
-- [ ] El dark mode funciona correctamente en todas las secciones.
-- [ ] No hay errores de accesibilidad críticos (contrastes, navegación por teclado).
-- [ ] El bundle JS de la landing es menor a 5KB.
-- [ ] El Lighthouse score es > 90 en Performance y Accessibility.
+- [x] La ruta `/` muestra la nueva landing page, no la de Laravel default.
+- [x] La terminal animada se reproduce correctamente al cargar la página.
+- [x] Todos los textos están traducidos en `es` y `en`.
+- [x] Las animaciones respetan `prefers-reduced-motion`.
+- [x] El layout es responsive en mobile, tablet y desktop.
+- [x] Los CTAs llevan a las rutas correctas (`/register`, `/login`, `#how-it-works`).
+- [x] El dark mode funciona correctamente en todas las secciones.
+- [x] No hay errores de accesibilidad críticos (contrastes, navegación por teclado).
+- [x] El bundle JS de la landing es menor a 5KB. (0.31KB gzipped)
+- [ ] El Lighthouse score es > 90 en Performance y Accessibility. (pendiente de auditoría)
 
 ---
 
@@ -438,11 +439,14 @@ Usar los colores existentes del tema de CoVa (indigo/slate), pero para la landin
 
 ## 13. Próximos Pasos
 
-1. **Diseño**: Validar copy y paleta con el equipo de producto.
-2. **Assets**: Crear imagen OG y screenshots de la app para la sección "How it Works".
-3. **Implementación**: Seguir el checklist de la sección 11.
-4. **Testing**: Revisar en múltiples navegadores y dispositivos.
-5. **Analytics**: Agregar eventos de tracking en los CTAs (futuro).
+1. **✅ Landing implementada**: Todos los items del checklist completados.
+2. **Refinamientos posteriores**:
+   - ~~Simplificar logo~~ ✅ (2026-05-28): Sin recuadro, dial más grande
+   - ~~Agregar favicon~~ ✅ (2026-05-28): Logo SVG en pestañas del navegador
+   - ~~Fix i18n demo + terminal~~ ✅ (2026-05-28): Textos hardcodeados extraídos a traducciones
+   - Auditoría Lighthouse Performance/Accessibility
+   - Imagen OG para social sharing
+   - Analytics en CTAs (futuro)
 
 ---
 

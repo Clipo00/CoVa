@@ -43,6 +43,21 @@
   - Formulario de crear blueprint con preview de variables
   - Navegación con dots y flechas, rotación automática cada 4 segundos
   - Mockups estilizados tipo browser con diseño consistente de CoVa
+  - **Fix i18n**: Todos los textos de las 3 slides extraídos a traducciones (`demo_dash_*`, `demo_org_*`, `demo_bp_*`)
+- **🎨 Logo SVG rediseñado** — icono simplificado de rueda de combinación:
+  - Sin recuadro de caja fuerte, solo dial centrado sobre fondo azul (indigo-600)
+  - Marcas de combinación cardinales + diagonales (8 total)
+  - Indicador/puntero en la parte superior
+  - Tamaño aumentado de w-8 a w-10 en nav, w-7 a w-8 en footer
+  - Aplicado en `landing.blade.php` y `footer.blade.php`
+- **🔖 Favicon SVG** — logo oficial en pestañas del navegador:
+  - Favicon estándar (32×32) como data URI SVG en `<link rel="icon">`
+  - Apple touch icon (180×180) para iOS/macOS
+  - Aplicado en ambos layouts: `landing.blade.php` y `app.blade.php`
+- **🌐 Fix i18n Terminal Animada** — textos de la terminal ahora responden al idioma:
+  - Nuevas keys: `terminal_cmd_fetch`, `terminal_downloading`, `terminal_variables`, `terminal_files`, `terminal_ready`
+  - Componente `animated-terminal` acepta prop `:lines` con contenido traducido
+  - Eliminados textos hardcodeados en español del JavaScript de Alpine.js
 - **🔍 Blueprint filters** — sistema de filtros por organización y categoría en el listado de blueprints:
   - Botón de filtro con icono de funnel y badge con cantidad de filtros activos
   - Dropdown con checkboxes para seleccionar organizaciones y categorías
@@ -317,4 +332,4 @@ Este proyecto no sigue estrictamente [Semantic Versioning](https://semver.org/la
 
 **Formato**: [Keep a Changelog](https://keepachangelog.com/)  
 **Changelog generado desde**: Conventional commits del repo (git log)  
-**Última actualización**: 2026-05-15
+**Última actualización**: 2026-05-28

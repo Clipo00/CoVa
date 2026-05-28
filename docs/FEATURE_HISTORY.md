@@ -381,8 +381,23 @@ lang/
 
 5. **Mock data > DB queries para landing**: Las landing pages son públicas y deben cargar rápido. Consultar la BD para mostrar plantillas del marketplace introduce latencia innecesaria y complejidad. Mock data es la decisión correcta hasta que el marketplace sea una feature real.
 
----
+### Refinamientos Post-Implementación (2026-05-28)
+
+| Refinamiento | Motivación | Decisión |
+|--------------|-----------|----------|
+| **Simplificar logo** | El recuadro de caja fuerte + rueda era visualmente ruidoso a tamaños pequeños | Solo el dial de combinación sobre fondo azul. Más limpio, más legible en 32×32px |
+| **Favicon SVG** | Pestañas del navegador mostraban el favicon genérico de Laravel | Data URI SVG inline en ambos layouts. Sin requests extra, siempre actualizado con el logo |
+| **Fix i18n terminal** | Textos hardcodeados en español dentro del JS de Alpine.js ignoraban el idioma del usuario | Pasar las traducciones desde Blade como prop `:lines` al componente. Alpine recibe array traducido vía `json_encode()` |
+| **Fix i18n demo** | Las 3 slides de la demo tenían textos hardcodeados en español | Extraer 37 nuevas keys de traducción (`demo_dash_*`, `demo_org_*`, `demo_bp_*`) |
+
+### Aprendizajes Clave (Refinamientos)
+
+6. **Los SVG como data URI son perfectos para favicons**: No requieren archivos estáticos, se cachean con el HTML, y escalan a cualquier tamaño sin pérdida. Un `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,...">` es más mantenible que un `.ico` o `.png`.
+
+7. **Nunca hardcodear strings visibles en JavaScript del cliente**: Alpine.js corre en el browser, después de que Laravel renderizó. Si el JS tiene strings en español, los usuarios en inglés verán español. La solución: pasar las traducciones desde Blade como props, no como literales en JS.
+
+8. **La consistencia del logo importa en todos los touchpoints**: Nav, footer, favicon, apple-touch-icon. Usar el mismo SVG en todos lados refuerza la marca. El favicon no es un detalle menor — es lo primero que ve el usuario en la pestaña.
 
 **Documento generado**: 2026-05-23  
-**Versión**: 1.0  
-**Última actualización**: Fase 7 (Landing Page)
+**Versión**: 1.1  
+**Última actualización**: Refinamientos Landing Page (logo, favicon, i18n)
