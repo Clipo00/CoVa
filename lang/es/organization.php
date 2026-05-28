@@ -10,6 +10,7 @@ return [
     'create_title' => 'Crear Organización',
     'create_heading' => 'Crear tu primera organización',
     'create_description' => 'Una organización agrupa tus blueprints y permite colaborar con tu equipo.',
+    'create_first_link' => 'Creá tu primera organización',
 
     // Create/Edit form
     'name_label' => 'Nombre de la organización',

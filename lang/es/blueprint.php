@@ -6,6 +6,7 @@ return [
     'heading' => 'Blueprints',
     'new_button' => 'Nuevo Blueprint',
     'all_orgs_limit' => 'Todas tus organizaciones han alcanzado el límite de blueprints. Eliminá uno existente o actualizá tu plan.',
+    'no_orgs' => 'No tenés ninguna organización.',
 
     // Create
     'create_title' => 'Nuevo Blueprint',

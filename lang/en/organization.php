@@ -10,6 +10,7 @@ return [
     'create_title' => 'Create Organization',
     'create_heading' => 'Create your first organization',
     'create_description' => 'An organization groups your blueprints and allows collaboration with your team.',
+    'create_first_link' => 'Create your first organization',
 
     // Create/Edit form
     'name_label' => 'Organization name',

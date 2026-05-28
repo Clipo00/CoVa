@@ -23,6 +23,9 @@ class BlueprintController
         /** @var User $user */
         $user = auth()->user();
 
+        // Verificar si el usuario tiene organizaciones
+        $userHasOrganizations = $user->organizations()->exists();
+
         // Verificar si el usuario tiene al menos 1 organización con cupo para blueprints
         $hasAvailableOrg = $user->organizations()
             ->with('plan')
@@ -34,7 +37,7 @@ class BlueprintController
                 return $maxBlueprints === null || $activeCount < $maxBlueprints;
             });
 
-        return view('blueprint::index', compact('hasAvailableOrg'));
+        return view('blueprint::index', compact('hasAvailableOrg', 'userHasOrganizations'));
     }
 
     public function create(): View|RedirectResponse

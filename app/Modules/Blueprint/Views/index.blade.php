@@ -10,6 +10,19 @@
                 <a href="{{ route('blueprints.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
                     {{ __('blueprint.new_button') }}
                 </a>
+            @elseif(!$userHasOrganizations)
+                <div class="relative group">
+                    <span class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                        </svg>
+                        {{ __('blueprint.new_button') }}
+                    </span>
+                    <div class="absolute right-0 mt-2 w-72 bg-gray-800 text-white text-xs rounded py-3 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+                        <p class="mb-2">{{ __('blueprint.no_orgs') }}</p>
+                        <a href="{{ route('organizations.create') }}" class="text-indigo-400 hover:text-indigo-300 underline">{{ __('organization.create_first_link') }}</a>
+                    </div>
+                </div>
             @else
                 <div class="relative group">
                     <span class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed">
