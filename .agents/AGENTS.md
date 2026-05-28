@@ -104,6 +104,8 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
    - `Models/*` → cargar `covar-laravel-model`
    - `Controllers/*` → cargar `covar-laravel-controller`
    - `Tests/*` → cargar `covar-laravel-test`
+   - `lang/*` → cargar `covar-i18n`
+   - `*.blade.php` → cargar `covar-i18n` (validación de traducciones en vistas)
 
 2. **Por extensión/comportamiento**:
    - extiende `Livewire\Component` → `covar-laravel-livewire`
@@ -137,6 +139,13 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
      - "¿Puedes añadir esta feature?" → Detecta español, responde en español.
      - "I want a new feature for blueprints" → Detecta inglés, responde en English.
 
+7. **Por internacionalización (i18n)**:
+   - `lang/*` → cargar `covar-i18n`
+   - `*.blade.php` con texto visible → cargar `covar-i18n` (validar que use `__()`)
+   - Archivos PHP con mensajes para usuarios (exceptions, validations, toasts) → `covar-i18n`
+   - Edición de traducciones existentes → `covar-i18n`
+   - Se combina con cualquier skill de dominio que genere texto nuevo
+
 ---
 
 ## Project Skills
@@ -150,6 +159,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 | `covar-laravel-controller` | Patrones para Controllers en CoVa | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
 | `covar-laravel-test` | Patrones para Tests en CoVa | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
 | `covar-laravel-dto` | Patrones para DTOs y Value Objects | [.agents/skills/covar-laravel-dto/SKILL.md](.agents/skills/covar-laravel-dto/SKILL.md) |
+| `covar-i18n` | Internacionalización: todo texto en castellano + inglés, sincronizado | [.agents/skills/covar-i18n/SKILL.md](.agents/skills/covar-i18n/SKILL.md) |
 | `covar-security` | OWASP Top 10:2025 — Seguridad integral en CoVa (SIEMPRE activa) | [.agents/skills/covar-security/SKILL.md](.agents/skills/covar-security/SKILL.md) |
 | `skill-creator` | Crear nuevas skills para CoVa | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
 | `sdd-init` | Inicializar SDD en el proyecto | [~/.config/opencode/skills/sdd-init/SKILL.md](../../.config/opencode/skills/sdd-init/SKILL.md) |
