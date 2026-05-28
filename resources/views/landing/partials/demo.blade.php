@@ -261,29 +261,63 @@
                             {{-- Right: Variables preview --}}
                             <div class="border-l border-gray-200 dark:border-gray-600 pl-6">
                                 <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Variables de Entorno</h4>
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-100 dark:border-gray-600">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_HOST</span>
-                                        <span class="text-xs text-gray-400">localhost</span>
+                                
+                                {{-- Group: .env --}}
+                                <div class="mb-3">
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">.env</span>
                                     </div>
-                                    <div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-100 dark:border-gray-600">
-                                        <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                                        <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_DATABASE</span>
-                                        <span class="text-xs text-gray-400">myapp</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-100 dark:border-gray-600">
-                                        <div class="w-2 h-2 rounded-full bg-amber-400"></div>
-                                        <span class="text-xs font-mono text-gray-700 dark:text-gray-300">API_KEY</span>
-                                        <span class="text-xs text-gray-400">••••••••</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-700 rounded border border-gray-100 dark:border-gray-600">
-                                        <div class="w-2 h-2 rounded-full bg-blue-400"></div>
-                                        <span class="text-xs font-mono text-gray-700 dark:text-gray-300">APP_URL</span>
-                                        <span class="text-xs text-gray-400">http://localhost</span>
+                                    <div class="space-y-1 pl-3.5 border-l-2 border-emerald-200 dark:border-emerald-800/50">
+                                        <div class="flex items-center gap-2 py-1">
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_HOST</span>
+                                            <span class="text-xs text-gray-500">=</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">localhost</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 py-1">
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_DATABASE</span>
+                                            <span class="text-xs text-gray-500">=</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">myapp</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">4 variables configuradas</p>
+
+                                {{-- Group: .env.testing --}}
+                                <div class="mb-3">
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">.env.testing</span>
+                                    </div>
+                                    <div class="space-y-1 pl-3.5 border-l-2 border-blue-200 dark:border-blue-800/50">
+                                        <div class="flex items-center gap-2 py-1">
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">DB_DATABASE</span>
+                                            <span class="text-xs text-gray-500">=</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">myapp_test</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Group: config/app.php --}}
+                                <div class="mb-3">
+                                    <div class="flex items-center gap-1.5 mb-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">config/app.php</span>
+                                    </div>
+                                    <div class="space-y-1 pl-3.5 border-l-2 border-amber-200 dark:border-amber-800/50">
+                                        <div class="flex items-center gap-2 py-1">
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">APP_NAME</span>
+                                            <span class="text-xs text-gray-500">=</span>
+                                            <span class="text-xs text-gray-600 dark:text-gray-400">MyApp</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 py-1">
+                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">APP_KEY</span>
+                                            <span class="text-xs text-gray-500">=</span>
+                                            <span class="text-xs text-gray-500">••••••••</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">5 variables en 3 ficheros</p>
                             </div>
                         </div>
                     </div>

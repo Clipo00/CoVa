@@ -1,3 +1,27 @@
+@php
+$sectionColors = [
+    'bg-emerald-500',
+    'bg-blue-500',
+    'bg-amber-500',
+    'bg-purple-500',
+    'bg-rose-500',
+    'bg-cyan-500',
+    'bg-orange-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-teal-500',
+];
+$sectionColorMap = [];
+$colorIndex = 0;
+foreach($variables as $var) {
+    $section = $var['section'] ?? '';
+    if ($section && !isset($sectionColorMap[$section])) {
+        $sectionColorMap[$section] = $sectionColors[$colorIndex % count($sectionColors)];
+        $colorIndex++;
+    }
+}
+@endphp
+
 <div class="space-y-4">
     <div class="flex justify-between items-center">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h3>
@@ -20,7 +44,7 @@
             <thead class="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">{{ __('blueprint.var_key') }}</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">{{ __('blueprint.var_group') }}</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-28">{{ __('blueprint.var_group') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">{{ __('blueprint.var_type') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('blueprint.var_value') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">{{ __('blueprint.var_interactive') }}</th>
@@ -32,12 +56,21 @@
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
                 @foreach($variables as $index => $variable)
-                    <tr wire:key="variable-{{ $index }}">
+                    @php
+                    $section = $variable['section'] ?? '';
+                    $sectionColor = $sectionColorMap[$section] ?? 'bg-gray-400';
+                    @endphp
+                    <tr wire:key="variable-{{ $index }}" class="border-l-4 {{ $section ? $sectionColor : 'border-transparent' }} border-l-4">
                         <td class="py-3 pl-4 pr-3">
                             <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
                         </td>
                         <td class="px-3 py-3">
-                            <input type="text" wire:model="variables.{{ $index }}.section" placeholder="{{ __('blueprint.var_group_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
+                            <div class="flex items-center gap-2">
+                                @if($section)
+                                    <span class="w-2.5 h-2.5 rounded-full {{ $sectionColor }} flex-shrink-0" title="{{ $section }}"></span>
+                                @endif
+                                <input type="text" wire:model="variables.{{ $index }}.section" placeholder="{{ __('blueprint.var_group_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
+                            </div>
                         </td>
                         <td class="px-3 py-3">
                             <select wire:model="variables.{{ $index }}.type" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
