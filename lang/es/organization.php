@@ -10,12 +10,12 @@ return [
     'create_title' => 'Crear Organización',
     'create_heading' => 'Crear tu primera organización',
     'create_description' => 'Una organización agrupa tus blueprints y permite colaborar con tu equipo.',
-    'create_first_link' => 'Creá tu primera organización',
+    'create_first_link' => 'Crea tu primera organización',
 
     // Create/Edit form
     'name_label' => 'Nombre de la organización',
     'slug_label' => 'Slug (URL)',
-    'slug_hint' => 'Se genera automáticamente desde el nombre, pero podés editarlo.',
+    'slug_hint' => 'Se genera automáticamente desde el nombre, pero puedes editarlo.',
     'create_button' => 'Crear Organización',
     'edit_button' => 'Guardar Cambios',
     'cancel_link' => '← Cancelar y volver',
@@ -30,14 +30,14 @@ return [
     'slug_edit_hint' => 'Identificador único para URLs.',
 
     // List
-    'list_empty' => 'No tenés organizaciones todavía.',
+    'list_empty' => 'No tienes organizaciones todavía.',
     'list_empty_link' => 'Crea tu primera organización',
     'slug_prefix' => 'slug: ',
 
     // Show
     'back_to_dashboard' => 'Volver al Dashboard',
     'edit_link' => 'Editar',
-    'delete_confirm' => "¿Estás seguro de que querés eliminar esta organización?\n\nEsta acción es reversible desde el dashboard.\n\nPara eliminar permanentemente, andá al dashboard después de eliminar.",
+    'delete_confirm' => "¿Estás seguro de que quieres eliminar esta organización?\n\nEsta acción es reversible desde el dashboard.\n\nPara eliminar permanentemente, ve al dashboard después de eliminar.",
     'delete_button' => 'Eliminar',
     'blueprints_count' => 'Blueprints',
     'view_blueprints' => 'Ver blueprints →',
@@ -46,7 +46,7 @@ return [
     'plan_label' => 'Plan',
     'max_blueprints_text' => ':max blueprints máx.',
     'limit_warning' => 'Has alcanzado el límite de <strong>:max blueprints</strong> de tu plan <strong>:plan</strong>.',
-    'limit_hint' => 'Eliminá un blueprint existente para poder crear uno nuevo.',
+    'limit_hint' => 'Elimina un blueprint existente para poder crear uno nuevo.',
     'recent_blueprints' => 'Blueprints recientes',
     'new_blueprint_button' => '+ Nuevo Blueprint',
     'limit_reached' => 'Límite alcanzado',
@@ -79,7 +79,7 @@ return [
 
     // Messages
     'updated' => 'Organización actualizada correctamente.',
-    'deleted' => 'Organización eliminada. Podés recuperarla desde el dashboard.',
+    'deleted' => 'Organización eliminada. Puedes recuperarla desde el dashboard.',
     'restored' => 'Organización restaurada correctamente.',
     'force_deleted' => 'Organización eliminada permanentemente.',
     'user_added' => 'Usuario :name agregado correctamente.',
@@ -88,16 +88,16 @@ return [
 
     // Errors
     'not_found' => 'Organización no encontrada.',
-    'no_access' => 'No tenés acceso a esta organización.',
-    'no_permission' => 'No tenés permisos para realizar esta acción.',
-    'no_edit_permission' => 'No tenés permisos para editar esta organización.',
-    'no_view_permission' => 'No tenés permisos para ver esta organización.',
-    'no_manage_permission' => 'No tenés permisos para gestionar miembros.',
-    'no_invite_permission' => 'No tenés permisos para invitar miembros.',
-    'no_delete_permission' => 'No tenés permisos para eliminar esta organización.',
-    'no_restore_permission' => 'No tenés permisos para restaurar esta organización.',
-    'no_force_delete_permission' => 'No tenés permisos para eliminar permanentemente esta organización.',
-    'cannot_change_owner_role' => 'No podés cambiar el rol del propietario de la organización.',
+    'no_access' => 'No tienes acceso a esta organización.',
+    'no_permission' => 'No tienes permisos para realizar esta acción.',
+    'no_edit_permission' => 'No tienes permisos para editar esta organización.',
+    'no_view_permission' => 'No tienes permisos para ver esta organización.',
+    'no_manage_permission' => 'No tienes permisos para gestionar miembros.',
+    'no_invite_permission' => 'No tienes permisos para invitar miembros.',
+    'no_delete_permission' => 'No tienes permisos para eliminar esta organización.',
+    'no_restore_permission' => 'No tienes permisos para restaurar esta organización.',
+    'no_force_delete_permission' => 'No tienes permisos para eliminar permanentemente esta organización.',
+    'cannot_change_owner_role' => 'No puedes cambiar el rol del propietario de la organización.',
     'invalid_role' => 'El rol debe ser developer o maintainer.',
     'not_a_member' => 'El usuario no es miembro de esta organización.',
     'restore_limit' => 'Límite de :max organizaciones alcanzado. Eliminá una organización activa para poder recuperar esta.',

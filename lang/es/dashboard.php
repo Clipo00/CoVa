@@ -15,7 +15,7 @@ return [
     'force_delete_warning' => 'Los datos eliminados permanentemente no se pueden recuperar.',
 
     // Empty state
-    'empty_heading' => 'No tenés organizaciones',
+    'empty_heading' => 'No tienes organizaciones',
     'empty_desc1' => 'Para empezar a usar CoVa necesitás crear una organización.',
     'empty_desc2' => 'Una organización agrupa tus blueprints y te permite colaborar con tu equipo.',
     'empty_cta' => 'Crear mi primera organización',
@@ -28,6 +28,6 @@ return [
 
     // Plan limit
     'plan_limit_warning' => 'Has alcanzado el límite de organizaciones de tu plan <strong>:plan</strong>.',
-    'upgrade_plan' => 'Actualizá tu plan',
+    'upgrade_plan' => 'Actualiza tu plan',
     'to_create_more' => 'para crear más.',
 ];
