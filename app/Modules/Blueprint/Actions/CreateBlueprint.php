@@ -60,6 +60,7 @@ class CreateBlueprint
                 'is_interactive' => $variableData['is_interactive'] ?? false,
                 'is_secret' => $variableData['is_secret'] ?? false,
                 'section' => $variableData['section'] ?? null,
+                'section_color' => $variableData['section_color'] ?? null,
                 'sort_order' => 0,
             ]);
         }

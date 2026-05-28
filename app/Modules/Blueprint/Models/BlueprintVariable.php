@@ -16,6 +16,7 @@ class BlueprintVariable extends Model
         'is_interactive',
         'is_secret',
         'section',
+        'section_color',
         'sort_order',
     ];
 

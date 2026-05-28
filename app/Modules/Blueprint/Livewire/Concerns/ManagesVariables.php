@@ -8,6 +8,19 @@ trait ManagesVariables
 {
     public array $variables = [];
 
+    public const SECTION_COLORS = [
+        '#10b981', // emerald-500
+        '#3b82f6', // blue-500
+        '#f59e0b', // amber-500
+        '#8b5cf6', // purple-500
+        '#f43f5e', // rose-500
+        '#06b6d4', // cyan-500
+        '#f97316', // orange-500
+        '#ec4899', // pink-500
+        '#6366f1', // indigo-500
+        '#14b8a6', // teal-500
+    ];
+
     public function addVariable(): void
     {
         $this->variables[] = [
@@ -17,6 +30,7 @@ trait ManagesVariables
             'is_interactive' => false,
             'is_secret' => false,
             'section' => null,
+            'section_color' => null,
         ];
     }
 
@@ -39,6 +53,23 @@ trait ManagesVariables
             return false;
         }
         return true;
+    }
+
+    public function assignSectionColors(): void
+    {
+        $sectionColors = [];
+        $colorIndex = 0;
+
+        foreach ($this->variables as $index => $variable) {
+            $section = $variable['section'] ?? null;
+            if ($section) {
+                if (!isset($sectionColors[$section])) {
+                    $sectionColors[$section] = self::SECTION_COLORS[$colorIndex % count(self::SECTION_COLORS)];
+                    $colorIndex++;
+                }
+                $this->variables[$index]['section_color'] = $sectionColors[$section];
+            }
+        }
     }
 
     protected function variableRules(): array

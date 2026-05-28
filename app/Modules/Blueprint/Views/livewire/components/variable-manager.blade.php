@@ -1,23 +1,25 @@
 @php
-$sectionColors = [
-    'bg-emerald-500',
-    'bg-blue-500',
-    'bg-amber-500',
-    'bg-purple-500',
-    'bg-rose-500',
-    'bg-cyan-500',
-    'bg-orange-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-teal-500',
-];
+// Build color map from section_color if available, otherwise auto-assign
 $sectionColorMap = [];
-$colorIndex = 0;
+$usedColors = [];
+
 foreach($variables as $var) {
     $section = $var['section'] ?? '';
-    if ($section && !isset($sectionColorMap[$section])) {
-        $sectionColorMap[$section] = $sectionColors[$colorIndex % count($sectionColors)];
-        $colorIndex++;
+    if (!$section) continue;
+    
+    if (isset($var['section_color']) && $var['section_color']) {
+        $sectionColorMap[$section] = $var['section_color'];
+        $usedColors[] = $var['section_color'];
+    } elseif (!isset($sectionColorMap[$section])) {
+        // Auto-assign from palette
+        $palette = [
+            '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#f43f5e',
+            '#06b6d4', '#f97316', '#ec4899', '#6366f1', '#14b8a6',
+        ];
+        // Find first unused color
+        $color = collect($palette)->first(fn($c) => !in_array($c, $usedColors)) ?? $palette[0];
+        $sectionColorMap[$section] = $color;
+        $usedColors[] = $color;
     }
 }
 @endphp
@@ -44,7 +46,7 @@ foreach($variables as $var) {
             <thead class="bg-gray-50 dark:bg-gray-700/50">
                 <tr>
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-1/4">{{ __('blueprint.var_key') }}</th>
-                    <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-28">{{ __('blueprint.var_group') }}</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">{{ __('blueprint.var_group') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">{{ __('blueprint.var_type') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('blueprint.var_value') }}</th>
                     <th scope="col" class="px-3 py-3.5 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">{{ __('blueprint.var_interactive') }}</th>
@@ -58,16 +60,30 @@ foreach($variables as $var) {
                 @foreach($variables as $index => $variable)
                     @php
                     $section = $variable['section'] ?? '';
-                    $sectionColor = $sectionColorMap[$section] ?? 'bg-gray-400';
+                    $sectionColor = $sectionColorMap[$section] ?? null;
                     @endphp
-                    <tr wire:key="variable-{{ $index }}" class="border-l-4 {{ $section ? $sectionColor : 'border-transparent' }} border-l-4">
+                    <tr wire:key="variable-{{ $index }}" 
+                        @if($section && $sectionColor)
+                            style="border-left: 4px solid {{ $sectionColor }}"
+                        @else
+                            class="border-l-4 border-transparent"
+                        @endif
+                    >
                         <td class="py-3 pl-4 pr-3">
                             <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
                         </td>
                         <td class="px-3 py-3">
                             <div class="flex items-center gap-2">
-                                @if($section)
-                                    <span class="w-2.5 h-2.5 rounded-full {{ $sectionColor }} flex-shrink-0" title="{{ $section }}"></span>
+                                @if($section && $sectionColor)
+                                    <input 
+                                        type="color" 
+                                        wire:model="variables.{{ $index }}.section_color" 
+                                        value="{{ $sectionColor }}"
+                                        class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent"
+                                        title="{{ __('blueprint.section_color') ?? 'Color de sección' }}"
+                                    >
+                                @else
+                                    <span class="w-6"></span>
                                 @endif
                                 <input type="text" wire:model="variables.{{ $index }}.section" placeholder="{{ __('blueprint.var_group_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
                             </div>
