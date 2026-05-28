@@ -114,6 +114,7 @@
 - **Botones de presets/skills activos** sin variante dark (se veían en modo claro sobre fondo oscuro)
 - **Hover de delete** en tab-manager: `text-red-600` sobre `bg-gray-800` daba solo 2.82:1
 - **Contraste WCAG AA** en Org show, Org list, Blueprint-list: badges de rol usaban colores incorrectos según el rol
+- **Modo oscuro no persistía en login**: `layouts/auth.blade.php` no incluía el script anti-flash ni el componente `ThemeToggle`, por lo que al navegar desde la landing (con dark mode activo) al login se perdía la preferencia y no había forma de cambiarla desde esa pantalla. Se agregó el script de detección de tema y `<livewire:shared.theme-toggle />` junto al locale switcher.
 
 ---
 
