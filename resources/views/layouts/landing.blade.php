@@ -88,26 +88,28 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-2 text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <!-- Fondo redondeado -->
+                    <svg class="w-10 h-10" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <!-- Fondo redondeado azul -->
                         <rect width="32" height="32" rx="8" fill="currentColor" class="text-indigo-600"/>
-                        <!-- Cuerpo de la caja fuerte -->
-                        <rect x="7" y="10" width="18" height="14" rx="2" stroke="white" stroke-width="1.5" fill="none"/>
-                        <!-- Bisagra (líneas verticales en el borde) -->
-                        <line x1="9" y1="12" x2="9" y2="14" stroke="white" stroke-width="1" stroke-linecap="round"/>
-                        <line x1="9" y1="16" x2="9" y2="18" stroke="white" stroke-width="1" stroke-linecap="round"/>
-                        <line x1="9" y1="20" x2="9" y2="22" stroke="white" stroke-width="1" stroke-linecap="round"/>
-                        <!-- Rueda de combinación circular -->
-                        <circle cx="19" cy="17" r="4" stroke="white" stroke-width="1.5" fill="none"/>
-                        <!-- Marcas de la rueda -->
-                        <line x1="19" y1="13" x2="19" y2="14" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
-                        <line x1="19" y1="20" x2="19" y2="21" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
-                        <line x1="15" y1="17" x2="16" y2="17" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
-                        <line x1="22" y1="17" x2="23" y2="17" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+                        <!-- Rueda de combinación circular principal -->
+                        <circle cx="16" cy="15" r="7" stroke="white" stroke-width="1.5" fill="none"/>
+                        <!-- Marcas de la rueda (principales) -->
+                        <line x1="16" y1="6" x2="16" y2="8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="16" y1="22" x2="16" y2="24" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="7" y1="15" x2="9" y2="15" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                        <line x1="23" y1="15" x2="25" y2="15" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+                        <!-- Marcas diagonales -->
+                        <line x1="9.6" y1="8.6" x2="11" y2="10" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+                        <line x1="21" y1="10" x2="22.4" y2="8.6" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+                        <line x1="9.6" y1="21.4" x2="11" y2="20" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
+                        <line x1="21" y1="20" x2="22.4" y2="21.4" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
                         <!-- Centro de la rueda -->
-                        <circle cx="19" cy="17" r="1" fill="white"/>
-                        <!-- Manija/Lock debajo de la rueda -->
-                        <rect x="17.5" y="22" width="3" height="1.5" rx="0.5" fill="white"/>
+                        <circle cx="16" cy="15" r="2" fill="white"/>
+                        <!-- Indicador/puntero arriba -->
+                        <path d="M14 7 L16 5 L18 7" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <!-- Manija/Lock debajo -->
+                        <rect x="13" y="25" width="6" height="2" rx="1" fill="white"/>
+                        <circle cx="16" cy="26" r="0.8" fill="#4f46e5"/>
                     </svg>
                     <span>{{ config('app.name', 'CoVa') }}</span>
                 </a>
