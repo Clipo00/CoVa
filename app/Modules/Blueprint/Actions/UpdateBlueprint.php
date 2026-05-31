@@ -35,10 +35,11 @@ class UpdateBlueprint
                 $blueprint->variables()->create([
                     'key' => $variableData['key'],
                     'type' => $variableData['type'] ?? 'fixed',
-                    'default_value' => $variableData['default_value'] ?? null,
+                    'default_value' => ($variableData['default_value'] ?? null) !== '' ? $variableData['default_value'] : null,
                     'is_interactive' => $variableData['is_interactive'] ?? false,
                     'is_secret' => $variableData['is_secret'] ?? false,
                     'section' => $variableData['section'] ?? null,
+                    'section_color' => $variableData['section_color'] ?? null,
                     'sort_order' => 0,
                 ]);
             }

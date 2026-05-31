@@ -7,6 +7,16 @@
 
     <title>{{ config('app.name', 'CoVa') }} - @yield('title', __('layouts.site_title'))</title>
 
+    <!-- Theme Anti-Flash -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -21,7 +31,8 @@
 </head>
 <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900">
     {{-- Locale Switcher — visible tanto para guests como autenticados --}}
-    <div class="fixed top-4 right-4 z-50">
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-3">
+        <livewire:shared.theme-toggle />
         <x-locale-switcher />
     </div>
 

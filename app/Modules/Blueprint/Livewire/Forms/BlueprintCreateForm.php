@@ -109,6 +109,7 @@ class BlueprintCreateForm extends Component
     {
         $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
         $this->cleanEmptyVariables();
+        $this->assignSectionColors();
 
         $validated = $this->validate();
 

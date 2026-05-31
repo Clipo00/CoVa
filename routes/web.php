@@ -5,6 +5,18 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
+| Landing Page (pública)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return view('landing.index');
+})->name('landing');
+
+/*
+|--------------------------------------------------------------------------
 | Locale Switcher (sin auth — disponible para guests en login/register)
 |--------------------------------------------------------------------------
 */

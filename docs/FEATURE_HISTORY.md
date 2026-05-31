@@ -316,6 +316,91 @@ Se identificaron gaps de seguridad durante la creación de la skill `covar-secur
 
 ---
 
-**Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 4 del plan de documentación
+## Fase 7: Landing Page (Mayo 2026)
+
+### El Problema
+
+La ruta raíz (`/`) mostraba la landing default de Laravel 13: un SVG del logo de Laravel, links a Laracasts y documentación, y botón "Deploy now". Esto era confuso para visitantes que llegaban a CoVa sin saber qué hace el producto. No comunicaba el valor diferencial ni tenía CTAs hacia registro.
+
+Además, visitantes autenticados veían la misma landing genérica en lugar de ser redirigidos al dashboard.
+
+### La Solución
+
+Una landing page de alto impacto estructurada en 6 secciones:
+
+1. **Hero**: Terminal animada ejecutando `vault fetch` para demostrar el core loop del producto en segundos
+2. **The Pain**: Tres cards que crean empatía con problemas reales (caos del .env, configuración manual, falta de estandarización)
+3. **How it Works**: Define → Publish → Fetch, el flujo completo explicado en 30 segundos
+4. **Marketplace Preview**: Grid con 6 plantillas populares (mock data) que muestran el valor inmediato
+5. **CTA Final**: Botón grande "Crear cuenta gratis" con copy de bajo riesgo
+6. **Footer**: Links a login, registro, marketplace
+
+### Decisiones Técnicas
+
+| Decisión | Alternativa | Por qué |
+|----------|-------------|---------|
+| Layout landing separado de app.blade.php | Usar app.blade.php con @guest | app.blade.php tiene nav de dashboard con links a orgs/blueprints que no existen para guests |
+| Alpine.js para terminal typing | CSS-only, Lottie, GSAP | Alpine ya está cargado vía Livewire. 0 dependencias nuevas. Control total del timing |
+| IntersectionObserver nativo para scroll reveal | Librería externa (AOS, ScrollReveal) | < 50 líneas de JS, sin dependencias, respeta prefers-reduced-motion |
+| Mock data para marketplace | DB queries reales | La landing es pública; los blueprints públicos no existen todavía como feature completa |
+| Terminal en Hero como componente Blade | Inline en la vista | Reutilizable para futuras páginas (docs, blog) |
+
+### Arquitectura de Archivos
+
+```
+resources/
+├── views/
+│   ├── layouts/
+│   │   └── landing.blade.php    ← Layout limpio (nav minimalista, SEO, footer)
+│   ├── landing/
+│   │   ├── index.blade.php      ← Vista principal (incluye partials)
+│   │   └── partials/
+│   │       ├── hero.blade.php
+│   │       ├── pain-point.blade.php
+│   │       ├── how-it-works.blade.php
+│   │       ├── marketplace-preview.blade.php
+│   │       ├── demo.blade.php
+│   │       ├── pricing.blade.php
+│   │       ├── cta-final.blade.php
+│   │       └── footer.blade.php
+│   └── components/
+│       └── animated-terminal.blade.php
+├── js/
+│   └── landing.js               ← Entry point Vite (0.31KB)
+lang/
+├── es/landing.php
+└── en/landing.php
+```
+
+### Aprendizajes Clave
+
+1. **El layout app.blade.php NO sirve para landing**: Tiene nav de dashboard con links a blueprints, orgs y trash — conceptos que no existen para usuarios no autenticados. Un layout separado es obligatorio.
+
+2. **Alpine.js para animaciones es perfecto para este caso**: La terminal typing animation con Alpine.data() es declarativa, reactiva, y reutilizable. Sin dependencias externas, ~80 líneas de JS.
+
+3. **`prefers-reduced-motion` no es opcional**: Muchos devs usan `prefers-reduced-motion: reduce`. Ignorarlo es una mala experiencia de usuario. La landing lo respeta en terminal typing, scroll reveal, y hover effects.
+
+4. **Las landing pages son el punto ciego de seguridad más común**: Como no tienen auth, suelen no auditarlas. La landing de CoVa no expone datos sensibles, no tiene formularios, y todos los CTAs apuntan a rutas internas protegidas.
+
+5. **Mock data > DB queries para landing**: Las landing pages son públicas y deben cargar rápido. Consultar la BD para mostrar plantillas del marketplace introduce latencia innecesaria y complejidad. Mock data es la decisión correcta hasta que el marketplace sea una feature real.
+
+### Refinamientos Post-Implementación (2026-05-28)
+
+| Refinamiento | Motivación | Decisión |
+|--------------|-----------|----------|
+| **Simplificar logo** | El recuadro de caja fuerte + rueda era visualmente ruidoso a tamaños pequeños | Solo el dial de combinación sobre fondo azul. Más limpio, más legible en 32×32px |
+| **Favicon SVG** | Pestañas del navegador mostraban el favicon genérico de Laravel | Data URI SVG inline en ambos layouts. Sin requests extra, siempre actualizado con el logo |
+| **Fix i18n terminal** | Textos hardcodeados en español dentro del JS de Alpine.js ignoraban el idioma del usuario | Pasar las traducciones desde Blade como prop `:lines` al componente. Alpine recibe array traducido vía `json_encode()` |
+| **Fix i18n demo** | Las 3 slides de la demo tenían textos hardcodeados en español | Extraer 37 nuevas keys de traducción (`demo_dash_*`, `demo_org_*`, `demo_bp_*`) |
+
+### Aprendizajes Clave (Refinamientos)
+
+6. **Los SVG como data URI son perfectos para favicons**: No requieren archivos estáticos, se cachean con el HTML, y escalan a cualquier tamaño sin pérdida. Un `<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,...">` es más mantenible que un `.ico` o `.png`.
+
+7. **Nunca hardcodear strings visibles en JavaScript del cliente**: Alpine.js corre en el browser, después de que Laravel renderizó. Si el JS tiene strings en español, los usuarios en inglés verán español. La solución: pasar las traducciones desde Blade como props, no como literales en JS.
+
+8. **La consistencia del logo importa en todos los touchpoints**: Nav, footer, favicon, apple-touch-icon. Usar el mismo SVG en todos lados refuerza la marca. El favicon no es un detalle menor — es lo primero que ve el usuario en la pestaña.
+
+**Documento generado**: 2026-05-23  
+**Versión**: 1.1  
+**Última actualización**: Refinamientos Landing Page (logo, favicon, i18n)

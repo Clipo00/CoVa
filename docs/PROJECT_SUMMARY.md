@@ -139,8 +139,8 @@ organization_invitations (id, organization_id, email, token, role, expires_at, u
 
 | Plan | Orgs | Blueprints/Org | Miembros/Org | Variables/BP | API | Marketplace |
 |------|------|----------------|--------------|--------------|-----|-------------|
-| **Free** | 2 | 3 | 5 | 20 | ❌ | ❌ |
-| **Pro** | 5 | 25 | 50 | 100 | ✅ | ✅ |
+| **Free** | 2 | 3 | 5 | 50 | ❌ | ❌ |
+| **Pro** | 5 | 25 | 50 | 150 | ✅ | ✅ |
 | **Enterprise** | ∞ | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del usuario se hereda a todas sus organizaciones en cascada.

@@ -3,11 +3,22 @@
 @section('title', __('blueprint.create_title'))
 
 @section('content')
-    <div class="max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6">{{ __('blueprint.create_heading') }}</h1>
+    <div class="max-w-4xl mx-auto">
+        {{-- Header --}}
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('blueprint.create_heading') }}</h1>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 ml-12">{{ __('blueprint.create_description') }}</p>
+        </div>
 
         @if(session('error'))
-            <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4">
+            <div class="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 rounded-r-lg">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

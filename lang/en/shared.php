@@ -11,6 +11,9 @@ return [
     'no_results' => 'No results',
     'remove_filter' => 'Remove :filter filter',
 
+    // Accessibility
+    'skip_to_content' => 'Skip to main content',
+
     // Locale Switcher
     'locale' => 'Language',
     'locale_es' => 'Español',

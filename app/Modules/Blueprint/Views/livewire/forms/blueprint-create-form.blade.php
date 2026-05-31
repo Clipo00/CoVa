@@ -1,95 +1,165 @@
 <div>
-    <form wire:submit="submit" class="space-y-8">
+    <form wire:submit="submit" class="space-y-6">
         {{-- Información básica --}}
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-6">
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2">{{ __('blueprint.general_info') }}</h2>
-
-            {{-- Selector de Organización --}}
-            <div>
-                <label for="organizationId" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('blueprint.org_label') }}</label>
-                @if($lockOrganization)
-                    <div class="mt-1 relative">
-                        <input type="text" disabled
-                            value="{{ collect($userOrganizations)->firstWhere('id', $organizationId)['name'] ?? '' }}"
-                            class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 bg-gray-100 text-gray-500 dark:text-gray-400 shadow-sm cursor-not-allowed"
-                        >
-                        <input type="hidden" wire:model="organizationId">
-                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.org_locked_hint') }}</p>
-                @else
-                    <select wire:model="organizationId" id="organizationId"
-                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        @foreach($userOrganizations as $org)
-                            @if($org['hasAvailableSlots'])
-                                <option value="{{ $org['id'] }}">{{ $org['name'] }}</option>
-                            @endif
-                        @endforeach
-                    </select>
-                @endif
-                @error('organizationId') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.general_info') }}</h2>
+                </div>
             </div>
+            
+            <div class="p-6 space-y-5">
+                {{-- Organization Selector --}}
+                <div>
+                    <label for="organizationId" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.org_label') }}</label>
+                    @if($lockOrganization)
+                        <div class="relative">
+                            <div class="flex items-center w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span class="text-sm">{{ collect($userOrganizations)->firstWhere('id', $organizationId)['name'] ?? '' }}</span>
+                            </div>
+                            <input type="hidden" wire:model="organizationId">
+                        </div>
+                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            {{ __('blueprint.org_locked_hint') }}
+                        </p>
+                    @else
+                        <div class="relative">
+                            <select wire:model="organizationId" id="organizationId"
+                                class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+                                @foreach($userOrganizations as $org)
+                                    @if($org['hasAvailableSlots'])
+                                        <option value="{{ $org['id'] }}">{{ $org['name'] }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    @endif
+                    @error('organizationId') <span class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</span> @enderror
+                </div>
 
-            <div>
-                <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('blueprint.title_label') }}</label>
-                <input wire:model.live="title" type="text" id="title" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="{{ __('blueprint.title_placeholder') }}">
-                @error('title') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-            </div>
+                {{-- Title & Slug in 2 columns --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.title_label') }}</label>
+                        <input wire:model.live="title" type="text" id="title" 
+                            class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all" 
+                            placeholder="{{ __('blueprint.title_placeholder') }}">
+                        @error('title') <span class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</span> @enderror
+                    </div>
 
-            <div>
-                <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('blueprint.slug_label') }}</label>
-                <input wire:model.live="slug" type="text" id="slug" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm">
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.slug_hint') }}</p>
-                @error('slug') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-            </div>
+                    <div>
+                        <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.slug_label') }}</label>
+                        <div class="relative">
+                            <input wire:model.live="slug" type="text" id="slug" 
+                                class="block w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-mono text-gray-600 dark:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all">
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.slug_hint') }}</p>
+                        @error('slug') <span class="text-red-500 text-sm mt-1.5 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</span> @enderror
+                    </div>
+                </div>
 
-            <div>
-                <label for="categoryId" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('blueprint.category_label') }}</label>
-                <select wire:model="categoryId" id="categoryId" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="">{{ __('blueprint.category_none') }}</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                @error('categoryId') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-            </div>
+                {{-- Category & Description --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-1">
+                        <label for="categoryId" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.category_label') }}</label>
+                        <div class="relative">
+                            <select wire:model="categoryId" id="categoryId" 
+                                class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+                                <option value="">{{ __('blueprint.category_none') }}</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                        @error('categoryId') <span class="text-red-500 text-sm mt-1.5">{{ $message }}</span> @enderror
+                    </div>
 
-            <div>
-                <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('blueprint.description_label') }}</label>
-                <textarea wire:model="description" id="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="{{ __('blueprint.description_placeholder') }}"></textarea>
-                @error('description') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                    <div class="md:col-span-2">
+                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.description_label') }}</label>
+                        <textarea wire:model="description" id="description" rows="3" 
+                            class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all resize-none" 
+                            placeholder="{{ __('blueprint.description_placeholder') }}"></textarea>
+                        @error('description') <span class="text-red-500 text-sm mt-1.5">{{ $message }}</span> @enderror
+                    </div>
+                </div>
             </div>
         </div>
 
         {{-- Variables --}}
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            @include('blueprint::livewire.components.variable-manager')
-            @error('variables') <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span> @enderror
-            @foreach($errors->messages() as $key => $messages)
-                @if(str_starts_with($key, 'variables.'))
-                    @foreach($messages as $message)
-                        <span class="text-red-500 text-sm block">{{ $message }}</span>
-                    @endforeach
-                @endif
-            @endforeach
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                @include('blueprint::livewire.components.variable-manager')
+                @error('variables') <span class="text-red-500 text-sm mt-2 block">{{ $message }}</span> @enderror
+                @foreach($errors->messages() as $key => $messages)
+                    @if(str_starts_with($key, 'variables.'))
+                        @foreach($messages as $message)
+                            <span class="text-red-500 text-sm block">{{ $message }}</span>
+                        @endforeach
+                    @endif
+                @endforeach
+            </div>
         </div>
 
         {{-- Tabs --}}
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2 mb-4">{{ __('blueprint.tabs_section') }}</h2>
-            <livewire:blueprint.components.tab-manager
-                :tabs-config="$tabsConfig"
-                wire:key="create-tab-manager"
-            />
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.tabs_section') }}</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                <livewire:blueprint.components.tab-manager
+                    :tabs-config="$tabsConfig"
+                    wire:key="create-tab-manager"
+                />
+            </div>
         </div>
 
         {{-- Submit --}}
-        <div class="flex justify-end">
-            <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <div class="flex justify-end pt-2">
+            <button type="submit" 
+                class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>

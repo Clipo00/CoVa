@@ -98,56 +98,66 @@
                 @else
                     @php
                         $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
+                        $sectionColors = [];
+                        foreach($groupedVars as $section => $vars) {
+                            $firstVar = $vars->first();
+                            $sectionColors[$section] = $firstVar->section_color ?? '#6b7280';
+                        }
                     @endphp
 
-                    @foreach($groupedVars as $section => $vars)
-                        <div class="mb-6 last:mb-0">
-                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 flex items-center">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs">
-                                    {{ $section }}
-                                </span>
-                                <span class="ml-2 text-xs text-gray-400">{{ __('blueprint.variable_count', ['count' => $vars->count()]) }}</span>
-                            </h3>
-                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                                <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-600">
-                                    <thead class="bg-gray-50 dark:bg-gray-700/50">
-                                        <tr>
-                                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.var_key') }}</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.var_type') }}</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.var_value') }}</th>
-                                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.var_interactive') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
-                                        @foreach($vars as $variable)
-                                            <tr>
-                                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-mono text-gray-900 dark:text-gray-100">{{ $variable->key }}</td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $variable->type === 'fixed' ? 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200' : 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-200' }}">
-                                                        {{ __('blueprint.var_type_' . $variable->type) }}
+                    <div class="space-y-5">
+                        @foreach($groupedVars as $section => $vars)
+                            @php
+                                $color = $sectionColors[$section] ?? '#6b7280';
+                            @endphp
+                            <div class="relative">
+                                {{-- Section Header --}}
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="w-3 h-3 rounded-full" style="background-color: {{ $color }}"></span>
+                                    <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{{ $section }}</span>
+                                    <span class="text-xs text-gray-400">{{ __('blueprint.variable_count', ['count' => $vars->count()]) }}</span>
+                                </div>
+                                
+                                {{-- Variables list with left border --}}
+                                <div class="pl-4 space-y-1" style="border-left: 2px solid {{ $color }}33">
+                                    @foreach($vars as $variable)
+                                        <div class="flex items-center gap-3 py-2 px-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                            <span class="text-sm font-mono text-gray-900 dark:text-gray-100 min-w-[140px]">{{ $variable->key }}</span>
+                                            <span class="text-xs text-gray-400">=</span>
+                                            <span class="text-sm text-gray-600 dark:text-gray-400 flex-1">
+                                                @if($variable->is_secret)
+                                                    <span class="text-gray-400 tracking-wider">{{ __('blueprint.secret_value') }}</span>
+                                                @else
+                                                    {{ $variable->default_value ?? '-' }}
+                                                @endif
+                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                @if($variable->type === 'fixed')
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">
+                                                        {{ __('blueprint.var_type_fixed') }}
                                                     </span>
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                    @if($variable->is_secret)
-                                                        <span class="text-gray-400">{{ __('blueprint.secret_value') }}</span>
-                                                    @else
-                                                        {{ $variable->default_value ?? '-' }}
-                                                    @endif
-                                                </td>
-                                                <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                                    @if($variable->is_interactive)
-                                                        <span class="text-indigo-600 dark:text-indigo-400 font-medium">{{ __('blueprint.yes') }}</span>
-                                                    @else
-                                                        <span class="text-gray-400">{{ __('blueprint.no') }}</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                                @else
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+                                                        {{ __('blueprint.var_type_empty') }}
+                                                    </span>
+                                                @endif
+                                                @if($variable->is_interactive)
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
+                                                        {{ __('blueprint.var_interactive') }}
+                                                    </span>
+                                                @endif
+                                                @if($variable->is_secret)
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">
+                                                        {{ __('blueprint.var_secret') }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
                 @endif
             </div>
         </div>

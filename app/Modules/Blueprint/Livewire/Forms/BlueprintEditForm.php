@@ -41,6 +41,7 @@ class BlueprintEditForm extends Component
                 'is_interactive' => (bool) $variable->is_interactive,
                 'is_secret' => (bool) $variable->is_secret,
                 'section' => $variable->section,
+                'section_color' => $variable->section_color,
             ];
         })->toArray();
 
@@ -91,6 +92,7 @@ class BlueprintEditForm extends Component
     {
         $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
         $this->cleanEmptyVariables();
+        $this->assignSectionColors();
 
         $validated = $this->validate();
 

@@ -6,10 +6,12 @@ return [
     'heading' => 'Blueprints',
     'new_button' => 'New Blueprint',
     'all_orgs_limit' => 'All your organizations have reached the blueprint limit. Delete an existing one or upgrade your plan.',
+    'no_orgs' => "You don't have any organizations yet.",
 
     // Create
     'create_title' => 'New Blueprint',
     'create_heading' => 'Create Blueprint',
+    'create_description' => 'Define the variables, files, and configurations of your environment.',
 
     // Create/Edit form
     'general_info' => 'General Information',
@@ -74,6 +76,7 @@ return [
     'var_actions' => 'Actions',
     'var_key_placeholder' => 'DB_HOST',
     'var_group_placeholder' => '.env',
+    'section_color' => 'Section color',
     'var_type_fixed' => 'Fixed',
     'var_type_empty' => 'Empty',
     'var_value_placeholder' => 'Default value',

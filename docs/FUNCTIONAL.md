@@ -401,7 +401,7 @@ Guest visita /register
   → Ve CTA "Crear primera organización"
   → Click → /organizations/create
   → Completa nombre
-  → Org creada (plan Free: 2 orgs max, 3 BP/org, 5 members, 20 variables/BP)
+  → Org creada (plan Free: 2 orgs max, 3 BP/org, 5 members, 50 variables/BP)
   → Redirect a /organizations/{slug}
   → Click "Nuevo Blueprint"
   → /blueprints/create?org={id}

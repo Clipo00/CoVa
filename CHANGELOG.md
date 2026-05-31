@@ -10,6 +10,54 @@
 ## [Unreleased]
 
 ### Added
+- **💰 Sección de Pricing en Landing** — página de precios con 3 planes (Free/Pro/Enterprise):
+  - Tarjetas comparativas con límites, features incluidos/excluidos, y CTAs
+  - Plan Free: 2 orgs, 3 BP, 5 members, 50 variables — €0
+  - Plan Pro: 5 orgs, 25 BP, 50 members, 150 variables — €9.99/mes
+  - Plan Enterprise: ilimitado todo — contactar
+  - Link "Precios" en nav superior y footer
+  - Badge "Más popular" en plan Pro con sombra destacada
+  - Traducciones ES/EN para todos los textos de pricing
+  - Actualización de docs: `PROJECT_SUMMARY.md` y `FUNCTIONAL.md` reflejan 50/150 variables
+  - Fix tests: límite de variables actualizado a 50 en Free
+- **🎨 Colores por sección en variables** — cada grupo/fichero de variables ahora tiene un color asignado:
+  - Nueva columna `section_color` en `blueprint_variables`
+  - Paleta de 10 colores predefinidos asignados automáticamente
+  - Color picker nativo en el formulario para que el usuario elija el color
+  - Variables agrupadas por sección con borde lateral del color correspondiente
+  - En la vista show: grupos con header coloreado, borde lateral, y badges para tipo/interactivo/secreto
+- **🎨 Rediseño de formularios de Blueprint** — create/edit ahora tienen UI moderna y amigable:
+  - Layout de dos columnas para título/slug y categoría/descripción
+  - Cards con bordes redondeados (rounded-2xl), sombras suaves y bordes sutiles
+  - Headers de sección con iconos coloridos (información, variables, tabs)
+  - Inputs con estilo rounded-xl y focus rings suaves
+  - Selects con flecha custom y apariencia mejorada
+  - Botón de submit con sombra y efecto hover scale
+  - Layout más amplio (max-w-4xl) para mejor aprovechamiento del espacio
+  - Breadcrumbs rediseñados con iconos de flecha
+  - Header con icono descriptivo y subtítulo
+  - Nueva traducción `blueprint.create_description`
+- **🖥️ Demo Section en Landing** — carousel de demostración con 3 pantallas rotatorias:
+  - Dashboard con organizaciones y estadísticas
+  - Formulario de crear organización con selector de plan
+  - Formulario de crear blueprint con preview de variables
+  - Navegación con dots y flechas, rotación automática cada 4 segundos
+  - Mockups estilizados tipo browser con diseño consistente de CoVa
+  - **Fix i18n**: Todos los textos de las 3 slides extraídos a traducciones (`demo_dash_*`, `demo_org_*`, `demo_bp_*`)
+- **🎨 Logo SVG rediseñado** — icono simplificado de rueda de combinación:
+  - Sin recuadro de caja fuerte, solo dial centrado sobre fondo azul (indigo-600)
+  - Marcas de combinación cardinales + diagonales (8 total)
+  - Indicador/puntero en la parte superior
+  - Tamaño aumentado de w-8 a w-10 en nav, w-7 a w-8 en footer
+  - Aplicado en `landing.blade.php` y `footer.blade.php`
+- **🔖 Favicon SVG** — logo oficial en pestañas del navegador:
+  - Favicon estándar (32×32) como data URI SVG en `<link rel="icon">`
+  - Apple touch icon (180×180) para iOS/macOS
+  - Aplicado en ambos layouts: `landing.blade.php` y `app.blade.php`
+- **🌐 Fix i18n Terminal Animada** — textos de la terminal ahora responden al idioma:
+  - Nuevas keys: `terminal_cmd_fetch`, `terminal_downloading`, `terminal_variables`, `terminal_files`, `terminal_ready`
+  - Componente `animated-terminal` acepta prop `:lines` con contenido traducido
+  - Eliminados textos hardcodeados en español del JavaScript de Alpine.js
 - **🔍 Blueprint filters** — sistema de filtros por organización y categoría en el listado de blueprints:
   - Botón de filtro con icono de funnel y badge con cantidad de filtros activos
   - Dropdown con checkboxes para seleccionar organizaciones y categorías
@@ -22,7 +70,7 @@
   - Accesibilidad: `aria-label`, `aria-expanded`, `aria-controls`, `role="region"`, `aria-live="polite"` en tags
   - Seguridad: IDs de organizaciones validados contra las organizaciones del usuario
 - **🌐 Internacionalización (i18n) completa** — sistema multi-idioma español/inglés:
-  - 339 keys de traducción en ES (español rioplatense con voseo) y EN (inglés)
+  - 339 keys de traducción en ES (castellano de España) y EN (inglés)
   - Archivos lang organizados por módulo: `auth`, `blueprint`, `organization`, `dashboard`, `layouts`, `errors`, `shared`, `welcome`
   - `config/app.php` con `supported_locales` y locale por defecto `es`
   - Todas las vistas Blade (36 archivos) reemplazadas con `{{ __('module.key') }}`
@@ -38,6 +86,18 @@
   - Visible en auth layout (fixed top-right) y app layout (topbar junto a ThemeToggle)
 - **💾 Persistencia de idioma en BD** — preferencia de usuario guardada en `users.locale`:
   - Migración `add_locale_to_users_table` — columna `locale` nullable
+- **🏠 Landing Page** — nueva home de alto impacto que comunica ahorro de tiempo y seguridad:
+  - Hero con terminal animada ejecutando `vault fetch` (Alpine.js typing animation)
+  - Sección "Pain Point": 3 cards sobre el caos de compartir .env por Slack
+  - Sección "How it Works": 3 pasos (Define → Publish → Fetch) con conectores visuales
+  - Marketplace Preview: grid con 6 plantillas populares (mock data)
+  - CTA final con botón "Create free account" hacia registro
+  - Layout dedicado `layouts/landing.blade.php` (sin nav de dashboard)
+  - Scroll reveal con IntersectionObserver + Alpine.js directive
+  - Respeto total de `prefers-reduced-motion`
+  - SEO meta tags y Open Graph
+  - 20 traducciones ES/EN en nuevo archivo `lang/{es,en}/landing.php`
+  - Bundle JS: 0.31KB (0.22KB gzipped)
   - `SetLocaleFromCookie` prioriza: BD > cookie > config default
   - Al cambiar idioma autenticado → se guarda en BD
   - Al registrarse → hereda locale de la cookie
@@ -102,6 +162,21 @@
 - **Botones de presets/skills activos** sin variante dark (se veían en modo claro sobre fondo oscuro)
 - **Hover de delete** en tab-manager: `text-red-600` sobre `bg-gray-800` daba solo 2.82:1
 - **Contraste WCAG AA** en Org show, Org list, Blueprint-list: badges de rol usaban colores incorrectos según el rol
+- **Modo oscuro no persistía en login**: `layouts/auth.blade.php` no incluía el script anti-flash ni el componente `ThemeToggle`, por lo que al navegar desde la landing (con dark mode activo) al login se perdía la preferencia y no había forma de cambiarla desde esa pantalla. Se agregó el script de detección de tema y `<livewire:shared.theme-toggle />` junto al locale switcher.
+- **Mensaje diferenciado en botón de crear blueprint**: antes mostraba "Todas tus organizaciones han alcanzado el límite..." aunque el usuario no tuviera ninguna organización. Ahora diferencia entre: (1) no tiene organizaciones → mensaje "No tienes ninguna organización" con link para crear una; (2) tiene organizaciones pero sin cupo → mensaje original de límite alcanzado.
+- **Migración de rioplatense a castellano en traducciones**: todos los archivos en `lang/es/` fueron actualizados para usar español de España (castellano) en lugar de rioplatense (voseo). Cambios: eliminá→elimina, tenés→tienes, podés→puedes, querés→quieres, probá→prueba, seleccioná→selecciona, agregá→agrega, actualizá→actualiza, ejecutá→ejecuta, iniciá→inicia, esperá→espera, volvé→vuelve, etc. Nueva skill `covar-i18n` creada para asegurar consistencia futura.
+  - **Copilot Review fixes** (PR #9):
+    - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
+    - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
+    - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
+    - **Rutas**: `/` ahora redirige a `dashboard` si el usuario está autenticado, en lugar de mostrar siempre la landing
+    - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
+    - **Meta tags**: descripciones Open Graph y Twitter en `landing.blade.php` ahora usan `strip_tags()` para evitar que HTML (`<strong>`) filtre a previews de links; eliminado `og:image` apuntando a archivo inexistente
+    - **Scroll reveal**: directive `x-reveal` de Alpine.js ahora aplica `revealed` también a descendientes `.reveal` (CSS `.revealed .reveal`), no solo al mismo elemento — los títulos y cards animan correctamente al entrar en viewport
+    - **Plan names i18n**: nombres de planes (`Free`, `Pro`, `Enterprise`) en `pricing.blade.php` movidos a traducciones (`landing.plan_name_*`) para cumplir con skill `covar-i18n`
+    - **Default value**: `CreateBlueprint` y `UpdateBlueprint` ahora usan comparación `!== ''` en lugar de `!empty()` para preservar el string `'0'` como valor válido de `default_value` (antes se guardaba como `null`)
+    - **Docs**: `docs/FEATURE_HISTORY.md` actualizado con árbol completo de partials de landing (demo, pricing, footer) y eliminado conteo obsoleto de "25 keys"
+  - **Fix en tiempo real de colores por sección**: hook `updatedVariables()` en `ManagesVariables` asigna `section_color` automáticamente cuando el usuario escribe una sección, evitando el bug donde el color picker solo aparecía al añadir la siguiente variable (desfase de un paso entre el mapa de la vista y la propiedad `section_color` de Livewire)
 
 ---
 
@@ -269,4 +344,4 @@ Este proyecto no sigue estrictamente [Semantic Versioning](https://semver.org/la
 
 **Formato**: [Keep a Changelog](https://keepachangelog.com/)  
 **Changelog generado desde**: Conventional commits del repo (git log)  
-**Última actualización**: 2026-05-15
+**Última actualización**: 2026-05-28
