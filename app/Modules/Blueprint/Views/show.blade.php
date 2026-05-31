@@ -109,7 +109,6 @@
                         @foreach($groupedVars as $section => $vars)
                             @php
                                 $color = $sectionColors[$section] ?? '#6b7280';
-                                $borderColor = $color . '40'; // 25% opacity for border
                             @endphp
                             <div class="relative">
                                 {{-- Section Header --}}

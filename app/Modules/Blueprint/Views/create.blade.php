@@ -14,7 +14,7 @@
                 </div>
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('blueprint.create_heading') }}</h1>
             </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400 ml-13">{{ __('blueprint.create_description') ?? 'Define las variables, archivos y configuraciones de tu entorno.' }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 ml-12">{{ __('blueprint.create_description') }}</p>
         </div>
 
         @if(session('error'))

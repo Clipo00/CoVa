@@ -136,7 +136,7 @@
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                {{ __('landing.login') }}
+                                {{ __('landing.go_to_dashboard') }}
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">

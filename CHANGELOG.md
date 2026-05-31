@@ -168,6 +168,7 @@
 - **Copilot Review fixes** (PR #9):
   - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
   - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
+  - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
 
 ---
 
