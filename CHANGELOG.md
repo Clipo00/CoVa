@@ -165,6 +165,9 @@
 - **Modo oscuro no persistía en login**: `layouts/auth.blade.php` no incluía el script anti-flash ni el componente `ThemeToggle`, por lo que al navegar desde la landing (con dark mode activo) al login se perdía la preferencia y no había forma de cambiarla desde esa pantalla. Se agregó el script de detección de tema y `<livewire:shared.theme-toggle />` junto al locale switcher.
 - **Mensaje diferenciado en botón de crear blueprint**: antes mostraba "Todas tus organizaciones han alcanzado el límite..." aunque el usuario no tuviera ninguna organización. Ahora diferencia entre: (1) no tiene organizaciones → mensaje "No tienes ninguna organización" con link para crear una; (2) tiene organizaciones pero sin cupo → mensaje original de límite alcanzado.
 - **Migración de rioplatense a castellano en traducciones**: todos los archivos en `lang/es/` fueron actualizados para usar español de España (castellano) en lugar de rioplatense (voseo). Cambios: eliminá→elimina, tenés→tienes, podés→puedes, querés→quieres, probá→prueba, seleccioná→selecciona, agregá→agrega, actualizá→actualiza, ejecutá→ejecuta, iniciá→inicia, esperá→espera, volvé→vuelve, etc. Nueva skill `covar-i18n` creada para asegurar consistencia futura.
+- **Copilot Review fixes** (PR #9):
+  - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
+  - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
 
 ---
 

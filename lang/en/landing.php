@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     // Nav
     'login' => 'Log in',
+    'go_to_dashboard' => 'Go to dashboard',
     'register' => 'Register',
 
     // Hero

@@ -80,7 +80,7 @@ foreach($variables as $var) {
                                         wire:model="variables.{{ $index }}.section_color" 
                                         value="{{ $sectionColor }}"
                                         class="w-6 h-6 rounded cursor-pointer border-0 p-0 bg-transparent"
-                                        title="{{ __('blueprint.section_color') ?? 'Color de sección' }}"
+                                        title="{{ __('blueprint.section_color') }}"
                                     >
                                 @else
                                     <span class="w-6"></span>

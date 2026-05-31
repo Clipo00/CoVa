@@ -76,6 +76,7 @@ return [
     'var_actions' => 'Actions',
     'var_key_placeholder' => 'DB_HOST',
     'var_group_placeholder' => '.env',
+    'section_color' => 'Section color',
     'var_type_fixed' => 'Fixed',
     'var_type_empty' => 'Empty',
     'var_value_placeholder' => 'Default value',

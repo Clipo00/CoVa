@@ -24,7 +24,7 @@ return [
     // 429
     '429_title' => 'Demasiadas solicitudes',
     '429_heading' => 'Demasiadas solicitudes',
-    '429_message' => 'Hiciste demasiadas solicitudes en poco tiempo. Espera un momento y vuélve a intentar.',
+    '429_message' => 'Hiciste demasiadas solicitudes en poco tiempo. Espera un momento y vuelve a intentar.',
     '429_retry' => 'Reintentar en 30 segundos',
 
     // 500
