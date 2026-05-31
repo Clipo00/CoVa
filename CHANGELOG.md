@@ -171,6 +171,7 @@
   - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
   - **Rutas**: `/` ahora redirige a `dashboard` si el usuario está autenticado, en lugar de mostrar siempre la landing
   - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
+  - **Fix en tiempo real de colores por sección**: hook `updatedVariables()` en `ManagesVariables` asigna `section_color` automáticamente cuando el usuario escribe una sección, evitando el bug donde el color picker solo aparecía al añadir la siguiente variable (desfase de un paso entre el mapa de la vista y la propiedad `section_color` de Livewire)
 
 ---
 

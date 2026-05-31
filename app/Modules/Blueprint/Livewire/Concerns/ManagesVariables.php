@@ -81,6 +81,54 @@ trait ManagesVariables
         }
     }
 
+    /**
+     * Hook de Livewire: asigna color automáticamente cuando cambia la sección
+     * de una variable. Esto evita que el color picker aparezca con un paso de
+     * retraso (el bug donde había que añadir otra variable para ver el color).
+     */
+    public function updatedVariables(mixed $value, string $key): void
+    {
+        if (!str_ends_with($key, '.section')) {
+            return;
+        }
+
+        $index = (int) explode('.', $key)[0];
+        $section = $this->variables[$index]['section'] ?? null;
+
+        if (!$section) {
+            return;
+        }
+
+        // Si ya tiene un color válido, no tocarlo (respeta elección del usuario)
+        $existingColor = $this->variables[$index]['section_color'] ?? null;
+        if ($existingColor && $this->isValidHexColor($existingColor)) {
+            return;
+        }
+
+        // Reutilizar color de otra variable con la misma sección
+        foreach ($this->variables as $i => $var) {
+            if ($i === $index) {
+                continue;
+            }
+            if (($var['section'] ?? null) === $section && !empty($var['section_color'] ?? null)) {
+                $this->variables[$index]['section_color'] = $var['section_color'];
+                return;
+            }
+        }
+
+        // Asignar un color nuevo del palette que no esté en uso
+        $usedColors = [];
+        foreach ($this->variables as $var) {
+            if (!empty($var['section_color'] ?? null)) {
+                $usedColors[] = $var['section_color'];
+            }
+        }
+
+        $palette = self::SECTION_COLORS;
+        $color = collect($palette)->first(fn($c) => !in_array($c, $usedColors)) ?? $palette[0];
+        $this->variables[$index]['section_color'] = $color;
+    }
+
     private function isValidHexColor(string $color): bool
     {
         return preg_match('/^#[a-fA-F0-9]{6}$/', $color) === 1;
