@@ -62,14 +62,28 @@ trait ManagesVariables
 
         foreach ($this->variables as $index => $variable) {
             $section = $variable['section'] ?? null;
-            if ($section) {
-                if (!isset($sectionColors[$section])) {
-                    $sectionColors[$section] = self::SECTION_COLORS[$colorIndex % count(self::SECTION_COLORS)];
-                    $colorIndex++;
-                }
-                $this->variables[$index]['section_color'] = $sectionColors[$section];
+            if (!$section) {
+                continue;
             }
+
+            // Respect user-chosen color; only auto-assign if empty
+            $userColor = $variable['section_color'] ?? null;
+            if ($userColor && $this->isValidHexColor($userColor)) {
+                $sectionColors[$section] = $userColor;
+                continue;
+            }
+
+            if (!isset($sectionColors[$section])) {
+                $sectionColors[$section] = self::SECTION_COLORS[$colorIndex % count(self::SECTION_COLORS)];
+                $colorIndex++;
+            }
+            $this->variables[$index]['section_color'] = $sectionColors[$section];
         }
+    }
+
+    private function isValidHexColor(string $color): bool
+    {
+        return preg_match('/^#[a-fA-F0-9]{6}$/', $color) === 1;
     }
 
     protected function variableRules(): array
@@ -81,6 +95,8 @@ trait ManagesVariables
             'variables.*.default_value' => ['nullable', 'string'],
             'variables.*.is_interactive' => ['boolean'],
             'variables.*.is_secret' => ['boolean'],
+            'variables.*.section' => ['nullable', 'string', 'max:255'],
+            'variables.*.section_color' => ['nullable', 'regex:/^#[a-fA-F0-9]{6}$/'],
         ];
     }
 }

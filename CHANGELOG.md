@@ -170,6 +170,7 @@
   - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
   - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
   - **Rutas**: `/` ahora redirige a `dashboard` si el usuario está autenticado, en lugar de mostrar siempre la landing
+  - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
 
 ---
 
