@@ -11,19 +11,19 @@
 
     <title>@yield('title', __('landing.site_title'))</title>
 
-    <meta name="description" content="@yield('meta_description', __('landing.hero_subtitle'))">
+    <meta name="description" content="@yield('meta_description', strip_tags(__('landing.hero_subtitle')))">
     <meta name="keywords" content="vault, environment variables, developer tools, devops, blueprints, laravel, env">
 
     <!-- Open Graph -->
     <meta property="og:title" content="@yield('og_title', __('landing.site_title'))">
-    <meta property="og:description" content="@yield('og_description', __('landing.hero_subtitle'))">
+    <meta property="og:description" content="@yield('og_description', strip_tags(__('landing.hero_subtitle')))">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url('/') }}">
-    <meta property="og:image" content="{{ asset('images/og-image.png') }}">
+    <meta property="og:image" content="{{ asset('favicon.ico') }}">
 
     <!-- Twitter -->
     <meta name="twitter:title" content="@yield('og_title', __('landing.site_title'))">
-    <meta name="twitter:description" content="@yield('og_description', __('landing.hero_subtitle'))">
+    <meta name="twitter:description" content="@yield('og_description', strip_tags(__('landing.hero_subtitle')))"
 
     <!-- Theme Anti-Flash -->
     <script>
