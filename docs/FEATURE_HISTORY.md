@@ -359,14 +359,17 @@ resources/
 │   │       ├── pain-point.blade.php
 │   │       ├── how-it-works.blade.php
 │   │       ├── marketplace-preview.blade.php
-│   │       └── cta-final.blade.php
+│   │       ├── demo.blade.php
+│   │       ├── pricing.blade.php
+│   │       ├── cta-final.blade.php
+│   │       └── footer.blade.php
 │   └── components/
 │       └── animated-terminal.blade.php
 ├── js/
 │   └── landing.js               ← Entry point Vite (0.31KB)
 lang/
-├── es/landing.php                ← 25 keys
-└── en/landing.php                ← 25 keys
+├── es/landing.php
+└── en/landing.php
 ```
 
 ### Aprendizajes Clave

@@ -179,6 +179,10 @@ return [
     'plan_dedicated_support' => 'Dedicated Support',
     'plan_sso' => 'SSO / SAML',
 
+    'plan_name_free' => 'Free',
+    'plan_name_pro' => 'Pro',
+    'plan_name_enterprise' => 'Enterprise',
+
     'plan_cta_free' => 'Start for free',
     'plan_cta_pro' => 'Try Pro 14 days',
     'plan_cta_enterprise' => 'Contact sales',

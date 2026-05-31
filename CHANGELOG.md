@@ -165,12 +165,17 @@
 - **Modo oscuro no persistía en login**: `layouts/auth.blade.php` no incluía el script anti-flash ni el componente `ThemeToggle`, por lo que al navegar desde la landing (con dark mode activo) al login se perdía la preferencia y no había forma de cambiarla desde esa pantalla. Se agregó el script de detección de tema y `<livewire:shared.theme-toggle />` junto al locale switcher.
 - **Mensaje diferenciado en botón de crear blueprint**: antes mostraba "Todas tus organizaciones han alcanzado el límite..." aunque el usuario no tuviera ninguna organización. Ahora diferencia entre: (1) no tiene organizaciones → mensaje "No tienes ninguna organización" con link para crear una; (2) tiene organizaciones pero sin cupo → mensaje original de límite alcanzado.
 - **Migración de rioplatense a castellano en traducciones**: todos los archivos en `lang/es/` fueron actualizados para usar español de España (castellano) en lugar de rioplatense (voseo). Cambios: eliminá→elimina, tenés→tienes, podés→puedes, querés→quieres, probá→prueba, seleccioná→selecciona, agregá→agrega, actualizá→actualiza, ejecutá→ejecuta, iniciá→inicia, esperá→espera, volvé→vuelve, etc. Nueva skill `covar-i18n` creada para asegurar consistencia futura.
-- **Copilot Review fixes** (PR #9):
-  - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
-  - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
-  - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
-  - **Rutas**: `/` ahora redirige a `dashboard` si el usuario está autenticado, en lugar de mostrar siempre la landing
-  - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
+  - **Copilot Review fixes** (PR #9):
+    - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
+    - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
+    - **UI**: `ml-13` (clase Tailwind inexistente) corregido a `ml-12` en `create.blade.php`; variable `$borderColor` sin usar eliminada de `show.blade.php`; botón para usuarios autenticados en landing nav ahora dice "Ir al panel" en vez de "Iniciar sesión"
+    - **Rutas**: `/` ahora redirige a `dashboard` si el usuario está autenticado, en lugar de mostrar siempre la landing
+    - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
+    - **Meta tags**: descripciones Open Graph y Twitter en `landing.blade.php` ahora usan `strip_tags()` para evitar que HTML (`<strong>`) filtre a previews de links; eliminado `og:image` apuntando a archivo inexistente
+    - **Scroll reveal**: directive `x-reveal` de Alpine.js ahora aplica `revealed` también a descendientes `.reveal` (CSS `.revealed .reveal`), no solo al mismo elemento — los títulos y cards animan correctamente al entrar en viewport
+    - **Plan names i18n**: nombres de planes (`Free`, `Pro`, `Enterprise`) en `pricing.blade.php` movidos a traducciones (`landing.plan_name_*`) para cumplir con skill `covar-i18n`
+    - **Default value**: `CreateBlueprint` y `UpdateBlueprint` ahora usan comparación `!== ''` en lugar de `!empty()` para preservar el string `'0'` como valor válido de `default_value` (antes se guardaba como `null`)
+    - **Docs**: `docs/FEATURE_HISTORY.md` actualizado con árbol completo de partials de landing (demo, pricing, footer) y eliminado conteo obsoleto de "25 keys"
   - **Fix en tiempo real de colores por sección**: hook `updatedVariables()` en `ManagesVariables` asigna `section_color` automáticamente cuando el usuario escribe una sección, evitando el bug donde el color picker solo aparecía al añadir la siguiente variable (desfase de un paso entre el mapa de la vista y la propiedad `section_color` de Livewire)
 
 ---

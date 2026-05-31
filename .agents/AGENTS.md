@@ -204,8 +204,8 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 | Plan | Orgs | Blueprints/Org | Miembros/Org | Variables/BP | API | Marketplace |
 |------|------|----------------|--------------|--------------|-----|-------------|
-| **Free** | 2 | 3 | 5 | 20 | ❌ | ❌ |
-| **Pro** | 5 | 25 | 50 | 100 | ✅ | ✅ |
+| **Free** | 2 | 3 | 5 | 50 | ❌ | ❌ |
+| **Pro** | 5 | 25 | 50 | 150 | ✅ | ✅ |
 | **Enterprise** | ∞ | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 Los límites se validan en Actions, lanzando excepciones custom:

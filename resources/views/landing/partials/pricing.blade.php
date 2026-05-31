@@ -15,7 +15,7 @@
             @php
                 $plans = [
                     [
-                        'name' => 'Free',
+                        'name' => __('landing.plan_name_free'),
                         'slug' => 'free',
                         'description' => __('landing.plan_free_desc'),
                         'price' => '0',
@@ -37,7 +37,7 @@
                         'highlight' => false,
                     ],
                     [
-                        'name' => 'Pro',
+                        'name' => __('landing.plan_name_pro'),
                         'slug' => 'pro',
                         'description' => __('landing.plan_pro_desc'),
                         'price' => '9.99',
@@ -58,7 +58,7 @@
                         'highlight' => true,
                     ],
                     [
-                        'name' => 'Enterprise',
+                        'name' => __('landing.plan_name_enterprise'),
                         'slug' => 'enterprise',
                         'description' => __('landing.plan_enterprise_desc'),
                         'price' => null,

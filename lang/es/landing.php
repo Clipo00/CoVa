@@ -179,6 +179,10 @@ return [
     'plan_dedicated_support' => 'Soporte dedicado',
     'plan_sso' => 'SSO / SAML',
 
+    'plan_name_free' => 'Free',
+    'plan_name_pro' => 'Pro',
+    'plan_name_enterprise' => 'Enterprise',
+
     'plan_cta_free' => 'Empezar gratis',
     'plan_cta_pro' => 'Prueba Pro 14 días',
     'plan_cta_enterprise' => 'Contactar ventas',
