@@ -70,4 +70,5 @@ return [
     'mfa_invalid_code' => 'El código introducido no es válido o ha caducado.',
     'mfa_expired_code' => 'El código ha caducado. Solicita uno nuevo.',
     'mfa_code_sent' => 'Se ha enviado un nuevo código a tu correo electrónico.',
+    'throttle' => 'Demasiados intentos. Por favor, inténtalo de nuevo en :seconds segundos.',
 ];

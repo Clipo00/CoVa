@@ -251,9 +251,9 @@ Flags: `is_interactive`, `is_secret`
 | 🔴 Alta | A02 | **Deploy config**: cachear config (`php artisan config:cache`), generar `APP_KEY`, verificar `APP_DEBUG=false` en producción | Pendiente |
 | ✅ Hecho | A02 | **CSP fine-tuning (dev)**: Vite IPv6 no soportado por CSP — se forzó IPv4 en `server.host` y se actualizaron origenes CSP a `127.0.0.1:5173` | Hecho en `fix/csp-vite-ipv6` |
 | 🟡 Media | A09 | **Audit logging**: implementar logging estructurado de operaciones sensibles (login, delete, invite, role changes) con canal separado `audit` | Pendiente |
-| 🟡 Media | A08 | **Implementar signed URLs** para invitaciones y password reset si no existen | Pendiente |
+| ✅ Hecho | A08 | **Implementar signed URLs** para email verification | Hecho en `security-validation-audit` |
 | 🟢 Baja | A06 | **Revisar rate limits**: ajustar thresholds según uso real en producción | Pendiente |
-| 🟢 Baja | A07 | **MFA**: evaluar implementación de autenticación de dos factores para organizations Enterprise | Pendiente |
+| ✅ Hecho | A07 | **MFA**: email-based MFA con código de 6 dígitos, 10min expiry, single-use, rate-limited. UI de challenge + toggle en perfil. | Hecho en `security-validation-audit` |
 | 🟢 Baja | A03 | **Dependency audit automático**: agregar `composer audit` y `npm audit` al pipeline CI/CD | Pendiente |
 
 ### Ya implementado (v1.0)
@@ -271,6 +271,21 @@ Flags: `is_interactive`, `is_secret`
 | A06 | Rate limiting en POST routes CRUD | Blueprint (30/min), Organization (30/5 min) |
 | A07 | Session regeneration on login, CSRF, httpOnly cookies | Laravel built-in |
 | A10 | Custom error pages + exception logging + JSON API handler | `resources/views/errors/*`, `bootstrap/app.php` |
+
+### Implementado en security-validation-audit (v1.1)
+
+| OWASP | Medida | Archivos |
+|-------|--------|----------|
+| A01 | Role change restringido a owner-only (`isOwner()` + `updateMemberRole` gate) | `UpdateOrganizationUserRole`, `OrganizationPolicy` |
+| A01 | Eliminación de blueprints solo por owner (alineado con SKILL.md) | `BlueprintPolicy::delete()` |
+| A01 | Verificación de email en aceptación de invitaciones + límite de miembros | `AcceptInvitation`, `MaxMembersReachedException` |
+| A01 | Chequeo de límite de blueprints en org destino al transferir | `TransferBlueprint` |
+| A04 | Validación de no duplicación de tipos de tab en blueprints | `TabManager`, `BlueprintCreateForm`, `BlueprintEditForm` |
+| A07 | Rate limiting en MFA challenge (`throttle:5,1` + `RateLimiter` en Livewire) | `Auth/Routes/web.php`, `MfaChallengeForm` |
+| A07 | Email-based MFA: códigos de 6 dígitos, 10min expiry, single-use, rate-limited | `SendMfaCode`, `VerifyMfaCode`, `MfaCode` model, migration |
+| A07 | Email verification con signed URLs (`MustVerifyEmail`, 24h expiry) | `EmailVerificationController`, User model |
+| A07 | Bloqueo de emails desechables/temporales en registro | `DisposableEmail` rule, `propaganistas/laravel-disposable-email` |
+| A08 | Signed URLs para email verification | `EmailVerificationController::verify()` |
 
 ---
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Livewire\Forms;
 
+use App\Modules\Auth\Actions\SendMfaCode;
 use App\Modules\Auth\Actions\UpdateUserProfile;
 use App\Modules\Auth\DTOs\UpdateUserProfileData;
 use Illuminate\Validation\Rule;
@@ -20,12 +21,14 @@ class UserProfileForm extends Component
     public ?string $currentPassword = null;
     public ?string $newPassword = null;
     public ?string $newPasswordConfirmation = null;
+    public bool $mfaEnabled = false;
 
     public function mount(): void
     {
         $user = auth()->user();
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->mfaEnabled = (bool) $user->mfa_enabled;
     }
 
     protected function rules(): array
@@ -49,7 +52,7 @@ class UserProfileForm extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function submit(UpdateUserProfile $updateUserProfile): void
+    public function submit(UpdateUserProfile $updateUserProfile, SendMfaCode $sendMfaCode): void
     {
         $validated = $this->validate();
 
@@ -57,6 +60,17 @@ class UserProfileForm extends Component
         if ($this->newPassword && !\Hash::check($this->currentPassword, auth()->user()->password)) {
             $this->addError('currentPassword', __('auth.wrong_password'));
             return;
+        }
+
+        $user = auth()->user();
+
+        // Handle MFA toggle
+        $mfaChanged = (bool) $user->mfa_enabled !== $this->mfaEnabled;
+        if ($mfaChanged) {
+            $user->update(['mfa_enabled' => $this->mfaEnabled]);
+            if ($this->mfaEnabled) {
+                $sendMfaCode->execute($user);
+            }
         }
 
         $data = new UpdateUserProfileData(
@@ -67,7 +81,7 @@ class UserProfileForm extends Component
             newPassword: $this->newPassword,
         );
 
-        $updateUserProfile->execute(auth()->user(), $data);
+        $updateUserProfile->execute($user, $data);
 
         // Reset password fields
         $this->currentPassword = null;

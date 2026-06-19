@@ -9,6 +9,23 @@
 
 ## [Unreleased]
 
+### Security
+- **🔒 Security Validation Audit** — cierre de 6 gaps de seguridad y autorización (OWASP A01, A07):
+  - **Track A (Fixes inmediatos)**:
+    - Restricción de cambio de roles: solo el owner de la organización puede cambiar roles de miembros
+    - Eliminación de blueprints: solo el owner puede eliminar (alineado con `BlueprintPolicy` SKILL.md)
+    - Verificación de email en aceptación de invitaciones + límite de miembros por plan
+    - Prevención de tabs duplicadas en blueprints (validación en `TabManager` + forms)
+    - Chequeo de límite de blueprints en org destino al transferir
+  - **Track B (Features nuevas)**:
+    - Bloqueo de emails desechables/temporales en registro (regla `indisposable` vía `propaganistas/laravel-disposable-email`)
+    - Verificación de email con signed URLs (`MustVerifyEmail`, 24h expiry)
+    - MFA con código de 6 dígitos por email (10min expiry, single-use, rate-limited)
+    - UI de MFA: formulario de challenge + toggle en perfil de usuario
+    - Rate limiting en ruta MFA (`throttle:5,1`) + `RateLimiter` en Livewire (OWASP A07)
+  - **Tests**: 171 tests, 320 assertions (46 tests nuevos total)
+  - **i18n**: 39 nuevas claves sincronizadas (es/en) para verificación, MFA y throttle
+
 ### Added
 - **💰 Sección de Pricing en Landing** — página de precios con 3 planes (Free/Pro/Enterprise):
   - Tarjetas comparativas con límites, features incluidos/excluidos, y CTAs

@@ -19,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
         ->name('verification.resend');
 
-    // MFA challenge (placeholder — full implementation in PR 3)
-    Route::get('/mfa/challenge', [AuthController::class, 'showMfaChallenge'])->name('mfa.challenge');
+    // MFA challenge — OWASP A07: throttle to prevent brute-force (5 attempts/min)
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::get('/mfa/challenge', [AuthController::class, 'showMfaChallenge'])->name('mfa.challenge');
+    });
 });
