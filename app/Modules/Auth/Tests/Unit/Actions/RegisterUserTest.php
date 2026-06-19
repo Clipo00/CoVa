@@ -81,7 +81,7 @@ class RegisterUserTest extends TestCase
         $action = new RegisterUser();
         $data = new RegisterUserData(
             name: 'Temp User',
-            email: 'user@tempmail.com',
+            email: 'user@mailinator.com',
             password: 'password123',
         );
 

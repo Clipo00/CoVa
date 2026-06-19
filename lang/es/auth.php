@@ -49,6 +49,7 @@ return [
 
     // Email verification
     'disposable_email' => 'No se permiten direcciones de correo temporales o desechables.',
+    'indisposable' => 'No se permiten direcciones de correo electrónico desechables.',
     'verification_sent' => 'Hemos enviado un enlace de verificación a tu correo electrónico.',
     'verification_success' => 'Correo electrónico verificado correctamente.',
     'verification_failed' => 'El enlace de verificación no es válido o ha caducado.',

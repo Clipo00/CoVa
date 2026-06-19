@@ -49,6 +49,7 @@ return [
 
     // Email verification
     'disposable_email' => 'Temporary or disposable email addresses are not allowed.',
+    'indisposable' => 'Disposable email addresses are not allowed.',
     'verification_sent' => 'We have sent a verification link to your email address.',
     'verification_success' => 'Email verified successfully.',
     'verification_failed' => 'The verification link is invalid or has expired.',
