@@ -8,6 +8,7 @@ use App\Modules\Auth\Actions\SendMfaCode;
 use App\Modules\Auth\Actions\VerifyMfaCode;
 use App\Modules\Auth\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class MfaChallengeForm extends Component
@@ -31,6 +32,16 @@ class MfaChallengeForm extends Component
         $this->validate();
 
         $userId = session('mfa_user_id');
+        $throttleKey = 'mfa-challenge:'.($userId ?? request()->ip());
+
+        // OWASP A07:2025 — prevent brute-force on MFA codes (5 attempts/min)
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('code', __('auth.throttle', ['seconds' => $seconds]));
+            return;
+        }
+
+        RateLimiter::hit($throttleKey, 60);
 
         if ($userId === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));
@@ -59,6 +70,16 @@ class MfaChallengeForm extends Component
     public function resend(SendMfaCode $sendMfaCode): void
     {
         $userId = session('mfa_user_id');
+        $throttleKey = 'mfa-resend:'.($userId ?? request()->ip());
+
+        // OWASP A07:2025 — prevent email bombing (3 resends/min)
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('code', __('auth.throttle', ['seconds' => $seconds]));
+            return;
+        }
+
+        RateLimiter::hit($throttleKey, 60);
 
         if ($userId === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));

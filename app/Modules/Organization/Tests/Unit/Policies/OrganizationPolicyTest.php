@@ -6,10 +6,12 @@ namespace App\Modules\Organization\Tests\Unit\Policies;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Actions\CreateOrganization;
+use App\Modules\Organization\Actions\UpdateOrganizationUserRole;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Policies\OrganizationPolicy;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class OrganizationPolicyTest extends TestCase
@@ -174,5 +176,68 @@ class OrganizationPolicyTest extends TestCase
         $maintainer = $this->createUserWithRole('maintainer', $organization);
 
         $this->assertFalse($this->policy->updateMemberRole($maintainer, $organization));
+    }
+
+    public function test_owner_self_change_role_is_denied(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'self-change@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org-self');
+
+        // The policy gate passes (owner IS owner), but the action blocks self-change
+        $this->assertTrue($this->policy->updateMemberRole($owner, $organization));
+
+        // The action enforces: owner MUST NOT change their own role
+        $updateRole = new UpdateOrganizationUserRole();
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage(__('organization.cannot_change_owner_role'));
+
+        $updateRole->execute(
+            organization: $organization,
+            targetUser: $owner,
+            newRole: 'maintainer',
+            actor: $owner,
+        );
+    }
+
+    public function test_owner_cannot_update_role_for_non_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-nm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $nonMember = User::create([
+            'name' => 'Non Member',
+            'email' => 'non-member@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org-nm');
+
+        $updateRole = new UpdateOrganizationUserRole();
+
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage(__('organization.not_a_member'));
+
+        $updateRole->execute(
+            organization: $organization,
+            targetUser: $nonMember,
+            newRole: 'developer',
+            actor: $owner,
+        );
     }
 }

@@ -70,4 +70,5 @@ return [
     'mfa_invalid_code' => 'The code entered is invalid or has expired.',
     'mfa_expired_code' => 'The code has expired. Request a new one.',
     'mfa_code_sent' => 'A new code has been sent to your email.',
+    'throttle' => 'Too many attempts. Please try again in :seconds seconds.',
 ];
