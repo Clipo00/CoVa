@@ -402,5 +402,51 @@ lang/
 8. **La consistencia del logo importa en todos los touchpoints**: Nav, footer, favicon, apple-touch-icon. Usar el mismo SVG en todos lados refuerza la marca. El favicon no es un detalle menor — es lo primero que ve el usuario en la pestaña.
 
 **Documento generado**: 2026-05-23  
-**Versión**: 1.1  
-**Última actualización**: Refinamientos Landing Page (logo, favicon, i18n)
+**Versión**: 1.2  
+**Última actualización**: Security Validation Audit (Junio 2026)
+
+---
+
+## Fase 2: Security Hardening (Junio 2026)
+
+### El Problema
+
+Una auditoría de seguridad reveló 6 gaps de autorización y validación que comprometían el modelo de seguridad de CoVa. Los roles no se respetaban correctamente (maintainers podían cambiar roles), las invitaciones no verificaban identidad, no había protección contra emails desechables, y no existía MFA.
+
+### Decisiones Clave
+
+**¿Por qué restringir cambio de roles a solo owner?**
+- El modelo de seguridad estándar en SaaS multi-tenant requiere que solo el owner pueda escalar privilegios. Permitir que un maintainer cambie roles abre la puerta a escalación horizontal: un maintainer podría promocionar a otro maintainer a owner-equivalente.
+
+**¿Por qué `propaganistas/laravel-disposable-email` y no una lista manual?**
+- El paquete tiene ~3M de descargas, 601 estrellas, cero issues abiertos, y recibe actualizaciones semanales de la blacklist `disposable/disposable`. Una lista manual se desactualiza en días. El comando `disposable:update` programable en el scheduler garantiza mantenimiento cero.
+
+**¿Por qué MFA por email y no TOTP (Google Authenticator)?**
+- El MVP prioriza simplicidad de implementación y UX. Email MFA no requiere que el usuario instale apps externas. La migración a TOTP/Webauthn se puede hacer más adelante sin romper la infraestructura existente (la tabla `mfa_codes` es genérica).
+
+**¿Por qué feature-branch-chain para los PRs del Track B?**
+- El Track B (~630 líneas) excedía el budget de revisión de 400 líneas. Partirlo en 3 PRs encadenados (PR1 → PR2 → PR3) mantiene cada diff bajo 300 líneas, y el feature-branch-chain evita conflictos de merge acumulativos.
+
+### Lo Que Se Hizo
+
+| Gap | Severidad | Solución | Archivos |
+|-----|-----------|----------|----------|
+| Maintainer cambia roles | HIGH | `UpdateOrganizationUserRole` restringido a `isOwner()`, nuevo gate `updateMemberRole` en `OrganizationPolicy` | Action, Policy, Controller |
+| Developer borra blueprints | MEDIUM | `BlueprintPolicy::delete()` ahora solo owner (alineado con SKILL.md) | Policy |
+| Invitación sin verificación de email | HIGH | `AcceptInvitation` verifica match de email + límite de miembros del plan | Action, Exception |
+| Tabs duplicadas en blueprint | MEDIUM | Dedup en `TabManager::addTab()` + validación en `BlueprintCreateForm`/`BlueprintEditForm` | Livewire, Forms, Blade |
+| Transfer sin check de límite | HIGH | `TransferBlueprint` chequea `max_blueprints_per_org` en org destino | Action |
+| Registro sin verificación de email | CRITICAL | `MustVerifyEmail` en User, signed URL verification, bloqueo de disposable emails | Model, Controller, Action, Rule, Routes |
+| Sin MFA | CRITICAL | Infraestructura completa: `mfa_codes` table, `SendMfaCode`/`VerifyMfaCode` actions, Livewire challenge UI, toggle en perfil, rate limiting OWASP A07 | Migration, Model, Actions, Livewire, Views, Routes |
+
+### Aprendizajes Clave
+
+9. **Rate limiting en MFA no es opcional**: Un código de 6 dígitos tiene 1/1,000,000 de probabilidad por intento. Sin throttle, un atacante con 100 requests/segundo lo rompe en ~2.7 horas. Con `throttle:5,1` (5 intentos/minuto), se necesitan ~139 días. La diferencia es pasar de "vulnerable" a "computacionalmente inviable".
+
+10. **El paquete de disposable email se actualiza solo**: `propaganistas/laravel-disposable-email` publica releases semanales con la última blacklist. Programar `disposable:update` en el scheduler de Laravel garantiza que la lista esté siempre fresca sin intervención manual.
+
+11. **`MustVerifyEmail` de Laravel ya hace el 80% del trabajo**: La interfaz `MustVerifyEmail` en el modelo User + el evento `Registered` disparan automáticamente el envío del email de verificación. Solo hizo falta crear el controller de verificación con signed URLs. No reinventar la rueda.
+
+**Documento generado**: 2026-05-23  
+**Versión**: 1.2  
+**Última actualización**: Security Validation Audit (Junio 2026)
