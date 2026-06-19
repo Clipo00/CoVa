@@ -32,4 +32,9 @@ class AuthController
     {
         return view('auth::profile');
     }
+
+    public function showMfaChallenge(): View
+    {
+        return view('auth::mfa-challenge');
+    }
 }

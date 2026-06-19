@@ -53,4 +53,21 @@ return [
     'verification_success' => 'Email verified successfully.',
     'verification_failed' => 'The verification link is invalid or has expired.',
     'verification_already_verified' => 'Your email has already been verified.',
+
+    // MFA (two-factor authentication)
+    'mfa_required' => 'Additional verification required. Check your email.',
+    'mfa_email_subject' => 'Your verification code',
+    'mfa_email_greeting' => 'Hello :name,',
+    'mfa_email_intro' => 'Your verification code is:',
+    'mfa_email_expiry' => 'This code expires in 10 minutes.',
+    'mfa_email_salutation' => 'Thank you for using CoVa.',
+    'mfa_challenge_title' => 'Two-step verification',
+    'mfa_challenge_subtitle' => 'We have sent a verification code to your email address.',
+    'mfa_code_label' => 'Verification code',
+    'mfa_code_placeholder' => 'Enter the 6-digit code',
+    'mfa_verify_button' => 'Verify',
+    'mfa_resend_button' => 'Resend code',
+    'mfa_invalid_code' => 'The code entered is invalid or has expired.',
+    'mfa_expired_code' => 'The code has expired. Request a new one.',
+    'mfa_code_sent' => 'A new code has been sent to your email.',
 ];

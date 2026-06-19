@@ -6,6 +6,7 @@ namespace App\Modules\Auth\Livewire\Forms;
 
 use App\Modules\Auth\Actions\LoginUser;
 use App\Modules\Auth\DTOs\LoginUserData;
+use App\Modules\Auth\Exceptions\MfaRequiredException;
 use App\Modules\Auth\Requests\LoginRequest;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -40,6 +41,9 @@ class LoginForm extends Component
             $loginUser->execute($data);
 
             $this->redirectIntended(route('dashboard'));
+        } catch (MfaRequiredException $e) {
+            session()->put('mfa_user_id', $e->user->id);
+            $this->redirect(route('mfa.challenge'));
         } catch (ValidationException $e) {
             $this->addError('email', $e->getMessage());
         }
