@@ -46,4 +46,11 @@ return [
     'wrong_password' => 'The current password is incorrect',
     'profile_updated' => 'Profile updated successfully',
     'free_plan_missing' => 'Free plan does not exist. Run database seeders.',
+
+    // Email verification
+    'disposable_email' => 'Temporary or disposable email addresses are not allowed.',
+    'verification_sent' => 'We have sent a verification link to your email address.',
+    'verification_success' => 'Email verified successfully.',
+    'verification_failed' => 'The verification link is invalid or has expired.',
+    'verification_already_verified' => 'Your email has already been verified.',
 ];

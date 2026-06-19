@@ -9,6 +9,9 @@ use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class RegisterUserTest extends TestCase
@@ -69,5 +72,38 @@ class RegisterUserTest extends TestCase
 
         $this->assertNotNull($user->plan);
         $this->assertEquals('free', $user->plan->slug);
+    }
+
+    public function test_it_rejects_disposable_email(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $action = new RegisterUser();
+        $data = new RegisterUserData(
+            name: 'Temp User',
+            email: 'user@tempmail.com',
+            password: 'password123',
+        );
+
+        $action->execute($data);
+    }
+
+    public function test_it_sends_verification_notification_after_registration(): void
+    {
+        Notification::fake();
+
+        $action = new RegisterUser();
+        $data = new RegisterUserData(
+            name: 'Jane Doe',
+            email: 'jane@example.com',
+            password: 'securepass123',
+        );
+
+        $user = $action->execute($data);
+
+        Notification::assertSentTo(
+            [$user],
+            VerifyEmail::class,
+        );
     }
 }

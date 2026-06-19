@@ -1,0 +1,61 @@
+# openspec/config.yaml — CoVa project context
+schema: spec-driven
+
+context: |
+  Tech stack: Laravel 13.7.0 (PHP 8.3+), Blade + Livewire 3, Tailwind CSS 4, SQLite (dev)/MySQL (prod), Vite, Sanctum.
+  Architecture: Modular (app/Modules/{Auth,Blueprint,Organization,Shared}), Actions pattern, DTOs, Value Objects, Policies per model, Soft Deletes, UUIDs.
+  Testing: PHPUnit 12.5 (125 tests, 237 assertions, 17.3s), Playwright E2E (3 specs), Laravel Pint (PSR-12), SQLite :memory: for tests.
+  Style: declare(strict_types=1) on all PHP, PSR-4 namespacing (App\Modules\{ModuleName}), camelCase methods, snake_case DB columns, Livewire Forms with rules().
+  Strict TDD: true (test runner works, tests exist and pass)
+  Locale: es (Spanish), translations in lang/ (ES/EN via covar-i18n)
+  Security: OWASP Top 10:2025 baseline implemented (Policies, CSP headers, signed URLs, custom error pages, session encryption)
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+  apply:
+    - Follow existing module conventions (Actions, DTOs, Policies, Livewire Forms)
+    - Always load covar-security skill for security implications
+    - Load corresponding module skill (covar-laravel-action, etc.) based on file context
+    tdd: true
+    test_command: php artisan test
+  verify:
+    test_command: php artisan test
+    build_command: npm run build
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+
+testing:
+  strict_tdd: true
+  runner: PHPUnit 12.5
+  command: php artisan test
+  layers:
+    unit: true
+    feature: true
+    e2e: true
+  coverage: false
+  linter: pint
+  formatter: pint
+  e2e_framework: Playwright
+
+stack:
+  laravel: 13.7.0
+  php: "^8.3"
+  livewire: "^4.3"
+  sanctum: "^4.3"
+  frontend: blade + tailwindcss 4 + alpine.js (via livewire)
+  build: vite 8 + laravel-vite-plugin 3
+  database: sqlite (dev) / mysql (prod)
+  cache: database
+  queue: database
+  session: database (encrypted)
