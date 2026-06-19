@@ -8,6 +8,7 @@ use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterUser
 {
@@ -30,6 +31,8 @@ class RegisterUser
             'password' => Hash::make($data->password),
             'plan_id' => $freePlan->id,
         ]);
+
+        event(new Registered($user));
 
         return $user;
     }

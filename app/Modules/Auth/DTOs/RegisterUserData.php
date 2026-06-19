@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\DTOs;
 
 use App\Modules\Shared\ValueObjects\Email;
+use App\Rules\DisposableEmail;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,7 +26,7 @@ class RegisterUserData
             'password' => $password,
         ], [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', new DisposableEmail()],
             'password' => ['required', 'string', 'min:8'],
         ]);
 

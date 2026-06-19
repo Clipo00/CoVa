@@ -46,4 +46,11 @@ return [
     'wrong_password' => 'La contraseña actual es incorrecta',
     'profile_updated' => 'Perfil actualizado correctamente',
     'free_plan_missing' => 'El plan gratuito no existe. Ejecuta los seeders de la base de datos.',
+
+    // Email verification
+    'disposable_email' => 'No se permiten direcciones de correo temporales o desechables.',
+    'verification_sent' => 'Hemos enviado un enlace de verificación a tu correo electrónico.',
+    'verification_success' => 'Correo electrónico verificado correctamente.',
+    'verification_failed' => 'El enlace de verificación no es válido o ha caducado.',
+    'verification_already_verified' => 'Tu correo electrónico ya ha sido verificado.',
 ];

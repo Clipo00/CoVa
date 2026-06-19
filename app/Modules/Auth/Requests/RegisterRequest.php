@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Requests;
 
+use App\Rules\DisposableEmail;
+
 class RegisterRequest
 {
     /**
@@ -15,7 +17,7 @@ class RegisterRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', new DisposableEmail()],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }

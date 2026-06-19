@@ -6,13 +6,15 @@ namespace App\Modules\Auth\Models;
 
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmailContract
 {
-    use Notifiable;
+    use Notifiable, MustVerifyEmail;
 
     protected $fillable = [
         'name',
