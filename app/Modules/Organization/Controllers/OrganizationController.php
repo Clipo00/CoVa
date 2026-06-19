@@ -126,6 +126,8 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
+        $this->authorize('updateMemberRole', $organization);
+
         $validated = $request->validate([
             'role' => ['required', 'in:developer,maintainer'],
         ]);

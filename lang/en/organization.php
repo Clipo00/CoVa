@@ -102,10 +102,12 @@ return [
     'not_a_member' => 'The user is not a member of this organization.',
     'restore_limit' => 'Limit of :max organizations reached. Delete an active organization to restore this one.',
     'max_reached' => 'Limit of :max organizations reached on plan :plan.',
+    'max_members_reached' => 'Member limit of :limit reached on plan :plan.',
 
     // Invitation
     'invitation_not_found' => 'Invitation not found.',
     'invitation_expired' => 'The invitation has expired or has already been used.',
     'invitation_user_required' => 'A user is required to accept this invitation.',
     'invitation_no_user' => 'A user with this email does not exist.',
+    'invitation_email_mismatch' => 'The user email does not match the invitation.',
 ];

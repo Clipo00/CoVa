@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Actions;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 
@@ -34,6 +35,14 @@ class TransferBlueprint
 
         if ($existingBlueprint) {
             abort(422, __('blueprint.transfer_slug_exists', ['slug' => $blueprint->slug]));
+        }
+
+        // Validar límite de blueprints de la org destino
+        $plan = $targetOrganization->plan;
+        $maxBlueprints = $plan->max_blueprints_per_org;
+
+        if ($maxBlueprints !== null && $targetOrganization->blueprints()->count() >= $maxBlueprints) {
+            throw new MaxBlueprintsReachedException($maxBlueprints, $plan->name);
         }
 
         $blueprint->update(['organization_id' => $targetOrganization->id]);

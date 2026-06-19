@@ -15,8 +15,8 @@ class UpdateOrganizationUserRole
         string $newRole,
         User $actor
     ): void {
-        // El actor debe poder gestionar miembros
-        if (!$actor->canManageMembers($organization)) {
+        // El actor debe ser owner de la organización
+        if (!$actor->isOwnerOf($organization)) {
             abort(403, __('organization.no_manage_permission'));
         }
 

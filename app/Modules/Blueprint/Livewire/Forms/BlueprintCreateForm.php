@@ -137,6 +137,14 @@ class BlueprintCreateForm extends Component
             return;
         }
 
+        // Validar que no haya tipos de pestaña duplicados
+        $tabTypes = array_column($this->tabsConfig, 'type');
+        $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
+        if (!empty($duplicates)) {
+            $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => reset($duplicates)]));
+            return;
+        }
+
         if (!$this->validateUniqueKeys()) {
             return;
         }

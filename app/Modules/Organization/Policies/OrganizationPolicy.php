@@ -38,4 +38,9 @@ class OrganizationPolicy
     {
         return $user->canCreateBlueprints($organization);
     }
+
+    public function updateMemberRole(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
 }

@@ -163,6 +163,13 @@
         </div>
     @endforelse
 
+    {{-- Duplicate Tab Error --}}
+    @if($tabError)
+        <div class="rounded-md bg-red-50 dark:bg-red-900/30 p-3 border border-red-200 dark:border-red-800">
+            <p class="text-sm text-red-700 dark:text-red-300">{{ $tabError }}</p>
+        </div>
+    @endif
+
     {{-- Add Tab Dropdown --}}
     <div class="flex flex-wrap gap-2">
         @foreach($availableTabTypes as $type => $label)

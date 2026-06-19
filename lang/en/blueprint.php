@@ -188,4 +188,5 @@ return [
     'max_blueprints_reached' => 'Limit of :max blueprints per organization reached on plan :plan.',
     'max_variables_reached' => 'Limit of :max variables per blueprint reached on plan :plan.',
     'unknown_tab_type' => 'Unknown tab type: \':type\'.',
+    'duplicate_tab_type' => 'A tab of type \':type\' already exists.',
 ];

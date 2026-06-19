@@ -28,8 +28,7 @@ class BlueprintPolicy
 
     public function delete(User $user, Blueprint $blueprint): bool
     {
-        return $blueprint->created_by === $user->id 
-            || $user->isOwnerOf($blueprint->organization);
+        return $user->isOwnerOf($blueprint->organization);
     }
 
     public function favorite(User $user, Blueprint $blueprint): bool

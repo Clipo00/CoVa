@@ -23,6 +23,8 @@ class TabManager extends Component
     /** @var array<string, string> */
     public array $availableTabTypes = [];
 
+    public string $tabError = '';
+
     public function mount(?array $tabsConfig = null): void
     {
         $this->tabs = $tabsConfig ?? [];
@@ -41,6 +43,16 @@ class TabManager extends Component
         if (!TabType::isValid($type)) {
             return;
         }
+
+        // Validar que no exista ya una pestaña del mismo tipo
+        foreach ($this->tabs as $tab) {
+            if ($tab['type'] === $type) {
+                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => $type]);
+                return;
+            }
+        }
+
+        $this->tabError = '';
 
         $defaultConfig = match ($type) {
             TabType::VSCODE_EXTENSIONS->value => ['extensions' => []],
