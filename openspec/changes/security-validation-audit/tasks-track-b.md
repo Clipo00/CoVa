@@ -53,11 +53,11 @@ Chain strategy: feature-branch-chain
 
 ## Phase 3: MFA UI + Integration (PR 3 → PR 2 branch)
 
-- [ ] 3.1 Create `MfaChallengeForm` Livewire component (code input, submit calls VerifyMfaCode then Auth::login)
-- [ ] 3.2 Create `auth::mfa-challenge` Blade view with code input and error display
-- [ ] 3.3 Add `showMfaChallenge()` to `AuthController` rendering the challenge view
-- [ ] 3.4 Add `/mfa/challenge` GET route (auth middleware) and wire `MfaChallengeForm`
-- [ ] 3.5 Add `mfa_enabled` toggle to `UserProfileForm` (requires current password; sends test code on enable)
-- [ ] 3.6 Register `MfaChallengeForm` in `AuthServiceProvider`
-- [ ] 3.7 Add `mfa_*` translation keys to `lang/{es,en}/auth.php`
-- [ ] 3.8 Create `Tests/Feature/MfaChallengeTest` covering valid, expired, and reused code scenarios
+- [x] 3.1 Create `MfaChallengeForm` Livewire component (code input, submit calls VerifyMfaCode then Auth::login, resend action)
+- [x] 3.2 Create `auth::livewire.forms.mfa-challenge-form` Blade view with centered code input, error display, and resend button
+- [x] 3.3 Add `showMfaChallenge()` to `AuthController` rendering the challenge view (placeholder from PR 2, finalized)
+- [x] 3.4 Add `/mfa/challenge` GET route (auth middleware) wiring `MfaChallengeForm` (placeholder from PR 2, finalized)
+- [x] 3.5 Add `mfa_enabled` toggle to `UserProfileForm` (toggle checkbox in blade, update user on submit; sends test code on enable)
+- [x] 3.6 Register `MfaChallengeForm` in `AuthServiceProvider`
+- [x] 3.7 Add `mfa_*` translation keys to `lang/{es,en}/auth.php` (17 keys including email notification, challenge page, code labels, errors)
+- [x] 3.8 Create `Tests/Feature/MfaChallengeTest` (5 tests: page renders, valid code, invalid code, expired code, resend) and `ProfileMfaTest` (4 tests: toggle default, toggle shows state, enable, disable)
