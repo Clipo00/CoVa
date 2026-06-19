@@ -129,4 +129,60 @@ class BlueprintPolicyTest extends TestCase
 
         $this->assertTrue($this->policy->delete($owner, $blueprint));
     }
+
+    public function test_creator_developer_cannot_delete_own_blueprint(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $developer = User::create([
+            'name' => 'Developer',
+            'email' => 'dev@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $this->actingAs($developer);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Dev BP', 'dev-bp');
+
+        $this->assertFalse($this->policy->delete($developer, $blueprint));
+    }
+
+    public function test_maintainer_cannot_delete(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $maintainer = User::create([
+            'name' => 'Maintainer',
+            'email' => 'maintainer@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
+        $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Owner BP', 'owner-bp');
+
+        $this->assertFalse($this->policy->delete($maintainer, $blueprint));
+    }
 }

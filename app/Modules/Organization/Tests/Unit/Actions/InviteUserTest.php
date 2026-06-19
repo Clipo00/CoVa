@@ -8,6 +8,7 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Actions\AcceptInvitation;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\InviteUser;
+use App\Modules\Organization\Exceptions\MaxMembersReachedException;
 use App\Modules\Organization\Models\OrganizationInvitation;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,5 +100,78 @@ class InviteUserTest extends TestCase
         $this->expectException(ValidationException::class);
         $acceptInvitation = new AcceptInvitation();
         $acceptInvitation->execute($invitation->token);
+    }
+
+    public function test_accept_invitation_rejects_email_mismatch(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $otherUser = User::create([
+            'name' => 'Other',
+            'email' => 'other@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'My Org', 'my-org');
+
+        $inviteUser = new InviteUser();
+        $invitation = $inviteUser->execute($organization, 'invited@example.com', 'developer');
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage(__('organization.invitation_email_mismatch'));
+
+        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation->execute($invitation->token, $otherUser);
+    }
+
+    public function test_accept_invitation_rejects_org_at_member_limit(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $member = User::create([
+            'name' => 'Member',
+            'email' => 'member@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'My Org', 'my-org');
+
+        // Llenar la organización hasta el límite
+        $maxMembers = $plan->max_members_per_org;
+        if ($maxMembers !== null) {
+            for ($i = 1; $i < $maxMembers; $i++) {
+                $extraUser = User::create([
+                    'name' => "Extra $i",
+                    'email' => "extra$i@example.com",
+                    'password' => bcrypt('password'),
+                    'plan_id' => $plan->id,
+                ]);
+                $organization->members()->attach($extraUser->id, ['role' => 'developer']);
+            }
+        }
+
+        $inviteUser = new InviteUser();
+        $invitation = $inviteUser->execute($organization, 'member@example.com', 'developer');
+
+        $this->expectException(MaxMembersReachedException::class);
+
+        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation->execute($invitation->token, $member);
     }
 }

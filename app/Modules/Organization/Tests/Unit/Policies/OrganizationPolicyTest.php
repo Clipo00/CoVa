@@ -141,4 +141,38 @@ class OrganizationPolicyTest extends TestCase
 
         $this->assertFalse($this->policy->manageMembers($developer, $organization));
     }
+
+    public function test_owner_can_update_member_role(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
+
+        $this->assertTrue($this->policy->updateMemberRole($owner, $organization));
+    }
+
+    public function test_maintainer_cannot_update_member_role(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
+
+        $maintainer = $this->createUserWithRole('maintainer', $organization);
+
+        $this->assertFalse($this->policy->updateMemberRole($maintainer, $organization));
+    }
 }
