@@ -53,4 +53,21 @@ return [
     'verification_success' => 'Correo electrónico verificado correctamente.',
     'verification_failed' => 'El enlace de verificación no es válido o ha caducado.',
     'verification_already_verified' => 'Tu correo electrónico ya ha sido verificado.',
+
+    // MFA (two-factor authentication)
+    'mfa_required' => 'Se requiere verificación adicional. Revisa tu correo electrónico.',
+    'mfa_email_subject' => 'Tu código de verificación',
+    'mfa_email_greeting' => 'Hola :name,',
+    'mfa_email_intro' => 'Tu código de verificación es:',
+    'mfa_email_expiry' => 'Este código caduca en 10 minutos.',
+    'mfa_email_salutation' => 'Gracias por usar CoVa.',
+    'mfa_challenge_title' => 'Verificación en dos pasos',
+    'mfa_challenge_subtitle' => 'Hemos enviado un código de verificación a tu correo electrónico.',
+    'mfa_code_label' => 'Código de verificación',
+    'mfa_code_placeholder' => 'Ingresa el código de 6 dígitos',
+    'mfa_verify_button' => 'Verificar',
+    'mfa_resend_button' => 'Reenviar código',
+    'mfa_invalid_code' => 'El código introducido no es válido o ha caducado.',
+    'mfa_expired_code' => 'El código ha caducado. Solicita uno nuevo.',
+    'mfa_code_sent' => 'Se ha enviado un nuevo código a tu correo electrónico.',
 ];

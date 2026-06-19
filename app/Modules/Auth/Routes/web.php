@@ -18,4 +18,7 @@ Route::middleware('auth')->group(function () {
         ->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
         ->name('verification.resend');
+
+    // MFA challenge (placeholder — full implementation in PR 3)
+    Route::get('/mfa/challenge', [AuthController::class, 'showMfaChallenge'])->name('mfa.challenge');
 });

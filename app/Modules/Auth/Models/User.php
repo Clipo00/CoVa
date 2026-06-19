@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Models;
 
+use App\Modules\Auth\Models\MfaCode;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Auth\MustVerifyEmail;
@@ -24,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'password',
         'plan_id',
         'is_system',
+        'mfa_enabled',
     ];
 
     protected $hidden = [
@@ -36,12 +38,18 @@ class User extends Authenticatable implements MustVerifyEmailContract
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'mfa_enabled' => 'boolean',
         ];
     }
 
     public function plan()
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function mfaCodes()
+    {
+        return $this->hasMany(MfaCode::class);
     }
 
     public function ownedOrganizations()
