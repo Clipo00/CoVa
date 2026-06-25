@@ -110,4 +110,14 @@ return [
     'invitation_user_required' => 'Se requiere un usuario para aceptar esta invitación.',
     'invitation_no_user' => 'No existe un usuario con este email.',
     'invitation_email_mismatch' => 'El email del usuario no coincide con la invitación.',
+    'invitation_accepted' => '¡Invitación aceptada correctamente!',
+    'invitation_accept_title' => 'Aceptar invitación',
+    'invitation_accept_intro' => 'Estás a punto de unirte a :organization como :role.',
+
+    // Invitation notification
+    'invitation_subject' => 'Has sido invitado a :organization',
+    'invitation_greeting' => '¡Hola!',
+    'invitation_intro' => 'Has sido invitado a unirte a :organization como :role.',
+    'invitation_accept_button' => 'Aceptar invitación',
+    'invitation_expiry' => 'Esta invitación expirará en :hours horas.',
 ];

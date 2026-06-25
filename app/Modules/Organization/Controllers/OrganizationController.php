@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Controllers;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Organization\Actions\AcceptInvitation;
 use App\Modules\Organization\Actions\CreateOrganizationUser;
 use App\Modules\Organization\Actions\DeleteOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Actions\UpdateOrganization;
 use App\Modules\Organization\Actions\UpdateOrganizationUserRole;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Organization\Models\OrganizationInvitation;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Mail;
 
@@ -144,6 +148,71 @@ class OrganizationController
         return redirect()
             ->route('organizations.members', $organization->slug)
             ->with('success', __('organization.role_updated', ['name' => $targetUser->name]));
+    }
+
+    /**
+     * Show invitation — OWASP A01/A07: validates token, handles guest redirect flow.
+     * Guests store token in session and redirect to login.
+     * Authenticated users accept directly.
+     */
+    public function showInvitation(string $token): RedirectResponse
+    {
+        try {
+            $invitation = OrganizationInvitation::where('token', $token)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            return redirect()->route('login')
+                ->with('error', __('organization.invitation_not_found'));
+        }
+
+        if (!$invitation->isValid()) {
+            return redirect()->route('login')
+                ->with('error', __('organization.invitation_expired'));
+        }
+
+        if (!auth()->check()) {
+            session(['invitation_token' => $token]);
+
+            return redirect()->guest(route('login'));
+        }
+
+        // Authenticated user: verify email match
+        if (auth()->user()->email !== $invitation->email) {
+            return redirect()->route('dashboard')
+                ->with('error', __('organization.invitation_email_mismatch'));
+        }
+
+        try {
+            app(AcceptInvitation::class)->execute($token, auth()->user());
+        } catch (ValidationException $e) {
+            return redirect()->route('dashboard')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('organizations.show', $invitation->organization->slug)
+            ->with('success', __('organization.invitation_accepted'));
+    }
+
+    /**
+     * Accept invitation via POST — CSRF protected endpoint for form-based acceptance.
+     */
+    public function acceptInvitation(string $token, Request $request, AcceptInvitation $acceptInvitation): RedirectResponse
+    {
+        try {
+            $invitation = OrganizationInvitation::where('token', $token)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            return redirect()->route('dashboard')
+                ->with('error', __('organization.invitation_not_found'));
+        }
+
+        try {
+            $acceptInvitation->execute($token, auth()->user());
+        } catch (ValidationException $e) {
+            return redirect()->route('dashboard')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('organizations.show', $invitation->organization->slug)
+            ->with('success', __('organization.invitation_accepted'));
     }
 
     public function invite(string $slug, Request $request, InviteUser $inviteUser): RedirectResponse

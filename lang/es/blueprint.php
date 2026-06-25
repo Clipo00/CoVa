@@ -83,6 +83,8 @@ return [
     'var_value_placeholder' => 'Valor por defecto',
     'var_delete_tooltip' => 'Eliminar variable',
     'var_add_button' => 'Añadir Variable',
+    'var_move_up' => 'Mover arriba',
+    'var_move_down' => 'Mover abajo',
     'var_none' => 'No hay variables configuradas.',
     'var_add_first' => 'Añadir primera variable',
     'secret_value' => '••••••••',
@@ -102,6 +104,20 @@ return [
 
     // MCP Servers
     'mcp_servers' => 'MCP Servers',
+
+    // Scripts
+    'scripts_section' => 'Scripts Post-Instalación',
+    'copy_scripts_command' => 'Copiar script',
+    'scripts_copied' => 'Script copiado al portapapeles',
+    'scripts_label' => 'Scripts',
+    'scripts_doc_only' => '⚠ Solo documentación — los comandos NO se ejecutan en el servidor.',
+    'script_label' => 'Script #:index',
+    'script_delete' => 'Eliminar',
+    'script_command_label' => 'Comando',
+    'script_command_placeholder' => 'composer install',
+    'script_description_label' => 'Descripción',
+    'script_description_placeholder' => 'Instalar dependencias PHP',
+    'script_add_button' => 'Añadir script',
 
     // Tab Manager
     'move_up' => 'Mover arriba',
@@ -123,10 +139,14 @@ return [
     'code_presets' => 'Presets de código',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean_arch' => 'Clean Architecture',
+    'preset_clean_architecture' => 'Clean Architecture',
+    'preset_laravel_conventions' => 'Laravel Conventions',
+    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
+    'skill_react_expert' => 'React Expert',
+    'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
     'tabs_empty' => 'No hay pestañas configuradas',
@@ -158,6 +178,7 @@ return [
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',
     'tab_type_mcp' => 'MCP Servers',
+    'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Desconocido',
 

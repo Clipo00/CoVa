@@ -21,13 +21,13 @@ class UpdateBlueprint
 
         $blueprint->update($data);
 
-        // Si hay variables, sincronizarlas
+        // Si hay variables, sincronizarlas — sort_order from array index preserves UI order
         if (!empty($variables)) {
             // Eliminar variables existentes
             $blueprint->variables()->delete();
 
             // Crear las nuevas
-            foreach ($variables as $variableData) {
+            foreach ($variables as $index => $variableData) {
                 if (empty($variableData['key'])) {
                     continue;
                 }
@@ -40,7 +40,7 @@ class UpdateBlueprint
                     'is_secret' => $variableData['is_secret'] ?? false,
                     'section' => $variableData['section'] ?? null,
                     'section_color' => $variableData['section_color'] ?? null,
-                    'sort_order' => 0,
+                    'sort_order' => $index,
                 ]);
             }
         }
