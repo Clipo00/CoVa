@@ -167,6 +167,8 @@
             $installCommand = $blueprintOutput->getVscodeInstallCommand();
             $mcpServers = $blueprintOutput->getMcpServers();
             $agentMd = $blueprintOutput->getAgentMdContent();
+            $scripts = $blueprintOutput->getScripts();
+            $scriptsShell = $blueprintOutput->getScriptsShellScript();
         @endphp
 
         {{-- Agent Context Section (collapsible) --}}
@@ -231,6 +233,48 @@
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                         <code class="text-sm text-gray-600 dark:text-gray-300 font-mono break-all">{{ $installCommand }}</code>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Scripts Section (collapsible) --}}
+        @if(!empty($scripts))
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+                <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.scripts_section') }}</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">{{ count($scripts) }}</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <livewire:shared.copy-to-clipboard
+                            :text="$scriptsShell"
+                            :label="__('blueprint.copy_scripts_command')"
+                            :success-message="__('blueprint.scripts_copied')"
+                        />
+                        <button type="button" @click="open = !open" class="p-1">
+                            <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-6">
+                    <div class="space-y-2">
+                        <ol class="list-decimal list-inside space-y-3">
+                            @foreach($scripts as $script)
+                                <li class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                                    <code class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all">{{ $script['command'] }}</code>
+                                    @if(!empty($script['description']))
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $script['description'] }}</p>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-xs text-amber-600 dark:text-amber-400">{{ __('blueprint.scripts_doc_only') }}</p>
                     </div>
                 </div>
             </div>
