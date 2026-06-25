@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+    // Password reset — OWASP A07: throttle to prevent enumeration & brute-force
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
+            ->name('password.request');
+        Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])
+            ->name('password.reset');
+    });
 });
 
 Route::middleware('auth')->group(function () {

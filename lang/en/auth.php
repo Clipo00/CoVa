@@ -14,6 +14,7 @@ return [
     'email_label' => 'Email',
     'password_label' => 'Password',
     'remember_me' => 'Remember me',
+    'forgot_password_link' => 'Forgot your password?',
     'login_button' => 'Sign in',
     'no_account' => "Don't have an account?",
     'create_account_link' => 'Create account',
@@ -54,6 +55,21 @@ return [
     'verification_success' => 'Email verified successfully.',
     'verification_failed' => 'The verification link is invalid or has expired.',
     'verification_already_verified' => 'Your email has already been verified.',
+
+    // Password reset
+    'password_reset_title' => 'Reset Password',
+    'password_reset_subtitle' => 'We will send you a link to reset your password',
+    'password_reset_button' => 'Send reset link',
+    'password_reset_sent' => 'If the email exists, you will receive a password reset link.',
+    'password_reset_subject' => 'Reset Password',
+    'password_reset_greeting' => 'Hello :name,',
+    'password_reset_intro' => 'You are receiving this email because you requested a password reset.',
+    'password_reset_expiry' => 'This link expires in :count minutes.',
+    'password_reset_no_action' => 'If you did not request this change, you can ignore this message.',
+    'password_reset_new_password' => 'New password',
+    'password_reset_new_password_confirm' => 'Confirm new password',
+    'password_reset_submit' => 'Reset Password',
+    'password_reset_success' => 'Your password has been reset successfully.',
 
     // MFA (two-factor authentication)
     'mfa_required' => 'Additional verification required. Check your email.',
