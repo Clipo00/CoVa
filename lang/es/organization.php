@@ -77,6 +77,14 @@ return [
     'status_pending' => 'Pendiente',
     'invitation_info' => 'Rol: :role · Expira :time',
 
+    // Remove Member
+    'remove_member_button' => 'Eliminar',
+    'remove_member_confirm' => '¿Estás seguro de que quieres eliminar a :name de la organización? Sus blueprints se reasignarán al propietario.',
+    'remove_member_success' => 'Usuario :name eliminado de la organización correctamente.',
+    'remove_member_denied' => 'No tienes permisos para eliminar miembros.',
+    'cannot_remove_self' => 'No puedes eliminarte a ti mismo de la organización.',
+    'cannot_remove_owner' => 'No puedes eliminar a otro propietario de la organización.',
+
     // Messages
     'updated' => 'Organización actualizada correctamente.',
     'deleted' => 'Organización eliminada. Puedes recuperarla desde el dashboard.',

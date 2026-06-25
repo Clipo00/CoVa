@@ -66,8 +66,11 @@
 
                 {{-- Terminal caption --}}
                 <p class="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
-                    <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-500 dark:text-gray-400 font-mono text-xs">vault fetch cova-marketplace/laravel-inertia</code>
-                    — {{ __('landing.terminal_caption') }}
+                    @if(config('marketplace.enabled'))
+                        <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-500 dark:text-gray-400 font-mono text-xs">vault fetch cova-marketplace/laravel-inertia</code>
+                        —
+                    @endif
+                    {{ __('landing.terminal_caption') }}
                 </p>
             </div>
         </div>

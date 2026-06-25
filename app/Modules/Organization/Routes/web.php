@@ -18,12 +18,17 @@ Route::middleware('auth')->group(function () {
     });
 
     // Acciones sensibles con rate limiting más restrictivo (5/min)
+    // NOTA: {user_id} usa ID auto-incremental porque el modelo User no tiene columna UUID.
+    // Si en el futuro se migra a UUID, cambiar a {user_uuid} y actualizar los controladores.
     Route::middleware('throttle:5,1')->group(function () {
         Route::post('/organizations/{slug}/force-delete', [OrganizationController::class, 'forceDestroy'])->name('organizations.force-destroy');
         Route::post('/organizations/{slug}/invite', [OrganizationController::class, 'invite'])->name('organizations.invite');
         Route::post('/organizations/{slug}/members/{user_id}/role', [OrganizationController::class, 'updateMemberRole'])->name('organizations.members.role');
+        Route::delete('/organizations/{slug}/members/{user_id}', [OrganizationController::class, 'removeMember'])->name('organizations.members.remove');
     });
 
-    // Store member sin throttle extra
-    Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])->name('organizations.members.store');
+    // Store member con rate limiting para evitar abuso en creación de cuentas
+    Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])
+        ->middleware('throttle:10,1')
+        ->name('organizations.members.store');
 });

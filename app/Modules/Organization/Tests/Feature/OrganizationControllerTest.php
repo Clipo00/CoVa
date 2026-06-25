@@ -201,4 +201,91 @@ class OrganizationControllerTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    // --- removeMember tests ---
+
+    public function test_remove_member_requires_auth(): void
+    {
+        $response = $this->delete('/organizations/test-org/members/1');
+        $response->assertRedirect('/login');
+    }
+
+    public function test_remove_member_denied_for_non_owner(): void
+    {
+        $owner = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org-rm',
+            'name' => 'Test Org RM',
+            'owner_id' => $owner->id,
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($owner->id, ['role' => 'owner']);
+
+        $maintainer = User::create([
+            'name' => 'Maintainer',
+            'email' => 'maintainer-rm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $developer = User::create([
+            'name' => 'Dev To Remove',
+            'email' => 'dev-rm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $response = $this->actingAs($maintainer)
+            ->delete('/organizations/' . $organization->slug . '/members/' . $developer->id);
+
+        $response->assertForbidden();
+    }
+
+    public function test_remove_member_success(): void
+    {
+        $owner = $this->createUserWithPlan();
+        $organization = \App\Modules\Organization\Models\Organization::create([
+            'slug' => 'test-org-rm2',
+            'name' => 'Test Org RM2',
+            'owner_id' => $owner->id,
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($owner->id, ['role' => 'owner']);
+
+        $developer = User::create([
+            'name' => 'Dev To Remove',
+            'email' => 'dev-rm2@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $owner->plan_id,
+        ]);
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        // Create a blueprint by the developer to test reassignment
+        $blueprint = \App\Modules\Blueprint\Models\Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440030',
+            'organization_id' => $organization->id,
+            'slug' => 'dev-blueprint',
+            'title' => 'Dev Blueprint',
+            'tabs_config' => [],
+            'created_by' => $developer->id,
+        ]);
+
+        $response = $this->actingAs($owner)
+            ->delete('/organizations/' . $organization->slug . '/members/' . $developer->id);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        // Verify the member was detached
+        $this->assertDatabaseMissing('organization_user', [
+            'user_id' => $developer->id,
+            'organization_id' => $organization->id,
+        ]);
+
+        // Verify blueprint was reassigned to owner
+        $blueprint->refresh();
+        $this->assertEquals($owner->id, $blueprint->created_by);
+    }
 }
