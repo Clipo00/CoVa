@@ -22,12 +22,14 @@ class Blueprint extends Model
         'title',
         'description',
         'is_public',
+        'aggregate_score',
         'tabs_config',
         'created_by',
     ];
 
     protected $casts = [
         'is_public' => 'boolean',
+        'aggregate_score' => 'integer',
         'tabs_config' => 'array',
     ];
 
@@ -54,6 +56,11 @@ class Blueprint extends Model
     public function favorites()
     {
         return $this->hasMany(BlueprintFavorite::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(BlueprintVote::class);
     }
 
     public function favoritedBy(User $user): bool

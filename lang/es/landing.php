@@ -149,12 +149,16 @@ return [
 
     // Marketplace extra
     'marketplace_more' => 'y muchas plantillas más creadas por la comunidad',
+    'coming_soon' => 'Próximamente',
+    'coming_soon_badge' => '🔜 Próximamente',
+    'marketplace_coming_soon' => 'El marketplace estará disponible próximamente. ¡Mantente atento!',
 
     // Pricing
     'nav_pricing' => 'Precios',
     'pricing_title' => 'Precios simples y transparentes',
     'pricing_subtitle' => 'Empieza gratis y escala cuando tu equipo crezca. Sin sorpresas, sin tarjetas de crédito.',
     'pricing_note' => 'Todos los precios en euros (EUR). El plan Enterprise requiere contacto previo.',
+    'pricing_coming_soon_note' => '* Funcionalidades del marketplace disponibles próximamente',
 
     'plan_free_desc' => 'Para empezar con CoVa',
     'plan_pro_desc' => 'Para equipos en crecimiento',
@@ -173,6 +177,7 @@ return [
     'plan_variables_unlimited' => 'Variables ilimitadas',
 
     'plan_marketplace_browse' => 'Explorar Marketplace',
+    'plan_coming_soon' => 'Próximamente',
     'plan_api_access' => 'Acceso API',
     'plan_marketplace_publish' => 'Publicar en Marketplace',
     'plan_priority_support' => 'Soporte prioritario',

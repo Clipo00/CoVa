@@ -16,5 +16,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/blueprints/{uuid}/transfer', [BlueprintController::class, 'transfer'])->name('blueprints.transfer');
         Route::post('/blueprints/{uuid}/delete', [BlueprintController::class, 'destroy'])->name('blueprints.destroy');
         Route::post('/blueprints/{uuid}/restore', [BlueprintController::class, 'restore'])->name('blueprints.restore');
+        Route::post('/blueprints/{uuid}/publish', [BlueprintController::class, 'publish'])->name('blueprints.publish');
+    });
+
+    // Votación con rate limit más restrictivo (10/min)
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/blueprints/{uuid}/vote', [BlueprintController::class, 'vote'])->name('blueprints.vote');
     });
 });

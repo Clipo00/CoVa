@@ -50,6 +50,17 @@
                     <a href="{{ route('blueprints.edit', $blueprint->uuid) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         {{ __('blueprint.edit_button') }}
                     </a>
+                                    @can('publish', $blueprint)
+                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_confirm_warning') }}', confirmText:'{{ __('blueprint.publish_button') }}', onConfirm(){ f.submit(); }})">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.publish_button') }}
+                            </button>
+                        </form>
+                    @endcan
                     @can('delete', $blueprint)
                         <form method="POST" action="{{ route('blueprints.destroy', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.delete_confirm') }}', onConfirm(){ f.submit(); }})">
                             @csrf
@@ -73,6 +84,37 @@
                 <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">{{ $blueprint->uuid }}</code>
             </div>
         </div>
+
+        {{-- Vote Section --}}
+        @if(config('marketplace.enabled') && $blueprint->is_public)
+            @can('vote', $blueprint)
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-center space-x-6">
+                        <form method="POST" action="{{ route('blueprints.vote', $blueprint->uuid) }}" class="inline">
+                            @csrf
+                            <input type="hidden" name="vote_type" value="up">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.vote_up') }}
+                            </button>
+                        </form>
+                        <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $blueprint->aggregate_score ?? 0 }}</span>
+                        <form method="POST" action="{{ route('blueprints.vote', $blueprint->uuid) }}" class="inline">
+                            @csrf
+                            <input type="hidden" name="vote_type" value="down">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.vote_down') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endcan
+        @endif
 
         {{-- Variables Section (collapsible) --}}
         <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
@@ -101,14 +143,16 @@
                         $sectionColors = [];
                         foreach($groupedVars as $section => $vars) {
                             $firstVar = $vars->first();
-                            $sectionColors[$section] = $firstVar->section_color ?? '#6b7280';
+                            $rawColor = $firstVar->section_color ?? '#6b7280';
+                            // Sanitize hex color: only allow valid 6-digit hex
+                            $sectionColors[$section] = preg_match('/^#[a-fA-F0-9]{6}$/', $rawColor) ? $rawColor : '#6B7280';
                         }
                     @endphp
 
                     <div class="space-y-5">
                         @foreach($groupedVars as $section => $vars)
                             @php
-                                $color = $sectionColors[$section] ?? '#6b7280';
+                                $color = $sectionColors[$section] ?? '#6B7280';
                             @endphp
                             <div class="relative">
                                 {{-- Section Header --}}
