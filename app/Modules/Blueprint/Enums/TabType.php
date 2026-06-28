@@ -9,6 +9,7 @@ enum TabType: string
     case VSCODE_EXTENSIONS = 'vscode_extensions';
     case MCP_SERVERS = 'mcp_servers';
     case AI_CONTEXT = 'ai_context';
+    case SCRIPTS = 'scripts';
 
     /**
      * Get all tab type values.
