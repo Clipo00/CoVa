@@ -252,5 +252,23 @@
     </script>
 
     @livewireScripts
+
+    {{-- Flash messages as toast notifications (must run AFTER Alpine is loaded) --}}
+    @if(session('success') || session('error'))
+    <script>
+        document.addEventListener('alpine:initialized', () => {
+            @if(session('success'))
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { message: @json(session('success')) }
+                }));
+            @endif
+            @if(session('error'))
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { message: @json(session('error')) }
+                }));
+            @endif
+        });
+    </script>
+    @endif
 </body>
 </html>
