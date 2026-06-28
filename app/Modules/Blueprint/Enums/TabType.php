@@ -28,4 +28,20 @@ enum TabType: string
     {
         return in_array($type, self::values(), true);
     }
+
+    /**
+     * Get the translated display label for a tab type value.
+     */
+    public static function label(string $type): string
+    {
+        $key = match ($type) {
+            self::VSCODE_EXTENSIONS->value => 'blueprint.tab_type_vscode',
+            self::MCP_SERVERS->value => 'blueprint.tab_type_mcp',
+            self::SCRIPTS->value => 'blueprint.tab_type_scripts',
+            self::AI_CONTEXT->value => 'blueprint.tab_type_ai',
+            default => null,
+        };
+
+        return $key ? __($key) : $type;
+    }
 }

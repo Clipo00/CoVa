@@ -61,7 +61,7 @@ class TabManager extends Component
         // Validar que no exista ya una pestaña del mismo tipo
         foreach ($this->tabs as $tab) {
             if ($tab['type'] === $type) {
-                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => $type]);
+                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => TabType::label($type)]);
                 return;
             }
         }
