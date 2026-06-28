@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Livewire\Forms;
 
 use App\Modules\Auth\Actions\SendMfaCode;
+use App\Modules\Auth\Actions\TrustDevice;
 use App\Modules\Auth\Actions\VerifyMfaCode;
 use App\Modules\Auth\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
@@ -63,6 +65,11 @@ class MfaChallengeForm extends Component
 
         Auth::login($user);
         session()->forget('mfa_user_id');
+
+        // Trust this device for 15 days
+        $trustDevice = app(TrustDevice::class);
+        $token = $trustDevice->execute($user);
+        Cookie::queue('mfa_trusted_device', $token, 1296000, '/', null, true, true, false, 'Lax');
 
         $this->redirectIntended(route('dashboard'));
     }

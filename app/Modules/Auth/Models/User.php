@@ -55,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
         return $this->hasMany(MfaCode::class);
     }
 
+    public function mfaTrustedDevices()
+    {
+        return $this->hasMany(MfaTrustedDevice::class);
+    }
+
     public function ownedOrganizations()
     {
         return $this->hasMany(Organization::class, 'owner_id');
