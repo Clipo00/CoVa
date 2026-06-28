@@ -19,7 +19,8 @@
                 slides: [
                     { id: 'dashboard', label: '{{ __('landing.demo_dashboard') }}' },
                     { id: 'org', label: '{{ __('landing.demo_org') }}' },
-                    { id: 'blueprint', label: '{{ __('landing.demo_blueprint') }}' }
+                    { id: 'blueprint', label: '{{ __('landing.demo_blueprint') }}' },
+                    { id: 'ai-context', label: '{{ __('landing.demo_ai_context') }}' }
                 ],
                 start() {
                     this.interval = setInterval(() => {
@@ -195,6 +196,85 @@
                                     <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg text-center opacity-90">
                                         {{ __('landing.demo_org_submit') }}
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- AI Context slide --}}
+                <div
+                    x-show="current === 3"
+                    x-transition:enter="transition ease-out duration-500"
+                    x-transition:enter-start="opacity-0 translate-x-8"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    x-transition:leave="transition ease-in duration-300"
+                    x-transition:leave-start="opacity-100 translate-x-0"
+                    x-transition:leave-end="opacity-0 -translate-x-8"
+                    class="absolute inset-0 flex flex-col"
+                >
+                    {{-- Browser chrome --}}
+                    <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                        <div class="flex gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <div class="flex-1 mx-4">
+                            <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
+                                cova.app/blueprints/configure
+                            </div>
+                        </div>
+                    </div>
+                    {{-- AI Context content --}}
+                    <div class="flex-1 p-6 overflow-hidden">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('landing.demo_ai_title') }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('landing.demo_ai_desc') }}</p>
+                        <div class="grid grid-cols-2 gap-4 h-[calc(100%-5rem)]">
+                            {{-- Left: Presets --}}
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{{ __('landing.demo_ai_presets') }}</h4>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_preset_psr12') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_solid') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_preset_clean') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_laravel') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_ts') }}</span>
+                                </div>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ __('landing.demo_ai_count') }}</p>
+                            </div>
+                            {{-- Right: Skills --}}
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{{ __('landing.demo_ai_skills') }}</h4>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_skill_stripe') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_skill_tailwind') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_skill_react') }}</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_skill_vue') }}</span>
+                                </div>
+                                {{-- Output preview --}}
+                                <div class="mt-4 bg-gray-50 dark:bg-gray-700/50 rounded-md p-3">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="px-1.5 py-0.5 text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded">agent.md</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_ai_output') }}</span>
+                                    </div>
+                                    <pre class="text-xs text-gray-600 dark:text-gray-400 font-mono leading-relaxed overflow-hidden"># Agent Context
+
+## PSR-12 Coding Standard
+Follow PSR-12 coding standard...
+
+## Clean Architecture
+Follow Clean Architecture principles...
+
+---
+
+## Stripe Integration
+When integrating Stripe payments...
+
+---
+
+## React Expert
+Follow React best practices...</pre>
                                 </div>
                             </div>
                         </div>

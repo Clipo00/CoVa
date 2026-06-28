@@ -7,11 +7,15 @@ namespace App\Modules\Blueprint\Tests\Unit\AiContext;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill;
 use PHPUnit\Framework\TestCase;
 
 class AgentGeneratorTest extends TestCase
@@ -26,10 +30,14 @@ class AgentGeneratorTest extends TestCase
         $this->presetsRegistry->register(new PSR12Preset());
         $this->presetsRegistry->register(new SOLIDPreset());
         $this->presetsRegistry->register(new CleanArchitecturePreset());
+        $this->presetsRegistry->register(new LaravelConventionsPreset());
+        $this->presetsRegistry->register(new TypeScriptStrictPreset());
 
         $this->skillsRegistry = new SegmentRegistry();
         $this->skillsRegistry->register(new StripeSkill());
         $this->skillsRegistry->register(new TailwindSkill());
+        $this->skillsRegistry->register(new ReactExpertSkill());
+        $this->skillsRegistry->register(new VueExpertSkill());
 
         $this->generator = new AgentGenerator(
             $this->presetsRegistry,
@@ -151,6 +159,9 @@ class AgentGeneratorTest extends TestCase
         $this->assertContains('psr12', $names);
         $this->assertContains('solid', $names);
         $this->assertContains('clean-architecture', $names);
+        $this->assertContains('laravel-conventions', $names);
+        $this->assertContains('typescript-strict', $names);
+        $this->assertCount(5, $names);
     }
 
     public function test_skill_names_returns_available_skills(): void
@@ -159,5 +170,52 @@ class AgentGeneratorTest extends TestCase
 
         $this->assertContains('stripe', $names);
         $this->assertContains('tailwind', $names);
+        $this->assertContains('react-expert', $names);
+        $this->assertContains('vue-expert', $names);
+        $this->assertCount(4, $names);
+    }
+
+    public function test_new_preset_appears_in_registry(): void
+    {
+        $names = $this->generator->presetNames();
+
+        $this->assertContains('laravel-conventions', $names);
+        $this->assertContains('typescript-strict', $names);
+    }
+
+    public function test_new_skill_appears_in_registry(): void
+    {
+        $names = $this->generator->skillNames();
+
+        $this->assertContains('react-expert', $names);
+        $this->assertContains('vue-expert', $names);
+    }
+
+    public function test_generate_includes_new_preset_content(): void
+    {
+        $config = new AiContextConfig(
+            presets: ['laravel-conventions', 'typescript-strict'],
+            skills: [],
+            customRules: '',
+        );
+
+        $result = $this->generator->generate($config);
+
+        $this->assertStringContainsString('Laravel Conventions', $result);
+        $this->assertStringContainsString('TypeScript Strict Mode', $result);
+    }
+
+    public function test_generate_includes_new_skill_content(): void
+    {
+        $config = new AiContextConfig(
+            presets: [],
+            skills: ['react-expert', 'vue-expert'],
+            customRules: '',
+        );
+
+        $result = $this->generator->generate($config);
+
+        $this->assertStringContainsString('React Expert', $result);
+        $this->assertStringContainsString('Vue Expert', $result);
     }
 }

@@ -64,6 +64,9 @@
                 <p class="text-gray-600 dark:text-gray-400 leading-relaxed max-w-sm">
                     {{ __('landing.step3_desc') }}
                 </p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                    {{ __('landing.step3_note') }}
+                </p>
             </div>
         </div>
     </div>
