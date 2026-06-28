@@ -75,6 +75,9 @@ return [
     'pending_invitations' => 'Pending invitations',
     'role_prefix' => 'Role:',
     'status_pending' => 'Pending',
+    'revoke_invitation_button' => 'Revoke',
+    'resend_invitation_button' => 'Resend',
+    'revoke_invitation_confirm' => 'Are you sure you want to revoke the invitation for :email?',
     'invitation_info' => 'Role: :role · Expires :time',
 
     // Remove Member
@@ -91,8 +94,12 @@ return [
     'restored' => 'Organization restored successfully.',
     'force_deleted' => 'Organization permanently deleted.',
     'user_added' => 'User :name added successfully.',
+    'user_already_member' => 'This user is already a member of the organization.',
     'role_updated' => ':name\'s role updated successfully.',
     'invite_sent' => 'Invitation sent successfully.',
+    'invite_already_member' => 'This user is already a member of the organization.',
+    'invitation_revoked' => 'Invitation revoked successfully.',
+    'invitation_resent' => 'Invitation resent successfully.',
 
     // Errors
     'not_found' => 'Organization not found.',
@@ -102,6 +109,8 @@ return [
     'no_view_permission' => 'You do not have permission to view this organization.',
     'no_manage_permission' => 'You do not have permission to manage members.',
     'no_invite_permission' => 'You do not have permission to invite members.',
+    'no_revoke_permission' => 'You do not have permission to revoke invitations.',
+    'no_resend_permission' => 'You do not have permission to resend invitations.',
     'no_delete_permission' => 'You do not have permission to delete this organization.',
     'no_restore_permission' => 'You do not have permission to restore this organization.',
     'no_force_delete_permission' => 'You do not have permission to permanently delete this organization.',

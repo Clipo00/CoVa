@@ -75,6 +75,9 @@ return [
     'pending_invitations' => 'Invitaciones pendientes',
     'role_prefix' => 'Rol:',
     'status_pending' => 'Pendiente',
+    'revoke_invitation_button' => 'Revocar',
+    'resend_invitation_button' => 'Reenviar',
+    'revoke_invitation_confirm' => '¿Estás seguro de que quieres revocar la invitación de :email?',
     'invitation_info' => 'Rol: :role · Expira :time',
 
     // Remove Member
@@ -91,8 +94,12 @@ return [
     'restored' => 'Organización restaurada correctamente.',
     'force_deleted' => 'Organización eliminada permanentemente.',
     'user_added' => 'Usuario :name agregado correctamente.',
+    'user_already_member' => 'Este usuario ya es miembro de la organización.',
     'role_updated' => 'Rol de :name actualizado correctamente.',
     'invite_sent' => 'Invitación enviada correctamente.',
+    'invite_already_member' => 'Este usuario ya es miembro de la organización.',
+    'invitation_revoked' => 'Invitación revocada correctamente.',
+    'invitation_resent' => 'Invitación reenviada correctamente.',
 
     // Errors
     'not_found' => 'Organización no encontrada.',
@@ -102,6 +109,8 @@ return [
     'no_view_permission' => 'No tienes permisos para ver esta organización.',
     'no_manage_permission' => 'No tienes permisos para gestionar miembros.',
     'no_invite_permission' => 'No tienes permisos para invitar miembros.',
+    'no_revoke_permission' => 'No tienes permisos para revocar invitaciones.',
+    'no_resend_permission' => 'No tienes permisos para reenviar invitaciones.',
     'no_delete_permission' => 'No tienes permisos para eliminar esta organización.',
     'no_restore_permission' => 'No tienes permisos para restaurar esta organización.',
     'no_force_delete_permission' => 'No tienes permisos para eliminar permanentemente esta organización.',
