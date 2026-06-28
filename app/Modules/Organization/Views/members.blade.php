@@ -103,8 +103,22 @@
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                             {{ $member->pivot->role === 'maintainer' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200' : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200' }}">
-                                            {{ __('organization.role_' . $member->pivot->role) }}
+                                            {{ __('organization.role_' . (in_array($member->pivot->role, ['developer', 'maintainer', 'owner']) ? $member->pivot->role : 'developer')) }}
                                         </span>
+                                    @endcan
+                                    @can('removeMember', $organization)
+                                        @if($member->id !== auth()->id())
+                                            <form method="POST" action="{{ route('organizations.members.remove', [$organization->slug, $member->id]) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('organization.remove_member_confirm', ['name' => $member->name]) }}', onConfirm(){ f.submit(); }})">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    {{ __('organization.remove_member_button') }}
+                                                </button>
+                                            </form>
+                                        @endif
                                     @endcan
                                 @endif
                             </div>
@@ -129,7 +143,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $invitation->email }}</p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('organization.invitation_info', ['role' => __('organization.role_' . $invitation->role), 'time' => $invitation->expires_at->diffForHumans()]) }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('organization.invitation_info', ['role' => __('organization.role_' . (in_array($invitation->role, ['developer', 'maintainer', 'owner']) ? $invitation->role : 'developer')), 'time' => $invitation->expires_at->diffForHumans()]) }}</p>
                                 </div>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200">
                                     {{ __('organization.status_pending') }}

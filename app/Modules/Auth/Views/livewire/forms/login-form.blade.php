@@ -26,13 +26,19 @@
             @enderror
         </div>
 
-        <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between">
             <div class="flex items-center">
                 <input wire:model="remember" id="remember" name="remember" type="checkbox"
                     class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded">
                 <label for="remember" class="ml-2 block text-sm text-gray-900 dark:text-gray-100">
                     {{ __('auth.remember_me') }}
                 </label>
+            </div>
+
+            <div class="text-sm">
+                <a href="{{ route('password.request') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                    {{ __('auth.forgot_password_link') }}
+                </a>
             </div>
         </div>
 

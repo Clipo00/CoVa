@@ -181,6 +181,24 @@ return [
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Unknown',
 
+    // Publish
+    'publish_button' => 'Publish to Marketplace',
+    'publish_confirm_title' => 'Publish Blueprint',
+    'publish_confirm_warning' => 'By publishing this blueprint, secret variables will be exposed in the public marketplace. Are you sure you want to continue?',
+    'publish_success' => 'Blueprint published to marketplace successfully.',
+    'publish_denied' => 'You do not have permission to publish this blueprint.',
+    'publish_marketplace_disabled' => 'The marketplace is not available at this time.',
+    'publish_plan_required' => 'You need a plan with marketplace support to publish blueprints.',
+    'publish_already_public' => 'This blueprint is already public.',
+
+    // Vote
+    'vote_up' => 'Upvote',
+    'vote_down' => 'Downvote',
+    'vote_denied' => 'You do not have permission to vote on this blueprint.',
+    'vote_marketplace_disabled' => 'The marketplace is not available at this time.',
+    'vote_throttle' => 'Too many votes. Please try again in a minute.',
+    'vote_registered' => 'Vote recorded successfully.',
+
     // Messages
     'deleted_success' => 'Blueprint deleted successfully.',
     'restored_success' => 'Blueprint restored successfully.',
@@ -199,6 +217,7 @@ return [
     'invalid_org_data' => 'Invalid organization data.',
 
     // Transfer errors
+    'transfer_denied' => 'You do not have permission to transfer this blueprint.',
     'transfer_not_owner' => 'Only the owner can transfer blueprints.',
     'transfer_not_owner_target' => 'You can only transfer to organizations where you are the owner.',
     'transfer_same_org' => 'You cannot transfer a blueprint to the same organization.',

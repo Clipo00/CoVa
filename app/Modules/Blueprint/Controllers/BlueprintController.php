@@ -6,9 +6,11 @@ namespace App\Modules\Blueprint\Controllers;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
+use App\Modules\Blueprint\Actions\PublishBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
+use App\Modules\Blueprint\Actions\VoteBlueprint;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
@@ -107,6 +109,9 @@ class BlueprintController
     public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+        if (!auth()->user()->can('view', $blueprint)) {
+            abort(403);
+        }
         $output = $resolveBlueprint->execute($blueprint);
 
         return view('blueprint::show', [
@@ -118,6 +123,9 @@ class BlueprintController
     public function edit(string $uuid): View
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+        if (!auth()->user()->can('update', $blueprint)) {
+            abort(403, __('blueprint.no_edit_permission'));
+        }
         return view('blueprint::edit', compact('blueprint'));
     }
 
@@ -192,15 +200,57 @@ class BlueprintController
             ->with('success', __('blueprint.restored_success'));
     }
 
+    public function publish(string $uuid, PublishBlueprint $publishBlueprint): RedirectResponse
+    {
+        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+
+        if (!auth()->user()->can('publish', $blueprint)) {
+            abort(403, __('blueprint.publish_denied'));
+        }
+
+        $publishBlueprint->execute($blueprint, auth()->user());
+
+        return redirect()
+            ->route('blueprints.show', $blueprint->fresh()->uuid)
+            ->with('success', __('blueprint.publish_success'));
+    }
+
+    public function vote(string $uuid, Request $request, VoteBlueprint $voteBlueprint): RedirectResponse
+    {
+        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+
+        $validated = $request->validate([
+            'vote_type' => ['required', 'string', 'in:up,down'],
+        ]);
+
+        if (!auth()->user()->can('vote', $blueprint)) {
+            abort(403, __('blueprint.vote_denied'));
+        }
+
+        $voteBlueprint->execute($blueprint, auth()->user(), $validated['vote_type']);
+
+        return redirect()
+            ->route('blueprints.show', $blueprint->uuid)
+            ->with('success', __('blueprint.vote_registered'));
+    }
+
     public function transfer(string $uuid, Request $request, TransferBlueprint $transferBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+        if (!auth()->user()->can('update', $blueprint)) {
+            abort(403, __('blueprint.no_edit_permission'));
+        }
 
         $validated = $request->validate([
             'target_organization_id' => ['required', 'integer', 'exists:organizations,id'],
         ]);
 
         $targetOrganization = Organization::findOrFail($validated['target_organization_id']);
+
+        // User must be owner of the target organization
+        if (!auth()->user()->isOwnerOf($targetOrganization)) {
+            abort(403, __('blueprint.transfer_denied'));
+        }
 
         $transferBlueprint->execute(
             blueprint: $blueprint,

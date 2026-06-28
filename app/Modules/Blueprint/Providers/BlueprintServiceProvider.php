@@ -15,12 +15,17 @@ use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill;
 use App\Modules\Blueprint\Tabs\McpServersTab;
+use App\Modules\Blueprint\Tabs\ScriptsTab;
 use App\Modules\Blueprint\Tabs\TabRegistry;
 use App\Modules\Blueprint\Tabs\VscodeExtensionsTab;
 use Illuminate\Support\Facades\Gate;
@@ -57,6 +62,8 @@ class BlueprintServiceProvider extends ServiceProvider
             $registry->register(new PSR12Preset());
             $registry->register(new SOLIDPreset());
             $registry->register(new CleanArchitecturePreset());
+            $registry->register(new LaravelConventionsPreset());
+            $registry->register(new TypeScriptStrictPreset());
             return $registry;
         });
 
@@ -65,6 +72,8 @@ class BlueprintServiceProvider extends ServiceProvider
             $registry = new SegmentRegistry();
             $registry->register(new StripeSkill());
             $registry->register(new TailwindSkill());
+            $registry->register(new ReactExpertSkill());
+            $registry->register(new VueExpertSkill());
             return $registry;
         });
 
@@ -81,6 +90,7 @@ class BlueprintServiceProvider extends ServiceProvider
             $registry = new TabRegistry();
             $registry->register($app->make(VscodeExtensionsTab::class));
             $registry->register($app->make(McpServersTab::class));
+            $registry->register($app->make(ScriptsTab::class));
             $registry->register($app->make(AiContextTab::class));
             return $registry;
         });

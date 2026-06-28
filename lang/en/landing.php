@@ -32,6 +32,7 @@ return [
     'step2_desc' => 'Keep it private for your organization or share it on the Marketplace for the community to use.',
     'step3_title' => 'Run vault fetch',
     'step3_desc' => 'A single command and your environment is ready. Variables loaded, files generated, everything in place.',
+    'step3_note' => 'Includes AI context rules, post-install scripts, VS Code extensions, and MCP servers.',
 
     // Demo
     'demo_title' => 'See how it works',
@@ -39,6 +40,7 @@ return [
     'demo_dashboard' => 'Dashboard',
     'demo_org' => 'Create Organization',
     'demo_blueprint' => 'Create Blueprint',
+    'demo_ai_context' => 'AI Context',
     'demo_prev' => 'Previous',
     'demo_next' => 'Next',
 
@@ -91,6 +93,23 @@ return [
     'demo_bp_var_value_hidden' => '••••••••',
     'demo_bp_vars_count' => '5 variables in 3 files',
 
+    // Demo slides - AI Context
+    'demo_ai_title' => 'AI Context Configuration',
+    'demo_ai_desc' => 'Select coding presets and skills to generate a custom agent.md file for your AI tools.',
+    'demo_ai_presets' => 'Code Presets',
+    'demo_ai_skills' => 'Skills',
+    'demo_ai_preset_psr12' => 'PSR-12',
+    'demo_ai_preset_solid' => 'SOLID',
+    'demo_ai_preset_clean' => 'Clean Architecture',
+    'demo_ai_preset_laravel' => 'Laravel Conv.',
+    'demo_ai_preset_ts' => 'TypeScript Strict',
+    'demo_ai_skill_stripe' => 'Stripe',
+    'demo_ai_skill_tailwind' => 'Tailwind',
+    'demo_ai_skill_react' => 'React Expert',
+    'demo_ai_skill_vue' => 'Vue Expert',
+    'demo_ai_output' => '→ Generates agent.md with 2 presets + 2 skills',
+    'demo_ai_count' => '5 presets · 4 skills available',
+
     // Marketplace
     'marketplace_title' => 'Start with a ready-to-use template',
     'marketplace_cta' => 'Explore the Marketplace →',
@@ -142,6 +161,8 @@ return [
     'terminal_downloading' => '> Downloading blueprint...',
     'terminal_variables' => '> Variables loaded: 12',
     'terminal_files' => '> Files generated: .env, agent.md, .cursorrules',
+    'terminal_presets' => '> AI context: PSR-12, Clean Architecture, React',
+    'terminal_scripts' => '> Post-install scripts: composer install, npm run build',
     'terminal_ready' => '✅ Environment ready in 2.4s',
 
     // Hero trust
@@ -149,12 +170,16 @@ return [
 
     // Marketplace extra
     'marketplace_more' => 'and many more templates created by the community',
+    'coming_soon' => 'Coming Soon',
+    'coming_soon_badge' => '🔜 Coming Soon',
+    'marketplace_coming_soon' => 'The marketplace will be available soon. Stay tuned!',
 
     // Pricing
     'nav_pricing' => 'Pricing',
     'pricing_title' => 'Simple, transparent pricing',
     'pricing_subtitle' => 'Start free and scale as your team grows. No surprises, no credit card required.',
     'pricing_note' => 'All prices in euros (EUR). Enterprise plan requires prior contact.',
+    'pricing_coming_soon_note' => '* Marketplace features coming soon',
 
     'plan_free_desc' => 'To get started with CoVa',
     'plan_pro_desc' => 'For growing teams',
@@ -173,6 +198,7 @@ return [
     'plan_variables_unlimited' => 'Unlimited variables',
 
     'plan_marketplace_browse' => 'Browse Marketplace',
+    'plan_coming_soon' => 'Coming soon',
     'plan_api_access' => 'API Access',
     'plan_marketplace_publish' => 'Publish to Marketplace',
     'plan_priority_support' => 'Priority Support',

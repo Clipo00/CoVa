@@ -149,5 +149,12 @@
         <p class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
             {{ __('landing.pricing_note') }}
         </p>
+
+        {{-- Marketplace coming soon note --}}
+        @if(!config('marketplace.enabled') || !config('marketplace.billing_enabled'))
+            <p class="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
+                {{ __('landing.pricing_coming_soon_note') }}
+            </p>
+        @endif
     </div>
 </section>

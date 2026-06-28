@@ -9,6 +9,7 @@ use App\Modules\Organization\Actions\AcceptInvitation;
 use App\Modules\Organization\Actions\CreateOrganizationUser;
 use App\Modules\Organization\Actions\DeleteOrganization;
 use App\Modules\Organization\Actions\InviteUser;
+use App\Modules\Organization\Actions\RemoveOrganizationUser;
 use App\Modules\Organization\Actions\UpdateOrganization;
 use App\Modules\Organization\Actions\UpdateOrganizationUserRole;
 use App\Modules\Organization\Models\Organization;
@@ -35,6 +36,9 @@ class OrganizationController
     public function show(string $slug): View
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
+        if (!auth()->user()->can('view', $organization)) {
+            abort(403, __('organization.no_view_permission'));
+        }
 
         $plan = $organization->plan;
         $maxBlueprints = $plan->max_blueprints_per_org;
@@ -237,6 +241,27 @@ class OrganizationController
         return redirect()
             ->route('organizations.members', $organization->slug)
             ->with('success', __('organization.invite_sent'));
+    }
+
+    public function removeMember(string $slug, int $userId, RemoveOrganizationUser $removeAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('removeMember', $organization)) {
+            abort(403, __('organization.no_manage_permission'));
+        }
+
+        $targetUser = User::findOrFail($userId);
+
+        $removeAction->execute(
+            organization: $organization,
+            targetUser: $targetUser,
+            actor: auth()->user(),
+        );
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.remove_member_success', ['name' => $targetUser->name]));
     }
 
     public function destroy(string $slug, DeleteOrganization $deleteOrganization): RedirectResponse

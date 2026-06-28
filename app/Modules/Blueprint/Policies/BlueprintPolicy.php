@@ -35,4 +35,48 @@ class BlueprintPolicy
     {
         return $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer', 'developer']);
     }
+
+    public function publish(User $user, Blueprint $blueprint): bool
+    {
+        // Must be owner
+        if (!$user->isOwnerOf($blueprint->organization)) {
+            return false;
+        }
+
+        // Must not already be public
+        if ($blueprint->is_public) {
+            return false;
+        }
+
+        // Marketplace must be enabled
+        if (!config('marketplace.enabled')) {
+            return false;
+        }
+
+        // If billing is enabled, check plan
+        if (config('marketplace.billing_enabled')) {
+            $plan = $user->plan;
+            if (!$plan || !$plan->has_marketplace_publish) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function vote(User $user, Blueprint $blueprint): bool
+    {
+        // Must be public
+        if (!$blueprint->is_public) {
+            return false;
+        }
+
+        // Marketplace must be enabled
+        if (!config('marketplace.enabled')) {
+            return false;
+        }
+
+        // Must be a member of the blueprint's (marketplace) organization
+        return $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer', 'developer']);
+    }
 }

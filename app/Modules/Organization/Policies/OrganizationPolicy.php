@@ -43,4 +43,9 @@ class OrganizationPolicy
     {
         return $user->isOwnerOf($organization);
     }
+
+    public function removeMember(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
 }

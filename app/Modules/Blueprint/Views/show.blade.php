@@ -50,6 +50,17 @@
                     <a href="{{ route('blueprints.edit', $blueprint->uuid) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                         {{ __('blueprint.edit_button') }}
                     </a>
+                                    @can('publish', $blueprint)
+                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_confirm_warning') }}', confirmText:'{{ __('blueprint.publish_button') }}', onConfirm(){ f.submit(); }})">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.publish_button') }}
+                            </button>
+                        </form>
+                    @endcan
                     @can('delete', $blueprint)
                         <form method="POST" action="{{ route('blueprints.destroy', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.delete_confirm') }}', onConfirm(){ f.submit(); }})">
                             @csrf
@@ -73,6 +84,37 @@
                 <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">{{ $blueprint->uuid }}</code>
             </div>
         </div>
+
+        {{-- Vote Section --}}
+        @if(config('marketplace.enabled') && $blueprint->is_public)
+            @can('vote', $blueprint)
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-6">
+                    <div class="flex items-center justify-center space-x-6">
+                        <form method="POST" action="{{ route('blueprints.vote', $blueprint->uuid) }}" class="inline">
+                            @csrf
+                            <input type="hidden" name="vote_type" value="up">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.vote_up') }}
+                            </button>
+                        </form>
+                        <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $blueprint->aggregate_score ?? 0 }}</span>
+                        <form method="POST" action="{{ route('blueprints.vote', $blueprint->uuid) }}" class="inline">
+                            @csrf
+                            <input type="hidden" name="vote_type" value="down">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                                {{ __('blueprint.vote_down') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endcan
+        @endif
 
         {{-- Variables Section (collapsible) --}}
         <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
@@ -101,14 +143,16 @@
                         $sectionColors = [];
                         foreach($groupedVars as $section => $vars) {
                             $firstVar = $vars->first();
-                            $sectionColors[$section] = $firstVar->section_color ?? '#6b7280';
+                            $rawColor = $firstVar->section_color ?? '#6b7280';
+                            // Sanitize hex color: only allow valid 6-digit hex
+                            $sectionColors[$section] = preg_match('/^#[a-fA-F0-9]{6}$/', $rawColor) ? $rawColor : '#6B7280';
                         }
                     @endphp
 
                     <div class="space-y-5">
                         @foreach($groupedVars as $section => $vars)
                             @php
-                                $color = $sectionColors[$section] ?? '#6b7280';
+                                $color = $sectionColors[$section] ?? '#6B7280';
                             @endphp
                             <div class="relative">
                                 {{-- Section Header --}}
@@ -167,6 +211,8 @@
             $installCommand = $blueprintOutput->getVscodeInstallCommand();
             $mcpServers = $blueprintOutput->getMcpServers();
             $agentMd = $blueprintOutput->getAgentMdContent();
+            $scripts = $blueprintOutput->getScripts();
+            $scriptsShell = $blueprintOutput->getScriptsShellScript();
         @endphp
 
         {{-- Agent Context Section (collapsible) --}}
@@ -231,6 +277,48 @@
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                         <code class="text-sm text-gray-600 dark:text-gray-300 font-mono break-all">{{ $installCommand }}</code>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Scripts Section (collapsible) --}}
+        @if(!empty($scripts))
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+                <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.scripts_section') }}</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">{{ count($scripts) }}</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <livewire:shared.copy-to-clipboard
+                            :text="$scriptsShell"
+                            :label="__('blueprint.copy_scripts_command')"
+                            :success-message="__('blueprint.scripts_copied')"
+                        />
+                        <button type="button" @click="open = !open" class="p-1">
+                            <svg :class="{'rotate-180': !open}" class="h-5 w-5 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-6">
+                    <div class="space-y-2">
+                        <ol class="list-decimal list-inside space-y-3">
+                            @foreach($scripts as $script)
+                                <li class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                                    <code class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all">{{ $script['command'] }}</code>
+                                    @if(!empty($script['description']))
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $script['description'] }}</p>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-xs text-amber-600 dark:text-amber-400">{{ __('blueprint.scripts_doc_only') }}</p>
                     </div>
                 </div>
             </div>

@@ -240,4 +240,81 @@ class OrganizationPolicyTest extends TestCase
             actor: $owner,
         );
     }
+
+    // --- removeMember gate tests ---
+
+    public function test_owner_can_remove_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-rm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org RM', 'test-org-rm');
+
+        $this->assertTrue($this->policy->removeMember($owner, $organization));
+    }
+
+    public function test_maintainer_cannot_remove_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-rm2@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org RM2', 'test-org-rm2');
+
+        $maintainer = $this->createUserWithRole('maintainer', $organization);
+
+        $this->assertFalse($this->policy->removeMember($maintainer, $organization));
+    }
+
+    public function test_developer_cannot_remove_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-rm3@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org RM3', 'test-org-rm3');
+
+        $developer = $this->createUserWithRole('developer', $organization);
+
+        $this->assertFalse($this->policy->removeMember($developer, $organization));
+    }
+
+    public function test_non_member_cannot_remove_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-rm4@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Test Org RM4', 'test-org-rm4');
+
+        $nonMember = User::create([
+            'name' => 'Non Member',
+            'email' => 'non-member-rm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $this->assertFalse($this->policy->removeMember($nonMember, $organization));
+    }
 }

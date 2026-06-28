@@ -14,6 +14,7 @@ return [
     'email_label' => 'Correo electrónico',
     'password_label' => 'Contraseña',
     'remember_me' => 'Recordarme',
+    'forgot_password_link' => '¿Olvidaste tu contraseña?',
     'login_button' => 'Iniciar sesión',
     'no_account' => '¿No tienes cuenta?',
     'create_account_link' => 'Crear cuenta',
@@ -54,6 +55,21 @@ return [
     'verification_success' => 'Correo electrónico verificado correctamente.',
     'verification_failed' => 'El enlace de verificación no es válido o ha caducado.',
     'verification_already_verified' => 'Tu correo electrónico ya ha sido verificado.',
+
+    // Password reset
+    'password_reset_title' => 'Restablecer contraseña',
+    'password_reset_subtitle' => 'Te enviaremos un enlace para restablecer tu contraseña',
+    'password_reset_button' => 'Enviar enlace de restablecimiento',
+    'password_reset_sent' => 'Si el correo existe, recibirás un enlace para restablecer tu contraseña.',
+    'password_reset_subject' => 'Restablecimiento de contraseña',
+    'password_reset_greeting' => 'Hola :name,',
+    'password_reset_intro' => 'Recibes este correo porque solicitaste restablecer tu contraseña.',
+    'password_reset_expiry' => 'Este enlace caduca en :count minutos.',
+    'password_reset_no_action' => 'Si no solicitaste este cambio, puedes ignorar este mensaje.',
+    'password_reset_new_password' => 'Nueva contraseña',
+    'password_reset_new_password_confirm' => 'Confirmar nueva contraseña',
+    'password_reset_submit' => 'Restablecer contraseña',
+    'password_reset_success' => 'Tu contraseña ha sido restablecida correctamente.',
 
     // MFA (two-factor authentication)
     'mfa_required' => 'Se requiere verificación adicional. Revisa tu correo electrónico.',

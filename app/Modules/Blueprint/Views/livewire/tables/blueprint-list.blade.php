@@ -136,9 +136,11 @@
                         >
                         <span class="ml-2 text-sm text-gray-600 dark:text-gray-300">{{ __('blueprint.filter_preserve') }}</span>
                     </label>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 italic">
-                        🚧 {{ __('blueprint.filter_marketplace') }}
-                    </p>
+                    @if(config('marketplace.enabled'))
+                        <p class="text-xs text-gray-400 dark:text-gray-500 italic">
+                            🚧 {{ __('blueprint.filter_marketplace') }}
+                        </p>
+                    @endif
                 </div>
             </div>
         </div>
