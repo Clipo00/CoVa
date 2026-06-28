@@ -32,10 +32,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/organizations/{slug}/members/{user_id}/role', [OrganizationController::class, 'updateMemberRole'])->name('organizations.members.role');
         Route::delete('/organizations/{slug}/members/{user_id}', [OrganizationController::class, 'removeMember'])->name('organizations.members.remove');
     });
-
-    // Store member sin throttle extra
-    Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])->name('organizations.members.store');
-
     // Invitation acceptance — CSRF protected, rate limited
     Route::middleware('throttle:10,1')->group(function () {
         Route::post('/invitations/{token}/accept', [OrganizationController::class, 'acceptInvitation'])
