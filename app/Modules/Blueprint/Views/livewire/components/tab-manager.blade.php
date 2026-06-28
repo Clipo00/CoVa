@@ -36,7 +36,7 @@
                     <textarea
                         wire:change="updateVscodeExtensions({{ $index }}, $event.target.value)"
                         rows="3"
-                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                         placeholder="{{ __('blueprint.extensions_placeholder') }}"
                     >{{ implode("\n", $extensions) }}</textarea>
                     @if(!empty($extensions))
@@ -67,7 +67,7 @@
                                         type="text"
                                         wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'name', $event.target.value)"
                                         value="{{ $server['name'] ?? '' }}"
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         placeholder="{{ __('blueprint.server_name_placeholder') }}"
                                     />
                                 </div>
@@ -77,7 +77,7 @@
                                         type="text"
                                         wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'command', $event.target.value)"
                                         value="{{ $server['command'] ?? '' }}"
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         placeholder="{{ __('blueprint.server_command_placeholder') }}"
                                     />
                                 </div>
@@ -88,7 +88,7 @@
                                     type="text"
                                     wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'args', $event.target.value)"
                                     value="{{ implode(' ', is_array($server['args'] ?? []) ? $server['args'] : []) }}"
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="{{ __('blueprint.server_args_placeholder') }}"
                                 />
                             </div>
@@ -127,7 +127,7 @@
                                     type="text"
                                     wire:change="updateScriptField({{ $index }}, {{ $scriptIndex }}, 'command', $event.target.value)"
                                     value="{{ $script['command'] ?? '' }}"
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                                     placeholder="{{ __('blueprint.script_command_placeholder') }}"
                                 />
                             </div>
@@ -137,7 +137,7 @@
                                     type="text"
                                     wire:change="updateScriptField({{ $index }}, {{ $scriptIndex }}, 'description', $event.target.value)"
                                     value="{{ $script['description'] ?? '' }}"
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="{{ __('blueprint.script_description_placeholder') }}"
                                 />
                             </div>
@@ -195,7 +195,7 @@
                         <textarea
                             wire:change="updateCustomRules({{ $index }}, $event.target.value)"
                             rows="3"
-                            class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                            class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                             placeholder="{{ __('blueprint.custom_rules_placeholder') }}"
                         >{{ $customRules }}</textarea>
                     </div>

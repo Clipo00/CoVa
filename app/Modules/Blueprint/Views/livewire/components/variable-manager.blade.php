@@ -70,7 +70,7 @@ foreach($variables as $var) {
                         @endif
                     >
                         <td class="py-3 pl-4 pr-3">
-                            <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
+                            <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full px-2 py-1.5 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
                         </td>
                         <td class="px-3 py-3">
                             <div class="flex items-center gap-2">
@@ -85,17 +85,17 @@ foreach($variables as $var) {
                                 @else
                                     <span class="w-6"></span>
                                 @endif
-                                <input type="text" wire:model="variables.{{ $index }}.section" placeholder="{{ __('blueprint.var_group_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
+                                <input type="text" wire:model="variables.{{ $index }}.section" placeholder="{{ __('blueprint.var_group_placeholder') }}" class="block w-full px-2 py-1.5 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono text-xs">
                             </div>
                         </td>
                         <td class="px-3 py-3">
-                            <select wire:model="variables.{{ $index }}.type" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <select wire:model="variables.{{ $index }}.type" class="block w-full px-2 py-1.5 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 <option value="fixed">{{ __('blueprint.var_type_fixed') }}</option>
                                 <option value="empty">{{ __('blueprint.var_type_empty') }}</option>
                             </select>
                         </td>
                         <td class="px-3 py-3">
-                            <input type="text" wire:model="variables.{{ $index }}.default_value" placeholder="{{ __('blueprint.var_value_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <input type="text" wire:model="variables.{{ $index }}.default_value" placeholder="{{ __('blueprint.var_value_placeholder') }}" class="block w-full px-2 py-1.5 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                         </td>
                         <td class="px-3 py-3 text-center">
                             <input type="checkbox" wire:model="variables.{{ $index }}.is_interactive" class="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded">

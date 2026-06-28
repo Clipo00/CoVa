@@ -28,17 +28,17 @@
                     @csrf
                     <div class="flex-1">
                         <label for="name" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_name_label') }}</label>
-                        <input type="text" name="name" id="name" placeholder="{{ __('organization.member_name_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <input type="text" name="name" id="name" placeholder="{{ __('organization.member_name_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex-1">
                         <label for="email" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_email_label') }}</label>
-                        <input type="email" name="email" id="email" placeholder="{{ __('organization.member_email_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <input type="email" name="email" id="email" placeholder="{{ __('organization.member_email_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="w-full sm:w-40">
                         <label for="role" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_role_label') }}</label>
-                        <select name="role" id="role" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="role" id="role" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="developer">{{ __('organization.role_developer') }}</option>
                             <option value="maintainer">{{ __('organization.role_maintainer') }}</option>
                         </select>
@@ -55,11 +55,11 @@
                 <form method="POST" action="{{ route('organizations.invite', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4">
                     @csrf
                     <div class="flex-1">
-                        <input type="email" name="email" placeholder="{{ __('organization.invite_email_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <input type="email" name="email" placeholder="{{ __('organization.invite_email_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="w-full sm:w-48">
-                        <select name="role" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <select name="role" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="developer">{{ __('organization.role_developer') }}</option>
                             <option value="maintainer">{{ __('organization.role_maintainer') }}</option>
                         </select>
@@ -95,7 +95,7 @@
                                     @can('manageMembers', $organization)
                                         <form method="POST" action="{{ route('organizations.members.role', [$organization->slug, $member->id]) }}" class="flex items-center space-x-2">
                                             @csrf
-                                            <select name="role" onchange="this.form.submit()" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1">
+                                            <select name="role" onchange="this.form.submit()" class="block w-full px-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1">
                                                 <option value="developer" {{ $member->pivot->role === 'developer' ? 'selected' : '' }}>{{ __('organization.role_developer') }}</option>
                                                 <option value="maintainer" {{ $member->pivot->role === 'maintainer' ? 'selected' : '' }}>{{ __('organization.role_maintainer') }}</option>
                                             </select>

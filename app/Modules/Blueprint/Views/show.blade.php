@@ -36,7 +36,7 @@
                     @if($userOrgsWhereOwner->count() > 0)
                         <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" x-data class="inline flex items-center space-x-2" @submit.prevent="const f=$el; const s=$refs.targetOrg; if (s.value) { f.submit(); } else { $store.confirm.ask({message:'{{ __('blueprint.transfer_select_org') }}', confirmText:'{{ __('shared.understood') }}', onConfirm(){ s.focus(); }}); }">
                             @csrf
-                            <select x-ref="targetOrg" name="target_organization_id" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2">
+                            <select x-ref="targetOrg" name="target_organization_id" class="block w-full px-3 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2">
                                 <option value="">{{ __('blueprint.transfer_to') }}</option>
                                 @foreach($userOrgsWhereOwner as $org)
                                     <option value="{{ $org->id }}">{{ $org->name }}</option>
