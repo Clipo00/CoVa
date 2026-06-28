@@ -24,7 +24,7 @@
             {{-- Create Member Direct Form --}}
             <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('organization.direct_member_heading') }}</h2>
-                <form method="POST" action="{{ route('organizations.members.store', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4 items-end">
+                <form method="POST" action="{{ route('organizations.members.store', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4 items-start">
                     @csrf
                     <div class="flex-1">
                         <label for="name" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_name_label') }}</label>
@@ -43,7 +43,7 @@
                             <option value="maintainer">{{ __('organization.role_maintainer') }}</option>
                         </select>
                     </div>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-5">
                         {{ __('organization.create_member_button') }}
                     </button>
                 </form>
@@ -145,9 +145,34 @@
                                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $invitation->email }}</p>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('organization.invitation_info', ['role' => __('organization.role_' . (in_array($invitation->role, ['developer', 'maintainer', 'owner']) ? $invitation->role : 'developer')), 'time' => $invitation->expires_at->diffForHumans()]) }}</p>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200">
-                                    {{ __('organization.status_pending') }}
-                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200">
+                                        {{ __('organization.status_pending') }}
+                                    </span>
+                                    @can('manageMembers', $organization)
+                                        {{-- Resend button --}}
+                                        <form method="POST" action="{{ route('organizations.invitations.resend', [$organization->slug, $invitation->id]) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" title="{{ __('organization.resend_invitation_button') }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                                </svg>
+                                                {{ __('organization.resend_invitation_button') }}
+                                            </button>
+                                        </form>
+                                        {{-- Revoke button with confirmation --}}
+                                        <form method="POST" action="{{ route('organizations.invitations.revoke', [$organization->slug, $invitation->id]) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('organization.revoke_invitation_confirm', ['email' => $invitation->email]) }}', confirmText:'{{ __('organization.revoke_invitation_button') }}', onConfirm(){ f.submit(); }})">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" title="{{ __('organization.revoke_invitation_button') }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                                {{ __('organization.revoke_invitation_button') }}
+                                            </button>
+                                        </form>
+                                    @endcan
+                                </div>
                             </div>
                         </li>
                     @endforeach

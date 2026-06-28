@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Organization\Actions;
 
-use App\Modules\Auth\Actions\RegisterUser;
-use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class CreateOrganizationUser
 {
@@ -18,14 +17,31 @@ class CreateOrganizationUser
         string $email,
         string $role = 'developer'
     ): User {
-        $temporaryPassword = bin2hex(random_bytes(8));
+        // Check if user with this email is already a member of the organization
+        $existingMember = User::where('email', $email)
+            ->whereHas('organizations', fn ($q) => $q->where('organization_id', $organization->id))
+            ->first();
 
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($temporaryPassword),
-            'plan_id' => null,
-        ]);
+        if ($existingMember) {
+            throw ValidationException::withMessages([
+                'email' => [__('organization.user_already_member')],
+            ]);
+        }
+
+        // Reuse existing user if they already have an account
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            // Create new user with temporary password
+            $temporaryPassword = bin2hex(random_bytes(8));
+
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => Hash::make($temporaryPassword),
+                'plan_id' => null,
+            ]);
+        }
 
         $user->organizations()->attach($organization->id, [
             'role' => $role,

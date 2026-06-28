@@ -16,27 +16,31 @@ Route::middleware('auth')->group(function () {
     Route::get('/organizations/{slug}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
     Route::get('/organizations/{slug}/members', [OrganizationController::class, 'members'])->name('organizations.members');
 
-    // Acciones mutantes con rate limiting (30/min para operaciones normales)
+    // Standard management operations — 30/min
     Route::middleware('throttle:30,1')->group(function () {
         Route::post('/organizations/{slug}/update', [OrganizationController::class, 'update'])->name('organizations.update');
         Route::post('/organizations/{slug}/delete', [OrganizationController::class, 'destroy'])->name('organizations.destroy');
         Route::post('/organizations/{slug}/restore', [OrganizationController::class, 'restore'])->name('organizations.restore');
-    });
 
-    // Acciones sensibles con rate limiting más restrictivo (5/min)
-    // NOTA: {user_id} usa ID auto-incremental porque el modelo User no tiene columna UUID.
-    // Si en el futuro se migra a UUID, cambiar a {user_uuid} y actualizar los controladores.
-    Route::middleware('throttle:5,1')->group(function () {
-        Route::post('/organizations/{slug}/force-delete', [OrganizationController::class, 'forceDestroy'])->name('organizations.force-destroy');
+        // Member management — inviting, role changes, removal
         Route::post('/organizations/{slug}/invite', [OrganizationController::class, 'invite'])->name('organizations.invite');
+        Route::delete('/organizations/{slug}/invitations/{invitation}', [OrganizationController::class, 'revokeInvitation'])->name('organizations.invitations.revoke');
+        Route::post('/organizations/{slug}/invitations/{invitation}/resend', [OrganizationController::class, 'resendInvitation'])->name('organizations.invitations.resend');
         Route::post('/organizations/{slug}/members/{user_id}/role', [OrganizationController::class, 'updateMemberRole'])->name('organizations.members.role');
         Route::delete('/organizations/{slug}/members/{user_id}', [OrganizationController::class, 'removeMember'])->name('organizations.members.remove');
     });
+
+    // Destructive operations — 5/min (permanent, irreversible)
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::post('/organizations/{slug}/force-delete', [OrganizationController::class, 'forceDestroy'])->name('organizations.force-destroy');
+    });
+
     // Invitation acceptance — CSRF protected, rate limited
     Route::middleware('throttle:10,1')->group(function () {
         Route::post('/invitations/{token}/accept', [OrganizationController::class, 'acceptInvitation'])
             ->name('invitations.accept');
     });
+
     // Store member con rate limiting para evitar abuso en creación de cuentas
     Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])
         ->middleware('throttle:10,1')

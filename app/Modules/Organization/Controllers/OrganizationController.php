@@ -10,6 +10,8 @@ use App\Modules\Organization\Actions\CreateOrganizationUser;
 use App\Modules\Organization\Actions\DeleteOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Actions\RemoveOrganizationUser;
+use App\Modules\Organization\Actions\ResendInvitation;
+use App\Modules\Organization\Actions\RevokeInvitation;
 use App\Modules\Organization\Actions\UpdateOrganization;
 use App\Modules\Organization\Actions\UpdateOrganizationUserRole;
 use App\Modules\Organization\Models\Organization;
@@ -111,7 +113,7 @@ class OrganizationController
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:developer,maintainer'],
         ]);
 
@@ -241,6 +243,40 @@ class OrganizationController
         return redirect()
             ->route('organizations.members', $organization->slug)
             ->with('success', __('organization.invite_sent'));
+    }
+
+    public function revokeInvitation(string $slug, int $invitationId, RevokeInvitation $revokeAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('revokeInvitation', $organization)) {
+            abort(403, __('organization.no_revoke_permission'));
+        }
+
+        $invitation = $organization->invitations()->findOrFail($invitationId);
+
+        $revokeAction->execute($invitation);
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.invitation_revoked'));
+    }
+
+    public function resendInvitation(string $slug, int $invitationId, ResendInvitation $resendAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('resendInvitation', $organization)) {
+            abort(403, __('organization.no_resend_permission'));
+        }
+
+        $invitation = $organization->invitations()->findOrFail($invitationId);
+
+        $resendAction->execute($invitation);
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.invitation_resent'));
     }
 
     public function removeMember(string $slug, int $userId, RemoveOrganizationUser $removeAction): RedirectResponse
