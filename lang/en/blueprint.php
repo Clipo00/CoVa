@@ -82,6 +82,8 @@ return [
     'var_value_placeholder' => 'Default value',
     'var_delete_tooltip' => 'Delete variable',
     'var_add_button' => 'Add Variable',
+    'var_move_up' => 'Move up',
+    'var_move_down' => 'Move down',
     'var_none' => 'No variables configured.',
     'var_add_first' => 'Add first variable',
     'secret_value' => '••••••••',
@@ -101,6 +103,20 @@ return [
 
     // MCP Servers
     'mcp_servers' => 'MCP Servers',
+
+    // Scripts
+    'scripts_section' => 'Post-Install Scripts',
+    'copy_scripts_command' => 'Copy script',
+    'scripts_copied' => 'Script copied to clipboard',
+    'scripts_label' => 'Scripts',
+    'scripts_doc_only' => '⚠ Documentation only — commands are NOT executed server-side.',
+    'script_label' => 'Script #:index',
+    'script_delete' => 'Delete',
+    'script_command_label' => 'Command',
+    'script_command_placeholder' => 'composer install',
+    'script_description_label' => 'Description',
+    'script_description_placeholder' => 'Install PHP dependencies',
+    'script_add_button' => 'Add script',
 
     // Tab Manager
     'move_up' => 'Move up',
@@ -122,10 +138,14 @@ return [
     'code_presets' => 'Code Presets',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean_arch' => 'Clean Architecture',
+    'preset_clean_architecture' => 'Clean Architecture',
+    'preset_laravel_conventions' => 'Laravel Conventions',
+    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
+    'skill_react_expert' => 'React Expert',
+    'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
     'tabs_empty' => 'No tabs configured',
@@ -157,6 +177,7 @@ return [
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',
     'tab_type_mcp' => 'MCP Servers',
+    'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Unknown',
 

@@ -3,6 +3,12 @@
 use App\Modules\Organization\Controllers\OrganizationController;
 use Illuminate\Support\Facades\Route;
 
+// Public invitation routes — OWASP A06: rate limited to prevent brute-force token guessing
+Route::middleware('throttle:10,1')->group(function () {
+    Route::get('/invitations/{token}', [OrganizationController::class, 'showInvitation'])
+        ->name('invitations.show');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::get('/organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
@@ -27,6 +33,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/organizations/{slug}/members/{user_id}', [OrganizationController::class, 'removeMember'])->name('organizations.members.remove');
     });
 
+    // Store member sin throttle extra
+    Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])->name('organizations.members.store');
+
+    // Invitation acceptance — CSRF protected, rate limited
+    Route::middleware('throttle:10,1')->group(function () {
+        Route::post('/invitations/{token}/accept', [OrganizationController::class, 'acceptInvitation'])
+            ->name('invitations.accept');
+    });
     // Store member con rate limiting para evitar abuso en creación de cuentas
     Route::post('/organizations/{slug}/members/store', [OrganizationController::class, 'storeMember'])
         ->middleware('throttle:10,1')

@@ -47,8 +47,8 @@ class CreateBlueprint
             'created_by' => auth()->id(),
         ]);
 
-        // Crear variables asociadas
-        foreach ($variables as $variableData) {
+        // Crear variables asociadas — sort_order from array index preserves UI order
+        foreach ($variables as $index => $variableData) {
             if (empty($variableData['key'])) {
                 continue;
             }
@@ -61,7 +61,7 @@ class CreateBlueprint
                 'is_secret' => $variableData['is_secret'] ?? false,
                 'section' => $variableData['section'] ?? null,
                 'section_color' => $variableData['section_color'] ?? null,
-                'sort_order' => 0,
+                'sort_order' => $index,
             ]);
         }
 

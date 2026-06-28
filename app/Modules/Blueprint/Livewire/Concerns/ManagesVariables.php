@@ -45,6 +45,25 @@ trait ManagesVariables
         $this->variables = array_values(array_filter($this->variables, fn($v) => !empty($v['key'])));
     }
 
+    /**
+     * Move a variable up (-1) or down (+1) in the list.
+     * Swaps the element with its neighbor. Does nothing at boundaries.
+     */
+    public function moveVariable(int $index, int $direction): void
+    {
+        $newIndex = $index + $direction;
+
+        if ($newIndex < 0 || $newIndex >= count($this->variables)) {
+            return;
+        }
+
+        $temp = $this->variables[$index];
+        $this->variables[$index] = $this->variables[$newIndex];
+        $this->variables[$newIndex] = $temp;
+
+        $this->variables = array_values($this->variables);
+    }
+
     public function validateUniqueKeys(): bool
     {
         $keys = array_column($this->variables, 'key');

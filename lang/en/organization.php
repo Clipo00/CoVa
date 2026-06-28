@@ -118,4 +118,14 @@ return [
     'invitation_user_required' => 'A user is required to accept this invitation.',
     'invitation_no_user' => 'A user with this email does not exist.',
     'invitation_email_mismatch' => 'The user email does not match the invitation.',
+    'invitation_accepted' => 'Invitation accepted successfully!',
+    'invitation_accept_title' => 'Accept Invitation',
+    'invitation_accept_intro' => 'You are about to join :organization as :role.',
+
+    // Invitation notification
+    'invitation_subject' => 'You have been invited to :organization',
+    'invitation_greeting' => 'Hello!',
+    'invitation_intro' => 'You have been invited to join :organization as :role.',
+    'invitation_accept_button' => 'Accept Invitation',
+    'invitation_expiry' => 'This invitation will expire in :hours hours.',
 ];

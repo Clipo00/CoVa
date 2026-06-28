@@ -50,6 +50,11 @@ class Blueprint extends Model
 
     public function variables()
     {
+        return $this->hasMany(BlueprintVariable::class)->orderBy('sort_order');
+    }
+
+    public function variablesUnsorted()
+    {
         return $this->hasMany(BlueprintVariable::class);
     }
 
