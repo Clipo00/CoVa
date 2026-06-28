@@ -31,7 +31,7 @@ class MfaChallengeForm extends Component
     {
         $this->validate();
 
-        $userId = session('mfa_user_id');
+        $userId = session('mfa_user_id', auth()->id());
         $throttleKey = 'mfa-challenge:'.($userId ?? request()->ip());
 
         // OWASP A07:2025 — prevent brute-force on MFA codes (5 attempts/min)
@@ -69,7 +69,7 @@ class MfaChallengeForm extends Component
 
     public function resend(SendMfaCode $sendMfaCode): void
     {
-        $userId = session('mfa_user_id');
+        $userId = session('mfa_user_id', auth()->id());
         $throttleKey = 'mfa-resend:'.($userId ?? request()->ip());
 
         // OWASP A07:2025 — prevent email bombing (3 resends/min)

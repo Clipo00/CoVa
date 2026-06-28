@@ -27,6 +27,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
         'plan_id',
         'is_system',
         'mfa_enabled',
+        'mfa_prompted_at',
     ];
 
     protected $hidden = [
@@ -40,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'mfa_enabled' => 'boolean',
+            'mfa_prompted_at' => 'datetime',
         ];
     }
 

@@ -12,6 +12,7 @@ use App\Modules\Auth\Livewire\Forms\LoginForm;
 use App\Modules\Auth\Livewire\Forms\MfaChallengeForm;
 use App\Modules\Auth\Livewire\Forms\RegisterForm;
 use App\Modules\Auth\Livewire\Forms\ResetPasswordForm;
+use App\Modules\Auth\Livewire\Forms\MfaSetupForm;
 use App\Modules\Auth\Livewire\Forms\UserProfileForm;
 
 class AuthServiceProvider extends ServiceProvider
@@ -31,6 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         Livewire::component('auth.forms.register-form', RegisterForm::class);
         Livewire::component('auth.forms.user-profile-form', UserProfileForm::class);
         Livewire::component('auth.forms.mfa-challenge-form', MfaChallengeForm::class);
+        Livewire::component('auth.forms.mfa-setup-form', MfaSetupForm::class);
         Livewire::component('auth.components.user-dropdown', UserDropdown::class);
     }
 }

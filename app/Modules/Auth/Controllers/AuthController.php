@@ -38,6 +38,11 @@ class AuthController
         return view('auth::mfa-challenge');
     }
 
+    public function showMfaSetup(): View
+    {
+        return view('auth::mfa-setup');
+    }
+
     public function showForgotPassword(): View
     {
         return view('auth::forgot-password');

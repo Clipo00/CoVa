@@ -40,6 +40,14 @@ class LoginForm extends Component
 
             $loginUser->execute($data);
 
+            // Prompt first-time users to enable MFA
+            $user = auth()->user();
+            if (!$user->mfa_prompted_at) {
+                $user->update(['mfa_prompted_at' => now()]);
+                $this->redirect(route('mfa.setup'));
+                return;
+            }
+
             $this->redirectIntended(route('dashboard'));
         } catch (MfaRequiredException $e) {
             session()->put('mfa_user_id', $e->user->id);
