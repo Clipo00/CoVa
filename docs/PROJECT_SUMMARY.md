@@ -359,7 +359,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 125 tests, 237 assertions |
+| Tests | ✅ 392 tests, 842 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
 | **AI Agents / Skills config** | ✅ Completo — 7 presets + 5 skills |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |

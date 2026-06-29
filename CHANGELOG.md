@@ -9,6 +9,25 @@
 
 ## [Unreleased]
 
+### Changed
+- **Publicar crea copia, no transfiere** — Al publicar un blueprint se crea una copia en `cova-marketplace` con secretos vaciados. El original se queda en la organización del creador marcado como público. El creador mantiene acceso completo.
+- **Sincronización (re-publicar)** — Si un blueprint ya está publicado, el botón cambia a "Sincronizar cambios". Al pulsarlo se actualiza la copia del marketplace con los últimos cambios del original y se notifica a los suscriptores.
+- **Marketplace solo muestra blueprints del sistema** — El listado ahora filtra exclusivamente por la organización `cova-marketplace` (no por `is_public=true` global), eliminando duplicados.
+- **Votación abierta a todos los usuarios autenticados** — Cualquier usuario con sesión puede votar en blueprints del marketplace. Ya no se requiere ser miembro de la organización.
+- **Sin auto-voto** — No se puede votar en blueprints propios (`created_by` check en policy).
+- **Las suscripciones consumen slots del plan** — Suscribirse a un blueprint del marketplace ahora cuenta contra `max_blueprints_per_org` igual que crear uno nuevo.
+- **Variables de entorno opcionales en creación** — El formulario de creación ya no precarga una variable vacía por defecto.
+- **Selector de plantillas con opción vacía** — Se agregó `<option value="">Sin plantilla</option>` para detectar correctamente cambios de selección.
+- **Mensajes de publish corregidos** — Los mensajes ahora reflejan correctamente que los secretos se vacían al publicar, no se exponen.
+
+### Fixed
+- **403 al publicar** — El blueprint ya no se transfiere al marketplace, por lo que el creador no pierde acceso.
+- **Slug duplicado** — Validación pre-insert en `BlueprintCreateForm` que muestra error amigable en vez de excepción SQL.
+- **Traducciones faltantes** — Agregadas `publish_section`, `publish_toggle`, `publish_help`, `template_label`, `template_empty`, `template_loading`, `live_preview`, `badge_public`, `slug_exists`, `publish_sync_button`, `publish_sync_confirm`.
+- **Voseo en traducciones** — Corregido a castellano neutro (España) en todos los mensajes nuevos.
+- **TabManager reactividad** — Cambiado prop `:tabs-config` a `:tabs` con key dinámica, permitiendo que las plantillas poblaran correctamente el editor.
+- **Template data format** — Corregido nesting de `config` en datos de plantillas para compatibilidad con TabManager.
+
 ### Added
 - **🛒 Marketplace v1** — marketplace completo como módulo independiente:
   - **Listado público** (`/marketplace`): búsqueda, filtros por tags, ordenamiento (rating, suscriptores, reciente), paginación
