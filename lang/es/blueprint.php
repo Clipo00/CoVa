@@ -186,7 +186,7 @@ return [
 
     // Templates
     'template_label' => 'Plantilla',
-    'template_hint' => 'Seleccioná una plantilla para precargar pestañas con configuraciones recomendadas.',
+    'template_hint' => 'Selecciona una plantilla para precargar pestañas con configuraciones recomendadas.',
 
     // Publish
     'publish_section' => 'Publicación',
@@ -194,7 +194,7 @@ return [
     'publish_help' => 'Al publicar, los valores de las variables secretas se vaciarán por seguridad. Tus secretos permanecen solo en tu copia privada.',
     'publish_button' => 'Publicar en Marketplace',
     'publish_confirm_title' => 'Publicar Blueprint',
-    'publish_confirm_warning' => 'Tus variables secretas NO se compartirán — se vaciarán antes de publicar. Solo vos y quienes copies tendréis los valores en vuestras copias privadas. ¿Quieres publicar este blueprint en el marketplace?',
+    'publish_confirm_warning' => 'Tus variables secretas NO se compartirán — se vaciarán antes de publicar. Solo tú y quienes copien el blueprint tendrán los valores en sus copias privadas. ¿Quieres publicar este blueprint en el marketplace?',
     'publish_success' => 'Blueprint publicado en el marketplace correctamente.',
     'publish_denied' => 'No tienes permisos para publicar este blueprint.',
     'publish_marketplace_disabled' => 'El marketplace no está disponible en este momento.',
