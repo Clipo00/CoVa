@@ -19,7 +19,9 @@
     @include('landing.partials.demo')
 
     {{-- Marketplace Preview Section --}}
-    @include('landing.partials.marketplace-preview')
+    @if($marketplaceEnabled ?? false)
+        @include('landing.partials.marketplace-preview')
+    @endif
 
     {{-- Final CTA Section --}}
     @include('landing.partials.cta-final')

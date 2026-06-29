@@ -26,8 +26,8 @@ class BlueprintPolicyTest extends TestCase
         $this->seed(\Database\Seeders\PlanSeeder::class);
         $this->policy = new BlueprintPolicy();
 
-        // Ensure env override doesn't leak into policy tests
-        Config::set('app.marketplace_enabled', false);
+        // Enable marketplace for policy tests (plan checks are the default gate)
+        Config::set('app.marketplace_enabled', true);
     }
 
     public function test_owner_can_update_any_blueprint(): void
@@ -313,5 +313,29 @@ class BlueprintPolicyTest extends TestCase
         $blueprint = $createBp->execute($organization, 'NonMem BP', 'nonmem-bp');
 
         $this->assertFalse($this->policy->publish($nonMember, $blueprint));
+    }
+
+    public function test_publish_denied_when_marketplace_disabled_globally(): void
+    {
+        Config::set('app.marketplace_enabled', false);
+
+        $plan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Pro Owner',
+            'email' => 'pro-owner-global@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Global Off', 'global-off');
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Pro BP', 'pro-bp');
+
+        // Pro plan owner should normally be able to publish,
+        // but global marketplace flag is off
+        $this->assertFalse($this->policy->publish($owner, $blueprint));
     }
 }

@@ -14,14 +14,17 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    $publicBlueprints = Blueprint::query()
-        ->where('is_public', true)
-        ->with(['organization', 'category'])
-        ->latest()
-        ->take(6)
-        ->get();
+    $marketplaceEnabled = config('app.marketplace_enabled', false);
+    $publicBlueprints = $marketplaceEnabled
+        ? Blueprint::query()
+            ->where('is_public', true)
+            ->with(['organization', 'category'])
+            ->latest()
+            ->take(6)
+            ->get()
+        : collect();
 
-    return view('landing.index', compact('publicBlueprints'));
+    return view('landing.index', compact('publicBlueprints', 'marketplaceEnabled'));
 })->name('landing');
 
 /*

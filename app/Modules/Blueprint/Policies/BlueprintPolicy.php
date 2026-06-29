@@ -53,9 +53,9 @@ class BlueprintPolicy
             return false;
         }
 
-        // Dev override: if MARKETPLACE_ENABLED env is true, bypass plan check
-        if (config('app.marketplace_enabled', false)) {
-            return true;
+        // Global feature flag: if marketplace is disabled, nobody can publish
+        if (!config('app.marketplace_enabled', false)) {
+            return false;
         }
 
         return $blueprint->organization->plan->has_marketplace_publish;
