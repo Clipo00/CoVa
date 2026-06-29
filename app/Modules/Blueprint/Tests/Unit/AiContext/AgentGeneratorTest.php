@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Tests\Unit\AiContext;
 
 use App\Modules\Blueprint\DTOs\AiContextConfig;
+use App\Modules\Blueprint\DTOs\AiContextSegment;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
@@ -56,24 +57,21 @@ class AgentGeneratorTest extends TestCase
 
     public function test_generate_includes_title(): void
     {
-        $config = new AiContextConfig(
-            presets: ['psr12'],
-            skills: [],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'psr12'),
+        ]);
 
         $result = $this->generator->generate($config);
 
         $this->assertStringStartsWith('# Agent Context', $result);
     }
 
-    public function test_generate_includes_requested_presets(): void
+    public function test_generate_includes_preset_registry_content(): void
     {
-        $config = new AiContextConfig(
-            presets: ['psr12', 'solid'],
-            skills: [],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'psr12'),
+            new AiContextSegment(type: 'preset', name: 'solid'),
+        ]);
 
         $result = $this->generator->generate($config);
 
@@ -81,13 +79,12 @@ class AgentGeneratorTest extends TestCase
         $this->assertStringContainsString('SOLID Principles', $result);
     }
 
-    public function test_generate_includes_requested_skills(): void
+    public function test_generate_includes_skill_registry_content(): void
     {
-        $config = new AiContextConfig(
-            presets: [],
-            skills: ['stripe', 'tailwind'],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'skill', name: 'stripe'),
+            new AiContextSegment(type: 'skill', name: 'tailwind'),
+        ]);
 
         $result = $this->generator->generate($config);
 
@@ -95,61 +92,107 @@ class AgentGeneratorTest extends TestCase
         $this->assertStringContainsString('Tailwind CSS', $result);
     }
 
-    public function test_generate_includes_custom_rules(): void
+    public function test_generate_includes_custom_segment(): void
     {
-        $config = new AiContextConfig(
-            presets: [],
-            skills: [],
-            customRules: 'Always use strict types. Prefer DTOs over arrays.',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(
+                type: 'custom',
+                name: 'Custom Rules',
+                content: 'Always use strict types. Prefer DTOs over arrays.',
+            ),
+        ]);
 
         $result = $this->generator->generate($config);
 
-        $this->assertStringContainsString('Custom Rules', $result);
+        $this->assertStringContainsString('## Custom Rules', $result);
         $this->assertStringContainsString('Always use strict types', $result);
     }
 
-    public function test_generate_combines_all_sections(): void
+    public function test_generate_combines_mixed_segments(): void
     {
-        $config = new AiContextConfig(
-            presets: ['psr12'],
-            skills: ['stripe'],
-            customRules: 'Test rule',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'psr12'),
+            new AiContextSegment(type: 'skill', name: 'stripe'),
+            new AiContextSegment(type: 'custom', name: 'My Rules', content: 'Test rule'),
+        ]);
 
         $result = $this->generator->generate($config);
 
         $this->assertStringContainsString('PSR-12 Coding Standard', $result);
         $this->assertStringContainsString('Stripe Integration', $result);
-        $this->assertStringContainsString('Custom Rules', $result);
+        $this->assertStringContainsString('## My Rules', $result);
         $this->assertStringContainsString('Test rule', $result);
+    }
+
+    public function test_generate_adds_separators_between_segments(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'solid'),
+            new AiContextSegment(type: 'preset', name: 'laravel-conventions'),
+        ]);
+
+        $result = $this->generator->generate($config);
+        // Segments are separated by "---" when there are multiple
+        $parts = explode('---', $result);
+
+        // Header + 2 segments = 3 parts separated by 2 dividers
+        $this->assertCount(3, $parts);
+    }
+
+    public function test_generate_uses_override_content_when_provided(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(
+                type: 'preset',
+                name: 'psr12',
+                content: 'Custom PSR-12 override content',
+            ),
+        ]);
+
+        $result = $this->generator->generate($config);
+
+        // Should NOT contain the registry default heading/content
+        $this->assertStringNotContainsString('PSR-12 Coding Standard', $result);
+        // Should use the generated heading with override content
+        $this->assertStringContainsString('## psr12', $result);
+        $this->assertStringContainsString('Custom PSR-12 override content', $result);
     }
 
     public function test_generate_skips_unknown_preset(): void
     {
-        $config = new AiContextConfig(
-            presets: ['unknown-preset'],
-            skills: [],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'unknown-preset'),
+        ]);
 
         $result = $this->generator->generate($config);
 
-        $this->assertStringStartsWith('# Agent Context', $result);
-        $this->assertStringNotContainsString('unknown-preset', $result);
+        // Only the header — unknown segments are skipped
+        $this->assertEquals('# Agent Context', $result);
     }
 
     public function test_generate_skips_unknown_skill(): void
     {
-        $config = new AiContextConfig(
-            presets: [],
-            skills: ['unknown-skill'],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'skill', name: 'unknown-skill'),
+        ]);
 
         $result = $this->generator->generate($config);
 
-        $this->assertStringStartsWith('# Agent Context', $result);
+        $this->assertEquals('# Agent Context', $result);
+    }
+
+    public function test_generate_handles_empty_override_content(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'custom', name: 'Empty Section', content: ''),
+        ]);
+
+        $result = $this->generator->generate($config);
+
+        // Empty content produces just the heading
+        $this->assertStringContainsString('## Empty Section', $result);
+        // No trailing content after heading
+        $this->assertStringEndsWith('## Empty Section', trim($result));
     }
 
     public function test_preset_names_returns_available_presets(): void
@@ -193,11 +236,10 @@ class AgentGeneratorTest extends TestCase
 
     public function test_generate_includes_new_preset_content(): void
     {
-        $config = new AiContextConfig(
-            presets: ['laravel-conventions', 'typescript-strict'],
-            skills: [],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'laravel-conventions'),
+            new AiContextSegment(type: 'preset', name: 'typescript-strict'),
+        ]);
 
         $result = $this->generator->generate($config);
 
@@ -207,11 +249,10 @@ class AgentGeneratorTest extends TestCase
 
     public function test_generate_includes_new_skill_content(): void
     {
-        $config = new AiContextConfig(
-            presets: [],
-            skills: ['react-expert', 'vue-expert'],
-            customRules: '',
-        );
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'skill', name: 'react-expert'),
+            new AiContextSegment(type: 'skill', name: 'vue-expert'),
+        ]);
 
         $result = $this->generator->generate($config);
 
@@ -221,7 +262,6 @@ class AgentGeneratorTest extends TestCase
 
     public function test_preset_names_returns_all_7_presets_after_registration(): void
     {
-        // Register the 4 new presets (Phase 5 will create them)
         $this->presetsRegistry->register(
             new \App\Modules\Blueprint\Tabs\AiContext\Presets\DockerPreset()
         );
@@ -246,7 +286,6 @@ class AgentGeneratorTest extends TestCase
 
     public function test_skill_names_returns_all_5_skills_after_registration(): void
     {
-        // Register the 3 new skills (Phase 5 will create them)
         $this->skillsRegistry->register(
             new \App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill()
         );

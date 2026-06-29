@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Tabs\AiContext;
 
 use App\Modules\Blueprint\Contracts\AgentContentSegment;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
+use App\Modules\Blueprint\DTOs\AiContextSegment;
 
 class AgentGenerator
 {
@@ -16,6 +17,9 @@ class AgentGenerator
 
     /**
      * Generate agent.md content from AI Context config.
+     *
+     * Iterates segments in order, resolving content with precedence:
+     * segment override > registry default > empty.
      */
     public function generate(AiContextConfig $config): string
     {
@@ -25,23 +29,51 @@ class AgentGenerator
 
         $sections = ["# Agent Context"];
 
-        foreach ($config->presets as $presetName) {
-            if ($this->presets->has($presetName)) {
-                $sections[] = $this->presets->get($presetName)->content();
-            }
-        }
+        foreach ($config->segments as $segment) {
+            $content = $this->resolveContent($segment);
 
-        foreach ($config->skills as $skillName) {
-            if ($this->skills->has($skillName)) {
-                $sections[] = $this->skills->get($skillName)->content();
+            if ($content === null) {
+                continue;
             }
-        }
 
-        if ($config->hasCustomRules()) {
-            $sections[] = "## Custom Rules\n\n" . $config->customRules;
+            $sections[] = $content;
         }
 
         return implode("\n\n---\n\n", $sections);
+    }
+
+    /**
+     * Resolve markdown content for a single segment.
+     *
+     * Precedence: segment override > registry default > null (skip).
+     */
+    private function resolveContent(AiContextSegment $segment): ?string
+    {
+        // Override content or custom segment: use provided content with generated heading
+        if ($segment->content !== null) {
+            $heading = "## {$segment->name}";
+
+            if ($segment->content === '') {
+                return $heading;
+            }
+
+            return "{$heading}\n\n{$segment->content}";
+        }
+
+        // Registry content (preset/skill with null content)
+        $registry = null;
+        if ($segment->isPreset()) {
+            $registry = $this->presets;
+        } elseif ($segment->isSkill()) {
+            $registry = $this->skills;
+        }
+
+        if ($registry !== null && $registry->has($segment->name)) {
+            return $registry->get($segment->name)->content();
+        }
+
+        // Segment not found in registry and no override — skip
+        return null;
     }
 
     /**
