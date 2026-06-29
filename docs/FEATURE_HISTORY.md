@@ -447,6 +447,79 @@ Una auditoría de seguridad reveló 6 gaps de autorización y validación que co
 
 11. **`MustVerifyEmail` de Laravel ya hace el 80% del trabajo**: La interfaz `MustVerifyEmail` en el modelo User + el evento `Registered` disparan automáticamente el envío del email de verificación. Solo hizo falta crear el controller de verificación con signed URLs. No reinventar la rueda.
 
+---
+
+## Fase 8: Marketplace v1 (Junio 2026)
+
+### El Problema
+
+CoVa tenía la infraestructura básica para publicar blueprints (`is_public`, toggle de publish), pero no era un marketplace real. No había listado público, ni búsqueda, ni forma de que los usuarios descubrieran plantillas de la comunidad. El "marketplace preview" en la landing page usaba mock data hardcodeado.
+
+### La Hipótesis
+
+Un marketplace real con descubrimiento, suscripciones (fork), votación y notificaciones crearía network effects: más blueprints públicos → más usuarios → más blueprints. Las suscripciones como "forks" (copias independientes) permitirían a los usuarios empezar desde una plantilla sin depender del original.
+
+### Decisiones Clave
+
+**¿Por qué un módulo separado y no extender Blueprint?**
+- Marketplace es un dominio distinto: descubrimiento, suscripción, votación. Meterlo en Blueprint acoplaría conceptos que no son core del CRUD de blueprints.
+- El módulo Marketplace consume Blueprint vía relaciones, no modifica su lógica interna.
+- Si mañana queremos extraer Marketplace a un microservicio, el límite ya está definido.
+
+**¿Por qué suscripciones ilimitadas pero edición capeada por plan?**
+- La suscripción es un acto de "guardar para después". No cuesta recursos significativos.
+- La edición (crear/modificar blueprints) es lo que consume recursos del plan (variables, tabs, storage).
+- Un usuario Free puede suscribirse a 50 plantillas pero solo editar 3. Es como "guardar en favoritos con copia".
+
+**¿Por qué notificaciones in-app y no email?**
+- El MVP prioriza simplicidad. Email requiere templates, colas de mail, manejo de bounces.
+- El buzón in-app es inmediato, no depende de deliverability, y no satura la bandeja del usuario.
+- Email se puede agregar después como canal adicional sin romper la infraestructura existente.
+
+**¿Por qué votos anónimos al usuario pero trazables?**
+- La transparencia total de votos (quién votó qué) puede inhibir votos negativos honestos por miedo a represalias.
+- La trazabilidad interna permite auditoría anti-abuso (detección de granjas de votos) sin exponer al usuario.
+- Es el mismo modelo que usa Reddit: los votos son privados, pero el sistema sabe quién votó.
+
+**¿Por qué desvincular en vez de borrar suscripciones al eliminar un blueprint?**
+- Borrar la suscripción pierde la trazabilidad. El usuario ya no sabe que estuvo suscrito.
+- Poner `subscribed_blueprint_id = null` mantiene el registro histórico y la copia del usuario sigue funcionando.
+- La copia es completamente independiente: tiene su propio UUID, su propia org, y no depende del original.
+
+### Lo Que Se Hizo
+
+| Feature | Archivos clave |
+|---------|---------------|
+| Listado público | `MarketplaceList` Livewire, `/marketplace`, búsqueda, tags, sort, paginación |
+| Vista detalle | `marketplace/show.blade.php`, reusa partials de Blueprint |
+| Suscripción/Fork | `SubscribeToBlueprint` Action, `blueprint_subscriptions` table |
+| Votación | `VoteOnBlueprint` Action, `blueprint_votes` table, Alpine.js optimistic UI |
+| Notificaciones | `NotificationBell` Livewire, `NotifySubscribers` Job (batched), buzón `/notifications` |
+| Delete flow | `DeleteBlueprint` modificado: notifica → desvincula → soft-delete |
+
+### Features Pre-CLI (misma sesión)
+
+Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (API + CLI):
+
+| Gap | Solución |
+|-----|----------|
+| Templates de tabs | 3 stacks (Laravel, Node.js, Python) con IDs reales |
+| Publicar blueprint UI | Toggle `is_public` + policy + badges + delete warning |
+| Presets/Skills | 7 presets + 5 skills dinámicos, Blade refactorizado |
+| Live Preview | Panel colapsable en create/edit con debounce 300ms |
+| Password toggle | Ojito en 6 campos (login, register, profile) |
+| Planes en orgs | `plan_id` eliminado de organizations, plan delegado al owner |
+
+### Aprendizajes Clave
+
+12. **Un módulo nuevo es menos disruptivo que extender uno existente**: Marketplace toca Blueprint solo en 2 puntos (UpdateBlueprint y DeleteBlueprint para disparar notificaciones). Todo lo demás es autocontenido. Si hubiéramos metido subscriptions y votes en Blueprint, el modelo Blueprint tendría 10 relaciones más.
+
+13. **Las notificaciones por lotes son obligatorias desde el día 1**: Un blueprint con 500 suscriptores no puede disparar 500 inserts en el request del owner. El job `NotifySubscribers` con `chunk(100)` y database queue lo resuelve sin complejidad de infraestructura (Redis, SQS).
+
+14. **Los cached counters evitan N+1 en listados**: `votes_count` y `subscribers_count` como columnas en `blueprints` permiten ordenar por rating sin subconsultas. Actualizarlos atómicamente (`increment`/`decrement`) es más barato que recalcular con `COUNT` en cada carga.
+
+15. **Desvincular > Borrar**: Cuando un blueprint del marketplace se elimina, los suscriptores pierden la relación con el original pero conservan su copia. Si borráramos la copia, el usuario perdería trabajo. Si borráramos la suscripción, perderíamos auditoría. `subscribed_blueprint_id = null` es el punto medio.
+
 **Documento generado**: 2026-05-23  
-**Versión**: 1.2  
-**Última actualización**: Security Validation Audit (Junio 2026)
+**Versión**: 1.3  
+**Última actualización**: Marketplace v1 (Junio 2026)

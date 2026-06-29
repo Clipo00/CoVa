@@ -9,6 +9,42 @@
 
 ## [Unreleased]
 
+### Added
+- **🛒 Marketplace v1** — marketplace completo como módulo independiente:
+  - **Listado público** (`/marketplace`): búsqueda, filtros por tags, ordenamiento (rating, suscriptores, reciente), paginación
+  - **Vista de detalle** (`/marketplace/{uuid}`): contenido completo resuelto, variables enmascaradas para no-owners, stats
+  - **Suscripción/Fork**: copia el blueprint a la organización del usuario con nuevo UUID. Relación trazable via `blueprint_subscriptions`. Sin límite de plan.
+  - **Votación**: upvote/downvote con toggle, un voto por usuario, cached counters, anónimo al usuario (trazable internamente)
+  - **Notificaciones in-app**: campanita con badge en nav, buzón en `/notifications`, notificaciones por update y delete de originales
+  - **Delete flow**: al borrar un blueprint publicado → notifica suscriptores por lotes → desvincula copias (quedan limpias e independientes) → soft-delete
+  - **Nuevo módulo**: `app/Modules/Marketplace/` con Actions, Controllers, Livewire, Models, Policies, Routes, Views, Tests
+  - **4 tablas nuevas**: `blueprint_subscriptions`, `blueprint_votes`, `blueprint_tags`, `notifications`
+  - **Tests**: 274 tests, 579 assertions (53 tests nuevos de marketplace)
+  - **i18n**: `lang/{es,en}/marketplace.php` (~25 keys)
+  - **Feature flag**: `MARKETPLACE_ENABLED` en `.env` controla visibilidad global del módulo
+- **🔍 Blueprint Live Preview** — panel de vista previa en create/edit forms:
+  - `ResolveBlueprintPreview` Action (in-memory, sin DB)
+  - `BlueprintPreviewPanel` Livewire con debounce 300ms
+  - Muestra agent.md, VSCode extensions, MCP servers en tiempo real
+  - Secrets enmascarados para no-owners
+  - Panel colapsable, actualización en template selection y carga inicial
+- **🏷️ Tab Templates** — 3 plantillas preconfiguradas al crear blueprint:
+  - Laravel Stack, Node.js Stack, Python Stack con IDs reales de extensiones VSCode y MCP
+- **📢 Publish UI** — toggle `is_public` en edit form con `BlueprintPolicy::publish()`
+  - Badge público/privado en show page y listados
+  - Warning al borrar blueprint publicado
+  - Landing marketplace preview con datos reales (top 6 públicos)
+- **🧠 Presets & Skills expandidos** — 7 presets + 5 skills dinámicos:
+  - Nuevos: Docker, CI/CD, LaravelConventions, TypeScriptStrict, API Design, ReactExpert, VueExpert
+  - `tab-manager.blade.php` refactorizado a loops dinámicos (`AgentGenerator::presetNames()`)
+- **👁️ Password visibility toggle** — ojito en login, register, y perfil (6 campos)
+  - Alpine.js `x-data` con SVG eye/eye-off, i18n `show_password`/`hide_password`
+
+### Changed
+- **🏗️ Arquitectura de planes**: `plan_id` eliminado de `organizations`. El plan se lee del owner via accessor. `$organization->plan` → `$organization->owner->plan`.
+- **🧪 Tests CSRF**: `ValidateCsrfToken` deshabilitado en `TestCase` base. 10 failures pre-existentes resueltos (de 419 a 200/302).
+- **🧹 Limpieza i18n**: 25 claves muertas del mock data viejo de marketplace eliminadas de `landing.php`
+
 ### Security
 - **🔒 Security Validation Audit** — cierre de 6 gaps de seguridad y autorización (OWASP A01, A07):
   - **Track A (Fixes inmediatos)**:

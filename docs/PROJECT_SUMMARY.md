@@ -19,6 +19,7 @@ app/Modules/
 ├── Auth/              # Autenticación y usuarios
 ├── Organization/      # Organizaciones, roles, invitaciones
 ├── Blueprint/         # Blueprints, variables, favoritos
+├── Marketplace/       # Marketplace público, suscripciones, votación, notificaciones
 └── Shared/            # Código transversal (planes, categorías, VO)
 ```
 
@@ -288,8 +289,9 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 | Blueprint | 49 | 57 |
 | Organization | 23 | 58 |
 | Shared | 34 | 44 |
+| Marketplace | 53 | — |
 | Feature (cross-module) | 1 | 56 |
-| **Total** | **125** | **237** |
+| **Total** | **274** | **579** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -359,39 +361,22 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Collapsible sections en UI | ✅ Completo |
 | Tests | ✅ 125 tests, 237 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
-| **AI Agents / Skills config** | 🚧 En progreso |
-| **Marketplace** (`is_public`, `has_marketplace_publish`) | 🚧 Preparación |
+| **AI Agents / Skills config** | ✅ Completo — 7 presets + 5 skills |
+| **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
 
 ## Próximas Fases
 
 ### Fase 2: Wizard de Blueprints (Pulido)
-> Estado: Parcialmente implementado. Tabs dinámicas, variables y preview de `agent.md` ya están en producción.
-
-- Refinar wizard de creación en pasos guiados (actualmente es formulario único)
-- Validación cross-tab (ej: AI Context requiere al menos un preset o skill)
-- Preview en tiempo real de la salida generada antes de guardar
-- Templates de tabs preconfigurados (ej: "Laravel + VSCode + MCP")
+> Estado: ✅ Completo. Tabs dinámicas, variables, templates, preview de `agent.md`, y live preview panel implementados.
 
 ### Fase 3: API REST + CLI
-- Exponer endpoints API con Sanctum
-- Autenticación por API tokens
-- Endpoint `GET /api/v1/blueprints/{uuid}/download` (resuelve tabs y devuelve archivos)
-- Paquete CLI en Node.js/Python que ejecute `cova fetch <uuid>`
-- Rate limiting por plan
+> Próxima fase. Sanctum instalado, marketplace operativo. Queda exponer API y construir CLI.
 
 ### Fase 4: Marketplace
-- Blueprints públicos (`is_public = true`, controlado por `has_marketplace_publish` del plan)
-- Rating y reviews
-- Templates estándar de la comunidad
-- Landing page para no autenticados
-- Búsqueda y filtros por categoría/tab type
+> ✅ Completo. Marketplace v1 operativo como módulo independiente.
 
 ### Fase 5: Billing
-- Integración con Stripe/PayPal
-- Suscripciones mensuales/anuales
-- Upgrade/downgrade de planes con migración de límites
-- Facturación automática
-- Webhooks para sincronización de estado de suscripción
+> Pendiente. Sin cambios desde planificación original.
 
 ---
 
@@ -424,6 +409,6 @@ php artisan serve
 
 ---
 
-**Documento actualizado**: 2026-05-15  
-**Versión**: MVP Fase 1 + Tabs Dinámicas  
-**Commits**: 25+ en rama `develop`
+**Documento actualizado**: 2026-06-29  
+**Versión**: MVP Fase 2 + Marketplace v1  
+**Commits**: 50+ en rama `develop`
