@@ -79,7 +79,7 @@
                                     {{ __('layouts.blueprints') }}
                                 </a>
                                 @if(config('app.marketplace_enabled', false))
-                                <a href="{{ route('blueprints.index', ['public' => 1]) }}" class="text-sm font-medium {{ request('public') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
+                                <a href="{{ route('marketplace.index') }}" class="text-sm font-medium {{ request()->routeIs('marketplace.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
                                     {{ __('layouts.marketplace') }}
                                 </a>
                                 @endif
@@ -93,6 +93,9 @@
                         <livewire:shared.theme-toggle />
                         <x-locale-switcher />
                         @auth
+                            @if(config('app.marketplace_enabled', false))
+                                <livewire:marketplace.notification-bell />
+                            @endif
                             <livewire:auth.components.user-dropdown />
                         @else
                             <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">{{ __('layouts.login') }}</a>
@@ -116,7 +119,7 @@
                             {{ __('layouts.blueprints') }}
                         </a>
                         @if(config('app.marketplace_enabled', false))
-                        <a href="{{ route('blueprints.index', ['public' => 1]) }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request('public') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
+                        <a href="{{ route('marketplace.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('marketplace.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
                             {{ __('layouts.marketplace') }}
                         </a>
                         @endif

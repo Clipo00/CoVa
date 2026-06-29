@@ -29,6 +29,8 @@ class Blueprint extends Model
     protected $casts = [
         'is_public' => 'boolean',
         'tabs_config' => 'array',
+        'votes_count' => 'integer',
+        'subscribers_count' => 'integer',
     ];
 
     public function organization()
@@ -59,5 +61,15 @@ class Blueprint extends Model
     public function favoritedBy(User $user): bool
     {
         return $this->favorites()->where('user_id', $user->id)->exists();
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(BlueprintTag::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(\App\Modules\Marketplace\Models\Vote::class, 'blueprint_id');
     }
 }
