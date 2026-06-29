@@ -131,8 +131,8 @@ class SubscribeToBlueprintTest extends TestCase
         $this->action->execute($this->user, $blueprint);
     }
 
-    // 2.2.3: Subscription does NOT check plan blueprint limit
-    public function test_subscription_does_not_check_plan_blueprint_limit(): void
+    // 2.2.3: Subscription respects plan blueprint limit
+    public function test_subscription_respects_plan_blueprint_limit(): void
     {
         $blueprint = $this->createPublicBlueprintWithVariables();
 
@@ -149,12 +149,10 @@ class SubscribeToBlueprintTest extends TestCase
             ]);
         }
 
-        // Subscribe should still work (does NOT check plan limit)
-        $copy = $this->action->execute($this->user, $blueprint);
+        // Subscribe should now throw because plan limit is reached
+        $this->expectException(\App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException::class);
 
-        $this->assertNotNull($copy->id);
-        $this->assertEquals($this->organization->id, $copy->organization_id);
-        $this->assertFalse($copy->is_public);
+        $this->action->execute($this->user, $blueprint);
     }
 
     private function createPublicBlueprintWithTabs(): Blueprint

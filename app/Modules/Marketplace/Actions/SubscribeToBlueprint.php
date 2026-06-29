@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Actions;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Models\Subscription;
 use App\Modules\Shared\ValueObjects\Uuid;
@@ -35,7 +36,15 @@ class SubscribeToBlueprint
             throw new RuntimeException(__('marketplace.no_organization'));
         }
 
-        // 3. Create copy of blueprint (skip plan limit check)
+        // 3. Check plan blueprint limit — subscriptions consume a slot
+        $plan = $organization->plan;
+        $maxBlueprints = $plan->max_blueprints_per_org;
+
+        if ($maxBlueprints !== null && $organization->blueprints()->count() >= $maxBlueprints) {
+            throw new MaxBlueprintsReachedException($maxBlueprints, $plan->name);
+        }
+
+        // 4. Create copy of blueprint
         $copy = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $organization->id,
