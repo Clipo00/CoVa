@@ -72,7 +72,11 @@ class BlueprintPolicy
             return false;
         }
 
-        // Must be a member of the blueprint's (marketplace) organization
-        return $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer', 'developer']);
+        // Cannot vote on own blueprints
+        if ($blueprint->created_by === $user->id) {
+            return false;
+        }
+
+        return true;
     }
 }

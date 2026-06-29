@@ -383,7 +383,7 @@ class BlueprintPolicyTest extends TestCase
         $this->assertFalse($this->policy->vote($member, $blueprint));
     }
 
-    public function test_non_member_cannot_vote(): void
+    public function test_non_member_can_vote(): void
     {
         config(['marketplace.enabled' => true]);
 
@@ -410,6 +410,30 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $this->assertFalse($this->policy->vote($nonMember, $blueprint));
+        $this->assertTrue($this->policy->vote($nonMember, $blueprint));
+    }
+
+    public function test_cannot_vote_on_own_blueprint(): void
+    {
+        config(['marketplace.enabled' => true]);
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Owner Vote 4',
+            'email' => 'owner-vote4@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Vote Org 4', 'vote-org-4');
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Vote BP 4', 'vote-bp-4');
+        $blueprint->update(['is_public' => true]);
+
+        // Creator cannot vote on their own blueprint
+        $this->assertFalse($this->policy->vote($owner, $blueprint));
     }
 }
