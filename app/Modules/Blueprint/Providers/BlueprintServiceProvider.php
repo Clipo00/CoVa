@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Providers;
 
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Contracts\TabInterface;
+use App\Modules\Blueprint\Livewire\Components\BlueprintPreviewPanel;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
 use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
@@ -37,6 +38,7 @@ class BlueprintServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerTabRegistries();
+        $this->registerTemplates();
     }
 
     public function boot(): void
@@ -49,6 +51,7 @@ class BlueprintServiceProvider extends ServiceProvider
         Livewire::component('blueprint.forms.blueprint-edit-form', BlueprintEditForm::class);
         Livewire::component('blueprint.tables.blueprint-list', BlueprintList::class);
         Livewire::component('blueprint.components.tab-manager', TabManager::class);
+        Livewire::component('blueprint.components.preview-panel', BlueprintPreviewPanel::class);
     }
 
     /**
@@ -100,6 +103,48 @@ class BlueprintServiceProvider extends ServiceProvider
             return new ResolveBlueprint(
                 $app->make(TabRegistry::class),
             );
+        });
+    }
+
+    /**
+     * Register blueprint templates for the create form.
+     */
+    private function registerTemplates(): void
+    {
+        $this->app->singleton('blueprint.templates', function () {
+            return [
+                'laravel' => [
+                    'label' => 'Laravel',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'extensions' => [
+                            'bmewburn.vscode-intelephense-client',
+                            'amiralizadeh9480.laravel-extra-intellisense',
+                            'shufo.vscode-blade-formatter',
+                        ]],
+                        ['type' => 'ai_context', 'presets' => ['psr12', 'solid', 'clean-architecture', 'laravel-conventions'], 'skills' => ['stripe', 'tailwind']],
+                    ],
+                ],
+                'nextjs' => [
+                    'label' => 'Next.js',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'extensions' => [
+                            'dsznajder.es7-react-js-snippets',
+                            'bradlc.vscode-tailwindcss',
+                        ]],
+                        ['type' => 'ai_context', 'presets' => ['typescript-strict', 'solid', 'clean-architecture'], 'skills' => ['react', 'tailwind']],
+                    ],
+                ],
+                'remix' => [
+                    'label' => 'Remix',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'extensions' => [
+                            'dsznajder.es7-react-js-snippets',
+                            'bradlc.vscode-tailwindcss',
+                        ]],
+                        ['type' => 'ai_context', 'presets' => ['typescript-strict', 'solid', 'clean-architecture'], 'skills' => ['react', 'tailwind']],
+                    ],
+                ],
+            ];
         });
     }
 }

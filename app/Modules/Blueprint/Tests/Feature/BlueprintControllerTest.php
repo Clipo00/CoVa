@@ -434,7 +434,7 @@ class BlueprintControllerTest extends TestCase
         $this->assertDatabaseHas('blueprint_votes', [
             'user_id' => $owner->id,
             'blueprint_id' => $blueprint->id,
-            'vote_type' => 'up',
+            'vote' => 1,
         ]);
     }
 

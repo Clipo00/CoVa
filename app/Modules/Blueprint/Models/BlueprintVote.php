@@ -13,15 +13,14 @@ class BlueprintVote extends Model
     protected $fillable = [
         'user_id',
         'blueprint_id',
-        'vote_type',
+        'vote',
     ];
 
-    // NOTA: La constraint unique(['user_id', 'blueprint_id']) está definida a nivel de DB
-    // en la migración 2026_06_25_000001_create_blueprint_votes_table.php.
+    // NOTA: La constraint unique(['user_id', 'blueprint_id']) está definida a nivel de DB.
     // Esto evita votos duplicados (un usuario solo puede votar una vez por blueprint).
 
     protected $casts = [
-        'vote_type' => 'string',
+        'vote' => 'integer',
     ];
 
     public function user(): BelongsTo

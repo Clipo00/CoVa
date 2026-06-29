@@ -7,16 +7,15 @@ namespace App\Modules\Blueprint\Actions;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintVote;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class VoteBlueprint
 {
-    public function execute(Blueprint $blueprint, User $user, string $voteType): void
+    public function execute(Blueprint $blueprint, User $user, int $vote): void
     {
-        // 1. Defense-in-depth: validate vote type
-        if (!in_array($voteType, ['up', 'down'], true)) {
-            throw new \InvalidArgumentException('Invalid vote type. Must be "up" or "down".');
+        // 1. Defense-in-depth: validate vote value
+        if (!in_array($vote, [1, -1], true)) {
+            throw new \InvalidArgumentException('Invalid vote. Must be 1 (up) or -1 (down).');
         }
 
         // 2. Check marketplace enabled (feature flag)
@@ -29,22 +28,20 @@ class VoteBlueprint
             throw new HttpException(403, __('blueprint.vote_denied'));
         }
 
-        // 3. Upsert vote
+        // 4. Upsert vote
         BlueprintVote::updateOrCreate(
             [
                 'user_id' => $user->id,
                 'blueprint_id' => $blueprint->id,
             ],
             [
-                'vote_type' => $voteType,
+                'vote' => $vote,
             ]
         );
 
-        // 4. Recalculate aggregate score
-        $score = BlueprintVote::where('blueprint_id', $blueprint->id)
-            ->selectRaw("SUM(CASE WHEN vote_type = 'up' THEN 1 ELSE 0 END) - SUM(CASE WHEN vote_type = 'down' THEN 1 ELSE 0 END) as score")
-            ->value('score');
+        // 5. Recalculate aggregate score (sum of all votes)
+        $score = BlueprintVote::where('blueprint_id', $blueprint->id)->sum('vote');
 
-        $blueprint->update(['aggregate_score' => $score ?? 0]);
+        $blueprint->update(['aggregate_score' => $score]);
     }
 }

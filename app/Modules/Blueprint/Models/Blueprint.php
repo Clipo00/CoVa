@@ -65,11 +65,6 @@ class Blueprint extends Model
         return $this->hasMany(BlueprintFavorite::class);
     }
 
-    public function votes()
-    {
-        return $this->hasMany(BlueprintVote::class);
-    }
-
     public function favoritedBy(User $user): bool
     {
         return $this->favorites()->where('user_id', $user->id)->exists();

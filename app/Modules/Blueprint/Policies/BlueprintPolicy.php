@@ -43,18 +43,8 @@ class BlueprintPolicy
             return false;
         }
 
-        // Must be owner or maintainer of the blueprint's org
-        $membership = $user->organizations()
-            ->where('organization_id', $blueprint->organization_id)
-            ->first();
-
-        if (!$membership) {
-            return false;
-        }
-
-        $role = $membership->pivot->role;
-
-        if (!in_array($role, ['owner', 'maintainer'], true)) {
+        // Must be owner of the blueprint's org
+        if (!$user->isOwnerOf($blueprint->organization)) {
             return false;
         }
 

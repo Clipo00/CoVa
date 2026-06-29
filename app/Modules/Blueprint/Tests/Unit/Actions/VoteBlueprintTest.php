@@ -31,10 +31,6 @@ class VoteBlueprintTest extends TestCase
 
         $this->seed(\Database\Seeders\PlanSeeder::class);
 
-        // Run migrations for blueprint_votes
-        $this->artisan('migrate', ['--path' => 'database/migrations/2026_06_25_000001_create_blueprint_votes_table.php', '--realpath' => true]);
-        $this->artisan('migrate', ['--path' => 'database/migrations/2026_06_25_000002_add_aggregate_score_to_blueprints_table.php', '--realpath' => true]);
-
         $this->action = new VoteBlueprint();
 
         config(['marketplace.enabled' => true]);
@@ -62,38 +58,38 @@ class VoteBlueprintTest extends TestCase
 
     public function test_upvote_records_vote(): void
     {
-        $this->action->execute($this->publicBlueprint, $this->owner, 'up');
+        $this->action->execute($this->publicBlueprint, $this->owner, 1);
 
         $this->assertDatabaseHas('blueprint_votes', [
             'user_id' => $this->owner->id,
             'blueprint_id' => $this->publicBlueprint->id,
-            'vote_type' => 'up',
+            'vote' => 1,
         ]);
     }
 
     public function test_downvote_records_vote(): void
     {
-        $this->action->execute($this->publicBlueprint, $this->owner, 'down');
+        $this->action->execute($this->publicBlueprint, $this->owner, -1);
 
         $this->assertDatabaseHas('blueprint_votes', [
             'user_id' => $this->owner->id,
             'blueprint_id' => $this->publicBlueprint->id,
-            'vote_type' => 'down',
+            'vote' => -1,
         ]);
     }
 
     public function test_duplicate_flip_updates_existing_vote(): void
     {
         // First vote up
-        $this->action->execute($this->publicBlueprint, $this->owner, 'up');
+        $this->action->execute($this->publicBlueprint, $this->owner, 1);
 
         // Then flip to down
-        $this->action->execute($this->publicBlueprint, $this->owner, 'down');
+        $this->action->execute($this->publicBlueprint, $this->owner, -1);
 
         $this->assertDatabaseHas('blueprint_votes', [
             'user_id' => $this->owner->id,
             'blueprint_id' => $this->publicBlueprint->id,
-            'vote_type' => 'down',
+            'vote' => -1,
         ]);
 
         // Should be only one vote
@@ -115,7 +111,7 @@ class VoteBlueprintTest extends TestCase
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage(__('blueprint.vote_denied'));
 
-        $this->action->execute($privateBlueprint, $this->owner, 'up');
+        $this->action->execute($privateBlueprint, $this->owner, 1);
     }
 
     public function test_marketplace_disabled_denies(): void
@@ -124,7 +120,7 @@ class VoteBlueprintTest extends TestCase
 
         $this->expectException(HttpException::class);
 
-        $this->action->execute($this->publicBlueprint, $this->owner, 'up');
+        $this->action->execute($this->publicBlueprint, $this->owner, 1);
     }
 
     public function test_aggregate_score_is_calculated(): void
@@ -148,9 +144,9 @@ class VoteBlueprintTest extends TestCase
         $this->organization->members()->attach($user3->id, ['role' => 'developer']);
 
         // Owner upvotes, User2 upvotes, User3 downvotes => score = 1
-        $this->action->execute($this->publicBlueprint, $this->owner, 'up');
-        $this->action->execute($this->publicBlueprint, $user2, 'up');
-        $this->action->execute($this->publicBlueprint, $user3, 'down');
+        $this->action->execute($this->publicBlueprint, $this->owner, 1);
+        $this->action->execute($this->publicBlueprint, $user2, 1);
+        $this->action->execute($this->publicBlueprint, $user3, -1);
 
         $this->publicBlueprint->refresh();
         $this->assertEquals(1, $this->publicBlueprint->aggregate_score);

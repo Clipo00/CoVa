@@ -227,7 +227,8 @@ class BlueprintController
             abort(403, __('blueprint.vote_denied'));
         }
 
-        $voteBlueprint->execute($blueprint, auth()->user(), $validated['vote_type']);
+        $voteValue = $validated['vote_type'] === 'up' ? 1 : -1;
+        $voteBlueprint->execute($blueprint, auth()->user(), $voteValue);
 
         return redirect()
             ->route('blueprints.show', $blueprint->uuid)
