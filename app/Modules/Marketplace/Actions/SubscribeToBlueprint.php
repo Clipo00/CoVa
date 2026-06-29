@@ -48,12 +48,12 @@ class SubscribeToBlueprint
             'created_by' => $user->id,
         ]);
 
-        // 4. Copy variables
+        // 4. Copy variables (clear secret default values for security)
         foreach ($blueprint->variables as $variable) {
             $copy->variables()->create([
                 'key' => $variable->key,
                 'type' => $variable->type,
-                'default_value' => $variable->default_value,
+                'default_value' => $variable->is_secret ? '' : $variable->default_value,
                 'is_interactive' => $variable->is_interactive,
                 'is_secret' => $variable->is_secret,
                 'section' => $variable->section,

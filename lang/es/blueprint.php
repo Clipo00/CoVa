@@ -191,10 +191,10 @@ return [
     // Publish
     'publish_section' => 'Publicación',
     'publish_toggle' => 'Hacer público este blueprint',
-    'publish_help' => 'Al publicar, las variables secretas serán visibles en el marketplace.',
+    'publish_help' => 'Al publicar, los valores de las variables secretas se vaciarán por seguridad. Tus secretos permanecen solo en tu copia privada.',
     'publish_button' => 'Publicar en Marketplace',
     'publish_confirm_title' => 'Publicar Blueprint',
-    'publish_confirm_warning' => 'Al publicar este blueprint, las variables marcadas como secretas pasarán al marketplace público. ¿Estás seguro de que quieres continuar?',
+    'publish_confirm_warning' => 'Tus variables secretas NO se compartirán — se vaciarán antes de publicar. Solo vos y quienes copies tendréis los valores en vuestras copias privadas. ¿Quieres publicar este blueprint en el marketplace?',
     'publish_success' => 'Blueprint publicado en el marketplace correctamente.',
     'publish_denied' => 'No tienes permisos para publicar este blueprint.',
     'publish_marketplace_disabled' => 'El marketplace no está disponible en este momento.',

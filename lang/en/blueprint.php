@@ -190,10 +190,10 @@ return [
     // Publish
     'publish_section' => 'Publishing',
     'publish_toggle' => 'Make this blueprint public',
-    'publish_help' => 'When published, secret variables will be visible in the marketplace.',
+    'publish_help' => 'When published, secret variable values will be cleared for security. Your secrets stay only in your private copy.',
     'publish_button' => 'Publish to Marketplace',
     'publish_confirm_title' => 'Publish Blueprint',
-    'publish_confirm_warning' => 'By publishing this blueprint, secret variables will be exposed in the public marketplace. Are you sure you want to continue?',
+    'publish_confirm_warning' => 'Your secret variables will NOT be shared — they will be cleared before publishing. Only you and your copies will retain the values in your private copies. Publish this blueprint to the marketplace?',
     'publish_success' => 'Blueprint published to marketplace successfully.',
     'publish_denied' => 'You do not have permission to publish this blueprint.',
     'publish_marketplace_disabled' => 'The marketplace is not available at this time.',

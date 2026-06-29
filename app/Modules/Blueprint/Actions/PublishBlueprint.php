@@ -40,6 +40,12 @@ class PublishBlueprint
             'is_public' => true,
         ]);
 
+        // 6. Clear all secret variable values so they are never exposed publicly.
+        //    The original creator has a local copy that keeps the secrets.
+        $blueprint->variables()
+            ->where('is_secret', true)
+            ->update(['default_value' => '']);
+
         return $blueprint->fresh();
     }
 }
