@@ -141,4 +141,53 @@ class BlueprintCreateFormTest extends TestCase
         // Without selecting any template, tabsConfig should remain empty or default
         $this->assertEmpty($component->get('tabsConfig'));
     }
+
+    public function test_selecting_template_sets_ai_context_with_segments_format(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'template-seg@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization = Organization::create([
+            'slug' => 'template-seg-org',
+            'name' => 'Template Seg Org',
+            'owner_id' => $user->id,
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $this->actingAs($user);
+
+        $component = Livewire::test(BlueprintCreateForm::class, [
+            'userOrganizations' => [
+                [
+                    'id' => $organization->id,
+                    'name' => $organization->name,
+                    'hasAvailableSlots' => true,
+                ],
+            ],
+        ]);
+
+        $component->set('selectedTemplate', 'laravel');
+
+        $tabsConfig = $component->get('tabsConfig');
+        $aiTab = collect($tabsConfig)->firstWhere('type', 'ai_context');
+
+        $this->assertNotNull($aiTab, 'AI Context tab should be present in template');
+        $this->assertArrayHasKey('segments', $aiTab['config'], 'AI Context config should use segments key');
+        $this->assertIsArray($aiTab['config']['segments'], 'segments should be an array');
+        $this->assertNotEmpty($aiTab['config']['segments'], 'segments should not be empty');
+
+        // Verify segment structure
+        $firstSegment = $aiTab['config']['segments'][0];
+        $this->assertArrayHasKey('type', $firstSegment);
+        $this->assertArrayHasKey('name', $firstSegment);
+        $this->assertArrayHasKey('content', $firstSegment);
+        $this->assertContains($firstSegment['type'], ['preset', 'skill']);
+    }
 }
