@@ -1,12 +1,11 @@
-@extends('layouts.landing')
+@extends('layouts.app')
 
 @section('title', $blueprint->title)
 
 @section('content')
-    <div class="pt-24 pb-16">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {{-- Breadcrumb --}}
-            <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+    <div class="max-w-4xl mx-auto">
+        {{-- Breadcrumb --}}
+        <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                 <a href="{{ route('marketplace.index') }}" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                     {{ __('marketplace.marketplace_title') }}
                 </a>
@@ -177,6 +176,5 @@
             @include('blueprint::partials.resolved-tabs', [
                 'resolvedTabs' => new \App\Modules\Blueprint\DTOs\ResolvedTabs($blueprintOutput->tabs),
             ])
-        </div>
     </div>
 @endsection
