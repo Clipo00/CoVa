@@ -346,7 +346,7 @@ class TabManager extends Component
      *
      * Matches the HTML-comment markers and removes the entire block
      * including the markers and the content between them.
-     * Also cleans up leftover blank lines.
+     * Uses a two-pass approach: strip the marked block, then normalize whitespace.
      */
     private function removeMarkedBlock(int $tabIndex, string $type, string $name): void
     {
@@ -359,14 +359,21 @@ class TabManager extends Component
         $markerBegin = preg_quote("<!-- BEGIN:{$type}:{$name} -->", '/');
         $markerEnd = preg_quote("<!-- END:{$type}:{$name} -->", '/');
 
-        $pattern = '/\n*' . $markerBegin . '.*?' . $markerEnd . '\n*/s';
+        // Strip the marked block (just the markers and content between them)
+        $pattern = '/' . $markerBegin . '.*?' . $markerEnd . '/s';
+        $cleaned = preg_replace($pattern, '', $currentRules);
 
-        $cleaned = preg_replace($pattern, "\n", $currentRules);
+        if ($cleaned === null) {
+            return; // Regex error — leave content untouched
+        }
 
-        // Clean up: normalize multiple blank lines to at most one
+        // Normalize: collapse blank-line gaps left by removal
+        //   - 3+ consecutive newlines → 2 (one blank line)
+        //   - Leading/trailing whitespace removed
         $cleaned = preg_replace('/\n{3,}/', "\n\n", $cleaned);
+        $cleaned = trim($cleaned);
 
-        $this->tabs[$tabIndex]['config']['custom_rules'] = trim($cleaned);
+        $this->tabs[$tabIndex]['config']['custom_rules'] = $cleaned;
     }
 
     /**
