@@ -80,7 +80,7 @@
 
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="font-sans antialiased min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Skip to content (a11y) -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:outline-none">
         {{ __('shared.skip_to_content') }}
@@ -156,7 +156,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main id="main-content">
+    <main id="main-content" class="flex-1">
         @yield('content')
     </main>
 
