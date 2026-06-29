@@ -40,8 +40,7 @@ class MarketplaceSeeder extends Seeder
         Organization::create([
             'slug' => 'cova-marketplace',
             'name' => 'CoVa Marketplace',
-            'owner_id' => $systemUser->id,
-            'plan_id' => $enterprisePlan->id,
+            'owner_id' => $systemUser->id
         ]);
 
         $this->command->info('Marketplace organization created successfully.');

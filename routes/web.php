@@ -2,6 +2,7 @@
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Marketplace\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,6 +53,18 @@ Route::get('/locale/{locale}', function (string $locale) {
     // Cookie forever (5 años) adjuntada DIRECTAMENTE a la respuesta de redirección
     return redirect()->to($back)->withCookie(cookie()->forever('locale', $locale));
 })->name('locale.set');
+
+/*
+|--------------------------------------------------------------------------
+| Notification Routes (global, auth required)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::post('/{id}/read', [NotificationController::class, 'markRead'])->name('read');
+    Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('readAll');
+});
 
 Route::middleware('auth')->get('/dashboard', function () {
     $user = auth()->user();

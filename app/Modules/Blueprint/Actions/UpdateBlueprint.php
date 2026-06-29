@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Actions;
 
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Marketplace\Actions\NotifySubscribers;
 
 class UpdateBlueprint
 {
@@ -43,6 +44,11 @@ class UpdateBlueprint
                     'sort_order' => 0,
                 ]);
             }
+        }
+
+        // Dispatch notification to subscribers if the blueprint is public
+        if ($blueprint->is_public && $blueprint->subscribers_count > 0) {
+            NotifySubscribers::dispatch($blueprint->id, 'blueprint_updated');
         }
 
         return $blueprint->fresh();
