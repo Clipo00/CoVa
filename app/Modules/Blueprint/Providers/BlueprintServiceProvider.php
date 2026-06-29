@@ -122,8 +122,14 @@ class BlueprintServiceProvider extends ServiceProvider
                             'shufo.vscode-blade-formatter',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['psr12', 'solid', 'clean-architecture', 'laravel-conventions'],
-                            'skills' => ['stripe', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'preset', 'name' => 'laravel-conventions', 'content' => null],
+                                ['type' => 'skill', 'name' => 'stripe', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],
@@ -135,8 +141,13 @@ class BlueprintServiceProvider extends ServiceProvider
                             'bradlc.vscode-tailwindcss',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
-                            'skills' => ['react', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],
@@ -148,8 +159,13 @@ class BlueprintServiceProvider extends ServiceProvider
                             'bradlc.vscode-tailwindcss',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
-                            'skills' => ['react', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],
