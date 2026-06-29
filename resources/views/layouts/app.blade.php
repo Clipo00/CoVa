@@ -78,6 +78,11 @@
                                 <a href="{{ route('blueprints.index') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
                                     {{ __('layouts.blueprints') }}
                                 </a>
+                                @if(config('app.marketplace_enabled', false))
+                                <a href="{{ route('blueprints.index', ['public' => 1]) }}" class="text-sm font-medium {{ request('public') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
+                                    {{ __('layouts.marketplace') }}
+                                </a>
+                                @endif
                                 <a href="{{ route('blueprints.deleted') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.deleted') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
                                     {{ __('layouts.deleted') }}
                                 </a>
@@ -110,6 +115,11 @@
                         <a href="{{ route('blueprints.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('blueprints.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
                             {{ __('layouts.blueprints') }}
                         </a>
+                        @if(config('app.marketplace_enabled', false))
+                        <a href="{{ route('blueprints.index', ['public' => 1]) }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request('public') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
+                            {{ __('layouts.marketplace') }}
+                        </a>
+                        @endif
                     </div>
                 </div>
             @endauth

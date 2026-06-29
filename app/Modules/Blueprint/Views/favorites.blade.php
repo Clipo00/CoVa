@@ -35,6 +35,12 @@
                                         </p>
                                         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                             {{ $blueprint->organization->name }}
+                                            @if($blueprint->is_public)
+                                                <span class="mx-1">·</span>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">
+                                                    {{ __('blueprint.badge_public') }}
+                                                </span>
+                                            @endif
                                             @if($blueprint->category)
                                                 <span class="mx-1">·</span>
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">

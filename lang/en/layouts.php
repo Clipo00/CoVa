@@ -10,6 +10,7 @@ return [
     'dashboard' => 'Dashboard',
     'organizations' => 'Organizations',
     'blueprints' => 'Blueprints',
+    'marketplace' => 'Marketplace',
     'deleted' => 'Deleted',
     'login' => 'Login',
     'register' => 'Register',

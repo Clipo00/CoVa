@@ -224,6 +224,11 @@
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">{{ $blueprint->title }}</p>
                                     <div class="flex items-center space-x-2 ml-4 flex-shrink-0">
+                                        @if($blueprint->is_public)
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">
+                                                {{ __('blueprint.badge_public') }}
+                                            </span>
+                                        @endif
                                         @if($blueprint->category)
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                                 {{ $blueprint->category->name }}

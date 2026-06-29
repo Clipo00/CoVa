@@ -19,6 +19,7 @@ class BlueprintList extends Component
     ];
     public bool $showFilters = false;
     public bool $preserveFilters = false;
+    public bool $publicOnly = false;
 
     // ──────────────────────────────────────────────
     //  Event Listeners
@@ -123,6 +124,9 @@ class BlueprintList extends Component
             })
             ->when($this->filters['categories'], function ($query) {
                 $query->whereIn('category_id', $this->filters['categories']);
+            })
+            ->when($this->publicOnly, function ($query) {
+                $query->where('is_public', true);
             })
             ->with(['organization', 'category'])
             ->orderBy('created_at', 'desc')

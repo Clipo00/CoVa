@@ -77,6 +77,6 @@
             </div>
         @endif
 
-        <livewire:blueprint.tables.blueprint-list />
+        <livewire:blueprint.tables.blueprint-list :public-only="request()->has('public')" />
     </div>
 @endsection
