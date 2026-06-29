@@ -41,91 +41,246 @@ class TabManagerTest extends TestCase
         $component->assertCount('tabs', 2);
     }
 
-    // --- AI Context: preset toggle via markers ---
+    // ──────────────────────────────────────────────
+    //  AI Context: Segment CRUD
+    // ──────────────────────────────────────────────
 
-    public function test_toggle_preset_on_loads_marked_content(): void
+    public function test_add_preset_segment_appears_with_correct_name(): void
     {
         $tabsConfig = [
-            ['type' => 'ai_context', 'config' => ['presets' => [], 'skills' => [], 'custom_rules' => '']],
+            ['type' => 'ai_context', 'config' => ['segments' => []]],
         ];
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        $component->call('togglePreset', 0, 'solid');
+        $component->call('addSegment', 0, 'preset', 'psr12');
 
         $tabs = $component->get('tabs');
-        $rules = $tabs[0]['config']['custom_rules'];
+        $segments = $tabs[0]['config']['segments'];
 
-        $this->assertStringContainsString('<!-- BEGIN:preset:solid -->', $rules);
-        $this->assertStringContainsString('SOLID Principles', $rules);
-        $this->assertStringContainsString('<!-- END:preset:solid -->', $rules);
+        $this->assertCount(1, $segments);
+        $this->assertEquals('preset', $segments[0]['type']);
+        $this->assertEquals('psr12', $segments[0]['name']);
+        $this->assertNotNull($segments[0]['content']);
     }
 
-    public function test_toggle_preset_off_removes_marked_block(): void
+    public function test_add_skill_segment_appears_with_correct_name(): void
     {
         $tabsConfig = [
-            ['type' => 'ai_context', 'config' => ['presets' => [], 'skills' => [], 'custom_rules' => '']],
+            ['type' => 'ai_context', 'config' => ['segments' => []]],
         ];
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        // Toggle ON: loads content with markers
-        $component->call('togglePreset', 0, 'solid');
-
-        // Toggle OFF: removes the marked block
-        $component->call('togglePreset', 0, 'solid');
+        $component->call('addSegment', 0, 'skill', 'stripe');
 
         $tabs = $component->get('tabs');
-        $rules = $tabs[0]['config']['custom_rules'];
+        $segments = $tabs[0]['config']['segments'];
 
-        $this->assertStringNotContainsString('<!-- BEGIN:preset:solid -->', $rules);
-        $this->assertStringNotContainsString('SOLID Principles', $rules);
-        $this->assertStringNotContainsString('<!-- END:preset:solid -->', $rules);
-        $this->assertEmpty($rules);
+        $this->assertCount(1, $segments);
+        $this->assertEquals('skill', $segments[0]['type']);
+        $this->assertEquals('stripe', $segments[0]['name']);
+        $this->assertNotNull($segments[0]['content']);
     }
 
-    public function test_toggle_one_skill_off_leaves_others_intact(): void
+    public function test_add_custom_segment_creates_empty_segment(): void
     {
         $tabsConfig = [
-            ['type' => 'ai_context', 'config' => ['presets' => [], 'skills' => [], 'custom_rules' => '']],
+            ['type' => 'ai_context', 'config' => ['segments' => []]],
         ];
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        // Add two skills
-        $component->call('toggleSkill', 0, 'stripe');
-        $component->call('toggleSkill', 0, 'tailwind');
-
-        // Remove one
-        $component->call('toggleSkill', 0, 'stripe');
+        $component->call('addSegment', 0, 'custom');
 
         $tabs = $component->get('tabs');
-        $rules = $tabs[0]['config']['custom_rules'];
+        $segments = $tabs[0]['config']['segments'];
 
-        $this->assertStringNotContainsString('<!-- BEGIN:skill:stripe -->', $rules);
-        $this->assertStringContainsString('<!-- BEGIN:skill:tailwind -->', $rules);
-        $this->assertStringContainsString('Tailwind CSS', $rules);
+        $this->assertCount(1, $segments);
+        $this->assertEquals('custom', $segments[0]['type']);
+        $this->assertEquals('custom-skill', $segments[0]['name']);
+        $this->assertNull($segments[0]['content']);
     }
 
-    public function test_custom_text_between_blocks_survives_toggle_off(): void
+    public function test_add_custom_segment_with_name(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => ['segments' => []]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        $component->call('addSegment', 0, 'custom', 'My Rules');
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertCount(1, $segments);
+        $this->assertEquals('My Rules', $segments[0]['name']);
+    }
+
+    public function test_remove_segment_removes_from_array(): void
     {
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
-                'presets' => [],
-                'skills' => ['stripe'],
-                'custom_rules' => "some custom text\n\n<!-- BEGIN:skill:stripe -->\ncontent\n<!-- END:skill:stripe -->",
+                'segments' => [
+                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'stripe', 'content' => null],
+                ],
             ]],
         ];
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        // Toggle off stripe — should remove only the marked block
-        $component->call('toggleSkill', 0, 'stripe');
+        $component->call('removeSegment', 0, 0);
 
         $tabs = $component->get('tabs');
-        $rules = $tabs[0]['config']['custom_rules'];
+        $segments = $tabs[0]['config']['segments'];
 
-        $this->assertStringContainsString('some custom text', $rules);
-        $this->assertStringNotContainsString('<!-- BEGIN:skill:stripe -->', $rules);
+        $this->assertCount(1, $segments);
+        $this->assertEquals('stripe', $segments[0]['name']);
+    }
+
+    public function test_move_segment_up(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => [
+                'segments' => [
+                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                ],
+            ]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        // Move solid up (index 1 → 0)
+        $component->call('moveSegment', 0, 1, -1);
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertCount(2, $segments);
+        $this->assertEquals('solid', $segments[0]['name']);
+        $this->assertEquals('psr12', $segments[1]['name']);
+    }
+
+    public function test_move_segment_down(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => [
+                'segments' => [
+                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                ],
+            ]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        // Move psr12 down (index 0 → 1)
+        $component->call('moveSegment', 0, 0, 1);
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertCount(2, $segments);
+        $this->assertEquals('solid', $segments[0]['name']);
+        $this->assertEquals('psr12', $segments[1]['name']);
+    }
+
+    public function test_update_segment_content(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => [
+                'segments' => [
+                    ['type' => 'custom', 'name' => 'My Rules', 'content' => null],
+                ],
+            ]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        $component->call('updateSegmentContent', 0, 0, 'Always use strict types.');
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertEquals('Always use strict types.', $segments[0]['content']);
+    }
+
+    public function test_update_segment_name(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => [
+                'segments' => [
+                    ['type' => 'custom', 'name' => 'custom-skill', 'content' => null],
+                ],
+            ]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        $component->call('updateSegmentName', 0, 0, 'My Custom Rules');
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertEquals('My Custom Rules', $segments[0]['name']);
+    }
+
+    public function test_add_duplicate_segment_name_is_silently_rejected(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => [
+                'segments' => [
+                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                ],
+            ]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        // Try adding another segment with the same name
+        $component->call('addSegment', 0, 'preset', 'psr12');
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertCount(1, $segments);
+    }
+
+    public function test_ai_context_default_config_uses_segments(): void
+    {
+        $component = Livewire::test(TabManager::class, ['tabs' => []]);
+
+        $component->call('addTab', 'ai_context');
+
+        $tabs = $component->get('tabs');
+        $this->assertArrayHasKey('segments', $tabs[0]['config']);
+        $this->assertEmpty($tabs[0]['config']['segments']);
+        $this->assertArrayNotHasKey('presets', $tabs[0]['config']);
+        $this->assertArrayNotHasKey('skills', $tabs[0]['config']);
+    }
+
+    public function test_segments_are_ordered_by_insertion(): void
+    {
+        $tabsConfig = [
+            ['type' => 'ai_context', 'config' => ['segments' => []]],
+        ];
+
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
+
+        $component->call('addSegment', 0, 'preset', 'solid');
+        $component->call('addSegment', 0, 'skill', 'stripe');
+        $component->call('addSegment', 0, 'custom', 'My Rules');
+
+        $tabs = $component->get('tabs');
+        $segments = $tabs[0]['config']['segments'];
+
+        $this->assertCount(3, $segments);
+        $this->assertEquals('solid', $segments[0]['name']);
+        $this->assertEquals('stripe', $segments[1]['name']);
+        $this->assertEquals('My Rules', $segments[2]['name']);
     }
 }
