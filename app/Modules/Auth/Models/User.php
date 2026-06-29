@@ -9,11 +9,12 @@ use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable implements MustVerifyEmailContract
+class User extends Authenticatable implements MustVerifyEmailContract, CanResetPasswordContract
 {
     use Notifiable, MustVerifyEmail;
 
@@ -26,6 +27,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'plan_id',
         'is_system',
         'mfa_enabled',
+        'mfa_prompted_at',
     ];
 
     protected $hidden = [
@@ -39,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'mfa_enabled' => 'boolean',
+            'mfa_prompted_at' => 'datetime',
         ];
     }
 
@@ -50,6 +53,11 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function mfaCodes()
     {
         return $this->hasMany(MfaCode::class);
+    }
+
+    public function mfaTrustedDevices()
+    {
+        return $this->hasMany(MfaTrustedDevice::class);
     }
 
     public function ownedOrganizations()
@@ -166,5 +174,13 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function canDeleteOrganization(Organization $organization): bool
     {
         return $this->isOwnerOf($organization);
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new \App\Modules\Auth\Notifications\ResetPasswordNotification($token));
     }
 }

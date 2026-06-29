@@ -38,27 +38,51 @@ class BlueprintPolicy
 
     public function publish(User $user, Blueprint $blueprint): bool
     {
-        $membershipRole = null;
-        $member = $user->organizations()
+        // Marketplace must be globally enabled
+        if (!config('marketplace.enabled')) {
+            return false;
+        }
+
+        // Must be owner or maintainer of the blueprint's org
+        $membership = $user->organizations()
             ->where('organization_id', $blueprint->organization_id)
             ->first();
 
-        if (!$member) {
+        if (!$membership) {
             return false;
         }
 
-        $membershipRole = $member->pivot->role;
+        $role = $membership->pivot->role;
 
-        if (!in_array($membershipRole, ['owner', 'maintainer'], true)) {
+        if (!in_array($role, ['owner', 'maintainer'], true)) {
             return false;
         }
 
-        // Global feature flag: if marketplace is disabled, nobody can publish
-        if (!config('app.marketplace_enabled', false)) {
+        // If billing is enabled, check plan
+        if (config('marketplace.billing_enabled')) {
+            // Plan belongs to the owner, not the org directly
+            $plan = $blueprint->organization->owner?->plan;
+            if (!$plan || !$plan->has_marketplace_publish) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function vote(User $user, Blueprint $blueprint): bool
+    {
+        // Must be public
+        if (!$blueprint->is_public) {
             return false;
         }
 
-        // Plan is owned by the user, not the org. Check owner's plan.
-        return $blueprint->organization->owner->plan->has_marketplace_publish;
+        // Marketplace must be enabled
+        if (!config('marketplace.enabled')) {
+            return false;
+        }
+
+        // Must be a member of the blueprint's (marketplace) organization
+        return $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer', 'developer']);
     }
 }

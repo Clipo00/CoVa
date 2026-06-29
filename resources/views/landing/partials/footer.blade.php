@@ -58,6 +58,9 @@
                     <li>
                         <span class="text-sm text-gray-500 dark:text-gray-400 cursor-default">
                             {{ __('landing.footer_links_marketplace') }}
+                            @if(!config('marketplace.enabled'))
+                                <span class="text-xs text-gray-400 dark:text-gray-500">({{ __('landing.coming_soon') }})</span>
+                            @endif
                         </span>
                     </li>
                 </ul>

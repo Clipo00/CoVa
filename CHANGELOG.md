@@ -183,6 +183,13 @@
 - `docs/CONTRIBUTING.md` — Guía de contribución
 - `docs/TESTING.md` — Estrategia de testing
 - `README.md` reemplazado por documentación real del proyecto
+- **📦 Marketplace Features** — small-features-batch con 4 funcionalidades completas:
+  - **Feature Flags** — `config/marketplace.php` con `MARKETPLACE_ENABLED` y `BILLING_ENABLED` (default false)
+  - **Publicar Blueprint** — Action `PublishBlueprint` con verificación de plan (via `has_marketplace_publish`), owner gate, transferencia a org `cova-marketplace` y cambio a `is_public=true`
+  - **Votación** — `BlueprintVote` model con composite unique `(user_id, blueprint_id)`, Action `VoteBlueprint` con upsert y recálculo de `aggregate_score`, rate limit 10/min
+  - **Eliminar Miembro** — Action `RemoveOrganizationUser` con transacción, reasignación de blueprints al owner, rate limit 5/min
+  - **Tests**: 207 tests, 374 assertions (36 nuevos tests para publish, vote, removeMember)
+  - **i18n**: 18 nuevas claves sincronizadas (es/en) para publish, vote y remove member
 
 ### Changed
 - **OWASP A01 — Broken Access Control**: IDs auto-incrementales reemplazados por slugs en URLs GET de Organization show y BlueprintController

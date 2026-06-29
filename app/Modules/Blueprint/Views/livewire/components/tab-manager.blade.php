@@ -4,7 +4,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
             <div class="flex items-center justify-between mb-3">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                    {{ $tab['type'] === 'vscode_extensions' ? ' bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200' : ($tab['type'] === 'mcp_servers' ? ' bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200' : ' bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200') }}">
+                    {{ $tab['type'] === 'vscode_extensions' ? ' bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200' : ($tab['type'] === 'mcp_servers' ? ' bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200' : ($tab['type'] === 'scripts' ? ' bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200' : ' bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200')) }}">
                     {{ $availableTabTypes[$tab['type']] ?? __('blueprint.tab_type_unknown') }}
                 </span>
                 <div class="flex items-center space-x-2">
@@ -36,7 +36,7 @@
                     <textarea
                         wire:change="updateVscodeExtensions({{ $index }}, $event.target.value)"
                         rows="3"
-                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                         placeholder="{{ __('blueprint.extensions_placeholder') }}"
                     >{{ implode("\n", $extensions) }}</textarea>
                     @if(!empty($extensions))
@@ -67,7 +67,7 @@
                                         type="text"
                                         wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'name', $event.target.value)"
                                         value="{{ $server['name'] ?? '' }}"
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         placeholder="{{ __('blueprint.server_name_placeholder') }}"
                                     />
                                 </div>
@@ -77,7 +77,7 @@
                                         type="text"
                                         wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'command', $event.target.value)"
                                         value="{{ $server['command'] ?? '' }}"
-                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         placeholder="{{ __('blueprint.server_command_placeholder') }}"
                                     />
                                 </div>
@@ -88,7 +88,7 @@
                                     type="text"
                                     wire:change="updateMcpServerField({{ $index }}, {{ $serverIndex }}, 'args', $event.target.value)"
                                     value="{{ implode(' ', is_array($server['args'] ?? []) ? $server['args'] : []) }}"
-                                    class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                     placeholder="{{ __('blueprint.server_args_placeholder') }}"
                                 />
                             </div>
@@ -97,6 +97,55 @@
                     <button type="button" wire:click="addMcpServer({{ $index }})" class="inline-flex items-center px-3 py-1.5 border border-dashed border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700/50 dark:hover:bg-gray-700">
                         <svg class="-ml-1 mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                         {{ __('blueprint.server_add_button') }}
+                    </button>
+                </div>
+            @endif
+
+            {{-- Scripts Config --}}
+            @if($tab['type'] === 'scripts')
+                @php
+                    $scripts = $tab['config']['scripts'] ?? [];
+                @endphp
+                <div class="space-y-3">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        {{ __('blueprint.scripts_label') }}
+                    </label>
+                    <p class="text-xs text-amber-600 dark:text-amber-400">
+                        {{ __('blueprint.scripts_doc_only') }}
+                    </p>
+                    @foreach($scripts as $scriptIndex => $script)
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-md p-3 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('blueprint.script_label', ['index' => $scriptIndex + 1]) }}</span>
+                                <button type="button" wire:click="removeScript({{ $index }}, {{ $scriptIndex }})" class="text-red-400 hover:text-red-600 text-xs">
+                                    {{ __('blueprint.script_delete') }}
+                                </button>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.script_command_label') }}</label>
+                                <input
+                                    type="text"
+                                    wire:change="updateScriptField({{ $index }}, {{ $scriptIndex }}, 'command', $event.target.value)"
+                                    value="{{ $script['command'] ?? '' }}"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                                    placeholder="{{ __('blueprint.script_command_placeholder') }}"
+                                />
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.script_description_label') }}</label>
+                                <input
+                                    type="text"
+                                    wire:change="updateScriptField({{ $index }}, {{ $scriptIndex }}, 'description', $event.target.value)"
+                                    value="{{ $script['description'] ?? '' }}"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                    placeholder="{{ __('blueprint.script_description_placeholder') }}"
+                                />
+                            </div>
+                        </div>
+                    @endforeach
+                    <button type="button" wire:click="addScript({{ $index }})" class="inline-flex items-center px-3 py-1.5 border border-dashed border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700/50 dark:hover:bg-gray-700">
+                        <svg class="-ml-1 mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        {{ __('blueprint.script_add_button') }}
                     </button>
                 </div>
             @endif
@@ -112,14 +161,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.code_presets') }}</label>
                         <div class="flex flex-wrap gap-2">
-                            @foreach($presetNames as $preset)
+                            @foreach($availablePresetNames as $preset)
                                 <button
                                     type="button"
                                     wire:click="togglePreset({{ $index }}, '{{ $preset }}')"
                                     class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                                         {{ in_array($preset, $presets) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
                                 >
-                                    {{ __("blueprint.preset_{$preset}") }}
+                                    {{ __('blueprint.preset_' . str_replace('-', '_', $preset)) }}
                                 </button>
                             @endforeach
                         </div>
@@ -128,14 +177,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.skills_label') }}</label>
                         <div class="flex flex-wrap gap-2">
-                            @foreach($skillNames as $skill)
+                            @foreach($availableSkillNames as $skill)
                                 <button
                                     type="button"
                                     wire:click="toggleSkill({{ $index }}, '{{ $skill }}')"
                                     class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                                         {{ in_array($skill, $skills) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
                                 >
-                                    {{ __("blueprint.skill_{$skill}") }}
+                                    {{ __('blueprint.skill_' . str_replace('-', '_', $skill)) }}
                                 </button>
                             @endforeach
                         </div>
@@ -146,7 +195,7 @@
                         <textarea
                             wire:change="updateCustomRules({{ $index }}, $event.target.value)"
                             rows="3"
-                            class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                            class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                             placeholder="{{ __('blueprint.custom_rules_placeholder') }}"
                         >{{ $customRules }}</textarea>
                     </div>

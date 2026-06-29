@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Livewire\Forms;
 
 use App\Modules\Blueprint\Actions\CreateBlueprint;
+use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
@@ -150,7 +151,7 @@ class BlueprintCreateForm extends Component
         $tabTypes = array_column($this->tabsConfig, 'type');
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
         if (!empty($duplicates)) {
-            $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => reset($duplicates)]));
+            $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
             return;
         }
 

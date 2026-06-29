@@ -10,8 +10,10 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Exceptions\MaxMembersReachedException;
 use App\Modules\Organization\Models\OrganizationInvitation;
+use App\Modules\Organization\Notifications\OrganizationInvitationNotification;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -173,5 +175,70 @@ class InviteUserTest extends TestCase
 
         $acceptInvitation = new AcceptInvitation();
         $acceptInvitation->execute($invitation->token, $member);
+    }
+
+    public function test_it_rejects_invitation_for_existing_member(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $member = User::create([
+            'name' => 'Existing Member',
+            'email' => 'existing@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'My Org', 'my-org');
+
+        // Add member to organization first
+        $organization->members()->attach($member->id, ['role' => 'developer']);
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage(__('organization.invite_already_member'));
+
+        $inviteUser = new InviteUser();
+        $inviteUser->execute($organization, 'existing@example.com', 'developer');
+    }
+
+    public function test_it_silently_skips_notification_for_existing_user_in_other_org(): void
+    {
+        Notification::fake();
+
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        // This user exists in the system but is NOT in this organization
+        $externalUser = User::create([
+            'name' => 'External User',
+            'email' => 'external@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'My Org', 'my-org');
+
+        $inviteUser = new InviteUser();
+        $invitation = $inviteUser->execute($organization, 'external@example.com', 'developer');
+
+        // Invitation is created normally
+        $this->assertInstanceOf(OrganizationInvitation::class, $invitation);
+        $this->assertEquals('external@example.com', $invitation->email);
+
+        // But NO notification is sent — prevents information disclosure
+        // (the owner should not learn that this email belongs to a user in the system)
+        Notification::assertNothingSent();
     }
 }

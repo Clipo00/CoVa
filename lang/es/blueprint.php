@@ -26,21 +26,6 @@ return [
     'description_label' => 'Descripción',
     'description_placeholder' => 'Describe el propósito de este blueprint...',
     'tabs_section' => 'Pestañas',
-
-    // Templates
-    'template_label' => 'Plantilla',
-    'template_none' => 'Ninguna (empezar de cero)',
-    'template_hint' => 'Selecciona una plantilla para precargar pestañas y configuraciones.',
-    'template_laravel' => 'Laravel + Inertia + Tailwind',
-    'template_nodejs' => 'Node.js API + TypeScript',
-    'template_python' => 'Python + FastAPI + SQLModel',
-
-    // Marketplace Publish
-    'publish_section' => 'Publicar en Marketplace',
-    'publish_toggle' => 'Publicar este blueprint en el Marketplace',
-    'publish_help' => 'Cualquier persona podrá ver y usar este blueprint como plantilla.',
-    'no_publish_permission' => 'No tienes permiso para publicar blueprints en el Marketplace. Se requiere un plan Pro o Enterprise.',
-
     'create_blueprint_button' => 'Crear Blueprint',
     'edit_blueprint_button' => 'Guardar Cambios',
     'cancel_link' => '← Cancelar y volver',
@@ -75,10 +60,7 @@ return [
     'transfer_to' => 'Transferir a...',
     'transfer_button' => 'Transferir',
     'edit_button' => 'Editar',
-    'badge_public' => 'Público',
-    'badge_private' => 'Privado',
     'delete_confirm' => '¿Estás seguro de que quieres eliminar este blueprint?',
-    'delete_confirm_public' => 'Este blueprint está publicado en el Marketplace. Eliminarlo lo hará invisible para la comunidad. ¿Estás seguro?',
     'delete_button' => 'Eliminar',
 
     // Variables
@@ -101,6 +83,8 @@ return [
     'var_value_placeholder' => 'Valor por defecto',
     'var_delete_tooltip' => 'Eliminar variable',
     'var_add_button' => 'Añadir Variable',
+    'var_move_up' => 'Mover arriba',
+    'var_move_down' => 'Mover abajo',
     'var_none' => 'No hay variables configuradas.',
     'var_add_first' => 'Añadir primera variable',
     'secret_value' => '••••••••',
@@ -120,6 +104,20 @@ return [
 
     // MCP Servers
     'mcp_servers' => 'MCP Servers',
+
+    // Scripts
+    'scripts_section' => 'Scripts Post-Instalación',
+    'copy_scripts_command' => 'Copiar script',
+    'scripts_copied' => 'Script copiado al portapapeles',
+    'scripts_label' => 'Scripts',
+    'scripts_doc_only' => '⚠ Solo documentación — los comandos NO se ejecutan en el servidor.',
+    'script_label' => 'Script #:index',
+    'script_delete' => 'Eliminar',
+    'script_command_label' => 'Comando',
+    'script_command_placeholder' => 'composer install',
+    'script_description_label' => 'Descripción',
+    'script_description_placeholder' => 'Instalar dependencias PHP',
+    'script_add_button' => 'Añadir script',
 
     // Tab Manager
     'move_up' => 'Mover arriba',
@@ -141,17 +139,14 @@ return [
     'code_presets' => 'Presets de código',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean-architecture' => 'Clean Architecture',
-    'preset_docker' => 'Docker',
-    'preset_cicd' => 'CI/CD',
-    'preset_laravel-conventions' => 'Convenciones Laravel',
-    'preset_typescript-strict' => 'TypeScript Strict',
+    'preset_clean_architecture' => 'Clean Architecture',
+    'preset_laravel_conventions' => 'Laravel Conventions',
+    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
-    'skill_api-design' => 'Diseño de API',
-    'skill_react-expert' => 'React Expert',
-    'skill_vue-expert' => 'Vue Expert',
+    'skill_react_expert' => 'React Expert',
+    'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
     'tabs_empty' => 'No hay pestañas configuradas',
@@ -180,14 +175,30 @@ return [
     'restore_disabled' => 'No disponible',
     'restore_permission_info' => 'Solo el owner puede restaurar',
 
-    // Live Preview
-    'live_preview' => 'Vista previa en vivo',
-
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',
     'tab_type_mcp' => 'MCP Servers',
+    'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Desconocido',
+
+    // Publish
+    'publish_button' => 'Publicar en Marketplace',
+    'publish_confirm_title' => 'Publicar Blueprint',
+    'publish_confirm_warning' => 'Al publicar este blueprint, las variables marcadas como secretas pasarán al marketplace público. ¿Estás seguro de que quieres continuar?',
+    'publish_success' => 'Blueprint publicado en el marketplace correctamente.',
+    'publish_denied' => 'No tienes permisos para publicar este blueprint.',
+    'publish_marketplace_disabled' => 'El marketplace no está disponible en este momento.',
+    'publish_plan_required' => 'Necesitas un plan con soporte de marketplace para publicar blueprints.',
+    'publish_already_public' => 'Este blueprint ya es público.',
+
+    // Vote
+    'vote_up' => 'Votar positivo',
+    'vote_down' => 'Votar negativo',
+    'vote_denied' => 'No tienes permisos para votar en este blueprint.',
+    'vote_marketplace_disabled' => 'El marketplace no está disponible en este momento.',
+    'vote_throttle' => 'Demasiados votos. Inténtalo de nuevo en un minuto.',
+    'vote_registered' => 'Voto registrado correctamente.',
 
     // Messages
     'deleted_success' => 'Blueprint eliminado correctamente.',
@@ -207,6 +218,7 @@ return [
     'invalid_org_data' => 'Datos de organización inválidos.',
 
     // Transfer errors
+    'transfer_denied' => 'No tienes permiso para transferir este blueprint.',
     'transfer_not_owner' => 'Solo el owner puede transferir blueprints.',
     'transfer_not_owner_target' => 'Solo puedes transferir a organizaciones donde eres owner.',
     'transfer_same_org' => 'No puedes transferir un blueprint a la misma organización.',

@@ -75,7 +75,18 @@ return [
     'pending_invitations' => 'Pending invitations',
     'role_prefix' => 'Role:',
     'status_pending' => 'Pending',
+    'revoke_invitation_button' => 'Revoke',
+    'resend_invitation_button' => 'Resend',
+    'revoke_invitation_confirm' => 'Are you sure you want to revoke the invitation for :email?',
     'invitation_info' => 'Role: :role · Expires :time',
+
+    // Remove Member
+    'remove_member_button' => 'Remove',
+    'remove_member_confirm' => 'Are you sure you want to remove :name from the organization? Their blueprints will be reassigned to the owner.',
+    'remove_member_success' => 'User :name removed from the organization successfully.',
+    'remove_member_denied' => 'You do not have permission to remove members.',
+    'cannot_remove_self' => 'You cannot remove yourself from the organization.',
+    'cannot_remove_owner' => 'You cannot remove another owner from the organization.',
 
     // Messages
     'updated' => 'Organization updated successfully.',
@@ -83,8 +94,12 @@ return [
     'restored' => 'Organization restored successfully.',
     'force_deleted' => 'Organization permanently deleted.',
     'user_added' => 'User :name added successfully.',
+    'user_already_member' => 'This user is already a member of the organization.',
     'role_updated' => ':name\'s role updated successfully.',
     'invite_sent' => 'Invitation sent successfully.',
+    'invite_already_member' => 'This user is already a member of the organization.',
+    'invitation_revoked' => 'Invitation revoked successfully.',
+    'invitation_resent' => 'Invitation resent successfully.',
 
     // Errors
     'not_found' => 'Organization not found.',
@@ -94,6 +109,8 @@ return [
     'no_view_permission' => 'You do not have permission to view this organization.',
     'no_manage_permission' => 'You do not have permission to manage members.',
     'no_invite_permission' => 'You do not have permission to invite members.',
+    'no_revoke_permission' => 'You do not have permission to revoke invitations.',
+    'no_resend_permission' => 'You do not have permission to resend invitations.',
     'no_delete_permission' => 'You do not have permission to delete this organization.',
     'no_restore_permission' => 'You do not have permission to restore this organization.',
     'no_force_delete_permission' => 'You do not have permission to permanently delete this organization.',
@@ -110,4 +127,14 @@ return [
     'invitation_user_required' => 'A user is required to accept this invitation.',
     'invitation_no_user' => 'A user with this email does not exist.',
     'invitation_email_mismatch' => 'The user email does not match the invitation.',
+    'invitation_accepted' => 'Invitation accepted successfully!',
+    'invitation_accept_title' => 'Accept Invitation',
+    'invitation_accept_intro' => 'You are about to join :organization as :role.',
+
+    // Invitation notification
+    'invitation_subject' => 'You have been invited to :organization',
+    'invitation_greeting' => 'Hello!',
+    'invitation_intro' => 'You have been invited to join :organization as :role.',
+    'invitation_accept_button' => 'Accept Invitation',
+    'invitation_expiry' => 'This invitation will expire in :hours hours.',
 ];

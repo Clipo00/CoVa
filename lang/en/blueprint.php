@@ -26,21 +26,6 @@ return [
     'description_label' => 'Description',
     'description_placeholder' => 'Describe the purpose of this blueprint...',
     'tabs_section' => 'Tabs',
-
-    // Templates
-    'template_label' => 'Template',
-    'template_none' => 'None (start from scratch)',
-    'template_hint' => 'Select a template to pre-load tabs and configurations.',
-    'template_laravel' => 'Laravel + Inertia + Tailwind',
-    'template_nodejs' => 'Node.js API + TypeScript',
-    'template_python' => 'Python + FastAPI + SQLModel',
-
-    // Marketplace Publish
-    'publish_section' => 'Publish to Marketplace',
-    'publish_toggle' => 'Publish this blueprint on the Marketplace',
-    'publish_help' => 'Anyone will be able to see and use this blueprint as a template.',
-    'no_publish_permission' => 'You do not have permission to publish blueprints to the Marketplace. A Pro or Enterprise plan is required.',
-
     'create_blueprint_button' => 'Create Blueprint',
     'edit_blueprint_button' => 'Save Changes',
     'cancel_link' => '← Cancel and go back',
@@ -74,10 +59,7 @@ return [
     'transfer_to' => 'Transfer to...',
     'transfer_button' => 'Transfer',
     'edit_button' => 'Edit',
-    'badge_public' => 'Public',
-    'badge_private' => 'Private',
     'delete_confirm' => 'Are you sure you want to delete this blueprint?',
-    'delete_confirm_public' => 'This blueprint is published on the Marketplace. Deleting it will make it invisible to the community. Are you sure?',
     'delete_button' => 'Delete',
 
     // Variables
@@ -100,6 +82,8 @@ return [
     'var_value_placeholder' => 'Default value',
     'var_delete_tooltip' => 'Delete variable',
     'var_add_button' => 'Add Variable',
+    'var_move_up' => 'Move up',
+    'var_move_down' => 'Move down',
     'var_none' => 'No variables configured.',
     'var_add_first' => 'Add first variable',
     'secret_value' => '••••••••',
@@ -119,6 +103,20 @@ return [
 
     // MCP Servers
     'mcp_servers' => 'MCP Servers',
+
+    // Scripts
+    'scripts_section' => 'Post-Install Scripts',
+    'copy_scripts_command' => 'Copy script',
+    'scripts_copied' => 'Script copied to clipboard',
+    'scripts_label' => 'Scripts',
+    'scripts_doc_only' => '⚠ Documentation only — commands are NOT executed server-side.',
+    'script_label' => 'Script #:index',
+    'script_delete' => 'Delete',
+    'script_command_label' => 'Command',
+    'script_command_placeholder' => 'composer install',
+    'script_description_label' => 'Description',
+    'script_description_placeholder' => 'Install PHP dependencies',
+    'script_add_button' => 'Add script',
 
     // Tab Manager
     'move_up' => 'Move up',
@@ -140,17 +138,14 @@ return [
     'code_presets' => 'Code Presets',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean-architecture' => 'Clean Architecture',
-    'preset_docker' => 'Docker',
-    'preset_cicd' => 'CI/CD',
-    'preset_laravel-conventions' => 'Laravel Conventions',
-    'preset_typescript-strict' => 'TypeScript Strict',
+    'preset_clean_architecture' => 'Clean Architecture',
+    'preset_laravel_conventions' => 'Laravel Conventions',
+    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
-    'skill_api-design' => 'API Design',
-    'skill_react-expert' => 'React Expert',
-    'skill_vue-expert' => 'Vue Expert',
+    'skill_react_expert' => 'React Expert',
+    'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
     'tabs_empty' => 'No tabs configured',
@@ -179,14 +174,30 @@ return [
     'restore_disabled' => 'Not available',
     'restore_permission_info' => 'Only the owner can restore',
 
-    // Live Preview
-    'live_preview' => 'Live Preview',
-
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',
     'tab_type_mcp' => 'MCP Servers',
+    'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Unknown',
+
+    // Publish
+    'publish_button' => 'Publish to Marketplace',
+    'publish_confirm_title' => 'Publish Blueprint',
+    'publish_confirm_warning' => 'By publishing this blueprint, secret variables will be exposed in the public marketplace. Are you sure you want to continue?',
+    'publish_success' => 'Blueprint published to marketplace successfully.',
+    'publish_denied' => 'You do not have permission to publish this blueprint.',
+    'publish_marketplace_disabled' => 'The marketplace is not available at this time.',
+    'publish_plan_required' => 'You need a plan with marketplace support to publish blueprints.',
+    'publish_already_public' => 'This blueprint is already public.',
+
+    // Vote
+    'vote_up' => 'Upvote',
+    'vote_down' => 'Downvote',
+    'vote_denied' => 'You do not have permission to vote on this blueprint.',
+    'vote_marketplace_disabled' => 'The marketplace is not available at this time.',
+    'vote_throttle' => 'Too many votes. Please try again in a minute.',
+    'vote_registered' => 'Vote recorded successfully.',
 
     // Messages
     'deleted_success' => 'Blueprint deleted successfully.',
@@ -206,6 +217,7 @@ return [
     'invalid_org_data' => 'Invalid organization data.',
 
     // Transfer errors
+    'transfer_denied' => 'You do not have permission to transfer this blueprint.',
     'transfer_not_owner' => 'Only the owner can transfer blueprints.',
     'transfer_not_owner_target' => 'You can only transfer to organizations where you are the owner.',
     'transfer_same_org' => 'You cannot transfer a blueprint to the same organization.',

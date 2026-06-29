@@ -37,4 +37,22 @@ class AuthController
     {
         return view('auth::mfa-challenge');
     }
+
+    public function showMfaSetup(): View
+    {
+        return view('auth::mfa-setup');
+    }
+
+    public function showForgotPassword(): View
+    {
+        return view('auth::forgot-password');
+    }
+
+    public function showResetPassword(Request $request, string $token): View
+    {
+        return view('auth::reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+        ]);
+    }
 }

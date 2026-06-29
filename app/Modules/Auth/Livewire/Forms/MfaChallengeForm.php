@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Livewire\Forms;
 
 use App\Modules\Auth\Actions\SendMfaCode;
+use App\Modules\Auth\Actions\TrustDevice;
 use App\Modules\Auth\Actions\VerifyMfaCode;
 use App\Modules\Auth\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
@@ -31,7 +33,7 @@ class MfaChallengeForm extends Component
     {
         $this->validate();
 
-        $userId = session('mfa_user_id');
+        $userId = session('mfa_user_id', auth()->id());
         $throttleKey = 'mfa-challenge:'.($userId ?? request()->ip());
 
         // OWASP A07:2025 — prevent brute-force on MFA codes (5 attempts/min)
@@ -64,12 +66,17 @@ class MfaChallengeForm extends Component
         Auth::login($user);
         session()->forget('mfa_user_id');
 
-        $this->redirectIntended(route('dashboard'));
+        // Trust this device for 15 days
+        $trustDevice = app(TrustDevice::class);
+        $token = $trustDevice->execute($user);
+        Cookie::queue('mfa_trusted_device', $token, 1296000, '/', null, true, true, false, 'Lax');
+
+        $this->redirect(route('dashboard'));
     }
 
     public function resend(SendMfaCode $sendMfaCode): void
     {
-        $userId = session('mfa_user_id');
+        $userId = session('mfa_user_id', auth()->id());
         $throttleKey = 'mfa-resend:'.($userId ?? request()->ip());
 
         // OWASP A07:2025 — prevent email bombing (3 resends/min)

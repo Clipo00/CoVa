@@ -8,6 +8,7 @@ use App\Modules\Blueprint\DTOs\TabConfig;
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Exceptions\UnknownTabTypeException;
 use App\Modules\Blueprint\Tabs\TabRegistry;
+use App\Modules\Blueprint\Tabs\ScriptsTab;
 use App\Modules\Blueprint\Tabs\VscodeExtensionsTab;
 use App\Modules\Blueprint\Tabs\McpServersTab;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
@@ -38,6 +39,7 @@ class TabRegistryTest extends TestCase
         $registry = new TabRegistry();
         $registry->register(new VscodeExtensionsTab());
         $registry->register(new McpServersTab());
+        $registry->register(new ScriptsTab());
         $registry->register(new AiContextTab($agentGenerator));
 
         return $registry;
@@ -49,6 +51,7 @@ class TabRegistryTest extends TestCase
 
         $this->assertTrue($registry->has('vscode_extensions'));
         $this->assertTrue($registry->has('mcp_servers'));
+        $this->assertTrue($registry->has('scripts'));
         $this->assertTrue($registry->has('ai_context'));
     }
 
@@ -82,9 +85,10 @@ class TabRegistryTest extends TestCase
 
         $types = $registry->types();
 
-        $this->assertCount(3, $types);
+        $this->assertCount(4, $types);
         $this->assertContains('vscode_extensions', $types);
         $this->assertContains('mcp_servers', $types);
+        $this->assertContains('scripts', $types);
         $this->assertContains('ai_context', $types);
     }
 }

@@ -43,4 +43,19 @@ class OrganizationPolicy
     {
         return $user->isOwnerOf($organization);
     }
+
+    public function removeMember(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
+
+    public function revokeInvitation(User $user, Organization $organization): bool
+    {
+        return $user->canManageMembers($organization);
+    }
+
+    public function resendInvitation(User $user, Organization $organization): bool
+    {
+        return $user->canManageMembers($organization);
+    }
 }

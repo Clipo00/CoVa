@@ -22,12 +22,14 @@ class Blueprint extends Model
         'title',
         'description',
         'is_public',
+        'aggregate_score',
         'tabs_config',
         'created_by',
     ];
 
     protected $casts = [
         'is_public' => 'boolean',
+        'aggregate_score' => 'integer',
         'tabs_config' => 'array',
         'votes_count' => 'integer',
         'subscribers_count' => 'integer',
@@ -50,12 +52,22 @@ class Blueprint extends Model
 
     public function variables()
     {
+        return $this->hasMany(BlueprintVariable::class)->orderBy('sort_order');
+    }
+
+    public function variablesUnsorted()
+    {
         return $this->hasMany(BlueprintVariable::class);
     }
 
     public function favorites()
     {
         return $this->hasMany(BlueprintFavorite::class);
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(BlueprintVote::class);
     }
 
     public function favoritedBy(User $user): bool

@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Controllers;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Organization\Actions\AcceptInvitation;
 use App\Modules\Organization\Actions\CreateOrganizationUser;
 use App\Modules\Organization\Actions\DeleteOrganization;
 use App\Modules\Organization\Actions\InviteUser;
+use App\Modules\Organization\Actions\RemoveOrganizationUser;
+use App\Modules\Organization\Actions\ResendInvitation;
+use App\Modules\Organization\Actions\RevokeInvitation;
 use App\Modules\Organization\Actions\UpdateOrganization;
 use App\Modules\Organization\Actions\UpdateOrganizationUserRole;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Organization\Models\OrganizationInvitation;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Mail;
 
@@ -31,6 +38,9 @@ class OrganizationController
     public function show(string $slug): View
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
+        if (!auth()->user()->can('view', $organization)) {
+            abort(403, __('organization.no_view_permission'));
+        }
 
         $plan = $organization->plan;
         $maxBlueprints = $plan->max_blueprints_per_org;
@@ -103,7 +113,7 @@ class OrganizationController
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:developer,maintainer'],
         ]);
 
@@ -146,6 +156,71 @@ class OrganizationController
             ->with('success', __('organization.role_updated', ['name' => $targetUser->name]));
     }
 
+    /**
+     * Show invitation — OWASP A01/A07: validates token, handles guest redirect flow.
+     * Guests store token in session and redirect to login.
+     * Authenticated users accept directly.
+     */
+    public function showInvitation(string $token): RedirectResponse
+    {
+        try {
+            $invitation = OrganizationInvitation::where('token', $token)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            return redirect()->route('login')
+                ->with('error', __('organization.invitation_not_found'));
+        }
+
+        if (!$invitation->isValid()) {
+            return redirect()->route('login')
+                ->with('error', __('organization.invitation_expired'));
+        }
+
+        if (!auth()->check()) {
+            session(['invitation_token' => $token]);
+
+            return redirect()->guest(route('login'));
+        }
+
+        // Authenticated user: verify email match
+        if (auth()->user()->email !== $invitation->email) {
+            return redirect()->route('dashboard')
+                ->with('error', __('organization.invitation_email_mismatch'));
+        }
+
+        try {
+            app(AcceptInvitation::class)->execute($token, auth()->user());
+        } catch (ValidationException $e) {
+            return redirect()->route('dashboard')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('organizations.show', $invitation->organization->slug)
+            ->with('success', __('organization.invitation_accepted'));
+    }
+
+    /**
+     * Accept invitation via POST — CSRF protected endpoint for form-based acceptance.
+     */
+    public function acceptInvitation(string $token, Request $request, AcceptInvitation $acceptInvitation): RedirectResponse
+    {
+        try {
+            $invitation = OrganizationInvitation::where('token', $token)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            return redirect()->route('dashboard')
+                ->with('error', __('organization.invitation_not_found'));
+        }
+
+        try {
+            $acceptInvitation->execute($token, auth()->user());
+        } catch (ValidationException $e) {
+            return redirect()->route('dashboard')
+                ->with('error', $e->getMessage());
+        }
+
+        return redirect()->route('organizations.show', $invitation->organization->slug)
+            ->with('success', __('organization.invitation_accepted'));
+    }
+
     public function invite(string $slug, Request $request, InviteUser $inviteUser): RedirectResponse
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
@@ -168,6 +243,61 @@ class OrganizationController
         return redirect()
             ->route('organizations.members', $organization->slug)
             ->with('success', __('organization.invite_sent'));
+    }
+
+    public function revokeInvitation(string $slug, int $invitationId, RevokeInvitation $revokeAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('revokeInvitation', $organization)) {
+            abort(403, __('organization.no_revoke_permission'));
+        }
+
+        $invitation = $organization->invitations()->findOrFail($invitationId);
+
+        $revokeAction->execute($invitation);
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.invitation_revoked'));
+    }
+
+    public function resendInvitation(string $slug, int $invitationId, ResendInvitation $resendAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('resendInvitation', $organization)) {
+            abort(403, __('organization.no_resend_permission'));
+        }
+
+        $invitation = $organization->invitations()->findOrFail($invitationId);
+
+        $resendAction->execute($invitation);
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.invitation_resent'));
+    }
+
+    public function removeMember(string $slug, int $userId, RemoveOrganizationUser $removeAction): RedirectResponse
+    {
+        $organization = Organization::where('slug', $slug)->firstOrFail();
+
+        if (!auth()->user()->can('removeMember', $organization)) {
+            abort(403, __('organization.no_manage_permission'));
+        }
+
+        $targetUser = User::findOrFail($userId);
+
+        $removeAction->execute(
+            organization: $organization,
+            targetUser: $targetUser,
+            actor: auth()->user(),
+        );
+
+        return redirect()
+            ->route('organizations.members', $organization->slug)
+            ->with('success', __('organization.remove_member_success', ['name' => $targetUser->name]));
     }
 
     public function destroy(string $slug, DeleteOrganization $deleteOrganization): RedirectResponse

@@ -15,7 +15,7 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    $marketplaceEnabled = config('app.marketplace_enabled', false);
+    $marketplaceEnabled = config('marketplace.enabled', false);
     $publicBlueprints = $marketplaceEnabled
         ? Blueprint::query()
             ->where('is_public', true)

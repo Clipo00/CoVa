@@ -16,39 +16,47 @@ class VueExpertSkill extends AbstractSkill
         return <<<'MARKDOWN'
 ## Vue Expert
 
+Follow Vue 3 best practices for production-quality applications:
+
 ### Composition API
-- Use `<script setup>` for cleaner component code
-- Prefer `ref()` for primitives and `reactive()` for objects
-- Use `computed()` for derived state with explicit getter/setter
-- Use `watch()` and `watchEffect()` for side effects
-- Create composable functions for reusable stateful logic
+- Always use `<script setup>` for components — it reduces boilerplate
+- Use `ref()` for primitive values, `reactive()` for objects/arrays
+- Prefer `computed()` over method calls for derived state (caching)
+- Use `watch()` and `watchEffect()` for side effects — prefer `watchEffect` for auto-tracking
+- Use `defineProps()` and `defineEmits()` with TypeScript generics for type safety
+- Extract reusable logic into composables (`useAuth()`, `usePagination()`)
 
-### State Management with Pinia
-- Define stores with `defineStore()` using composition API syntax
-- Use `storeToRefs()` for reactive destructuring
-- Keep actions async for API calls
-- Use getters for computed store values
-- Organize stores by domain (user store, cart store, etc.)
+### Pinia Store Patterns
+- Use Options API stores for simple CRUD, Setup stores for complex logic
+- Access stores with `storeToRefs()` to preserve reactivity when destructuring
+- Use actions for any logic that mutates state (even simple assignments)
+- Keep stores flat — nest getters and actions by concern, not depth
+- Use $patch for updating multiple properties simultaneously
+- Use `onUnmounted()` in stores to clean up subscriptions and intervals
 
-### Components
-- Use single-file components (SFC) with `.vue` extension
-- Follow the attribute order: directives, props, events
-- Use `v-for` with `:key` for list rendering
-- Use `v-if`/`v-else-if`/`v-else` for conditional rendering
-- Prefer `defineProps` and `defineEmits` for component interfaces
+### Component Composition
+- Keep components focused: one file = one component = one responsibility
+- Use slots for flexible content injection: default slot, named slots, scoped slots
+- Prefer emit-based communication over provide/inject for parent-child
+- Use `defineAsyncComponent()` for code-splitting heavy components
+- Use `<Teleport to="body">` for modals, tooltips, and overlays
+- Use `<KeepAlive>` to preserve state in dynamic components
 
-### Reactivity
-- Understand Vue's reactivity system (Proxy-based)
-- Avoid deeply nested reactive objects — flatten when possible
-- Use `shallowRef` and `shallowReactive` for large data sets
-- Use `toRaw` to access the original object when needed
-- Use `triggerRef` to manually trigger updates on `shallowRef`
+### Reactivity Patterns
+- Never reassign a `reactive()` object — mutate its properties instead
+- Use `shallowRef()` and `shallowReactive()` for large data structures
+- Use `toRaw()` when passing reactive objects to non-reactive libraries
+- Use `markRaw()` for objects that should never be made reactive (e.g., third-party instances)
+- Use `triggerRef()` when mutating a `shallowRef`'s internal state
+- Use `customRef()` for explicit dependency tracking control
 
-### Testing
-- Use Vitest for unit testing composables and stores
-- Use Vue Test Utils + Vitest for component tests
-- Use Cypress or Playwright for E2E testing
-- Test component behavior through user interactions
+### Testing Patterns
+- Use `@vue/test-utils` with `mount()` for integration, `shallowMount()` for unit
+- Use `vi.fn()` for mocking composables and external services
+- Test user interactions via `wrapper.find('button').trigger('click')`
+- Assert on rendered output, not internal component state
+- Use `flushPromises()` for async updates before assertions
+- Test composables in isolation with `@vue/test-utils` composable helpers
 MARKDOWN;
     }
 }

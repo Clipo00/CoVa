@@ -83,4 +83,34 @@ final class BlueprintOutput
     {
         return $this->resolvedTabs->getMcpServers();
     }
+
+    /**
+     * Get scripts list.
+     *
+     * @return array<int, array{command: string, description: string, order: int}>
+     */
+    public function getScripts(): array
+    {
+        foreach ($this->tabs as $tab) {
+            if ($tab->type === TabType::SCRIPTS && $tab->isArray()) {
+                return $tab->content['scripts'] ?? [];
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Get combined shell script for all scripts.
+     */
+    public function getScriptsShellScript(): string
+    {
+        foreach ($this->tabs as $tab) {
+            if ($tab->type === TabType::SCRIPTS && $tab->isArray()) {
+                return $tab->content['shell_script'] ?? '';
+            }
+        }
+
+        return '';
+    }
 }

@@ -16,43 +16,50 @@ class LaravelConventionsPreset extends AbstractPreset
         return <<<'MARKDOWN'
 ## Laravel Conventions
 
+Follow Laravel conventions for consistent, maintainable code:
+
 ### Naming Conventions
-- Controllers: singular PascalCase (e.g., `UserController`)
-- Models: singular PascalCase (e.g., `User`, `Organization`)
-- Migrations: snake_case with timestamp prefix
-- Routes: kebab-case for URLs, camelCase for route names
-- Tables: snake_case plural (e.g., `blueprint_variables`)
-- Pivot tables: singular alphabetically sorted (e.g., `organization_user`)
+- Models: Singular, PascalCase (`User`, `Organization`, `BlueprintVariable`)
+- Controllers: Singular, PascalCase with `Controller` suffix (`UserController`)
+- Actions: `{Verb}{Entity}` — `CreateBlueprint`, `AcceptInvitation`, `TransferFunds`
+- Migrations: `YYYY_MM_DD_HHmmSS_create_{table}_table.php`
+- Routes: kebab-case (`/blueprints/create`, `/organizations/{org}/members`)
+- Table names: snake_case, plural (`blueprint_variables`, `organization_user`)
+- Pivot tables: singular, alphabetical (`organization_user`, not `organization_has_user`)
+- Form requests: Singular, PascalCase with `Request` suffix (`StoreBlueprintRequest`)
 
-### Routes and Controllers
-- Use route model binding for automatic model resolution
+### Route Conventions
 - Group routes by middleware and prefix
-- Use resource controllers for CRUD operations
-- Keep controllers thin — delegate business logic to Actions
+- Use `Route::resource()` for standard CRUD when applicable
+- Name all routes with `{module}.{action}` pattern
+- Keep routes in dedicated route files per module
+- Use `slug` or `uuid` for route model binding, never auto-increment ID
 
-### Actions Pattern
-- Each action is a single class with an `execute()` method
-- Actions are invokable via `__invoke()` when appropriate
-- Actions handle one specific use case
-- Inject dependencies via constructor, not facades
+### Controller Conventions
+- Thin controllers: delegate business logic to Actions
+- Controller methods follow RESTful naming: `index`, `create`, `store`, `show`, `edit`, `update`, `destroy`
+- Always authorize with `$this->authorize('action', $model)` using Policies
+- Return typed responses: `RedirectResponse`, `ViewResponse`, `JsonResponse`
 
-### Validation
-- Use FormRequest classes for controller validation
-- Use `rules()` method for validation rules
-- Custom validation rules as invokable classes
-- Never trust `request()->all()` — always validate
+### Action Pattern
+- Each Action class has a single `execute()` method
+- Actions are invokable classes registered in the container
+- Actions receive dependencies via constructor injection
+- Actions validate business rules and throw domain exceptions
+- Actions DO NOT handle HTTP concerns (redirects, responses, sessions)
 
-### Migrations
-- Each migration is a single change (create, modify, drop)
-- Use `foreignId()` for foreign keys with cascade on delete
-- Add indexes for frequently queried columns
-- Use soft deletes with `SoftDeletes` trait
+### Migration Conventions
+- Always have both `up()` and `down()` methods
+- Use `foreignId()` for foreign keys with proper constraints
+- Define indexes for columns used in `WHERE`, `JOIN`, or `ORDER BY`
+- Chain `cascadeOnDelete()` on foreign keys where appropriate
+- Use `softDeletes()` for models that should support restoration
 
-### Testing
-- Feature tests for HTTP layer
-- Unit tests for Actions, Policies, Models
-- Use `RefreshDatabase` trait for isolation
-- Test failure paths, not just happy paths
+### Validation Conventions
+- Use Form Requests for complex validation
+- Keep validation rules in `rules()` method of Form Request
+- Custom validation messages via `messages()` method
+- Use `__()` for all user-facing validation messages
 MARKDOWN;
     }
 }

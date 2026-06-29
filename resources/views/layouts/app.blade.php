@@ -78,7 +78,7 @@
                                 <a href="{{ route('blueprints.index') }}" class="text-sm font-medium {{ request()->routeIs('blueprints.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
                                     {{ __('layouts.blueprints') }}
                                 </a>
-                                @if(config('app.marketplace_enabled', false))
+                                @if(config('marketplace.enabled', false))
                                 <a href="{{ route('marketplace.index') }}" class="text-sm font-medium {{ request()->routeIs('marketplace.*') ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' }} transition-colors duration-200">
                                     {{ __('layouts.marketplace') }}
                                 </a>
@@ -93,7 +93,7 @@
                         <livewire:shared.theme-toggle />
                         <x-locale-switcher />
                         @auth
-                            @if(config('app.marketplace_enabled', false))
+                            @if(config('marketplace.enabled', false))
                                 <livewire:marketplace.notification-bell />
                             @endif
                             <livewire:auth.components.user-dropdown />
@@ -118,7 +118,7 @@
                         <a href="{{ route('blueprints.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('blueprints.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
                             {{ __('layouts.blueprints') }}
                         </a>
-                        @if(config('app.marketplace_enabled', false))
+                        @if(config('marketplace.enabled', false))
                         <a href="{{ route('marketplace.index') }}" class="block pl-3 pr-4 py-2 border-l-4 text-base font-medium {{ request()->routeIs('marketplace.*') ? 'border-indigo-500 text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-300' : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200' }} transition-colors duration-200">
                             {{ __('layouts.marketplace') }}
                         </a>
@@ -265,5 +265,23 @@
     </script>
 
     @livewireScripts
+
+    {{-- Flash messages as toast notifications (must run AFTER Alpine is loaded) --}}
+    @if(session('success') || session('error'))
+    <script>
+        document.addEventListener('alpine:initialized', () => {
+            @if(session('success'))
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { message: @json(session('success')) }
+                }));
+            @endif
+            @if(session('error'))
+                window.dispatchEvent(new CustomEvent('notify', {
+                    detail: { message: @json(session('error')) }
+                }));
+            @endif
+        });
+    </script>
+    @endif
 </body>
 </html>

@@ -16,37 +16,47 @@ class ReactExpertSkill extends AbstractSkill
         return <<<'MARKDOWN'
 ## React Expert
 
-### Hooks
-- Use `useState` for local component state
-- Use `useEffect` for side effects with proper dependency arrays
-- Use `useCallback` and `useMemo` for performance optimization
-- Create custom hooks for reusable stateful logic
-- Follow the Rules of Hooks: call at top level, only in React functions
+Follow React best practices for production-quality components:
+
+### Hooks Rules
+- Only call hooks at the top level (never inside conditions, loops, or nested functions)
+- Only call hooks from React function components or custom hooks
+- Use the `use` prefix for all custom hooks
+- Keep hooks focused: one hook = one concern
+- Use the exhaustive-deps ESLint rule to catch missing dependencies
+- Prefix state setters with `set` (e.g., `setCount`, `setUser`)
 
 ### Composition Patterns
-- Prefer composition over inheritance
-- Use `children` prop for flexible component layouts
-- Use render props and function-as-children patterns sparingly
-- Leverage React Context for global state (auth, theme, locale)
+- Favor composition over inheritance — use `children` prop and render props
+- Split UI from logic: use container/presentational pattern
+- Use compound components for related components: `<Select><Select.Option /></Select>`
+- Extract reusable logic into custom hooks, not HOCs or render props
+- Use `React.memo()` only when profiling shows a performance bottleneck
+- Prefer lifting state up over prop drilling with context
 
 ### State Management
-- Lift state up when multiple components need shared state
-- Use `useReducer` for complex state logic
-- Consider Zustand or Jotai for mid-complexity state management
-- Keep URL state in sync with navigation (search params, filters)
+- Keep state as local as possible: component state → context → external store
+- Use `useReducer` for complex state with multiple sub-values
+- Use context sparingly — too many consumers cause unnecessary re-renders
+- Normalize nested state (like Redux-style entities) for complex data
+- Derive computed values with `useMemo` and `useCallback` — measure first, optimize later
+- Keep URL state in sync with `useSearchParams` for shareable views
 
-### Performance
-- Memoize expensive computations with `useMemo`
-- Prevent unnecessary re-renders with `React.memo`
-- Virtualize long lists with `react-window` or `tanstack-virtual`
-- Code-split with `React.lazy` and `Suspense`
-- Use `useTransition` for non-urgent state updates
+### Performance Optimization
+- Profile before optimizing — use React DevTools Profiler
+- Use `React.lazy()` + `Suspense` for code-splitting routes
+- Virtualize long lists with libraries like `react-window` or `tanstack-virtual`
+- Avoid creating new objects/arrays in render (inline styles, callbacks)
+- Use `useId()` for generating unique IDs accessible to all components
+- Batch state updates — React 18 auto-batches in event handlers
 
-### Testing
-- Test component behavior, not implementation
-- Use React Testing Library for user-centric tests
-- Use `@testing-library/user-event` over `fireEvent`
-- Mock external services with MSW (Mock Service Worker)
+### Testing Patterns
+- Test behavior, not implementation (don't assert on internal state)
+- Use `@testing-library/react` — query by role/text, not by test IDs
+- Use `userEvent` over `fireEvent` for realistic interactions
+- Test error states, loading states, and empty states — not just happy paths
+- Keep tests co-located with components (`Button.test.tsx` next to `Button.tsx`)
+- Mock at the network level (MSW), never mock child components
 MARKDOWN;
     }
 }

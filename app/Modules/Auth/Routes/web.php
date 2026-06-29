@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+    // Password reset — OWASP A07: throttle to prevent enumeration & brute-force
+    Route::middleware('throttle:5,1')->group(function () {
+        Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])
+            ->name('password.request');
+        Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])
+            ->name('password.reset');
+    });
 });
 
 Route::middleware('auth')->group(function () {
@@ -19,8 +27,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
         ->name('verification.resend');
 
-    // MFA challenge — OWASP A07: throttle to prevent brute-force (5 attempts/min)
-    Route::middleware('throttle:5,1')->group(function () {
-        Route::get('/mfa/challenge', [AuthController::class, 'showMfaChallenge'])->name('mfa.challenge');
-    });
+    // MFA first-login setup interstitial
+    Route::get('/mfa/setup', [AuthController::class, 'showMfaSetup'])->name('mfa.setup');
+});
+
+// MFA challenge — OWASP A07: throttle to prevent brute-force (5 attempts/min)
+// NOTE: must be OUTSIDE auth middleware because user is NOT logged in yet
+// when redirected here from login (identified via session mfa_user_id).
+Route::middleware('throttle:5,1')->group(function () {
+    Route::get('/mfa/challenge', [AuthController::class, 'showMfaChallenge'])->name('mfa.challenge');
 });

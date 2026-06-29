@@ -24,11 +24,11 @@ class TabManager extends Component
     /** @var array<string, string> */
     public array $availableTabTypes = [];
 
-    /** @var list<string> */
-    public array $presetNames = [];
+    /** @var string[] */
+    public array $availablePresetNames = [];
 
-    /** @var list<string> */
-    public array $skillNames = [];
+    /** @var string[] */
+    public array $availableSkillNames = [];
 
     public string $tabError = '';
 
@@ -38,12 +38,15 @@ class TabManager extends Component
         $this->availableTabTypes = [
             TabType::VSCODE_EXTENSIONS->value => __('blueprint.tab_type_vscode'),
             TabType::MCP_SERVERS->value => __('blueprint.tab_type_mcp'),
+            TabType::SCRIPTS->value => __('blueprint.tab_type_scripts'),
             TabType::AI_CONTEXT->value => __('blueprint.tab_type_ai'),
         ];
 
-        $generator = app(AgentGenerator::class);
-        $this->presetNames = $generator->presetNames();
-        $this->skillNames = $generator->skillNames();
+        // Load available presets and skills dynamically from registry
+        /** @var AgentGenerator $generator */
+        $generator = app()->make(AgentGenerator::class);
+        $this->availablePresetNames = $generator->presetNames();
+        $this->availableSkillNames = $generator->skillNames();
     }
 
     /**
@@ -58,7 +61,7 @@ class TabManager extends Component
         // Validar que no exista ya una pestaña del mismo tipo
         foreach ($this->tabs as $tab) {
             if ($tab['type'] === $type) {
-                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => $type]);
+                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => TabType::label($type)]);
                 return;
             }
         }
@@ -68,6 +71,7 @@ class TabManager extends Component
         $defaultConfig = match ($type) {
             TabType::VSCODE_EXTENSIONS->value => ['extensions' => []],
             TabType::MCP_SERVERS->value => ['servers' => []],
+            TabType::SCRIPTS->value => ['scripts' => []],
             TabType::AI_CONTEXT->value => ['presets' => [], 'skills' => [], 'custom_rules' => ''],
             default => [],
         };
@@ -188,6 +192,54 @@ class TabManager extends Component
         }
 
         $this->tabs[$tabIndex]['config']['servers'][$serverIndex][$field] = $value;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Add an empty script entry to a scripts tab.
+     */
+    public function addScript(int $tabIndex): void
+    {
+        if (!isset($this->tabs[$tabIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['scripts'][] = [
+            'command' => '',
+            'description' => '',
+        ];
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Remove a script entry from a scripts tab.
+     */
+    public function removeScript(int $tabIndex, int $scriptIndex): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
+            return;
+        }
+
+        unset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex]);
+        $this->tabs[$tabIndex]['config']['scripts'] = array_values(
+            $this->tabs[$tabIndex]['config']['scripts']
+        );
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update a script field (command or description) in a scripts tab.
+     */
+    public function updateScriptField(int $tabIndex, int $scriptIndex, string $field, string $value): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['scripts'][$scriptIndex][$field] = $value;
 
         $this->syncToParent();
     }

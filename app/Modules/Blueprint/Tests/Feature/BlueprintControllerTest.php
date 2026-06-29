@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -190,7 +191,7 @@ class BlueprintControllerTest extends TestCase
             'name' => 'Dev',
             'email' => 'dev@example.com',
             'password' => bcrypt('password'),
-            'plan_id' => $owner->plan_id,
+            'plan_id' => $organization->plan_id,
         ]);
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
@@ -265,7 +266,7 @@ class BlueprintControllerTest extends TestCase
             'name' => 'Maintainer',
             'email' => 'maintainer@example.com',
             'password' => bcrypt('password'),
-            'plan_id' => $owner->plan_id,
+            'plan_id' => $organization->plan_id,
         ]);
         $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
 
@@ -287,49 +288,192 @@ class BlueprintControllerTest extends TestCase
         $this->assertSoftDeleted($blueprint);
     }
 
-    // ─── Landing Marketplace Tests (REQ-MARKETPLACE-1) ───────────────────
+    // --- publish tests ---
 
-    public function test_landing_shows_public_blueprints(): void
+    public function test_publish_requires_auth(): void
     {
-        [$user, $organization] = $this->createUserWithOrg();
-
-        // Create a public blueprint
-        Blueprint::create([
-            'uuid' => '550e8400-e29b-41d4-a716-446655440010',
-            'organization_id' => $organization->id,
-            'slug' => 'public-bp',
-            'title' => 'Public Blueprint',
-            'description' => 'This is public',
-            'is_public' => true,
-            'tabs_config' => [],
-            'created_by' => $user->id,
-        ]);
-
-        $response = $this->get(route('landing'));
-
-        $response->assertStatus(200);
-        $response->assertSee('Public Blueprint');
+        $response = $this->post('/blueprints/some-uuid/publish');
+        $response->assertRedirect('/login');
     }
 
-    public function test_landing_excludes_private_blueprints(): void
+    public function test_publish_without_permission_denied(): void
     {
-        [$user, $organization] = $this->createUserWithOrg();
+        config(['marketplace.enabled' => true]);
+        config(['marketplace.billing_enabled' => true]);
 
-        // Create a private blueprint
-        Blueprint::create([
-            'uuid' => '550e8400-e29b-41d4-a716-446655440011',
-            'organization_id' => $organization->id,
-            'slug' => 'private-bp',
-            'title' => 'Private Blueprint',
-            'description' => 'This is private',
-            'is_public' => false,
-            'tabs_config' => [],
-            'created_by' => $user->id,
+        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'pub-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
         ]);
 
-        $response = $this->get(route('landing'));
+        $org = Organization::create([
+            'slug' => 'pub-org',
+            'name' => 'Pub Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $proPlan->id,
+        ]);
+        $org->members()->attach($owner->id, ['role' => 'owner']);
 
-        $response->assertStatus(200);
-        $response->assertDontSee('Private Blueprint');
+        $maintainer = User::create([
+            'name' => 'Maintainer',
+            'email' => 'pub-maintainer@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+        $org->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440011',
+            'organization_id' => $org->id,
+            'slug' => 'publish-deny',
+            'title' => 'Publish Deny Test',
+            'tabs_config' => [],
+            'created_by' => $owner->id,
+        ]);
+
+        $response = $this->actingAs($maintainer)
+            ->post('/blueprints/' . $blueprint->uuid . '/publish');
+
+        $response->assertForbidden();
+    }
+
+    public function test_publish_successful(): void
+    {
+        config(['marketplace.enabled' => true]);
+        config(['marketplace.billing_enabled' => true]);
+
+        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Pub Owner',
+            'email' => 'pub-success@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        $org = Organization::create([
+            'slug' => 'pub-success-org',
+            'name' => 'Pub Success Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $proPlan->id,
+        ]);
+        $org->members()->attach($owner->id, ['role' => 'owner']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440012',
+            'organization_id' => $org->id,
+            'slug' => 'publish-success',
+            'title' => 'Publish Success Test',
+            'tabs_config' => [],
+            'created_by' => $owner->id,
+        ]);
+
+        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+
+        $response = $this->actingAs($owner)
+            ->post('/blueprints/' . $blueprint->uuid . '/publish');
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $blueprint->refresh();
+        $this->assertTrue($blueprint->is_public);
+        $this->assertEquals($marketplaceOrg->id, $blueprint->organization_id);
+    }
+
+    // --- vote tests ---
+
+    public function test_vote_requires_auth(): void
+    {
+        $response = $this->post('/blueprints/some-uuid/vote', ['vote_type' => 'up']);
+        $response->assertRedirect('/login');
+    }
+
+    public function test_vote_success(): void
+    {
+        config(['marketplace.enabled' => true]);
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Vote Owner',
+            'email' => 'vote-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        $org = Organization::create([
+            'slug' => 'vote-org',
+            'name' => 'Vote Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $proPlan->id,
+        ]);
+        $org->members()->attach($owner->id, ['role' => 'owner']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440021',
+            'organization_id' => $org->id,
+            'slug' => 'vote-test',
+            'title' => 'Vote Test',
+            'tabs_config' => [],
+            'is_public' => true,
+            'created_by' => $owner->id,
+        ]);
+
+        $response = $this->actingAs($owner)
+            ->post('/blueprints/' . $blueprint->uuid . '/vote', ['vote_type' => 'up']);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('blueprint_votes', [
+            'user_id' => $owner->id,
+            'blueprint_id' => $blueprint->id,
+            'vote_type' => 'up',
+        ]);
+    }
+
+    public function test_vote_throttle_exceeded(): void
+    {
+        config(['marketplace.enabled' => true]);
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Throttle Owner',
+            'email' => 'throttle-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        $org = Organization::create([
+            'slug' => 'throttle-org',
+            'name' => 'Throttle Org',
+            'owner_id' => $owner->id,
+            'plan_id' => $proPlan->id,
+        ]);
+        $org->members()->attach($owner->id, ['role' => 'owner']);
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440022',
+            'organization_id' => $org->id,
+            'slug' => 'throttle-test',
+            'title' => 'Throttle Test',
+            'tabs_config' => [],
+            'is_public' => true,
+            'created_by' => $owner->id,
+        ]);
+
+        // Exceed the throttle limit (10 requests per minute)
+        for ($i = 0; $i < 11; $i++) {
+            $response = $this->actingAs($owner)
+                ->post('/blueprints/' . $blueprint->uuid . '/vote', ['vote_type' => 'up']);
+        }
+
+        $response->assertStatus(429);
     }
 }

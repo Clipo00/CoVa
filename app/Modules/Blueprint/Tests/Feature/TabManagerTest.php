@@ -23,7 +23,7 @@ class TabManagerTest extends TestCase
 
         $component->call('addTab', 'vscode_extensions');
 
-        $component->assertSet('tabError', __('blueprint.duplicate_tab_type', ['type' => 'vscode_extensions']));
+        $component->assertSet('tabError', __('blueprint.duplicate_tab_type', ['type' => __('blueprint.tab_type_vscode')]));
         $component->assertCount('tabs', 1);
     }
 
