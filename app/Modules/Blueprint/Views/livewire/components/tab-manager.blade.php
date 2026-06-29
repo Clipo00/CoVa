@@ -153,53 +153,135 @@
             {{-- AI Context Config --}}
             @if($tab['type'] === 'ai_context')
                 @php
-                    $presets = $tab['config']['presets'] ?? [];
-                    $skills = $tab['config']['skills'] ?? [];
-                    $customRules = $tab['config']['custom_rules'] ?? '';
+                    $segments = $tab['config']['segments'] ?? [];
+                    $usedPresetNames = array_map(fn($s) => $s['name'], array_filter($segments, fn($s) => $s['type'] === 'preset'));
+                    $usedSkillNames = array_map(fn($s) => $s['name'], array_filter($segments, fn($s) => $s['type'] === 'skill'));
+                    $unusedPresets = array_values(array_diff($availablePresetNames, $usedPresetNames));
+                    $unusedSkills = array_values(array_diff($availableSkillNames, $usedSkillNames));
                 @endphp
                 <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.code_presets') }}</label>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach($availablePresetNames as $preset)
-                                <button
-                                    type="button"
-                                    wire:click="togglePreset({{ $index }}, '{{ $preset }}')"
-                                    class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
-                                        {{ in_array($preset, $presets) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
-                                >
-                                    {{ __('blueprint.preset_' . str_replace('-', '_', $preset)) }}
-                                </button>
+                    {{-- Add Preset Dropdown --}}
+                    @if(!empty($unusedPresets))
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                {{ __('blueprint.add_preset') }}
+                            </label>
+                            <select
+                                wire:change="addSegment({{ $index }}, 'preset', $event.target.value)"
+                                class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            >
+                                <option value="">{{ __('blueprint.add_preset_placeholder') }}</option>
+                                @foreach($unusedPresets as $preset)
+                                    <option value="{{ $preset }}">
+                                        {{ __('blueprint.preset_' . str_replace('-', '_', $preset)) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
+                    {{-- Add Skill Dropdown --}}
+                    @if(!empty($unusedSkills))
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                {{ __('blueprint.add_skill') }}
+                            </label>
+                            <select
+                                wire:change="addSegment({{ $index }}, 'skill', $event.target.value)"
+                                class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            >
+                                <option value="">{{ __('blueprint.add_skill_placeholder') }}</option>
+                                @foreach($unusedSkills as $skill)
+                                    <option value="{{ $skill }}">
+                                        {{ __('blueprint.skill_' . str_replace('-', '_', $skill)) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
+                    {{-- Add Custom Skill Button --}}
+                    <button
+                        type="button"
+                        wire:click="addSegment({{ $index }}, 'custom')"
+                        class="inline-flex items-center px-3 py-1.5 border border-dashed border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-700/50 dark:hover:bg-gray-700"
+                    >
+                        <svg class="-ml-1 mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        {{ __('blueprint.add_custom_skill') }}
+                    </button>
+
+                    {{-- Segment Cards --}}
+                    @if(empty($segments))
+                        <p class="text-sm text-gray-500 dark:text-gray-400 italic">{{ __('blueprint.segments_empty') }}</p>
+                    @else
+                        <div class="space-y-3">
+                            @foreach($segments as $segIndex => $segment)
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
+                                    {{-- Segment Header --}}
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2 min-w-0">
+                                            @if($segment['type'] === 'custom')
+                                                <input
+                                                    type="text"
+                                                    wire:change="updateSegmentName({{ $index }}, {{ $segIndex }}, $event.target.value)"
+                                                    value="{{ $segment['name'] }}"
+                                                    class="block w-40 px-2 py-1 text-sm font-medium rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                    placeholder="{{ __('blueprint.segment_name_placeholder') }}"
+                                                />
+                                            @else
+                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                                    {{ $segment['name'] }}
+                                                </span>
+                                            @endif
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium
+                                                {{ $segment['type'] === 'preset' ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300' : ($segment['type'] === 'skill' ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300') }}">
+                                                {{ $segment['type'] }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            @if($segIndex > 0)
+                                            <button type="button" wire:click="moveSegment({{ $index }}, {{ $segIndex }}, -1)" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="{{ __('blueprint.var_move_up') }}">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                                                </button>
+                                            @endif
+                                            @if($segIndex < count($segments) - 1)
+                                            <button type="button" wire:click="moveSegment({{ $index }}, {{ $segIndex }}, 1)" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="{{ __('blueprint.var_move_down') }}">
+                                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                                </button>
+                                            @endif
+                                            <button
+                                                type="button"
+                                                wire:click="removeSegment({{ $index }}, {{ $segIndex }})"
+                                                wire:confirm="{{ __('blueprint.segment_remove_confirm') }}"
+                                                class="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300"
+                                                title="{{ __('blueprint.segment_remove') }}"
+                                            >
+                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {{-- Segment Content --}}
+                                    <div>
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                            {{ __('blueprint.segment_content_label') }}
+                                        </label>
+                                        <textarea
+                                            wire:change="updateSegmentContent({{ $index }}, {{ $segIndex }}, $event.target.value)"
+                                            rows="4"
+                                            class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                                            placeholder="{{ __('blueprint.segment_content_placeholder') }}"
+                                        >{{ $segment['content'] ?? '' }}</textarea>
+                                        @if($segment['type'] !== 'custom' && $segment['content'] !== null)
+                                            <p class="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                                                {{ __('blueprint.segment_override_hint') }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.skills_label') }}</label>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach($availableSkillNames as $skill)
-                                <button
-                                    type="button"
-                                    wire:click="toggleSkill({{ $index }}, '{{ $skill }}')"
-                                    class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
-                                        {{ in_array($skill, $skills) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
-                                >
-                                    {{ __('blueprint.skill_' . str_replace('-', '_', $skill)) }}
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{{ __('blueprint.custom_rules') }}</label>
-                        <textarea
-                            wire:change="updateCustomRules({{ $index }}, $event.target.value)"
-                            rows="6"
-                            class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
-                            placeholder="{{ __('blueprint.custom_rules_placeholder') }}"
-                        >{{ $customRules }}</textarea>
-                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.custom_rules_hint') }}</p>
-                    </div>
+                    @endif
                 </div>
             @endif
         </div>

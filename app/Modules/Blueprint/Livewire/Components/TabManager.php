@@ -71,7 +71,7 @@ class TabManager extends Component
             TabType::VSCODE_EXTENSIONS->value => ['extensions' => []],
             TabType::MCP_SERVERS->value => ['servers' => []],
             TabType::SCRIPTS->value => ['scripts' => []],
-            TabType::AI_CONTEXT->value => ['presets' => [], 'skills' => [], 'custom_rules' => ''],
+            TabType::AI_CONTEXT->value => ['segments' => []],
             default => [],
         };
 
@@ -243,160 +243,188 @@ class TabManager extends Component
         $this->syncToParent();
     }
 
+    // ──────────────────────────────────────────────
+    //  AI Context: Segment CRUD
+    // ──────────────────────────────────────────────
+
     /**
-     * Toggle a preset for AI Context tab.
+     * Add a segment to an AI Context tab.
      *
-     * When toggled ON, the preset's generated content is wrapped in markers
-     * and loaded into the custom_rules textarea for editing.
-     * When toggled OFF, the marked block is removed from custom_rules.
+     * For preset and skill types, the default content is loaded from the
+     * corresponding registry. For custom type, an empty content segment
+     * with an editable name is created.
      */
-    public function togglePreset(int $tabIndex, string $preset): void
+    public function addSegment(int $tabIndex, string $type, string $name = ''): void
     {
-        if (!isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
             return;
         }
 
-        $presets = $this->tabs[$tabIndex]['config']['presets'] ?? [];
+        if ($name === '') {
+            $name = $this->suggestSegmentName($type);
+        }
 
-        if (in_array($preset, $presets, true)) {
-            $presets = array_values(array_filter($presets, fn($p) => $p !== $preset));
-
-            // Remove the preset's marked block from custom_rules
-            $this->removeMarkedBlock($tabIndex, 'preset', $preset);
-        } else {
-            $presets[] = $preset;
-
-            // Load preset content into custom_rules wrapped in markers
-            $presetsRegistry = app()->make('blueprint.presets');
-            if ($presetsRegistry->has($preset)) {
-                $presetContent = $presetsRegistry->get($preset)->content();
-                $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
-
-                $markerBegin = "<!-- BEGIN:preset:{$preset} -->";
-                $markerEnd = "<!-- END:preset:{$preset} -->";
-
-                // Only append if the marker isn't already present
-                if (!str_contains($currentRules, $markerBegin)) {
-                    $separator = $currentRules !== '' ? "\n\n" : '';
-                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules
-                        . $separator
-                        . $markerBegin . "\n"
-                        . $presetContent . "\n"
-                        . $markerEnd;
-                }
+        // Prevent duplicate names within segments
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        foreach ($segments as $segment) {
+            if ($segment['name'] === $name) {
+                return; // Silently reject duplicates
             }
         }
 
-        $this->tabs[$tabIndex]['config']['presets'] = $presets;
-
-        $this->syncToParent();
-    }
-
-    /**
-     * Toggle a skill for AI Context tab.
-     *
-     * When toggled ON, the skill's generated content is wrapped in markers
-     * and loaded into the custom_rules textarea for editing.
-     * When toggled OFF, the marked block is removed from custom_rules.
-     */
-    public function toggleSkill(int $tabIndex, string $skill): void
-    {
-        if (!isset($this->tabs[$tabIndex])) {
-            return;
-        }
-
-        $skills = $this->tabs[$tabIndex]['config']['skills'] ?? [];
-
-        if (in_array($skill, $skills, true)) {
-            $skills = array_values(array_filter($skills, fn($s) => $s !== $skill));
-
-            // Remove the skill's marked block from custom_rules
-            $this->removeMarkedBlock($tabIndex, 'skill', $skill);
-        } else {
-            $skills[] = $skill;
-
-            // Load skill content into custom_rules wrapped in markers
-            $skillsRegistry = app()->make('blueprint.skills');
-            if ($skillsRegistry->has($skill)) {
-                $skillContent = $skillsRegistry->get($skill)->content();
-                $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
-
-                $markerBegin = "<!-- BEGIN:skill:{$skill} -->";
-                $markerEnd = "<!-- END:skill:{$skill} -->";
-
-                // Only append if the marker isn't already present
-                if (!str_contains($currentRules, $markerBegin)) {
-                    $separator = $currentRules !== '' ? "\n\n" : '';
-                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules
-                        . $separator
-                        . $markerBegin . "\n"
-                        . $skillContent . "\n"
-                        . $markerEnd;
-                }
+        // Load default content from registry for preset/skill
+        $content = null;
+        if ($type === 'preset') {
+            $registry = app()->make('blueprint.presets');
+            if ($registry->has($name)) {
+                $content = $registry->get($name)->content();
+            }
+        } elseif ($type === 'skill') {
+            $registry = app()->make('blueprint.skills');
+            if ($registry->has($name)) {
+                $content = $registry->get($name)->content();
             }
         }
 
-        $this->tabs[$tabIndex]['config']['skills'] = $skills;
+        $segments[] = [
+            'type' => $type,
+            'name' => $name,
+            'content' => $content,
+        ];
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
 
         $this->syncToParent();
     }
 
     /**
-     * Remove a marked block (preset or skill) from the custom_rules textarea.
+     * Remove a segment from an AI Context tab by index.
+     */
+    public function removeSegment(int $tabIndex, int $segmentIndex): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        unset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex]);
+        $this->tabs[$tabIndex]['config']['segments'] = array_values(
+            $this->tabs[$tabIndex]['config']['segments']
+        );
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Move a segment up or down in the ordered list.
+     */
+    public function moveSegment(int $tabIndex, int $segmentIndex, int $direction): void
+    {
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        $newIndex = $segmentIndex + $direction;
+
+        if ($newIndex < 0 || $newIndex >= count($segments)) {
+            return;
+        }
+
+        $temp = $segments[$segmentIndex];
+        $segments[$segmentIndex] = $segments[$newIndex];
+        $segments[$newIndex] = $temp;
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update the content of a segment (override for preset/skill, content for custom).
+     */
+    public function updateSegmentContent(int $tabIndex, int $segmentIndex, string $content): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'][$segmentIndex]['content'] = $content;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update the name of a segment (for custom segments).
+     */
+    public function updateSegmentName(int $tabIndex, int $segmentIndex, string $name): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        if ($name === '') {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'][$segmentIndex]['name'] = $name;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Determine the segments that are NOT yet added, for dropdown display.
      *
-     * Matches the HTML-comment markers and removes the entire block
-     * including the markers and the content between them.
-     * Uses a two-pass approach: strip the marked block, then normalize whitespace.
+     * @return string[] Preset names not yet in the current segments
      */
-    private function removeMarkedBlock(int $tabIndex, string $type, string $name): void
+    public function getUnusedPresetsProperty(int $tabIndex): array
     {
-        $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
-
-        if ($currentRules === '') {
-            return;
-        }
-
-        $markerBegin = preg_quote("<!-- BEGIN:{$type}:{$name} -->", '/');
-        $markerEnd = preg_quote("<!-- END:{$type}:{$name} -->", '/');
-
-        // Strip the marked block (just the markers and content between them)
-        $pattern = '/' . $markerBegin . '.*?' . $markerEnd . '/s';
-        $cleaned = preg_replace($pattern, '', $currentRules);
-
-        if ($cleaned === null) {
-            return; // Regex error — leave content untouched
-        }
-
-        // Normalize: collapse blank-line gaps left by removal
-        //   - 3+ consecutive newlines → 2 (one blank line)
-        //   - Leading/trailing whitespace removed
-        $cleaned = preg_replace('/\n{3,}/', "\n\n", $cleaned);
-        $cleaned = trim($cleaned);
-
-        $this->tabs[$tabIndex]['config']['custom_rules'] = $cleaned;
+        return $this->unusedNames($tabIndex, 'preset', $this->availablePresetNames);
     }
 
     /**
-     * Update custom rules for AI Context tab.
+     * Determine the skills that are NOT yet added, for dropdown display.
+     *
+     * @return string[] Skill names not yet in the current segments
      */
-    public function updateCustomRules(int $tabIndex, string $rules): void
+    public function getUnusedSkillsProperty(int $tabIndex): array
     {
-        if (!isset($this->tabs[$tabIndex])) {
-            return;
+        return $this->unusedNames($tabIndex, 'skill', $this->availableSkillNames);
+    }
+
+    /**
+     * Suggest a unique name for a new segment.
+     */
+    private function suggestSegmentName(string $type): string
+    {
+        return match ($type) {
+            'preset' => 'preset',
+            'skill' => 'skill',
+            'custom' => 'custom-skill',
+            default => 'segment',
+        };
+    }
+
+    /**
+     * Filter out names already present in the tab's segments.
+     *
+     * @param int    $tabIndex
+     * @param string $type     Segment type to filter by
+     * @param string[] $allNames All available names
+     * @return string[]
+     */
+    private function unusedNames(int $tabIndex, string $type, array $allNames): array
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'])) {
+            return $allNames;
         }
 
-        $this->tabs[$tabIndex]['config']['custom_rules'] = $rules;
+        $existingSegments = $this->tabs[$tabIndex]['config']['segments'];
+        $existingNames = array_map(
+            fn (array $s) => $s['name'],
+            array_filter($existingSegments, fn (array $s) => $s['type'] === $type),
+        );
 
-        $this->syncToParent();
+        return array_values(array_diff($allNames, $existingNames));
     }
 
     /**
      * Sync state to parent component.
-     *
-     * In Livewire 3, we use $this->dispatch() with a named event that
-     * the parent component listens to via getListeners().
-     * The parent (BlueprintEditForm/BlueprintCreateForm) has
-     * 'tabs-updated' => 'onTabsUpdated' in its getListeners().
      */
     private function syncToParent(): void
     {

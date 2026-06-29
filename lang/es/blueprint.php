@@ -179,6 +179,20 @@ return [
     'restore_disabled' => 'No disponible',
     'restore_permission_info' => 'Solo el owner puede restaurar',
 
+    // AI Context Segments
+    'add_preset' => 'Añadir preset',
+    'add_preset_placeholder' => 'Selecciona un preset...',
+    'add_skill' => 'Añadir skill',
+    'add_skill_placeholder' => 'Selecciona una skill...',
+    'add_custom_skill' => 'Añadir skill personalizada',
+    'segment_name_placeholder' => 'Nombre del segmento...',
+    'segment_content_label' => 'Contenido',
+    'segment_content_placeholder' => 'Escribe el contenido del segmento aquí...',
+    'segment_remove' => 'Eliminar segmento',
+    'segment_remove_confirm' => '¿Estás seguro de que quieres eliminar este segmento?',
+    'segment_override_hint' => 'Has modificado el contenido original. Vuelve a seleccionarlo desde el desplegable para restaurarlo.',
+    'segments_empty' => 'No hay segmentos configurados. Añade presets, skills o una skill personalizada desde arriba.',
+
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',
     'tab_type_mcp' => 'MCP Servers',
