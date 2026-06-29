@@ -6,7 +6,6 @@ namespace App\Modules\Blueprint\Livewire\Components;
 
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
-use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use Livewire\Component;
 
 /**
@@ -33,9 +32,6 @@ class TabManager extends Component
 
     public string $tabError = '';
 
-    private SegmentRegistry $presetsRegistry;
-    private SegmentRegistry $skillsRegistry;
-
     public function mount(?array $tabs = null): void
     {
         $this->tabs = $tabs ?? [];
@@ -50,10 +46,6 @@ class TabManager extends Component
         $generator = app()->make(AgentGenerator::class);
         $this->availablePresetNames = $generator->presetNames();
         $this->availableSkillNames = $generator->skillNames();
-
-        // Store registries for content lookup when toggling presets/skills
-        $this->presetsRegistry = app()->make('blueprint.presets');
-        $this->skillsRegistry = app()->make('blueprint.skills');
     }
 
     /**
@@ -271,8 +263,9 @@ class TabManager extends Component
             $presets[] = $preset;
 
             // Load preset content into custom_rules for inline editing
-            if ($this->presetsRegistry->has($preset)) {
-                $presetContent = $this->presetsRegistry->get($preset)->content();
+            $presetsRegistry = app()->make('blueprint.presets');
+            if ($presetsRegistry->has($preset)) {
+                $presetContent = $presetsRegistry->get($preset)->content();
                 $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
 
                 // Only append if not already present (avoid duplicates on re-toggle)
@@ -308,8 +301,9 @@ class TabManager extends Component
             $skills[] = $skill;
 
             // Load skill content into custom_rules for inline editing
-            if ($this->skillsRegistry->has($skill)) {
-                $skillContent = $this->skillsRegistry->get($skill)->content();
+            $skillsRegistry = app()->make('blueprint.skills');
+            if ($skillsRegistry->has($skill)) {
+                $skillContent = $skillsRegistry->get($skill)->content();
                 $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
 
                 // Only append if not already present (avoid duplicates on re-toggle)
