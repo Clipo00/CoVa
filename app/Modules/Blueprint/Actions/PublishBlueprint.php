@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Actions;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Marketplace\Actions\NotifySubscribers;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\ValueObjects\Uuid;
 use Illuminate\Support\Facades\DB;
@@ -14,11 +15,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class PublishBlueprint
 {
     /**
-     * Publish a blueprint to the marketplace.
+     * Publish or sync a blueprint to the marketplace.
      *
-     * Creates a copy in the marketplace organization with secrets cleared,
-     * marks the original as public, and creates a subscription so the
-     * creator can sync updates later.
+     * First publish: creates a copy in the marketplace org with secrets cleared,
+     * marks the original as public, and creates a subscription.
+     *
+     * Re-publish (sync): updates the existing marketplace copy with the
+     * latest data from the original and notifies subscribers.
      */
     public function execute(Blueprint $blueprint, User $user): Blueprint
     {
@@ -35,15 +38,54 @@ class PublishBlueprint
             }
         }
 
-        // 3. Ensure blueprint is not already public
-        if ($blueprint->is_public) {
-            throw new HttpException(409, __('blueprint.publish_already_public'));
-        }
-
-        // 4. Resolve marketplace organization
         $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->firstOrFail();
 
-        // 5. Create a copy in the marketplace org (secrets cleared on copy)
+        // 3. Check if already published — find the marketplace copy via subscription
+        $subscription = DB::table('blueprint_subscriptions')
+            ->where('user_id', $user->id)
+            ->where('copied_blueprint_id', $blueprint->id)
+            ->first();
+
+        if ($subscription) {
+            // === SYNC: Update existing marketplace copy ===
+            $copy = Blueprint::find($subscription->subscribed_blueprint_id);
+
+            if (!$copy) {
+                throw new HttpException(500, __('blueprint.publish_sync_copy_missing'));
+            }
+
+            $this->syncCopy($blueprint, $copy);
+
+            // Notify subscribers about the update
+            app(NotifySubscribers::class)->execute($copy, 'updated');
+
+            return $blueprint->fresh();
+        }
+
+        // === FIRST PUBLISH: Create marketplace copy ===
+        $copy = $this->createMarketplaceCopy($blueprint, $user, $marketplaceOrg);
+
+        // Mark original as public
+        $blueprint->update(['is_public' => true]);
+
+        // Create subscription linking creator to marketplace copy
+        DB::table('blueprint_subscriptions')->insert([
+            'user_id' => $user->id,
+            'subscribed_blueprint_id' => $copy->id,
+            'copied_blueprint_id' => $blueprint->id,
+            'notify_on_update' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return $blueprint->fresh();
+    }
+
+    /**
+     * Create a new marketplace copy from the original blueprint.
+     */
+    private function createMarketplaceCopy(Blueprint $blueprint, User $user, Organization $marketplaceOrg): Blueprint
+    {
         $copy = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $marketplaceOrg->id,
@@ -56,8 +98,28 @@ class PublishBlueprint
             'created_by' => $user->id,
         ]);
 
-        // 5b. Copy variables — clear secret values on the marketplace copy
-        foreach ($blueprint->variables as $variable) {
+        $this->syncCopy($blueprint, $copy);
+
+        return $copy;
+    }
+
+    /**
+     * Sync variables and tags from original to marketplace copy.
+     * Secret values are always cleared on the copy.
+     */
+    private function syncCopy(Blueprint $original, Blueprint $copy): void
+    {
+        // Update basic fields
+        $copy->update([
+            'title' => $original->title,
+            'description' => $original->description,
+            'category_id' => $original->category_id,
+            'tabs_config' => $original->tabs_config,
+        ]);
+
+        // Sync variables: delete old, recreate with secrets cleared
+        $copy->variables()->delete();
+        foreach ($original->variables as $variable) {
             $copy->variables()->create([
                 'key' => $variable->key,
                 'type' => $variable->type,
@@ -70,33 +132,10 @@ class PublishBlueprint
             ]);
         }
 
-        // 5c. Copy tags
-        foreach ($blueprint->tags as $tag) {
+        // Sync tags
+        $copy->tags()->delete();
+        foreach ($original->tags as $tag) {
             $copy->tags()->create(['tag' => $tag->tag]);
         }
-
-        // 6. Mark original as public (stays in user's org)
-        $blueprint->update(['is_public' => true]);
-
-        // 7. Create a subscription so the creator can sync updates later.
-        //    The creator is subscribed to their own marketplace copy,
-        //    and the copied_blueprint_id points back to the original.
-        $exists = DB::table('blueprint_subscriptions')
-            ->where('user_id', $user->id)
-            ->where('subscribed_blueprint_id', $copy->id)
-            ->exists();
-
-        if (!$exists) {
-            DB::table('blueprint_subscriptions')->insert([
-                'user_id' => $user->id,
-                'subscribed_blueprint_id' => $copy->id,
-                'copied_blueprint_id' => $blueprint->id,
-                'notify_on_update' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
-        return $blueprint->fresh();
     }
 }
