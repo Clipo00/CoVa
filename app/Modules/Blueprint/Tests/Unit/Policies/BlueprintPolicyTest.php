@@ -11,6 +11,7 @@ use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class BlueprintPolicyTest extends TestCase
@@ -24,6 +25,9 @@ class BlueprintPolicyTest extends TestCase
         parent::setUp();
         $this->seed(\Database\Seeders\PlanSeeder::class);
         $this->policy = new BlueprintPolicy();
+
+        // Ensure env override doesn't leak into policy tests
+        Config::set('app.marketplace_enabled', false);
     }
 
     public function test_owner_can_update_any_blueprint(): void

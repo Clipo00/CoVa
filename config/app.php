@@ -82,6 +82,18 @@ return [
 
     'supported_locales' => ['es', 'en'],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Marketplace Feature Flag
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, bypasses the plan-level marketplace_publish check in
+    | BlueprintPolicy, allowing any Owner/Maintainer to publish blueprints.
+    | Useful for local development and QA. Set MARKETPLACE_ENABLED=true in .env.
+    |
+    */
+    'marketplace_enabled' => env('MARKETPLACE_ENABLED', false),
+
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'es_ES'),

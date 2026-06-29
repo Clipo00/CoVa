@@ -53,6 +53,11 @@ class BlueprintPolicy
             return false;
         }
 
+        // Dev override: if MARKETPLACE_ENABLED env is true, bypass plan check
+        if (config('app.marketplace_enabled', false)) {
+            return true;
+        }
+
         return $blueprint->organization->plan->has_marketplace_publish;
     }
 }
