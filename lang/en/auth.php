@@ -13,6 +13,8 @@ return [
     // Login form
     'email_label' => 'Email',
     'password_label' => 'Password',
+    'show_password' => 'Show password',
+    'hide_password' => 'Hide password',
     'remember_me' => 'Remember me',
     'login_button' => 'Sign in',
     'no_account' => "Don't have an account?",
