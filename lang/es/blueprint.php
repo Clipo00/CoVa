@@ -21,6 +21,7 @@ return [
     'title_placeholder' => 'Mi Proyecto Laravel',
     'slug_label' => 'Slug *',
     'slug_hint' => 'Identificador único para URLs. Se genera automáticamente desde el título.',
+    'slug_exists' => 'Ya existe un blueprint con el slug \':slug\' en esta organización. Usa otro título o edita el slug manualmente.',
     'category_label' => 'Categoría',
     'category_none' => 'Sin categoría',
     'description_label' => 'Descripción',

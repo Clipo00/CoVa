@@ -157,6 +157,16 @@ class BlueprintCreateForm extends Component
             return;
         }
 
+        // Validar slug único dentro de la organización
+        $slugExists = Blueprint::where('organization_id', $this->organizationId)
+            ->where('slug', $validated['slug'])
+            ->exists();
+
+        if ($slugExists) {
+            $this->addError('slug', __('blueprint.slug_exists', ['slug' => $validated['slug']]));
+            return;
+        }
+
         // Convert tabsConfig to the format expected by tabs_config column
         $tabsForDb = array_values(array_map(fn($tab) => [
             'type' => $tab['type'],
