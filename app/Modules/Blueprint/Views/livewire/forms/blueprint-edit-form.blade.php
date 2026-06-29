@@ -138,6 +138,7 @@
             <div class="p-6">
                 <livewire:blueprint.components.tab-manager
                     :tabs-config="$tabsConfig"
+                    wire:key="edit-tab-manager"
                 />
             </div>
         </div>
@@ -184,6 +185,6 @@
             }
         }
     }" class="mt-6">
-        <livewire:blueprint.components.preview-panel :can-view-secrets="$this->isOwner" />
+        <livewire:blueprint.components.preview-panel :can-view-secrets="$this->isOwner" wire:key="edit-preview-panel" />
     </div>
 </div>
