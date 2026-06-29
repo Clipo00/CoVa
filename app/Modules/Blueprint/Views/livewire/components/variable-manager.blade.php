@@ -70,7 +70,7 @@ foreach($variables as $var) {
                         @endif
                     >
                         <td class="py-3 pl-4 pr-3">
-                            <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono" required>
+                            <input type="text" wire:model="variables.{{ $index }}.key" placeholder="{{ __('blueprint.var_key_placeholder') }}" class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono">
                         </td>
                         <td class="px-3 py-3">
                             <div class="flex items-center gap-2">
