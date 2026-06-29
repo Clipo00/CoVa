@@ -384,7 +384,15 @@ class BlueprintControllerTest extends TestCase
 
         $blueprint->refresh();
         $this->assertTrue($blueprint->is_public);
-        $this->assertEquals($marketplaceOrg->id, $blueprint->organization_id);
+        // Original stays in user's org — a copy was created in marketplace
+        $this->assertEquals($org->id, $blueprint->organization_id);
+
+        // Verify marketplace copy exists
+        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $this->assertDatabaseHas('blueprints', [
+            'organization_id' => $marketplaceOrg->id,
+            'is_public' => true,
+        ]);
     }
 
     // --- vote tests ---
