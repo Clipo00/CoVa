@@ -40,34 +40,19 @@ class BlueprintPolicy
     {
         // Marketplace must be globally enabled
         if (!config('marketplace.enabled')) {
-            \Illuminate\Support\Facades\Log::warning('Publish denied: marketplace disabled', ['user_id' => $user->id]);
             return false;
         }
 
         // Must be owner of the blueprint's org
-        $org = $blueprint->organization;
-        if (!$org) {
-            \Illuminate\Support\Facades\Log::warning('Publish denied: organization not found', ['user_id' => $user->id, 'blueprint_id' => $blueprint->id]);
-            return false;
-        }
-        if (!$user->isOwnerOf($org)) {
-            \Illuminate\Support\Facades\Log::warning('Publish denied: user is not owner', [
-                'user_id' => $user->id,
-                'org_id' => $org->id,
-                'org_owner_id' => $org->owner_id,
-            ]);
+        if (!$user->isOwnerOf($blueprint->organization)) {
             return false;
         }
 
         // If billing is enabled, check plan
         if (config('marketplace.billing_enabled')) {
-            $plan = $org->owner?->plan;
+            // Plan belongs to the owner, not the org directly
+            $plan = $blueprint->organization->owner?->plan;
             if (!$plan || !$plan->has_marketplace_publish) {
-                \Illuminate\Support\Facades\Log::warning('Publish denied: plan check failed', [
-                    'user_id' => $user->id,
-                    'plan' => $plan?->name ?? 'null',
-                    'has_marketplace_publish' => $plan?->has_marketplace_publish ?? 'null',
-                ]);
                 return false;
             }
         }
