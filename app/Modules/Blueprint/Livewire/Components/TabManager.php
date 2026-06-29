@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Livewire\Components;
 
 use App\Modules\Blueprint\Enums\TabType;
+use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use Livewire\Component;
 
 /**
@@ -23,6 +24,12 @@ class TabManager extends Component
     /** @var array<string, string> */
     public array $availableTabTypes = [];
 
+    /** @var list<string> */
+    public array $presetNames = [];
+
+    /** @var list<string> */
+    public array $skillNames = [];
+
     public string $tabError = '';
 
     public function mount(?array $tabsConfig = null): void
@@ -33,6 +40,10 @@ class TabManager extends Component
             TabType::MCP_SERVERS->value => __('blueprint.tab_type_mcp'),
             TabType::AI_CONTEXT->value => __('blueprint.tab_type_ai'),
         ];
+
+        $generator = app(AgentGenerator::class);
+        $this->presetNames = $generator->presetNames();
+        $this->skillNames = $generator->skillNames();
     }
 
     /**

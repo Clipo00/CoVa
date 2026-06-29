@@ -105,4 +105,40 @@ class CreateBlueprintTest extends TestCase
         $this->expectException(MaxVariablesReachedException::class);
         $action->execute($organization, 'Too Many Vars', 'too-many-vars', variables: $variables);
     }
+
+    public function test_it_creates_blueprint_with_template_tabs_config(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $user = User::create([
+            'name' => 'John',
+            'email' => 'john-tpl@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($user, 'Template Org', 'tpl-org');
+
+        $this->actingAs($user);
+
+        $tabsConfig = [
+            ['type' => 'vscode_extensions', 'config' => ['extensions' => ['bmewburn.vscode-intelephense-client']]],
+            ['type' => 'mcp_servers', 'config' => ['servers' => [['name' => 'test', 'command' => 'npx', 'args' => []]]]],
+            ['type' => 'ai_context', 'config' => ['presets' => ['laravel-conventions'], 'skills' => [], 'custom_rules' => '']],
+        ];
+
+        $action = new CreateBlueprint();
+        $blueprint = $action->execute(
+            organization: $organization,
+            title: 'Template BP',
+            slug: 'template-bp',
+            tabsConfig: $tabsConfig,
+        );
+
+        $this->assertCount(3, $blueprint->tabs_config);
+        $this->assertEquals('vscode_extensions', $blueprint->tabs_config[0]['type']);
+        $this->assertEquals('mcp_servers', $blueprint->tabs_config[1]['type']);
+        $this->assertEquals('ai_context', $blueprint->tabs_config[2]['type']);
+        $this->assertEquals(['laravel-conventions'], $blueprint->tabs_config[2]['config']['presets']);
+    }
 }

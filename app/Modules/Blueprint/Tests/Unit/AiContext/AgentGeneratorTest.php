@@ -160,4 +160,50 @@ class AgentGeneratorTest extends TestCase
         $this->assertContains('stripe', $names);
         $this->assertContains('tailwind', $names);
     }
+
+    public function test_preset_names_returns_all_7_presets_after_registration(): void
+    {
+        // Register the 4 new presets (Phase 5 will create them)
+        $this->presetsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Presets\DockerPreset()
+        );
+        $this->presetsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Presets\CICDPreset()
+        );
+        $this->presetsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset()
+        );
+        $this->presetsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset()
+        );
+
+        $names = $this->generator->presetNames();
+
+        $this->assertCount(7, $names);
+        $this->assertContains('docker', $names);
+        $this->assertContains('cicd', $names);
+        $this->assertContains('laravel-conventions', $names);
+        $this->assertContains('typescript-strict', $names);
+    }
+
+    public function test_skill_names_returns_all_5_skills_after_registration(): void
+    {
+        // Register the 3 new skills (Phase 5 will create them)
+        $this->skillsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill()
+        );
+        $this->skillsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill()
+        );
+        $this->skillsRegistry->register(
+            new \App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill()
+        );
+
+        $names = $this->generator->skillNames();
+
+        $this->assertCount(5, $names);
+        $this->assertContains('api-design', $names);
+        $this->assertContains('react-expert', $names);
+        $this->assertContains('vue-expert', $names);
+    }
 }

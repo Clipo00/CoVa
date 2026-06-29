@@ -185,4 +185,129 @@ class BlueprintPolicyTest extends TestCase
 
         $this->assertFalse($this->policy->delete($maintainer, $blueprint));
     }
+
+    // ─── Publish method tests (REQ-PUBLISH-2) ───────────────────────────
+
+    public function test_owner_with_pro_plan_can_publish(): void
+    {
+        $plan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Pro Owner',
+            'email' => 'pro-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Pro Org', 'pro-org');
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Pro BP', 'pro-bp');
+
+        $this->assertTrue($this->policy->publish($owner, $blueprint));
+    }
+
+    public function test_owner_with_free_plan_cannot_publish(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Free Owner',
+            'email' => 'free-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Free Org', 'free-org');
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Free BP', 'free-bp');
+
+        $this->assertFalse($this->policy->publish($owner, $blueprint));
+    }
+
+    public function test_maintainer_with_pro_plan_can_publish(): void
+    {
+        $plan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Org Owner',
+            'email' => 'org-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $maintainer = User::create([
+            'name' => 'Pro Maintainer',
+            'email' => 'pro-maintainer@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Maint Org', 'maint-org');
+        $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Maint BP', 'maint-bp');
+
+        $this->assertTrue($this->policy->publish($maintainer, $blueprint));
+    }
+
+    public function test_developer_cannot_publish(): void
+    {
+        $plan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Org Owner',
+            'email' => 'org-owner-2@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $developer = User::create([
+            'name' => 'Developer',
+            'email' => 'dev-pub@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'Dev Org', 'dev-org');
+        $organization->members()->attach($developer->id, ['role' => 'developer']);
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'Dev BP', 'dev-bp');
+
+        $this->assertFalse($this->policy->publish($developer, $blueprint));
+    }
+
+    public function test_non_member_cannot_publish(): void
+    {
+        $plan = Plan::where('slug', 'pro')->first();
+        $owner = User::create([
+            'name' => 'Org Owner',
+            'email' => 'org-owner-3@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $nonMember = User::create([
+            'name' => 'Non Member',
+            'email' => 'non-member-pub@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization();
+        $organization = $createOrg->execute($owner, 'NonMem Org', 'nonmem-org');
+
+        $this->actingAs($owner);
+        $createBp = new CreateBlueprint();
+        $blueprint = $createBp->execute($organization, 'NonMem BP', 'nonmem-bp');
+
+        $this->assertFalse($this->policy->publish($nonMember, $blueprint));
+    }
 }

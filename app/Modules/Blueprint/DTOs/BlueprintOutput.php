@@ -4,21 +4,27 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\DTOs;
 
-use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Models\Blueprint;
 
 /**
  * Complete output after resolving a blueprint's tabs.
+ *
+ * Delegates tab accessor methods to ResolvedTabs for reuse across
+ * show page and preview components.
  */
 final class BlueprintOutput
 {
+    private readonly ResolvedTabs $resolvedTabs;
+
     /**
      * @param TabOutput[] $tabs
      */
     public function __construct(
         public readonly Blueprint $blueprint,
         public readonly array $tabs,
-    ) {}
+    ) {
+        $this->resolvedTabs = new ResolvedTabs($tabs);
+    }
 
     /**
      * Get all tab outputs as array.
@@ -52,63 +58,29 @@ final class BlueprintOutput
         );
     }
 
-    /**
-     * Get agent.md content if AI Context tab was processed.
-     */
     public function getAgentMdContent(): ?string
     {
-        foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::AI_CONTEXT && $tab->isMarkdown()) {
-                return $tab->content;
-            }
-        }
-
-        return null;
+        return $this->resolvedTabs->getAgentMdContent();
     }
 
     /**
-     * Get VSCode extensions list.
-     *
      * @return string[]
      */
     public function getVscodeExtensions(): array
     {
-        foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::VSCODE_EXTENSIONS && $tab->isArray()) {
-                return $tab->content['extensions'] ?? [];
-            }
-        }
-
-        return [];
+        return $this->resolvedTabs->getVscodeExtensions();
     }
 
-    /**
-     * Get VSCode extensions install command.
-     */
     public function getVscodeInstallCommand(): string
     {
-        $extensions = $this->getVscodeExtensions();
-
-        if (empty($extensions)) {
-            return '';
-        }
-
-        return 'code --install-extension ' . implode(' --install-extension ', $extensions);
+        return $this->resolvedTabs->getVscodeInstallCommand();
     }
 
     /**
-     * Get MCP servers configuration.
-     *
      * @return array<string, mixed>
      */
     public function getMcpServers(): array
     {
-        foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::MCP_SERVERS && $tab->isArray()) {
-                return $tab->content;
-            }
-        }
-
-        return [];
+        return $this->resolvedTabs->getMcpServers();
     }
 }

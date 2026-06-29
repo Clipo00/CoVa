@@ -35,4 +35,24 @@ class BlueprintPolicy
     {
         return $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer', 'developer']);
     }
+
+    public function publish(User $user, Blueprint $blueprint): bool
+    {
+        $membershipRole = null;
+        $member = $user->organizations()
+            ->where('organization_id', $blueprint->organization_id)
+            ->first();
+
+        if (!$member) {
+            return false;
+        }
+
+        $membershipRole = $member->pivot->role;
+
+        if (!in_array($membershipRole, ['owner', 'maintainer'], true)) {
+            return false;
+        }
+
+        return $blueprint->organization->plan->has_marketplace_publish;
+    }
 }

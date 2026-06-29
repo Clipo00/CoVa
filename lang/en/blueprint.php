@@ -26,6 +26,21 @@ return [
     'description_label' => 'Description',
     'description_placeholder' => 'Describe the purpose of this blueprint...',
     'tabs_section' => 'Tabs',
+
+    // Templates
+    'template_label' => 'Template',
+    'template_none' => 'None (start from scratch)',
+    'template_hint' => 'Select a template to pre-load tabs and configurations.',
+    'template_laravel' => 'Laravel + Inertia + Tailwind',
+    'template_nodejs' => 'Node.js API + TypeScript',
+    'template_python' => 'Python + FastAPI + SQLModel',
+
+    // Marketplace Publish
+    'publish_section' => 'Publish to Marketplace',
+    'publish_toggle' => 'Publish this blueprint on the Marketplace',
+    'publish_help' => 'Anyone will be able to see and use this blueprint as a template.',
+    'no_publish_permission' => 'You do not have permission to publish blueprints to the Marketplace. A Pro or Enterprise plan is required.',
+
     'create_blueprint_button' => 'Create Blueprint',
     'edit_blueprint_button' => 'Save Changes',
     'cancel_link' => '← Cancel and go back',
@@ -59,7 +74,10 @@ return [
     'transfer_to' => 'Transfer to...',
     'transfer_button' => 'Transfer',
     'edit_button' => 'Edit',
+    'badge_public' => 'Public',
+    'badge_private' => 'Private',
     'delete_confirm' => 'Are you sure you want to delete this blueprint?',
+    'delete_confirm_public' => 'This blueprint is published on the Marketplace. Deleting it will make it invisible to the community. Are you sure?',
     'delete_button' => 'Delete',
 
     // Variables
@@ -122,10 +140,17 @@ return [
     'code_presets' => 'Code Presets',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean_arch' => 'Clean Architecture',
+    'preset_clean-architecture' => 'Clean Architecture',
+    'preset_docker' => 'Docker',
+    'preset_cicd' => 'CI/CD',
+    'preset_laravel-conventions' => 'Laravel Conventions',
+    'preset_typescript-strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
+    'skill_api-design' => 'API Design',
+    'skill_react-expert' => 'React Expert',
+    'skill_vue-expert' => 'Vue Expert',
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
     'tabs_empty' => 'No tabs configured',
@@ -153,6 +178,9 @@ return [
     'restore_button' => 'Restore',
     'restore_disabled' => 'Not available',
     'restore_permission_info' => 'Only the owner can restore',
+
+    // Live Preview
+    'live_preview' => 'Live Preview',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,15 @@ Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route('dashboard');
     }
-    return view('landing.index');
+
+    $publicBlueprints = Blueprint::query()
+        ->where('is_public', true)
+        ->with(['organization', 'category'])
+        ->latest()
+        ->take(6)
+        ->get();
+
+    return view('landing.index', compact('publicBlueprints'));
 })->name('landing');
 
 /*

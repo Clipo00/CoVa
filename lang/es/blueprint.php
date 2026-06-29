@@ -26,6 +26,21 @@ return [
     'description_label' => 'Descripción',
     'description_placeholder' => 'Describe el propósito de este blueprint...',
     'tabs_section' => 'Pestañas',
+
+    // Templates
+    'template_label' => 'Plantilla',
+    'template_none' => 'Ninguna (empezar de cero)',
+    'template_hint' => 'Selecciona una plantilla para precargar pestañas y configuraciones.',
+    'template_laravel' => 'Laravel + Inertia + Tailwind',
+    'template_nodejs' => 'Node.js API + TypeScript',
+    'template_python' => 'Python + FastAPI + SQLModel',
+
+    // Marketplace Publish
+    'publish_section' => 'Publicar en Marketplace',
+    'publish_toggle' => 'Publicar este blueprint en el Marketplace',
+    'publish_help' => 'Cualquier persona podrá ver y usar este blueprint como plantilla.',
+    'no_publish_permission' => 'No tienes permiso para publicar blueprints en el Marketplace. Se requiere un plan Pro o Enterprise.',
+
     'create_blueprint_button' => 'Crear Blueprint',
     'edit_blueprint_button' => 'Guardar Cambios',
     'cancel_link' => '← Cancelar y volver',
@@ -60,7 +75,10 @@ return [
     'transfer_to' => 'Transferir a...',
     'transfer_button' => 'Transferir',
     'edit_button' => 'Editar',
+    'badge_public' => 'Público',
+    'badge_private' => 'Privado',
     'delete_confirm' => '¿Estás seguro de que quieres eliminar este blueprint?',
+    'delete_confirm_public' => 'Este blueprint está publicado en el Marketplace. Eliminarlo lo hará invisible para la comunidad. ¿Estás seguro?',
     'delete_button' => 'Eliminar',
 
     // Variables
@@ -123,10 +141,17 @@ return [
     'code_presets' => 'Presets de código',
     'preset_psr12' => 'PSR-12',
     'preset_solid' => 'SOLID',
-    'preset_clean_arch' => 'Clean Architecture',
+    'preset_clean-architecture' => 'Clean Architecture',
+    'preset_docker' => 'Docker',
+    'preset_cicd' => 'CI/CD',
+    'preset_laravel-conventions' => 'Convenciones Laravel',
+    'preset_typescript-strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
+    'skill_api-design' => 'Diseño de API',
+    'skill_react-expert' => 'React Expert',
+    'skill_vue-expert' => 'Vue Expert',
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
     'tabs_empty' => 'No hay pestañas configuradas',
@@ -154,6 +179,9 @@ return [
     'restore_button' => 'Restaurar',
     'restore_disabled' => 'No disponible',
     'restore_permission_info' => 'Solo el owner puede restaurar',
+
+    // Live Preview
+    'live_preview' => 'Vista previa en vivo',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

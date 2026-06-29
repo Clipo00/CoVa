@@ -286,4 +286,50 @@ class BlueprintControllerTest extends TestCase
         $response->assertForbidden();
         $this->assertSoftDeleted($blueprint);
     }
+
+    // ─── Landing Marketplace Tests (REQ-MARKETPLACE-1) ───────────────────
+
+    public function test_landing_shows_public_blueprints(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        // Create a public blueprint
+        Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440010',
+            'organization_id' => $organization->id,
+            'slug' => 'public-bp',
+            'title' => 'Public Blueprint',
+            'description' => 'This is public',
+            'is_public' => true,
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->get(route('landing'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Public Blueprint');
+    }
+
+    public function test_landing_excludes_private_blueprints(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        // Create a private blueprint
+        Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440011',
+            'organization_id' => $organization->id,
+            'slug' => 'private-bp',
+            'title' => 'Private Blueprint',
+            'description' => 'This is private',
+            'is_public' => false,
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->get(route('landing'));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('Private Blueprint');
+    }
 }

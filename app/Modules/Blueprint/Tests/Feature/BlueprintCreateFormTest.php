@@ -63,4 +63,82 @@ class BlueprintCreateFormTest extends TestCase
 
         $component->assertHasErrors('tabsConfig');
     }
+
+    // ─── Template Tests (REQ-TEMPLATE-1) ────────────────────────────────
+
+    public function test_selecting_laravel_template_populates_tabs_config(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'template-test@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization = Organization::create([
+            'slug' => 'template-org',
+            'name' => 'Template Org',
+            'owner_id' => $user->id,
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $this->actingAs($user);
+
+        $component = Livewire::test(BlueprintCreateForm::class, [
+            'userOrganizations' => [
+                [
+                    'id' => $organization->id,
+                    'name' => $organization->name,
+                    'hasAvailableSlots' => true,
+                ],
+            ],
+        ]);
+
+        // Select the laravel template
+        $component->set('selectedTemplate', 'laravel');
+
+        // tabsConfig should now be populated
+        $this->assertNotEmpty($component->get('tabsConfig'));
+        // Should contain vscode_extensions tab with laravel extensions
+        $tabTypes = array_column($component->get('tabsConfig'), 'type');
+        $this->assertContains('vscode_extensions', $tabTypes);
+    }
+
+    public function test_not_selecting_template_leaves_tabs_config_empty(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'template-empty@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization = Organization::create([
+            'slug' => 'template-empty-org',
+            'name' => 'Template Empty Org',
+            'owner_id' => $user->id,
+            'plan_id' => $plan->id,
+        ]);
+
+        $organization->members()->attach($user->id, ['role' => 'owner']);
+
+        $this->actingAs($user);
+
+        $component = Livewire::test(BlueprintCreateForm::class, [
+            'userOrganizations' => [
+                [
+                    'id' => $organization->id,
+                    'name' => $organization->name,
+                    'hasAvailableSlots' => true,
+                ],
+            ],
+        ]);
+
+        // Without selecting any template, tabsConfig should remain empty or default
+        $this->assertEmpty($component->get('tabsConfig'));
+    }
 }

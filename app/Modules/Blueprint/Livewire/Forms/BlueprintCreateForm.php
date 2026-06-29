@@ -10,6 +10,7 @@ use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -29,6 +30,7 @@ class BlueprintCreateForm extends Component
     public string $description = '';
     public ?int $categoryId = null;
     public array $tabsConfig = [];
+    public string $selectedTemplate = '';
 
     public function mount(): void
     {
@@ -91,6 +93,13 @@ class BlueprintCreateForm extends Component
     public function updatedTitle(): void
     {
         $this->slug = \Illuminate\Support\Str::slug($this->title);
+    }
+
+    public function updatedSelectedTemplate(string $value): void
+    {
+        $templates = app('blueprint.templates');
+        $this->tabsConfig = $templates[$value]['tabs'] ?? [];
+        $this->dispatch('tabs-updated', tabs: $this->tabsConfig);
     }
 
     protected function getListeners(): array
@@ -183,7 +192,22 @@ class BlueprintCreateForm extends Component
     public function render()
     {
         $categories = \App\Modules\Shared\Models\Category::all();
+        $templates = app('blueprint.templates');
 
-        return view('blueprint::livewire.forms.blueprint-create-form', compact('categories'));
+        return view('blueprint::livewire.forms.blueprint-create-form', compact('categories', 'templates'));
+    }
+
+    /**
+     * Check if the currently authenticated user is the owner of the selected organization.
+     */
+    public function getIsOwnerProperty(): bool
+    {
+        if ($this->organizationId === null) {
+            return false;
+        }
+
+        $organization = Organization::find($this->organizationId);
+
+        return $organization !== null && $organization->owner_id === Auth::id();
     }
 }

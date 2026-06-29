@@ -148,7 +148,28 @@
                     <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.tabs_section') }}</h2>
                 </div>
             </div>
-            <div class="p-6">
+            <div class="p-6 space-y-4">
+                {{-- Template selector --}}
+                <div>
+                    <label for="selectedTemplate" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">
+                        {{ __('blueprint.template_label') }}
+                    </label>
+                    <div class="relative">
+                        <select wire:model.live="selectedTemplate" id="selectedTemplate"
+                            class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+                            @foreach($templates as $key => $template)
+                                <option value="{{ $key }}">{{ __($template['label']) }}</option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.template_hint') }}</p>
+                </div>
+
                 <livewire:blueprint.components.tab-manager
                     :tabs-config="$tabsConfig"
                     wire:key="create-tab-manager"
@@ -167,4 +188,29 @@
             </button>
         </div>
     </form>
+
+    {{-- Live Preview Panel --}}
+    <div x-data="{
+        timeout: null,
+        init() {
+            Livewire.on('tabs-updated', (event) => {
+                clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => {
+                    Livewire.dispatch('preview-refresh', {
+                        tabsConfig: event.tabs,
+                        variables: $wire.variables
+                    });
+                }, 300);
+            });
+            // Initial preview if tabs already populated (template selection)
+            if ($wire.tabsConfig && $wire.tabsConfig.length > 0) {
+                Livewire.dispatch('preview-refresh', {
+                    tabsConfig: $wire.tabsConfig,
+                    variables: $wire.variables
+                });
+            }
+        }
+    }" class="mt-6">
+        <livewire:blueprint.components.preview-panel :can-view-secrets="$this->isOwner" />
+    </div>
 </div>

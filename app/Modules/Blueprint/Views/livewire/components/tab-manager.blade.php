@@ -112,14 +112,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.code_presets') }}</label>
                         <div class="flex flex-wrap gap-2">
-                            @foreach(['psr12' => __('blueprint.preset_psr12'), 'solid' => __('blueprint.preset_solid'), 'clean-architecture' => __('blueprint.preset_clean_arch')] as $preset => $label)
+                            @foreach($presetNames as $preset)
                                 <button
                                     type="button"
                                     wire:click="togglePreset({{ $index }}, '{{ $preset }}')"
                                     class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                                         {{ in_array($preset, $presets) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
                                 >
-                                    {{ $label }}
+                                    {{ __("blueprint.preset_{$preset}") }}
                                 </button>
                             @endforeach
                         </div>
@@ -128,14 +128,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{{ __('blueprint.skills_label') }}</label>
                         <div class="flex flex-wrap gap-2">
-                            @foreach(['stripe' => __('blueprint.skill_stripe'), 'tailwind' => __('blueprint.skill_tailwind')] as $skill => $label)
+                            @foreach($skillNames as $skill)
                                 <button
                                     type="button"
                                     wire:click="toggleSkill({{ $index }}, '{{ $skill }}')"
                                     class="inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                                         {{ in_array($skill, $skills) ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-800 dark:text-indigo-200 ring-1 ring-indigo-300 dark:ring-indigo-700' : ' bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600' }}"
                                 >
-                                    {{ $label }}
+                                    {{ __("blueprint.skill_{$skill}") }}
                                 </button>
                             @endforeach
                         </div>

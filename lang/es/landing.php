@@ -93,40 +93,8 @@ return [
 
     // Marketplace
     'marketplace_title' => 'Empieza con una plantilla lista para usar',
+    'marketplace_empty' => 'Aún no hay blueprints públicos en el Marketplace. Publica el primero.',
     'marketplace_cta' => 'Explorar el Marketplace →',
-
-    // Marketplace cards (mock data)
-    'blueprint_1_title' => 'Laravel + Inertia + Tailwind',
-    'blueprint_1_desc' => 'Configuración completa para un stack moderno de Laravel.',
-    'blueprint_1_badge' => 'Popular',
-    'blueprint_1_downloads' => '1.2k descargas',
-
-    'blueprint_2_title' => 'React + TypeScript + Vite',
-    'blueprint_2_desc' => 'Entorno frontend con reglas de Cursor y MCP listos.',
-    'blueprint_2_badge' => 'Nuevo',
-    'blueprint_2_downloads' => '850 descargas',
-
-    'blueprint_3_title' => 'Node.js API + PostgreSQL',
-    'blueprint_3_desc' => 'Variables de conexión, seeds y configuración de Docker.',
-    'blueprint_3_badge' => 'Backend',
-    'blueprint_3_downloads' => '600 descargas',
-
-    'blueprint_4_title' => 'Python + FastAPI + SQLModel',
-    'blueprint_4_desc' => 'Stack Python moderno con configuración de entorno lista.',
-    'blueprint_4_badge' => 'Backend',
-    'blueprint_4_downloads' => '430 descargas',
-
-    'blueprint_5_title' => 'Vue 3 + Nuxt + Supabase',
-    'blueprint_5_desc' => 'Configuración completa para apps Vue con backend serverless.',
-    'blueprint_5_badge' => 'Fullstack',
-    'blueprint_5_downloads' => '720 descargas',
-
-    'blueprint_6_title' => 'Go + Gin + PostgreSQL',
-    'blueprint_6_desc' => 'API en Go con configuración de entorno y Docker.',
-    'blueprint_6_badge' => 'Backend',
-    'blueprint_6_downloads' => '310 descargas',
-
-    'badge_cova_team' => 'CoVa Team',
 
     // CTA Final
     'cta_final_title' => 'Empieza a ahorrar tiempo hoy',
