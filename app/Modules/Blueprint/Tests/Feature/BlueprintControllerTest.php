@@ -433,14 +433,22 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $owner->id,
         ]);
 
-        $response = $this->actingAs($owner)
+        // Create a different user to vote (cannot self-vote)
+        $voter = User::create([
+            'name' => 'Voter',
+            'email' => 'voter@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        $response = $this->actingAs($voter)
             ->post('/blueprints/' . $blueprint->uuid . '/vote', ['vote_type' => 'up']);
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('blueprint_votes', [
-            'user_id' => $owner->id,
+            'user_id' => $voter->id,
             'blueprint_id' => $blueprint->id,
             'vote' => 1,
         ]);
