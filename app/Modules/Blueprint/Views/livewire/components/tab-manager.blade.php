@@ -194,10 +194,11 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{{ __('blueprint.custom_rules') }}</label>
                         <textarea
                             wire:change="updateCustomRules({{ $index }}, $event.target.value)"
-                            rows="3"
+                            rows="6"
                             class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
                             placeholder="{{ __('blueprint.custom_rules_placeholder') }}"
                         >{{ $customRules }}</textarea>
+                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.custom_rules_hint') }}</p>
                     </div>
                 </div>
             @endif

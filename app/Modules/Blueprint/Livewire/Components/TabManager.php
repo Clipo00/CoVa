@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Livewire\Components;
 
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use Livewire\Component;
 
 /**
@@ -32,6 +33,9 @@ class TabManager extends Component
 
     public string $tabError = '';
 
+    private SegmentRegistry $presetsRegistry;
+    private SegmentRegistry $skillsRegistry;
+
     public function mount(?array $tabs = null): void
     {
         $this->tabs = $tabs ?? [];
@@ -42,11 +46,14 @@ class TabManager extends Component
             TabType::AI_CONTEXT->value => __('blueprint.tab_type_ai'),
         ];
 
-        // Load available presets and skills dynamically from registry
         /** @var AgentGenerator $generator */
         $generator = app()->make(AgentGenerator::class);
         $this->availablePresetNames = $generator->presetNames();
         $this->availableSkillNames = $generator->skillNames();
+
+        // Store registries for content lookup when toggling presets/skills
+        $this->presetsRegistry = app()->make('blueprint.presets');
+        $this->skillsRegistry = app()->make('blueprint.skills');
     }
 
     /**
@@ -246,6 +253,9 @@ class TabManager extends Component
 
     /**
      * Toggle a preset for AI Context tab.
+     *
+     * When toggled ON, the preset's generated content is loaded into
+     * the custom_rules textarea so the user can freely edit it.
      */
     public function togglePreset(int $tabIndex, string $preset): void
     {
@@ -259,6 +269,18 @@ class TabManager extends Component
             $presets = array_values(array_filter($presets, fn($p) => $p !== $preset));
         } else {
             $presets[] = $preset;
+
+            // Load preset content into custom_rules for inline editing
+            if ($this->presetsRegistry->has($preset)) {
+                $presetContent = $this->presetsRegistry->get($preset)->content();
+                $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
+
+                // Only append if not already present (avoid duplicates on re-toggle)
+                if ($currentRules === '' || !str_contains($currentRules, trim($presetContent))) {
+                    $separator = $currentRules !== '' ? "\n\n" : '';
+                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules . $separator . $presetContent;
+                }
+            }
         }
 
         $this->tabs[$tabIndex]['config']['presets'] = $presets;
@@ -268,6 +290,9 @@ class TabManager extends Component
 
     /**
      * Toggle a skill for AI Context tab.
+     *
+     * When toggled ON, the skill's generated content is loaded into
+     * the custom_rules textarea so the user can freely edit it.
      */
     public function toggleSkill(int $tabIndex, string $skill): void
     {
@@ -281,6 +306,18 @@ class TabManager extends Component
             $skills = array_values(array_filter($skills, fn($s) => $s !== $skill));
         } else {
             $skills[] = $skill;
+
+            // Load skill content into custom_rules for inline editing
+            if ($this->skillsRegistry->has($skill)) {
+                $skillContent = $this->skillsRegistry->get($skill)->content();
+                $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
+
+                // Only append if not already present (avoid duplicates on re-toggle)
+                if ($currentRules === '' || !str_contains($currentRules, trim($skillContent))) {
+                    $separator = $currentRules !== '' ? "\n\n" : '';
+                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules . $separator . $skillContent;
+                }
+            }
         }
 
         $this->tabs[$tabIndex]['config']['skills'] = $skills;

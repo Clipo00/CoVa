@@ -52,7 +52,7 @@
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pl-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                                 </svg>

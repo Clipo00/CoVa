@@ -150,6 +150,7 @@ return [
     'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
+    'custom_rules_hint' => 'When you toggle presets or skills, their content loads here for editing. Remove anything you don\'t need.',
     'tabs_empty' => 'No tabs configured',
     'tabs_empty_hint' => 'Add a tab to get started',
     'add_tab' => 'Add',
