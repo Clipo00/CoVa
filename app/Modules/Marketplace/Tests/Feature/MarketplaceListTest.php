@@ -22,6 +22,12 @@ class MarketplaceListTest extends TestCase
         parent::setUp();
 
         $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+    }
+
+    private function getMarketplaceId(): int
+    {
+        return Organization::where('slug', 'cova-marketplace')->value('id');
     }
 
     public function test_renders_public_blueprints(): void
@@ -42,7 +48,7 @@ class MarketplaceListTest extends TestCase
 
         Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'public-bp',
             'title' => 'Public Blueprint',
             'description' => 'A public blueprint',
@@ -53,7 +59,7 @@ class MarketplaceListTest extends TestCase
 
         Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'private-bp',
             'title' => 'Private Blueprint',
             'is_public' => false,
@@ -86,7 +92,7 @@ class MarketplaceListTest extends TestCase
         for ($i = 1; $i <= 25; $i++) {
             Blueprint::create([
                 'uuid' => (string) \Illuminate\Support\Str::uuid(),
-                'organization_id' => $organization->id,
+                'organization_id' => $this->getMarketplaceId(),
                 'slug' => "bp-{$i}",
                 'title' => "Blueprint {$i}",
                 'is_public' => true,
@@ -119,7 +125,7 @@ class MarketplaceListTest extends TestCase
 
         Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'laravel-bp',
             'title' => 'Laravel Setup',
             'description' => 'Laravel configuration blueprint',
@@ -130,7 +136,7 @@ class MarketplaceListTest extends TestCase
 
         Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'react-bp',
             'title' => 'React Setup',
             'description' => 'React configuration blueprint',
@@ -163,7 +169,7 @@ class MarketplaceListTest extends TestCase
 
         $lowRated = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'low-rated',
             'title' => 'Low Rated',
             'is_public' => true,
@@ -175,7 +181,7 @@ class MarketplaceListTest extends TestCase
 
         $highRated = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'high-rated',
             'title' => 'High Rated',
             'is_public' => true,
@@ -208,7 +214,7 @@ class MarketplaceListTest extends TestCase
 
         $lowSubs = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'low-subs',
             'title' => 'Low Subscribers',
             'is_public' => true,
@@ -220,7 +226,7 @@ class MarketplaceListTest extends TestCase
 
         $highSubs = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'high-subs',
             'title' => 'High Subscribers',
             'is_public' => true,
@@ -253,7 +259,7 @@ class MarketplaceListTest extends TestCase
 
         $oldBp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'old-bp',
             'title' => 'Old Blueprint',
             'is_public' => true,
@@ -265,7 +271,7 @@ class MarketplaceListTest extends TestCase
 
         $recent = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'recent-bp',
             'title' => 'Recent Blueprint',
             'is_public' => true,
@@ -296,7 +302,7 @@ class MarketplaceListTest extends TestCase
 
         Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'org-bp',
             'title' => 'Acme Blueprint',
             'is_public' => true,
@@ -305,7 +311,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
-            ->assertSee('Acme Corp');
+            ->assertSee('CoVa Marketplace');
     }
 
     public function test_shows_votes_and_subscribers_count(): void
@@ -326,7 +332,7 @@ class MarketplaceListTest extends TestCase
 
         $countedBp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'counts-bp',
             'title' => 'Counted Blueprint',
             'is_public' => true,
@@ -360,7 +366,7 @@ class MarketplaceListTest extends TestCase
 
         $laravelBp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'laravel-tag',
             'title' => 'Laravel Blueprint',
             'is_public' => true,
@@ -370,7 +376,7 @@ class MarketplaceListTest extends TestCase
 
         $reactBp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'react-tag',
             'title' => 'React Blueprint',
             'is_public' => true,
@@ -405,7 +411,7 @@ class MarketplaceListTest extends TestCase
 
         $fullstack = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'fullstack',
             'title' => 'Fullstack App',
             'is_public' => true,
@@ -415,7 +421,7 @@ class MarketplaceListTest extends TestCase
 
         $pythonApp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'python',
             'title' => 'Python App',
             'is_public' => true,
@@ -425,7 +431,7 @@ class MarketplaceListTest extends TestCase
 
         $anotherBp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'another',
             'title' => 'Another App',
             'is_public' => true,
@@ -463,7 +469,7 @@ class MarketplaceListTest extends TestCase
 
         $bp = Blueprint::create([
             'uuid' => (string) \Illuminate\Support\Str::uuid(),
-            'organization_id' => $organization->id,
+            'organization_id' => $this->getMarketplaceId(),
             'slug' => 'bp-no-tag',
             'title' => 'No Tags Blueprint',
             'is_public' => true,

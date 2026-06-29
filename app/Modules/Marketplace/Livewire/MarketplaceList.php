@@ -25,7 +25,8 @@ class MarketplaceList extends Component
 
     public function getBlueprintsProperty()
     {
-        return Blueprint::where('is_public', true)
+        return Blueprint::whereHas('organization', fn($q) => $q->where('slug', 'cova-marketplace'))
+            ->where('is_public', true)
             ->when($this->search, fn($q) => $q->where('title', 'like', "%{$this->search}%"))
             ->when($this->selectedTags, fn($q) => $q->whereHas('tags', fn($t) => $t->whereIn('tag', $this->selectedTags)))
             ->when($this->sort === 'rating', fn($q) => $q->orderBy('votes_count', 'desc'))
