@@ -28,7 +28,7 @@ class BlueprintController
 
         // Verificar si el usuario tiene al menos 1 organización con cupo para blueprints
         $hasAvailableOrg = $user->organizations()
-            ->with('plan')
+            ->with('owner.plan')
             ->get()
             ->contains(function ($organization) {
                 $maxBlueprints = $organization->plan->max_blueprints_per_org;
@@ -47,7 +47,7 @@ class BlueprintController
 
         // Obtener organizaciones del usuario con info de disponibilidad
         $userOrganizations = $user->organizations()
-            ->with('plan')
+            ->with('owner.plan')
             ->get()
             ->map(function ($organization) {
                 $maxBlueprints = $organization->plan->max_blueprints_per_org;
@@ -140,7 +140,7 @@ class BlueprintController
 
         $deletedBlueprints = Blueprint::onlyTrashed()
             ->whereIn('organization_id', $organizationIds)
-            ->with('organization.plan')
+            ->with('organization.owner.plan')
             ->orderBy('deleted_at', 'desc')
             ->get();
 

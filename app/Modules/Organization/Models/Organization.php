@@ -17,7 +17,6 @@ class Organization extends Model
         'slug',
         'name',
         'owner_id',
-        'plan_id',
     ];
 
     public function owner()
@@ -25,9 +24,13 @@ class Organization extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function plan()
+    /**
+     * Plan is owned by the user, not the organization.
+     * This accessor delegates to the owner's plan transparently.
+     */
+    public function getPlanAttribute(): ?Plan
     {
-        return $this->belongsTo(Plan::class);
+        return $this->owner?->plan;
     }
 
     public function members()

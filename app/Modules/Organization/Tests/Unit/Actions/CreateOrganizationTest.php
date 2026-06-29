@@ -41,7 +41,7 @@ class CreateOrganizationTest extends TestCase
         $this->assertEquals('My Org', $organization->name);
         $this->assertEquals('my-org', $organization->slug);
         $this->assertEquals($user->id, $organization->owner_id);
-        $this->assertEquals($this->freePlan->id, $organization->plan_id);
+        $this->assertEquals($this->freePlan->id, $organization->plan->id);
     }
 
     public function test_it_adds_owner_as_member(): void

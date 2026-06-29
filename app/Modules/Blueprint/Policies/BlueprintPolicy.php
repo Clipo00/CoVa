@@ -58,6 +58,7 @@ class BlueprintPolicy
             return false;
         }
 
-        return $blueprint->organization->plan->has_marketplace_publish;
+        // Plan is owned by the user, not the org. Check owner's plan.
+        return $blueprint->organization->owner->plan->has_marketplace_publish;
     }
 }

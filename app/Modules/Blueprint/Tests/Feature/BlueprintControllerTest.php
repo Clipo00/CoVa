@@ -190,7 +190,7 @@ class BlueprintControllerTest extends TestCase
             'name' => 'Dev',
             'email' => 'dev@example.com',
             'password' => bcrypt('password'),
-            'plan_id' => $organization->plan_id,
+            'plan_id' => $owner->plan_id,
         ]);
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
@@ -265,7 +265,7 @@ class BlueprintControllerTest extends TestCase
             'name' => 'Maintainer',
             'email' => 'maintainer@example.com',
             'password' => bcrypt('password'),
-            'plan_id' => $organization->plan_id,
+            'plan_id' => $owner->plan_id,
         ]);
         $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
 
