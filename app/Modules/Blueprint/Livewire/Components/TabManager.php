@@ -246,8 +246,9 @@ class TabManager extends Component
     /**
      * Toggle a preset for AI Context tab.
      *
-     * When toggled ON, the preset's generated content is loaded into
-     * the custom_rules textarea so the user can freely edit it.
+     * When toggled ON, the preset's generated content is wrapped in markers
+     * and loaded into the custom_rules textarea for editing.
+     * When toggled OFF, the marked block is removed from custom_rules.
      */
     public function togglePreset(int $tabIndex, string $preset): void
     {
@@ -259,19 +260,29 @@ class TabManager extends Component
 
         if (in_array($preset, $presets, true)) {
             $presets = array_values(array_filter($presets, fn($p) => $p !== $preset));
+
+            // Remove the preset's marked block from custom_rules
+            $this->removeMarkedBlock($tabIndex, 'preset', $preset);
         } else {
             $presets[] = $preset;
 
-            // Load preset content into custom_rules for inline editing
+            // Load preset content into custom_rules wrapped in markers
             $presetsRegistry = app()->make('blueprint.presets');
             if ($presetsRegistry->has($preset)) {
                 $presetContent = $presetsRegistry->get($preset)->content();
                 $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
 
-                // Only append if not already present (avoid duplicates on re-toggle)
-                if ($currentRules === '' || !str_contains($currentRules, trim($presetContent))) {
+                $markerBegin = "<!-- BEGIN:preset:{$preset} -->";
+                $markerEnd = "<!-- END:preset:{$preset} -->";
+
+                // Only append if the marker isn't already present
+                if (!str_contains($currentRules, $markerBegin)) {
                     $separator = $currentRules !== '' ? "\n\n" : '';
-                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules . $separator . $presetContent;
+                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules
+                        . $separator
+                        . $markerBegin . "\n"
+                        . $presetContent . "\n"
+                        . $markerEnd;
                 }
             }
         }
@@ -284,8 +295,9 @@ class TabManager extends Component
     /**
      * Toggle a skill for AI Context tab.
      *
-     * When toggled ON, the skill's generated content is loaded into
-     * the custom_rules textarea so the user can freely edit it.
+     * When toggled ON, the skill's generated content is wrapped in markers
+     * and loaded into the custom_rules textarea for editing.
+     * When toggled OFF, the marked block is removed from custom_rules.
      */
     public function toggleSkill(int $tabIndex, string $skill): void
     {
@@ -297,19 +309,29 @@ class TabManager extends Component
 
         if (in_array($skill, $skills, true)) {
             $skills = array_values(array_filter($skills, fn($s) => $s !== $skill));
+
+            // Remove the skill's marked block from custom_rules
+            $this->removeMarkedBlock($tabIndex, 'skill', $skill);
         } else {
             $skills[] = $skill;
 
-            // Load skill content into custom_rules for inline editing
+            // Load skill content into custom_rules wrapped in markers
             $skillsRegistry = app()->make('blueprint.skills');
             if ($skillsRegistry->has($skill)) {
                 $skillContent = $skillsRegistry->get($skill)->content();
                 $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
 
-                // Only append if not already present (avoid duplicates on re-toggle)
-                if ($currentRules === '' || !str_contains($currentRules, trim($skillContent))) {
+                $markerBegin = "<!-- BEGIN:skill:{$skill} -->";
+                $markerEnd = "<!-- END:skill:{$skill} -->";
+
+                // Only append if the marker isn't already present
+                if (!str_contains($currentRules, $markerBegin)) {
                     $separator = $currentRules !== '' ? "\n\n" : '';
-                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules . $separator . $skillContent;
+                    $this->tabs[$tabIndex]['config']['custom_rules'] = $currentRules
+                        . $separator
+                        . $markerBegin . "\n"
+                        . $skillContent . "\n"
+                        . $markerEnd;
                 }
             }
         }
@@ -317,6 +339,34 @@ class TabManager extends Component
         $this->tabs[$tabIndex]['config']['skills'] = $skills;
 
         $this->syncToParent();
+    }
+
+    /**
+     * Remove a marked block (preset or skill) from the custom_rules textarea.
+     *
+     * Matches the HTML-comment markers and removes the entire block
+     * including the markers and the content between them.
+     * Also cleans up leftover blank lines.
+     */
+    private function removeMarkedBlock(int $tabIndex, string $type, string $name): void
+    {
+        $currentRules = $this->tabs[$tabIndex]['config']['custom_rules'] ?? '';
+
+        if ($currentRules === '') {
+            return;
+        }
+
+        $markerBegin = preg_quote("<!-- BEGIN:{$type}:{$name} -->", '/');
+        $markerEnd = preg_quote("<!-- END:{$type}:{$name} -->", '/');
+
+        $pattern = '/\n*' . $markerBegin . '.*?' . $markerEnd . '\n*/s';
+
+        $cleaned = preg_replace($pattern, "\n", $currentRules);
+
+        // Clean up: normalize multiple blank lines to at most one
+        $cleaned = preg_replace('/\n{3,}/', "\n\n", $cleaned);
+
+        $this->tabs[$tabIndex]['config']['custom_rules'] = trim($cleaned);
     }
 
     /**

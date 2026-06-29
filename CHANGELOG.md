@@ -11,7 +11,7 @@
 
 ### Changed
 - **Selectores con más espacio para el chevron** — Aumentado el padding derecho del ícono dropdown de `px-3` (12px) a `pr-4` (16px) en todos los select nativos del formulario de creación y edición.
-- **Presets y skills cargan contenido editable** — Al activar un preset (SOLID, PSR-12, etc.) o skill en la pestaña AI Context, su contenido markdown se carga automáticamente en el textarea de reglas custom. El usuario puede editar, borrar o modificar el texto antes de guardar.
+- **Presets y skills cargan contenido editable** — Al activar un preset (SOLID, PSR-12, etc.) o skill en la pestaña AI Context, su contenido markdown se carga automáticamente en el textarea de reglas custom envuelto en marcadores `<!-- BEGIN:preset:... -->`. El usuario edita libremente; al desactivar el toggle, el bloque se elimina del textarea automáticamente.
 - **Textarea de reglas custom más alto** — Aumentado de 3 a 6 filas para facilitar la edición del contenido cargado por presets.
 - **Publicar crea copia, no transfiere** — Al publicar un blueprint se crea una copia en `cova-marketplace` con secretos vaciados. El original se queda en la organización del creador marcado como público. El creador mantiene acceso completo.
 - **Sincronización (re-publicar)** — Si un blueprint ya está publicado, el botón cambia a "Sincronizar cambios". Al pulsarlo se actualiza la copia del marketplace con los últimos cambios del original y se notifica a los suscriptores.

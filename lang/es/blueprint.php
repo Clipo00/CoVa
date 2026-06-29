@@ -151,7 +151,7 @@ return [
     'skill_vue_expert' => 'Vue Expert',
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
-    'custom_rules_hint' => 'Al activar presets o skills, su contenido se carga aquí para que puedas editarlo. Eliminá lo que no necesites.',
+    'custom_rules_hint' => 'Al activar presets o skills, su contenido se carga aquí para que puedas editarlo. Al desactivarlos, el bloque se elimina automáticamente.',
     'tabs_empty' => 'No hay pestañas configuradas',
     'tabs_empty_hint' => 'Agrega una pestaña para comenzar',
     'add_tab' => 'Agregar',
