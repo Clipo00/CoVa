@@ -171,17 +171,17 @@
                     <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.template_hint') }}</p>
                 </div>
 
-                <div wire:loading wire:target="selectedTemplate" class="flex items-center justify-center py-4 text-sm text-indigo-600 dark:text-indigo-400">
-                    <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    {{ __('blueprint.template_loading') }}
-                </div>
-                <div wire:loading.remove wire:target="selectedTemplate">
+                <div class="relative">
+                    <div wire:loading wire:target="selectedTemplate" class="absolute inset-0 z-10 flex items-center justify-center bg-white/70 dark:bg-gray-800/70 rounded-lg">
+                        <svg class="animate-spin h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        <span class="text-sm text-indigo-600 dark:text-indigo-400 ml-2">{{ __('blueprint.template_loading') }}</span>
+                    </div>
                     <livewire:blueprint.components.tab-manager
                         :tabs="$tabsConfig"
-                        wire:key="create-tab-manager"
+                        :key="'create-tab-manager-' . md5(json_encode($tabsConfig))"
                     />
                 </div>
             </div>
