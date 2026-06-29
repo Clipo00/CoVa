@@ -211,7 +211,7 @@ class BlueprintController
         $publishBlueprint->execute($blueprint, auth()->user());
 
         return redirect()
-            ->route('blueprints.index')
+            ->route('blueprints.show', $blueprint->uuid)
             ->with('success', __('blueprint.publish_success'));
     }
 

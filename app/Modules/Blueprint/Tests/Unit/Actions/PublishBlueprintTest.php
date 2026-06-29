@@ -61,15 +61,33 @@ class PublishBlueprintTest extends TestCase
         );
     }
 
-    public function test_successful_publish_changes_org_and_is_public(): void
+    public function test_successful_publish_creates_copy_and_marks_original_public(): void
     {
         $blueprint = $this->createPrivateBlueprint($this->owner);
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $originalOrgId = $blueprint->organization_id;
 
+        // Execute publish — returns the original blueprint
         $result = $this->action->execute($blueprint, $this->owner);
 
+        // Original stays in user's org and is now public
         $this->assertTrue($result->fresh()->is_public);
-        $this->assertEquals($marketplaceOrg->id, $result->fresh()->organization_id);
+        $this->assertEquals($originalOrgId, $result->fresh()->organization_id);
+
+        // A marketplace copy was created
+        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $this->assertDatabaseHas('blueprints', [
+            'slug' => 'test-bp',
+            'organization_id' => $marketplaceOrg->id,
+            'is_public' => true,
+        ]);
+
+        // A subscription record was created for the creator
+        $marketplaceCopy = Blueprint::where('organization_id', $marketplaceOrg->id)->where('slug', 'test-bp')->first();
+        $this->assertDatabaseHas('blueprint_subscriptions', [
+            'user_id' => $this->owner->id,
+            'subscribed_blueprint_id' => $marketplaceCopy->id,
+            'copied_blueprint_id' => $result->id,
+        ]);
     }
 
     public function test_free_plan_denied_when_billing_enabled(): void
@@ -99,6 +117,7 @@ class PublishBlueprintTest extends TestCase
         // at the Policy/Controller level. This test verifies the Action
         // does NOT reject non-owners (the guard is in the Policy).
         $blueprint = $this->createPrivateBlueprint($this->owner);
+        $originalOrgId = $blueprint->organization_id;
 
         // User must be a member of the org to be relevant
         $otherUser = User::create([
@@ -109,13 +128,12 @@ class PublishBlueprintTest extends TestCase
         ]);
         $this->organization->members()->attach($otherUser->id, ['role' => 'developer']);
 
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
-
         $result = $this->action->execute($blueprint, $otherUser);
 
         // Action still publishes — auth gate is in the Controller/Policy
+        // Original stays in its org
         $this->assertTrue($result->fresh()->is_public);
-        $this->assertEquals($marketplaceOrg->id, $result->fresh()->organization_id);
+        $this->assertEquals($originalOrgId, $result->fresh()->organization_id);
     }
 
     public function test_marketplace_disabled_denies(): void
@@ -142,11 +160,10 @@ class PublishBlueprintTest extends TestCase
         ]);
 
         $org = (new CreateOrganization())->execute($freeUser, 'Free Org 2', 'free-org-2');
+        $originalOrgId = $org->id;
         $this->actingAs($freeUser);
         $createBp = new CreateBlueprint();
         $blueprint = $createBp->execute($org, 'Free BP 2', 'free-bp-2');
-
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
 
         // Make user owner of the org
         $org->members()->syncWithoutDetaching([
@@ -155,7 +172,8 @@ class PublishBlueprintTest extends TestCase
 
         $result = $this->action->execute($blueprint, $freeUser);
 
+        // Original stays in its org with billing check skipped
         $this->assertTrue($result->fresh()->is_public);
-        $this->assertEquals($marketplaceOrg->id, $result->fresh()->organization_id);
+        $this->assertEquals($originalOrgId, $result->fresh()->organization_id);
     }
 }
