@@ -116,32 +116,41 @@ class BlueprintServiceProvider extends ServiceProvider
                 'laravel' => [
                     'label' => 'Laravel',
                     'tabs' => [
-                        ['type' => 'vscode_extensions', 'extensions' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
                             'bmewburn.vscode-intelephense-client',
                             'amiralizadeh9480.laravel-extra-intellisense',
                             'shufo.vscode-blade-formatter',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'presets' => ['psr12', 'solid', 'clean-architecture', 'laravel-conventions'],
+                            'skills' => ['stripe', 'tailwind'],
                         ]],
-                        ['type' => 'ai_context', 'presets' => ['psr12', 'solid', 'clean-architecture', 'laravel-conventions'], 'skills' => ['stripe', 'tailwind']],
                     ],
                 ],
                 'nextjs' => [
                     'label' => 'Next.js',
                     'tabs' => [
-                        ['type' => 'vscode_extensions', 'extensions' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
                             'dsznajder.es7-react-js-snippets',
                             'bradlc.vscode-tailwindcss',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
+                            'skills' => ['react', 'tailwind'],
                         ]],
-                        ['type' => 'ai_context', 'presets' => ['typescript-strict', 'solid', 'clean-architecture'], 'skills' => ['react', 'tailwind']],
                     ],
                 ],
                 'remix' => [
                     'label' => 'Remix',
                     'tabs' => [
-                        ['type' => 'vscode_extensions', 'extensions' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
                             'dsznajder.es7-react-js-snippets',
                             'bradlc.vscode-tailwindcss',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
+                            'skills' => ['react', 'tailwind'],
                         ]],
-                        ['type' => 'ai_context', 'presets' => ['typescript-strict', 'solid', 'clean-architecture'], 'skills' => ['react', 'tailwind']],
                     ],
                 ],
             ];
