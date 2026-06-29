@@ -185,6 +185,8 @@ return [
 
     // Templates
     'template_label' => 'Template',
+    'template_empty' => 'No template',
+    'template_loading' => 'Loading template...',
     'template_hint' => 'Select a template to preload tabs with recommended configurations.',
 
     // Publish

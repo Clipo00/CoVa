@@ -157,8 +157,9 @@
                     <div class="relative">
                         <select wire:model.live="selectedTemplate" id="selectedTemplate"
                             class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
+                            <option value="">{{ __('blueprint.template_empty') }}</option>
                             @foreach($templates as $key => $template)
-                                <option value="{{ $key }}">{{ __($template['label']) }}</option>
+                                <option value="{{ $key }}">{{ $template['label'] }}</option>
                             @endforeach
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
@@ -170,10 +171,19 @@
                     <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{{ __('blueprint.template_hint') }}</p>
                 </div>
 
-                <livewire:blueprint.components.tab-manager
-                    :tabs-config="$tabsConfig"
-                    wire:key="create-tab-manager"
-                />
+                <div wire:loading wire:target="selectedTemplate" class="flex items-center justify-center py-4 text-sm text-indigo-600 dark:text-indigo-400">
+                    <svg class="animate-spin h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    {{ __('blueprint.template_loading') }}
+                </div>
+                <div wire:loading.remove wire:target="selectedTemplate">
+                    <livewire:blueprint.components.tab-manager
+                        :tabs="$tabsConfig"
+                        wire:key="create-tab-manager"
+                    />
+                </div>
             </div>
         </div>
 

@@ -186,6 +186,8 @@ return [
 
     // Templates
     'template_label' => 'Plantilla',
+    'template_empty' => 'Sin plantilla',
+    'template_loading' => 'Cargando plantilla...',
     'template_hint' => 'Selecciona una plantilla para precargar pestañas con configuraciones recomendadas.',
 
     // Publish

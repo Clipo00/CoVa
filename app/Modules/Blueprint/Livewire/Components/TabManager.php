@@ -32,9 +32,9 @@ class TabManager extends Component
 
     public string $tabError = '';
 
-    public function mount(?array $tabsConfig = null): void
+    public function mount(?array $tabs = null): void
     {
-        $this->tabs = $tabsConfig ?? [];
+        $this->tabs = $tabs ?? [];
         $this->availableTabTypes = [
             TabType::VSCODE_EXTENSIONS->value => __('blueprint.tab_type_vscode'),
             TabType::MCP_SERVERS->value => __('blueprint.tab_type_mcp'),

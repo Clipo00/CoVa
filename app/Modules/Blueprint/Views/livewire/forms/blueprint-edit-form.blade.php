@@ -137,7 +137,7 @@
             </div>
             <div class="p-6">
                 <livewire:blueprint.components.tab-manager
-                    :tabs-config="$tabsConfig"
+                    :tabs="$tabsConfig"
                     wire:key="edit-tab-manager"
                 />
             </div>

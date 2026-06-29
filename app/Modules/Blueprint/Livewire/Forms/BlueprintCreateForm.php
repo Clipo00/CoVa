@@ -54,8 +54,6 @@ class BlueprintCreateForm extends Component
 
             $this->organizationId = $firstAvailable ? $firstAvailable['id'] : null;
         }
-
-        $this->addVariable();
     }
 
     /**

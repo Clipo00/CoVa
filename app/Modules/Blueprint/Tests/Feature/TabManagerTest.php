@@ -19,7 +19,7 @@ class TabManagerTest extends TestCase
             ['type' => 'vscode_extensions', 'config' => ['extensions' => []]],
         ];
 
-        $component = Livewire::test(TabManager::class, ['tabsConfig' => $tabsConfig]);
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
         $component->call('addTab', 'vscode_extensions');
 
@@ -33,7 +33,7 @@ class TabManagerTest extends TestCase
             ['type' => 'vscode_extensions', 'config' => ['extensions' => []]],
         ];
 
-        $component = Livewire::test(TabManager::class, ['tabsConfig' => $tabsConfig]);
+        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
         $component->call('addTab', 'mcp_servers');
 
