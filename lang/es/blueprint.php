@@ -45,6 +45,7 @@ return [
     'filter_organizations' => 'Organización',
     'filter_categories' => 'Categoría',
     'filter_marketplace' => 'Marketplace (próximamente)',
+    'badge_public' => 'Público',
     'filter_clear_all' => 'Limpiar todo',
     'filter_count' => ':count activo(s)',
     'filter_preserve' => 'Guardar filtros',
@@ -152,6 +153,7 @@ return [
     'tabs_empty' => 'No hay pestañas configuradas',
     'tabs_empty_hint' => 'Agrega una pestaña para comenzar',
     'add_tab' => 'Agregar',
+    'live_preview' => 'Vista previa',
 
     // Favorites
     'favorites_title' => 'Favoritos',
@@ -181,6 +183,10 @@ return [
     'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Desconocido',
+
+    // Templates
+    'template_label' => 'Plantilla',
+    'template_hint' => 'Seleccioná una plantilla para precargar pestañas con configuraciones recomendadas.',
 
     // Publish
     'publish_section' => 'Publicación',

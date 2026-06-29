@@ -45,6 +45,7 @@ return [
     'filter_organizations' => 'Organization',
     'filter_categories' => 'Category',
     'filter_marketplace' => 'Marketplace (coming soon)',
+    'badge_public' => 'Public',
     'filter_clear_all' => 'Clear all',
     'filter_count' => ':count active',
     'filter_preserve' => 'Save filters',
@@ -151,6 +152,7 @@ return [
     'tabs_empty' => 'No tabs configured',
     'tabs_empty_hint' => 'Add a tab to get started',
     'add_tab' => 'Add',
+    'live_preview' => 'Live Preview',
 
     // Favorites
     'favorites_title' => 'Favorites',
@@ -180,6 +182,10 @@ return [
     'tab_type_scripts' => 'Scripts',
     'tab_type_ai' => 'AI Context',
     'tab_type_unknown' => 'Unknown',
+
+    // Templates
+    'template_label' => 'Template',
+    'template_hint' => 'Select a template to preload tabs with recommended configurations.',
 
     // Publish
     'publish_section' => 'Publishing',
