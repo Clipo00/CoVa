@@ -182,6 +182,9 @@ return [
     'tab_type_unknown' => 'Unknown',
 
     // Publish
+    'publish_section' => 'Publishing',
+    'publish_toggle' => 'Make this blueprint public',
+    'publish_help' => 'When published, secret variables will be visible in the marketplace.',
     'publish_button' => 'Publish to Marketplace',
     'publish_confirm_title' => 'Publish Blueprint',
     'publish_confirm_warning' => 'By publishing this blueprint, secret variables will be exposed in the public marketplace. Are you sure you want to continue?',

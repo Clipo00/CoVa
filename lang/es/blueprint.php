@@ -183,6 +183,9 @@ return [
     'tab_type_unknown' => 'Desconocido',
 
     // Publish
+    'publish_section' => 'Publicación',
+    'publish_toggle' => 'Hacer público este blueprint',
+    'publish_help' => 'Al publicar, las variables secretas serán visibles en el marketplace.',
     'publish_button' => 'Publicar en Marketplace',
     'publish_confirm_title' => 'Publicar Blueprint',
     'publish_confirm_warning' => 'Al publicar este blueprint, las variables marcadas como secretas pasarán al marketplace público. ¿Estás seguro de que quieres continuar?',
