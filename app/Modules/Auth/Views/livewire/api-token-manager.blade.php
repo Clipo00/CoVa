@@ -105,7 +105,7 @@
                             type="text"
                             wire:model="tokenName"
                             maxlength="255"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
+                            class="mt-1 block w-full py-2.5 px-3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
                         />
                         @error('tokenName')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -121,7 +121,7 @@
                         <select
                             id="selectedOrganizationId"
                             wire:model="selectedOrganizationId"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
+                            class="mt-1 block w-full py-2.5 px-3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
                         >
                             <option value="">{{ __('auth.token_select_org') }}</option>
                             @foreach ($eligibleOrganizations as $org)
@@ -145,7 +145,7 @@
                             wire:model="expiresAt"
                             min="{{ now()->format('Y-m-d') }}"
                             max="{{ now()->addYear()->format('Y-m-d') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
+                            class="mt-1 block w-full py-2.5 px-3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
                         />
                         @error('expiresAt')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -161,7 +161,7 @@
                             id="password"
                             type="password"
                             wire:model="password"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
+                            class="mt-1 block w-full py-2.5 px-3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
                         />
                         @error('password')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -241,7 +241,7 @@
                             id="revokePassword"
                             type="password"
                             wire:model="revokePassword"
-                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
+                            class="mt-1 block w-full py-2.5 px-3 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-100 sm:text-sm"
                         />
                         @error('revokePassword')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
