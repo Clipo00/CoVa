@@ -36,6 +36,7 @@
 | `/b/{slug}` | Blueprint Show (slug) | — | Friendly URL for blueprint show |
 | `/marketplace` | Marketplace Index | `MarketplaceList` | Public marketplace listing |
 | `/notifications` | Notifications Inbox | `NotificationBell` | In-app notification feed |
+| `/profile` | Profile | `UserProfileForm`, `ApiTokenManager` | Perfil con tabs (Datos, Cuenta, Seguridad) |
 
 ---
 
@@ -99,6 +100,24 @@
   - Indicador de fuerza de password (opcional)
   - Checkmarks en validación inline
   - Botón "Crear cuenta" con spinner
+
+#### `ApiTokenManager`
+- **Props**: Ninguno (usa estado local + auth()->user())
+- **Estado**: `$tokens` (collection), `$tokenName`, `$expiresAt`, `$password`, `$newPlainTextToken`, `$revokePassword`, `$revokeTokenId`, `$showCreateForm`, `$isFreePlan`
+- **Operaciones**:
+  - `createToken()`: valida → CreateApiToken Action → one-time display
+  - `dismissNewToken()`: limpia plain-text token
+  - `confirmRevoke($tokenId)`: muestra confirmación
+  - `revokeToken()`: verifica password → RevokeApiToken Action
+  - `cancelRevoke()`: limpia estado de revocación
+- **UI**:
+  - Tabla de tokens: columnas Nombre, Último uso, Expira, Acciones
+  - Empty state con CTA localizado
+  - Formulario de creación colapsable (toggle)
+  - One-time token display con warning + botón copiar + botón "Entendido"
+  - Modal de confirmación de revocación con password
+  - Free plan CTA de upgrade
+  - Rate limiting a nivel de componente (RateLimiter 10/min)
 
 ### 3.2 Organization
 
@@ -352,6 +371,16 @@
 - **Plan-limit handling**: if plan is maxed, shows message and disables creation
 - **UI**: horizontal progress bar (4 dots), step indicator with shortened mobile labels, spinner on Next/Skip buttons, confirmation modal for skip-all
 
+### 4.6 Profile (`/profile`)
+
+- **Layout**: Página de perfil con 3 tabs Alpine.js
+- **Tabs**:
+  - **Datos**: Nombre, avatar (UserProfileForm existente)
+  - **Cuenta**: Cambio de password, MFA toggle (UserProfileForm existente)
+  - **Seguridad**: API tokens (ApiTokenManager Livewire)
+- **URL hash sync**: `#datos`, `#cuenta`, `#seguridad` — deep-linking y restauración al cargar
+- **Tab activo por defecto**: Datos
+
 ---
 
 ## 5. Estados de UI
@@ -366,6 +395,7 @@
 | Modal | Acción en progreso | Overlay semi-transparente + spinner centrado |
 | Page transition | Entre páginas | Fade out/in de 150ms |
 | Download file | Click en descargar | Botón con spinner, toast "Descargado" |
+| Token creation | Creación de API token | Spinner en botón "Generar token" → One-time display o error |
 
 ### 5.2 Empty States
 
@@ -478,6 +508,11 @@
 **Decisión**: Wizard de 4 pasos post-registro en lugar de soltar al usuario en un dashboard vacío.
 **Razón**: Reduce abandono guiando al usuario. Skip-all disponible para exploradores. Persistencia en BD evita pérdida de progreso. Middleware asegura completitud sin bloquear rutas de utilidad.
 
+### 6.12 One-Time Token Display
+**Decisión**: El plain-text token se muestra UNA sola vez inmediatamente después de la creación, con botón copiar y advertencia prominente. El botón "Entendido" lo descarta permanentemente.
+
+**Razón**: Es el patrón estándar de la industria (GitHub, GitLab, npm, PyPI). El token se hashea con SHA-256 en BD (Sanctum) — nunca se almacena en texto plano. Mostrarlo una vez y forzar al usuario a copiarlo o perderlo es más seguro que permitir re-visualización.
+
 ---
 
 ## 7. Responsive Breakpoints
@@ -532,4 +567,4 @@
 
 **Documento generado**: 2026-05-15  
 **Versión**: 1.1  
-**Última actualización**: 2026-06-30 — Segment CRUD, onboarding wizard, downloads, dashboard polish
+**Última actualización**: 2026-06-30 — API token management, tabbed profile

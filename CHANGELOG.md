@@ -88,6 +88,7 @@
   - `tab-manager.blade.php` refactorizado a loops dinámicos (`AgentGenerator::presetNames()`)
 - **👁️ Password visibility toggle** — ojito en login, register, y perfil (6 campos)
   - Alpine.js `x-data` con SVG eye/eye-off, i18n `show_password`/`hide_password`
+- **🔑 API Token Management** — Gestión de tokens de API personales desde el perfil de usuario. Sanctum integrado (`HasApiTokens` trait, migración `personal_access_tokens`, prefijo `covar_`). Perfil reorganizado en 3 tabs Alpine.js (Datos, Cuenta, Seguridad). CRUD de tokens en tab Seguridad: crear (nombre + expiración máx 1 año + confirmación de contraseña), listar (nombre, último uso, expiración), revocar (confirmación de contraseña). Token en texto plano mostrado UNA sola vez con botón copiar. Plan-gating: solo Pro/Enterprise. RateLimiter 10/min. 24 tests nuevos.
 
 ### Changed
 - **🏗️ Arquitectura de planes**: `plan_id` eliminado de `organizations`. El plan se lee del owner via accessor. `$organization->plan` → `$organization->owner->plan`.
@@ -96,6 +97,7 @@
 
 ### Security
 - **Clear secrets on publish/subscribe** — Secret variable values are now properly emptied when publishing to marketplace and when subscribing/forking.
+- **OWASP A07 — API token security**: Confirmación de contraseña requerida para crear Y revocar tokens. RateLimiter 10/min en componente. Token nunca almacenado en texto plano (Sanctum SHA-256). Prefijo `covar_` para detección de secrets en GitHub. One-time display con advertencia.
 - **🔒 Security Validation Audit** — cierre de 6 gaps de seguridad y autorización (OWASP A01, A07):
   - **Track A (Fixes inmediatos)**:
     - Restricción de cambio de roles: solo el owner de la organización puede cambiar roles de miembros

@@ -403,6 +403,15 @@ The AI Context tab uses a segment-based model:
 
 **Why segments over toggles**: The previous system injected HTML markers into a textarea (fragile regex). Segments are first-class data — typed, ordered, independently editable.
 
+### 5.6 API Token Management (Auth Module)
+
+The Auth module manages API tokens via Laravel Sanctum:
+
+- `HasApiTokens` trait from Sanctum on the `User` model
+- `CreateApiToken` and `RevokeApiToken` Actions, both using the `VerifiesPassword` trait for password confirmation
+- `ApiTokenManager` Livewire component in the Auth module for UI interaction
+- `personal_access_tokens` migration provided by Sanctum
+
 ---
 
 ## 6. Stack y Dependencias Clave
@@ -416,7 +425,7 @@ The AI Context tab uses a segment-based model:
 | Build | Vite | — | Asset bundling |
 | Auth | Laravel Breeze (custom) | — | Login/register/logout |
 | API Ready | Laravel Sanctum | — | API tokens (fase 3) |
-| Testing | PHPUnit | 12.5 (463 tests, 1029 assertions) | Unit + Feature tests |
+| Testing | PHPUnit | 12.5 (487 tests, 1096 assertions) | Unit + Feature tests |
 | DB Dev | SQLite | 3 | Desarrollo local |
 | DB Prod | MySQL | 8.0+ | Producción |
 
@@ -451,6 +460,6 @@ The AI Context tab uses a segment-based model:
 
 ---
 
-**Documento generado**: 2026-05-15  
+**Documento generado**: 2026-06-30  
 **Versión**: 1.0  
 **Última actualización**: 2026-06-30

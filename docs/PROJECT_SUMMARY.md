@@ -58,8 +58,11 @@ Cada módulo contiene:
 | `RegisterUser` Action | Crea usuario con plan Free por defecto |
 | `LoginUser` Action | Autentica con credenciales |
 | `LogoutUser` Action | Invalida sesión y tokens |
+| `CreateApiToken` Action | Crea token Sanctum con plan-gating |
+| `RevokeApiToken` Action | Revoca token Sanctum del usuario |
 | `LoginForm` Livewire | Formulario reactivo con validación en tiempo real |
 | `RegisterForm` Livewire | Registro con validación y redirect al dashboard |
+| `ApiTokenManager` Livewire | Gestión de tokens API en perfil de usuario |
 
 **Rutas**:
 - `GET /login` — Formulario de login
@@ -295,7 +298,8 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 | Marketplace | 53 | — |
 | Feature (cross-module) | 1 | 56 |
 | Agent Context | 33+ | 70+ |
-| **Total** | **463** | **1029** |
+| API Tokens | 24 | 67 |
+| **Total** | **487** | **1096** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -344,6 +348,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Feature | Estado |
 |---------|--------|
 | Auth (login/register/logout) | ✅ Completo |
+| API Token Management | ✅ Completo — Sanctum tokens UI, perfil con tabs, plan-gating |
 | Planes configurables | ✅ Completo |
 | CRUD Organizaciones | ✅ Completo |
 | Gestión de miembros (add/invite/roles) | ✅ Completo |
@@ -363,7 +368,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 463 tests, 1029 assertions |
+| Tests | ✅ 487 tests, 1096 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
 | **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos preset/skill/custom |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
@@ -418,5 +423,5 @@ php artisan serve
 ---
 
 **Documento actualizado**: 2026-06-30  
-**Versión**: MVP Fase 3 (Friendly URLs, Downloads, Onboarding) + Marketplace v1  
+**Versión**: MVP Completo (web) + Marketplace v1  
 **Commits**: 50+ en rama `develop`

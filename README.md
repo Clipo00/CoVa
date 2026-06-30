@@ -80,7 +80,7 @@ php artisan test
 php artisan test --coverage
 ```
 
-**Estado actual**: 463 tests, 1029 assertions.
+**Estado actual**: 487 tests, 1096 assertions.
 
 ---
 

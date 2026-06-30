@@ -568,6 +568,29 @@ Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (
 
 ---
 
+## Fase 12: API Token Management (Junio 2026)
+
+**El Problema**: CoVa necesitaba tokens de API para que el futuro CLI (`cova fetch`) pudiera autenticarse. Sanctum estaba instalado pero completamente sin usar: no había `HasApiTokens` en User, no existía la migración `personal_access_tokens`, y no había ninguna UI para gestionar tokens.
+
+**La Solución**: Integrar Sanctum en el módulo Auth existente y rediseñar el perfil de usuario en tabs para acomodar los tokens junto a las settings de seguridad existentes (password, MFA).
+
+**Decisiones Clave**: 
+- **Perfil en tabs**: Datos, Cuenta, Seguridad — los API tokens viven en Seguridad junto con el concepto de "acceso externo"
+- **Token de un solo uso**: el plain-text token se muestra UNA vez con botón copiar y advertencia — patrón estándar de GitHub, GitLab, npm
+- **Expiración obligatoria**: máximo 1 año, requerido en creación. Sin tokens eternos.
+- **Plan-gating**: solo Pro/Enterprise — Free ve CTA de upgrade
+- **Password confirmation para crear Y revocar**: OWASP A07 — previene session riding
+- **RateLimiter en componente**: no depende de rutas HTTP, Livewire maneja el throttle internamente
+
+**Lo Que Se Hizo**: `HasApiTokens` en User. Migración Sanctum. Prefijo `covar_` en config. `ApiTokenManager` Livewire con CRUD completo. `CreateApiToken` y `RevokeApiToken` Actions con `VerifiesPassword` trait. Perfil con 3 tabs Alpine.js + URL hash sync. 24 tests nuevos (7 unit + 14 feature + 3 tabs). 487 tests, 0 regresiones.
+
+**Aprendizajes Clave**:
+22. **RateLimiter de Laravel en Livewire > throttle en rutas**: Al poner el rate limit en el componente Livewire con `RateLimiter::attempt()`, el límite aplica sin necesidad de rutas HTTP dedicadas. Esto evita crear métodos vacíos en controllers solo para que exista un endpoint rate-limited.
+
+23. **El trait `VerifiesPassword` evita duplicación**: Tanto `CreateApiToken` como `RevokeApiToken` necesitan verificar la contraseña del usuario. Extraerlo a un trait (`VerifiesPassword`) mantiene DRY sin herencia forzada. En un futuro, `LoginUser` también podría usarlo.
+
+---
+
 **Documento generado**: 2026-05-23  
-**Versión**: 1.4  
-**Última actualización**: Junio 2026 — Friendly URLs, Segment CRUD, Dashboard Polish, Onboarding Wizard
+**Versión**: 1.5  
+**Última actualización**: Junio 2026 — API Token Management

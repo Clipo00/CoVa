@@ -71,6 +71,37 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 2. Sistema invalida sesión y tokens de Sanctum
 3. Redirige a `/login`
 
+### 2.4 API Token Management
+
+**Actor**: User (Pro/Enterprise plan)
+**Precondición**: Usuario autenticado con plan Pro o Enterprise.
+**Postcondición**: Token creado/revocado.
+
+**Flujo de creación**:
+1. User navega a `/profile` → tab Seguridad
+2. Click en "Crear token"
+3. Completa: nombre del token, fecha de expiración (máx 1 año), contraseña actual
+4. Sistema valida plan (Free → CTA upgrade), expiración, contraseña
+5. Token creado via Sanctum `createToken()`
+6. Plain-text token mostrado UNA vez con botón copiar y advertencia
+
+**Flujo de revocación**:
+1. User click en "Revocar" junto al token
+2. Confirma contraseña actual
+3. Token eliminado via Sanctum `delete()`
+4. Toast de confirmación
+
+**Flujo de listado**:
+- Muestra nombre, último uso ("Nunca" si null), fecha de expiración
+- Empty state: "No tienes tokens de API" con CTA
+- Solo tokens del usuario autenticado
+
+**Reglas de negocio**:
+- RN-TOKEN-01: Solo planes Pro/Enterprise pueden crear tokens.
+- RN-TOKEN-02: Expiración obligatoria, máximo 1 año desde creación.
+- RN-TOKEN-03: Contraseña requerida para crear y revocar.
+- RN-TOKEN-04: Plain-text token visible UNA sola vez.
+
 ---
 
 ## 3. Módulo Organization
@@ -483,6 +514,10 @@ Developer en /blueprints/{uuid}
 | RN-BP-11 | Validar límite blueprints org destino en transferencia | Blueprint |
 | RN-BP-12 | Favoritos solo de orgs del usuario | Blueprint |
 | RN-BP-13 | Favoritos persisten en soft delete | Blueprint |
+| RN-TOKEN-01 | Solo planes Pro/Enterprise pueden crear tokens | Auth |
+| RN-TOKEN-02 | Expiración obligatoria, máximo 1 año desde creación | Auth |
+| RN-TOKEN-03 | Contraseña requerida para crear y revocar | Auth |
+| RN-TOKEN-04 | Plain-text token visible UNA sola vez | Auth |
 
 ---
 
@@ -522,6 +557,7 @@ Developer en /blueprints/{uuid}
 | Copiar al portapapeles | Icono cambia a ✓ | Toast verde "Copiado" | — |
 | Invitar miembro | Spinner en botón | Toast verde "Invitación enviada" | Toast rojo |
 | Aceptar invitación | Spinner en página | Redirect a org, toast verde | Toast rojo con razón |
+| Crear token | Spinner en botón | One-time display → "Token creado" | Toast rojo |
 
 ---
 
@@ -550,6 +586,12 @@ Developer en /blueprints/{uuid}
 - **Descripción**: URLs de blueprints con slugs legibles (`/b/{slug}`) en lugar de UUIDs. 301 redirects de UUID a slug. Mutation routes mantienen UUID.
 - **Implementado**: Route model binding `{blueprint:slug}`, regex constraint, `BlueprintController@showBySlug`.
 - **Pendiente**: Nada.
+
+### 10.5 API Token Management
+- **Estado**: ✅ Completo
+- **Descripción**: Gestión de tokens de API personales para autenticación del futuro CLI. Integración con Laravel Sanctum, UI en perfil de usuario (tab Seguridad), plan-gating, expiración obligatoria, y rate limiting.
+- **Implementado**: `HasApiTokens` en User, migración `personal_access_tokens`, `ApiTokenManager` Livewire, `CreateApiToken`/`RevokeApiToken` Actions con `VerifiesPassword` trait, perfil con 3 tabs (Alpine.js + URL hash sync), 24 tests.
+- **Pendiente**: CLI (`cova fetch`), notificaciones de expiración.
 
 ---
 
