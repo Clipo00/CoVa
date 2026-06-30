@@ -6,11 +6,11 @@ return [
     'page_subtitle' => 'Configura tu cuenta',
 
     // Step labels (step indicator bar)
-    'step_welcome' => 'Bienvenido',
-    'step_organization' => 'Crear Organización',
-    'step_blueprint' => 'Crear Blueprint',
-    'step_invite' => 'Invitar Miembros',
-    'step_done' => '¡Listo!',
+    'step_welcome' => 'Inicio',
+    'step_organization' => 'Organización',
+    'step_blueprint' => 'Blueprint',
+    'step_invite' => 'Invitar',
+    'step_done' => 'Listo',
 
     // Step 1: Welcome
     'welcome_heading' => 'Bienvenido a CoVa, :name',

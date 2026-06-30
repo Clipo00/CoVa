@@ -11,19 +11,19 @@
     @endphp
 
     {{-- Step Indicator Bar --}}
-    <div class="mb-8">
-        <div class="flex items-center justify-center space-x-2 sm:space-x-4">
+    <div class="mb-8 overflow-x-auto">
+        <div class="flex items-center justify-center space-x-1 sm:space-x-2 min-w-max">
             @foreach (range(1, 5) as $stepNumber)
-                <div class="flex items-center">
+                <div class="flex items-center flex-shrink-0">
                     {{-- Step circle --}}
                     <div @class([
-                        'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors',
+                        'w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium transition-colors flex-shrink-0',
                         'bg-indigo-600 text-white' => $step === $stepNumber,
                         'bg-indigo-100 text-indigo-600' => $step > $stepNumber,
                         'bg-gray-200 text-gray-500' => $step < $stepNumber,
                     ])>
                         @if ($step > $stepNumber)
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                         @else
@@ -33,7 +33,7 @@
 
                     {{-- Step label (hidden on small screens) --}}
                     <span @class([
-                        'hidden sm:inline ml-2 text-sm',
+                        'hidden md:inline ml-1 sm:ml-2 text-xs sm:text-sm whitespace-nowrap',
                         'font-medium text-indigo-600' => $step === $stepNumber,
                         'text-gray-500' => $step !== $stepNumber,
                     ])>
@@ -43,7 +43,7 @@
                     {{-- Connector line --}}
                     @if ($stepNumber < 5)
                         <div @class([
-                            'w-6 sm:w-12 h-0.5 mx-1 sm:mx-2',
+                            'w-4 sm:w-8 h-0.5 mx-0.5 sm:mx-1 flex-shrink-0',
                             'bg-indigo-600' => $step > $stepNumber,
                             'bg-gray-200' => $step <= $stepNumber,
                         ])></div>
