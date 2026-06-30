@@ -51,6 +51,21 @@ final class ApiTokenManager extends Component
 
     public ?int $selectedOrganizationId = null;
 
+    public function tokensCount(): int
+    {
+        return $this->tokens->count();
+    }
+
+    public function activeTokensCount(): int
+    {
+        return $this->tokens->filter(fn ($t) => $t->expires_at === null || $t->expires_at->isFuture())->count();
+    }
+
+    public function expiredTokensCount(): int
+    {
+        return $this->tokens->filter(fn ($t) => $t->expires_at !== null && $t->expires_at->isPast())->count();
+    }
+
     public function mount(): void
     {
         $user = auth()->user();

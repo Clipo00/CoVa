@@ -1,4 +1,22 @@
 <div>
+    {{-- Token Stats --}}
+    @if($tokens->isNotEmpty())
+        <div class="grid grid-cols-3 gap-4 mb-4">
+            <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                <p class="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wider">{{ __('auth.token_active') }}</p>
+                <p class="mt-1 text-2xl font-bold text-green-700 dark:text-green-300">{{ $this->activeTokensCount() }}</p>
+            </div>
+            <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
+                <p class="text-xs font-medium text-red-600 dark:text-red-400 uppercase tracking-wider">{{ __('auth.token_expired') }}</p>
+                <p class="mt-1 text-2xl font-bold text-red-700 dark:text-red-300">{{ $this->expiredTokensCount() }}</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('auth.token_total') }}</p>
+                <p class="mt-1 text-2xl font-bold text-gray-700 dark:text-gray-300">{{ $this->tokensCount() }}</p>
+            </div>
+        </div>
+    @endif
+
     {{-- Token List --}}
     @if($tokens->isNotEmpty())
         <div class="overflow-x-auto">
