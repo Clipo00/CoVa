@@ -121,6 +121,7 @@ return [
     'token_revoke_confirm_button' => 'Sí, revocar',
     'token_one_time_warning' => 'Copia este token ahora. No podrás verlo de nuevo.',
     'token_copy' => 'Copiar token',
+    'token_show_hide' => 'Mostrar / ocultar token',
     'token_dismiss' => 'Entendido',
     'token_empty' => 'No tienes tokens de API. Crea uno para acceder desde el CLI.',
     'token_plan_cta' => 'Los tokens de API requieren el plan Pro o Enterprise.',

@@ -24,6 +24,20 @@ final class ApiTokenManager extends Component
 
     public ?string $newPlainTextToken = null;
 
+    /**
+     * Get the token value without Sanctum's ID prefix (e.g., "1|abc123" → "abc123").
+     */
+    public function tokenWithoutPrefix(): string
+    {
+        if ($this->newPlainTextToken === null) {
+            return '';
+        }
+
+        $parts = explode('|', $this->newPlainTextToken, 2);
+
+        return $parts[1] ?? $this->newPlainTextToken;
+    }
+
     public string $revokePassword = '';
 
     public ?int $revokeTokenId = null;
