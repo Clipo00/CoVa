@@ -266,6 +266,9 @@
 
     @livewireScripts
 
+    {{-- Stack for page-specific scripts (Alpine helpers, download buttons, etc.) --}}
+    @stack('scripts')
+
     {{-- Flash messages as toast notifications (must run AFTER Alpine is loaded) --}}
     @if(session('success') || session('error'))
     <script>
