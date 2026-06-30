@@ -32,6 +32,10 @@
 | `/blueprints/deleted` | Deleted Blueprints | `BlueprintList` | Papelera de blueprints |
 | `/blueprints/{uuid}` | Blueprint Show | — | Detalle con resolución y tabs |
 | `/blueprints/{uuid}/edit` | Edit Blueprint | `BlueprintEditForm`, `VariableManager`, `TabManager` | Edición completa |
+| `/onboarding` | Onboarding Wizard | `OnboardingWizard` | 4-step post-registration wizard |
+| `/b/{slug}` | Blueprint Show (slug) | — | Friendly URL for blueprint show |
+| `/marketplace` | Marketplace Index | `MarketplaceList` | Public marketplace listing |
+| `/notifications` | Notifications Inbox | `NotificationBell` | In-app notification feed |
 
 ---
 
@@ -188,10 +192,13 @@
   - Contenido expandido según tipo:
     - **VSCode Extensions**: Textarea (una extensión por línea) + preview de lista
     - **MCP Servers**: Tabla de servidores con inputs name/command/args + botón añadir/quitar
-    - **AI Context**:
-      - Presets: Checkboxes de presets predefinidos
-      - Skills: Checkboxes de skills disponibles
-      - Custom Rules: Textarea libre
+    - **AI Context** (Segment CRUD):
+      - Segments: Collapsible cards, each with type (preset/skill/custom badge), editable name, and content textarea
+      - Operations: addSegment, removeSegment, moveSegment, updateSegmentContent, updateSegmentName
+      - Dropdowns "Add preset" and "Add skill" load content from the preset/skill registry
+      - Custom segments: free-text textarea in collapsible card
+      - Segments are ordered and independently collapsible
+      - Content loaded from registry on toggle, editable by the user
   - Dropdown "+ Añadir tab" (solo tipos disponibles en `availableTabTypes`)
   - Máximo de tabs: no hardcodeado, pero UI scrollable
 
@@ -294,9 +301,9 @@
     - Tabla: Name | Command | Args
     - Botón "Copiar configuración"
   - **AI Context** (si existe tab):
-    - Presets activos (badges)
-    - Skills activos (badges)
-    - Custom rules (blockquote)
+    - Segments: lista de segmentos con badge de tipo (preset/skill/custom) y nombre
+    - Contenido de cada segmento renderizado en bloque colapsable
+    - Custom segments muestran contenido libre (blockquote)
     - **agent.md preview**:
       - Badge "agent.md"
       - Bloque de código con syntax highlighting
@@ -304,6 +311,13 @@
 - **Install Command** (si aplica):
   - Bloque de código: `cova fetch {uuid}`
   - Botón copiar
+
+- **Downloads Section** (new):
+  - Vault Fetch CLI card: shows `cova fetch {slug}` with copy button
+  - Download agent.md: button downloads full agent.md (Alpine.js Blob)
+  - Download per-segment .md: one button per AI Context segment
+  - Download .env template: button downloads generated .env file
+  - All client-side via Alpine.js Blob + URL.createObjectURL()
 
 ### 4.4 Members Page (`/organizations/{slug}/members`)
 
@@ -323,6 +337,21 @@
   - "Añadir miembro" (Owner): Modal con email + rol
   - "Invitar por email" (Owner/Maintainer): Modal con email + rol
 
+### 4.5 Onboarding Wizard (`/onboarding`)
+
+- **Actor**: Newly registered user (has not completed onboarding)
+- **Middleware**: `EnsureOnboardingCompleted` redirects to `/onboarding` from any authenticated route
+- **Steps**:
+  1. Welcome: greeting message + "Skip all" option
+  2. Create Organization: simplified org creation form
+  3. Invite Team: invite members by email (optional, skippable)
+  4. Complete: summary + CTA to dashboard
+- **Skip-all flow**: "Skip" button on step 1 → sets `onboarding_completed_at` → redirect to `/dashboard`
+- **Email verification banner**: shown on all steps if email unverified (non-blocking)
+- **Browser refresh resilience**: `onboarding_step` column preserves current step
+- **Plan-limit handling**: if plan is maxed, shows message and disables creation
+- **UI**: horizontal progress bar (4 dots), step indicator with shortened mobile labels, spinner on Next/Skip buttons, confirmation modal for skip-all
+
 ---
 
 ## 5. Estados de UI
@@ -336,6 +365,7 @@
 | Blueprint Show | Resolución | Spinner en área de tabs |
 | Modal | Acción en progreso | Overlay semi-transparente + spinner centrado |
 | Page transition | Entre páginas | Fade out/in de 150ms |
+| Download file | Click en descargar | Botón con spinner, toast "Descargado" |
 
 ### 5.2 Empty States
 
@@ -349,6 +379,8 @@
 | Sin invitaciones | "No hay invitaciones pendientes" | 📧 | — |
 | Sin variables | "Este blueprint no tiene variables" | ⚙️ | CTA a editar |
 | Sin tabs | "No hay tabs configuradas" | 📑 | CTA a editar |
+| "Marketplace vacío" | "No hay blueprints públicos todavía" | 🛒 | CTA a crear y publicar |
+| "Sin notificaciones" | "No tienes notificaciones" | 🔔 | — |
 
 ### 5.3 Estados de Error
 
@@ -434,6 +466,18 @@
 - Token en URL = shareable (puede enviarse por Slack, WhatsApp, etc. sin perder funcionalidad).
 - Expiración de 48h mitiga riesgo de tokens expuestos.
 
+### 6.9 Segmentos sobre Toggles para AI Context
+**Decisión**: Reemplazar toggles de presets/skills con segmentos modulares tipo cards colapsables.
+**Razón**: Los toggles inyectaban marcadores HTML en textarea (frágil, regex). Segmentos son ciudadanos de primera clase: tipados, ordenables, editables independientemente. El agent.md generado es un router que incluye segmentos en orden.
+
+### 6.10 Descargas Client-Side con Alpine.js
+**Decisión**: Descargas de archivos con Blob + URL.createObjectURL() en Alpine.js, sin endpoints nuevos.
+**Razón**: Datos ya en el DOM tras autorización. Cero riesgo de exposición (sin endpoint que proteger). Sin requests adicionales = más rápido.
+
+### 6.11 Onboarding Wizard Post-Registro
+**Decisión**: Wizard de 4 pasos post-registro en lugar de soltar al usuario en un dashboard vacío.
+**Razón**: Reduce abandono guiando al usuario. Skip-all disponible para exploradores. Persistencia en BD evita pérdida de progreso. Middleware asegura completitud sin bloquear rutas de utilidad.
+
 ---
 
 ## 7. Responsive Breakpoints
@@ -488,4 +532,4 @@
 
 **Documento generado**: 2026-05-15  
 **Versión**: 1.1  
-**Última actualización**: 2026-05-21 — Modo oscuro, confirm dialog Alpine, badges de roles, ThemeToggle
+**Última actualización**: 2026-06-30 — Segment CRUD, onboarding wizard, downloads, dashboard polish

@@ -10,6 +10,12 @@
 ## [Unreleased]
 
 ### Changed
+- **Presets & Skills → Segments** — The toggle-based preset/skill system with HTML markers (`<!-- BEGIN:preset:... -->`) replaced by the new segment CRUD system in TabManager.
+- **Template data format** — Templates in `BlueprintServiceProvider` updated from flat presets/skills arrays to the new `segments[]` format with registry content.
+- **i18n: Castilian Spanish standard** — All new and modified translation strings use neutral Castilian Spanish (Spain) instead of Rioplatense voseo. New `covar-i18n` skill enforces this.
+- **Re-publishing (sync)** — Published blueprints can now be synced to update marketplace copies with latest changes.
+- **Publish creates copy instead of transfer** — Publishing now creates a marketplace copy with emptied secrets; original stays in creator's org marked public.
+- **Marketplace listing filter** — Listing now filters by `cova-marketplace` organization, removing duplicates.
 - **Selectores con más espacio para el chevron** — Aumentado el padding derecho del ícono dropdown de `px-3` (12px) a `pr-4` (16px) en todos los select nativos del formulario de creación y edición.
 - **Presets y skills cargan contenido editable** — Al activar un preset (SOLID, PSR-12, etc.) o skill en la pestaña AI Context, su contenido markdown se carga automáticamente en el textarea de reglas custom envuelto en marcadores `<!-- BEGIN:preset:... -->`. El usuario edita libremente; al desactivar el toggle, el bloque se elimina del textarea automáticamente.
 - **Textarea de reglas custom más alto** — Aumentado de 3 a 6 filas para facilitar la edición del contenido cargado por presets.
@@ -24,6 +30,18 @@
 - **Mensajes de publish corregidos** — Los mensajes ahora reflejan correctamente que los secretos se vacían al publicar, no se exponen.
 
 ### Fixed
+- **Blueprint collapsible toggle** — Variables section collapse/expand now works correctly with proper container constraints.
+- **Download buttons not working** — Missing @stack('scripts') in app layout added.
+- **Onboarding step indicator overflow** — Step labels shortened and responsive breakpoints added for mobile.
+- **x-data quoting with @json** — Changed to single quotes in x-data attributes using @json.
+- **Self-voting prevention** — Policy prevents users from voting on their own blueprints.
+- **Subscription blueprint limit** — Marketplace subscriptions now count against max_blueprints_per_org.
+- **Secret variables cleared on publish/subscribe** — Secret values properly emptied during publish and subscribe flows.
+- **Slug uniqueness validation** — Pre-insert validation shows friendly error instead of SQL exception.
+- **Publish redirect** — Publishing redirects to blueprint index (not show page in marketplace org).
+- **Negation operator spacing** — Removed incorrect space after ! operator in LoginUser.
+- **Cache files removed from repo** — .atl/ directory added to .gitignore and removed.
+- **PHP code formatting** — Consistent pint formatting applied across all modules.
 - **403 al publicar** — El blueprint ya no se transfiere al marketplace, por lo que el creador no pierde acceso.
 - **Slug duplicado** — Validación pre-insert en `BlueprintCreateForm` que muestra error amigable en vez de excepción SQL.
 - **Traducciones faltantes** — Agregadas `publish_section`, `publish_toggle`, `publish_help`, `template_label`, `template_empty`, `template_loading`, `live_preview`, `badge_public`, `slug_exists`, `publish_sync_button`, `publish_sync_confirm`.
@@ -32,6 +50,15 @@
 - **Template data format** — Corregido nesting de `config` en datos de plantillas para compatibilidad con TabManager.
 
 ### Added
+- **🔗 Friendly slug-based URLs `/b/{slug}`** — Blueprint show pages now use readable slugs instead of UUIDs. Route model binding with `{blueprint:slug}` and regex constraint `[a-z0-9]+(?:-[a-z0-9]+)*`. Legacy UUID requests receive 301 redirects to slug URLs. Mutation routes (create, edit, delete) retain UUIDs for security.
+- **📥 Downloads section on blueprint show page** — Vault fetch CLI card with copyable `cova fetch` command. Download agent.md, per-segment .md files, and .env template as files using Alpine.js Blob downloads (no new routes). New `GenerateEnvTemplate` Action.
+- **🔄 Auth loading spinners** — Login and register form submit buttons now show animated spinners during authentication with inputs disabled to prevent double submission.
+- **🧩 AI Context Segment CRUD** — The AI Context tab refactored from flat preset/skill toggles to collapsible segment cards. New `AiContextSegment` DTO with types (preset, skill, custom). Segments are ordered, independently editable, and collapsible. Dropdown menus "Add preset" and "Add skill" load content from registry. Custom segments include free-text textarea.
+- **📄 Agent.md router** — Generated `agent.md` now acts as a router including all segments in order with per-segment Markdown headings. `AgentGenerator::resolveSegments()` generates per-segment blocks.
+- **📊 Segment-variable limit validation** — Segments now consume variable slots from the plan limit. `CreateBlueprint` and `UpdateBlueprint` validate combined segment + variable count against plan maximums.
+- **📈 Dashboard polish** — 5 UI improvements: stats row (total orgs, blueprints, marketplace items), redesigned organization cards with role badges and counts, marketplace empty state, blueprint category badge on recent list, organization show blueprint count.
+- **🧙 Onboarding wizard** — 4-step post-registration Livewire wizard: Welcome → Create Organization → Invite Team → Complete. Skip-all flow. Email verification banner (non-blocking, all steps). Browser refresh resilience via `onboarding_step` column. `EnsureOnboardingCompleted` middleware. Plan-limit exception handling. 20/20 tasks, 3 chained PRs.
+- **📋 Template tabs populate TabManager** — Template selection during blueprint creation now correctly populates the TabManager with dynamic `wire:key` attributes.
 - **🛒 Marketplace v1** — marketplace completo como módulo independiente:
   - **Listado público** (`/marketplace`): búsqueda, filtros por tags, ordenamiento (rating, suscriptores, reciente), paginación
   - **Vista de detalle** (`/marketplace/{uuid}`): contenido completo resuelto, variables enmascaradas para no-owners, stats
@@ -68,6 +95,7 @@
 - **🧹 Limpieza i18n**: 25 claves muertas del mock data viejo de marketplace eliminadas de `landing.php`
 
 ### Security
+- **Clear secrets on publish/subscribe** — Secret variable values are now properly emptied when publishing to marketplace and when subscribing/forking.
 - **🔒 Security Validation Audit** — cierre de 6 gaps de seguridad y autorización (OWASP A01, A07):
   - **Track A (Fixes inmediatos)**:
     - Restricción de cambio de roles: solo el owner de la organización puede cambiar roles de miembros

@@ -214,6 +214,7 @@ Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicaci�
 | `ToggleFavorite` | Agrega/elimina favorito |
 | `TransferBlueprint` | Transfiere blueprint a otra organización |
 | `ResolveBlueprint` | Procesa tabs_config y genera outputs estructurados (`TabOutput[]`, `BlueprintOutput`) incluyendo `agent.md` |
+| `GenerateEnvTemplate` | Genera archivo `.env` a partir de las variables del blueprint |
 
 #### Livewire Components
 
@@ -246,6 +247,8 @@ Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicaci�
 - `POST /blueprints/{uuid}/transfer` — Transferir a otra org
 - `POST /blueprints/{uuid}/delete` — Soft delete
 - `POST /blueprints/{uuid}/restore` — Restaurar
+- `GET /b/{slug}` — Ver blueprint por slug amigable
+- `GET /b/u/{uuid}` — Legacy redirect (301 a `/b/{slug}`)
 
 ---
 
@@ -285,13 +288,14 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 
 | Suite | Tests | Assertions |
 |-------|-------|------------|
-| Auth | 18 | 22 |
-| Blueprint | 49 | 57 |
+| Auth + Onboarding | 35+ | 90+ |
+| Blueprint | 65+ | 120+ |
 | Organization | 23 | 58 |
 | Shared | 34 | 44 |
 | Marketplace | 53 | — |
 | Feature (cross-module) | 1 | 56 |
-| **Total** | **274** | **579** |
+| Agent Context | 33+ | 70+ |
+| **Total** | **463** | **1029** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -359,10 +363,14 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 392 tests, 842 assertions |
+| Tests | ✅ 463 tests, 1029 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
-| **AI Agents / Skills config** | ✅ Completo — 7 presets + 5 skills |
+| **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos preset/skill/custom |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
+| **Friendly URLs `/b/{slug}`** | ✅ Completo — Slugs con 301 redirects |
+| **Show page downloads** | ✅ Completo — Vault fetch, .md/.env downloads |
+| **Dashboard polish** | ✅ Completo — 5 UI deliverables |
+| **Onboarding wizard** | ✅ Completo — 4-step wizard, skip-all, email banner |
 
 ## Próximas Fases
 
@@ -370,7 +378,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 > Estado: ✅ Completo. Tabs dinámicas, variables, templates, preview de `agent.md`, y live preview panel implementados.
 
 ### Fase 3: API REST + CLI
-> Próxima fase. Sanctum instalado, marketplace operativo. Queda exponer API y construir CLI.
+> Friendly URLs y downloads completos. Sanctum instalado, marketplace operativo. Queda exponer API y construir CLI.
 
 ### Fase 4: Marketplace
 > ✅ Completo. Marketplace v1 operativo como módulo independiente.
@@ -409,6 +417,6 @@ php artisan serve
 
 ---
 
-**Documento actualizado**: 2026-06-29  
-**Versión**: MVP Fase 2 + Marketplace v1  
+**Documento actualizado**: 2026-06-30  
+**Versión**: MVP Fase 3 (Friendly URLs, Downloads, Onboarding) + Marketplace v1  
 **Commits**: 50+ en rama `develop`

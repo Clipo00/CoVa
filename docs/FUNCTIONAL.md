@@ -267,6 +267,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
    - **AI Context**: Preview de `agent.md` generado con copy-to-clipboard
 4. Si hay `agent.md`, muestra badge y botón de copia
 5. Botón "Copiar comando de instalación" (si aplica)
+6. **Sección Descargas**: Vault fetch CLI card, botones para descargar `agent.md`, `.env` template, y archivos `.md` por segmento (Alpine.js Blob, client-side).
 
 **Reglas de negocio**:
 - RN-BP-05: Solo Owner ve valores de variables secretas. Otros roles ven `***`.
@@ -365,6 +366,10 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 - `/blueprints/deleted` — Blueprints soft-deleted de las orgs donde es Owner
 - Acciones: Restaurar
 - No se muestra a Developer/Maintainer
+
+#### 4.8.4 Friendly URLs
+- `GET /b/{slug}` — Ver blueprint por slug amigable
+- `GET /b/u/{uuid}` — Legacy redirect (301 a `/b/{slug}`)
 
 ---
 
@@ -498,6 +503,7 @@ Developer en /blueprints/{uuid}
 | Transferir sin ser Owner | "Solo el Owner puede transferir blueprints" | 403 |
 | Blueprint no encontrado | "Blueprint no encontrado" | 404 |
 | Org no encontrada | "Organización no encontrada" | 404 |
+| Slug duplicado | "Ya existe un blueprint con ese slug" | 422 |
 
 ---
 
@@ -528,13 +534,25 @@ Developer en /blueprints/{uuid}
 - **Pendiente**: Integración con LLM providers, export a formatos específicos de agentes (Claude, GPT, etc.).
 
 ### 10.2 Marketplace
-- **Estado**: 🚧 Preparación
+- **Estado**: ✅ Completo
 - **Descripción**: Publicación de blueprints públicos para la comunidad.
-- **Implementado**: Campo `is_public` en blueprints, flag `has_marketplace_publish` en planes, org de marketplace creada en seeder.
-- **Pendiente**: Landing pública, rating/reviews, búsqueda, filtrado, moderación.
+- **Implementado**: `MarketplaceList` Livewire, `SubscribeToBlueprint` Action, `VoteOnBlueprint` Action, `NotificationBell` Livewire, `NotifySubscribers` Job, rutas `/marketplace`, `/marketplace/{uuid}`, `/notifications`.
+- **Pendiente**: Ranking/reviews, moderación de contenido.
+
+### 10.3 Onboarding Wizard
+- **Estado**: ✅ Completo
+- **Descripción**: Wizard de 4 pasos post-registro (Welcome → Create Org → Invite Team → Complete). Skip-all flow. Email verification banner no bloqueante. `EnsureOnboardingCompleted` middleware.
+- **Implementado**: `OnboardingWizard` Livewire, `onboarding_step` en BD, `lang/{es,en}/onboarding.php`.
+- **Pendiente**: Nada.
+
+### 10.4 Friendly URLs
+- **Estado**: ✅ Completo
+- **Descripción**: URLs de blueprints con slugs legibles (`/b/{slug}`) en lugar de UUIDs. 301 redirects de UUID a slug. Mutation routes mantienen UUID.
+- **Implementado**: Route model binding `{blueprint:slug}`, regex constraint, `BlueprintController@showBySlug`.
+- **Pendiente**: Nada.
 
 ---
 
 **Documento generado**: 2026-05-15  
 **Versión**: 1.0  
-**Última actualización**: Fase 2 del plan de documentación
+**Última actualización**: 2026-06-30

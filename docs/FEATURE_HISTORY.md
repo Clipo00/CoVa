@@ -520,6 +520,54 @@ Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (
 
 15. **Desvincular > Borrar**: Cuando un blueprint del marketplace se elimina, los suscriptores pierden la relación con el original pero conservan su copia. Si borráramos la copia, el usuario perdería trabajo. Si borráramos la suscripción, perderíamos auditoría. `subscribed_blueprint_id = null` es el punto medio.
 
+---
+
+## Fase 9: Friendly URLs & Downloads (Junio 2026)
+
+**El Problema**: Las URLs de blueprints usaban UUIDs (`/blueprints/550e8400-e29b-...`) que son ilegibles, difíciles de compartir, y perjudican el SEO. Los usuarios no tenían forma de descargar el contenido del blueprint (agent.md, .env template) como archivos para usar en sus proyectos.
+
+**Decisiones Clave**: Slugs en lugar de UUIDs para legibilidad. 301 redirects de UUID→slug mantienen links viejos. Descargas client-side con Alpine.js Blob sin nuevas rutas. Mutation routes (POST/PUT/DELETE) mantienen UUID por seguridad.
+
+**Lo Que Se Hizo**: Friendly URLs `/b/{slug}` con route model binding. Legacy 301 redirects. Vault fetch CLI card en show page. Descargas de agent.md, .env template, y per-segment .md con Alpine.js Blob. `GenerateEnvTemplate` Action. Auth loading spinners en login/register.
+
+**Aprendizajes Clave**:
+16. **Descargas client-side evitan complejidad**: Blob + URL.createObjectURL() + `<a download>` permite descargas sin endpoints nuevos. Los datos ya están en el DOM tras autorización. Sin riesgo de exposición.
+17. **Slugs en GET, UUIDs en POST**: Separar identificadores por verbo HTTP es más seguro que usar uno solo para todo. Slugs son legibles, UUIDs son inmutables.
+
+---
+
+## Fase 10: Segment CRUD & Dashboard Polish (Junio 2026)
+
+**El Problema**: El AI Context tab usaba toggles que inyectaban marcadores HTML (`<!-- BEGIN:preset:... -->`) en un textarea. Esto era frágil (regex para quitar bloques), no escalaba, y los usuarios no podían reordenar ni editar contenido individualmente. El dashboard carecía de estadísticas y empty states.
+
+**La Solución: Segmentos modulares**: Cada preset/skill se convierte en un "segmento" — card colapsable con nombre, tipo, contenido y orden. Son DTOs (`AiContextSegment`), no texto escapado en textarea.
+
+**Decisiones Clave**: Segmentos como DTOs con validación en construcción. Tipos: preset, skill, custom. Consumen slots de variables del plan. agent.md como router de segmentos. Sin backward compat (proyecto no publicado).
+
+**Lo Que Se Hizo**: `AiContextSegment` DTO + `AiContextConfig` refactor. TabManager segment CRUD (add, remove, move, update). Blade rewrite con dropdowns + cards colapsables. AgentGenerator itera segments. Templates en formato segments. Dashboard polish con 5 UI deliverables (stats row, org cards, marketplace empty, blueprint badge, org show count). 463 tests.
+
+**Aprendizajes Clave**:
+18. **DTOs previenen bugs de forma**: `AiContextSegment` valida `type` contra enum en construcción. Imposible crear segmento con tipo inválido.
+19. **Contenido del registry no se precarga en UI al seleccionar template**: Los tabs se crean correctamente pero los textareas aparecen vacíos. Livewire no serializa propiedades privadas; requiere hidratación adicional.
+
+---
+
+## Fase 11: Onboarding Wizard (Junio 2026)
+
+**El Problema**: Post-registro, usuarios llegaban a dashboard vacío sin guía. Sin camino claro, la tasa de abandono era alta.
+
+**La Solución**: Wizard de 4 pasos: Bienvenida → Crear Org → Invitar → Completar. Skip-all para usuarios que prefieren explorar solos.
+
+**Decisiones Clave**: Livewire wizard sin recarga entre pasos. `onboarding_step` en BD para persistencia. Middleware `EnsureOnboardingCompleted` redirige al wizard. Skip-all marca `onboarding_completed_at` inmediatamente. Email banner no bloqueante. 3 chained PRs (~630 loc).
+
+**Lo Que Se Hizo**: `OnboardingWizard` Livewire. `EnsureOnboardingCompleted` middleware. Columnas `onboarding_step` + `onboarding_completed_at` en users. RegisterForm redirect a `/onboarding`. i18n `onboarding.php`. `OnboardingFlowTest.php` con 7 tests de integración. 463 tests, 1029 assertions.
+
+**Aprendizajes Clave**:
+20. **Flash message y orden de limpieza**: El bug C1 fue limpiar `inviteEmail` ANTES del flash message. Guardar en variable local primero.
+21. **Middleware de onboarding no debe bloquear rutas de utilidad**: Whitelist debe incluir logout, locale switch, y cualquier ruta necesaria para salir del wizard.
+
+---
+
 **Documento generado**: 2026-05-23  
-**Versión**: 1.3  
-**Última actualización**: Marketplace v1 (Junio 2026)
+**Versión**: 1.4  
+**Última actualización**: Junio 2026 — Friendly URLs, Segment CRUD, Dashboard Polish, Onboarding Wizard

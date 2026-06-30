@@ -30,6 +30,7 @@ app/Modules/
 ├── Auth/              # Autenticación y usuarios
 ├── Organization/      # Organizaciones, roles, invitaciones
 ├── Blueprint/         # Blueprints, variables, tabs dinámicas, favoritos
+├── Marketplace/       # Marketplace público, suscripciones, votación, notificaciones
 └── Shared/            # Código transversal (planes, categorías, VO)
 ```
 
@@ -79,7 +80,7 @@ php artisan test
 php artisan test --coverage
 ```
 
-**Estado actual**: 117 tests, 219 assertions.
+**Estado actual**: 463 tests, 1029 assertions.
 
 ---
 
