@@ -118,9 +118,21 @@
                             {{ __('landing.plan_cta_free') }}
                         </span>
                     @elseif ($isPro)
-                        <span class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
-                            {{ __('landing.plan_cta_pro') }}
-                        </span>
+                        @php
+                            $canStartTrial = auth()->check() && auth()->user()->plan_id === optional(\App\Modules\Shared\Models\Plan::where('slug', 'free')->first())->id && auth()->user()->trial_used_at === null;
+                        @endphp
+                        @if ($canStartTrial)
+                            <form method="POST" action="{{ route('pricing.start-trial') }}">
+                                @csrf
+                                <button type="submit" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors cursor-pointer">
+                                    {{ __('landing.plan_cta_trial') }}
+                                </button>
+                            </form>
+                        @else
+                            <span class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                                {{ __('landing.plan_cta_pro') }}
+                            </span>
+                        @endif
                     @elseif ($isEnterprise)
                         <span class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900">
                             {{ __('landing.plan_cta_enterprise') }}

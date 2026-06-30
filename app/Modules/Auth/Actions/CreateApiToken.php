@@ -15,7 +15,7 @@ final class CreateApiToken
 
     public function execute(User $user, string $name, Carbon $expiresAt, string $password): string
     {
-        if ($user->plan === null || !$user->plan->has_api_access) {
+        if (!$user->hasApiAccess()) {
             throw new \RuntimeException('Your plan does not include API access.');
         }
 

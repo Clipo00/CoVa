@@ -35,7 +35,7 @@ final class ApiTokenManager extends Component
     {
         $user = auth()->user();
         $this->tokens = $user->tokens;
-        $this->isFreePlan = $user->plan === null || ! $user->plan->has_api_access;
+        $this->isFreePlan = !$user->hasApiAccess();
     }
 
     public function createToken(CreateApiToken $action): void

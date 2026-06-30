@@ -182,6 +182,10 @@ return [
     'plan_cta_enterprise' => 'Contact sales',
     'plan_popular' => 'Most popular',
     'plan_current' => 'Your current plan',
+    'trial_started' => '14-day trial activated! Enjoy all Pro features.',
+    'trial_days_remaining' => ':count days left in your Pro trial.',
+    'trial_start_button' => 'Try Pro free for 14 days',
+    'plan_cta_trial' => 'Try free for 14 days',
 
     // Footer
     'footer_tagline' => 'Configurations that travel with you.',

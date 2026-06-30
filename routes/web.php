@@ -92,6 +92,23 @@ Route::middleware('auth')->get('/pricing', function () {
     return view('pricing', compact('plans'));
 })->name('pricing');
 
+/*
+|--------------------------------------------------------------------------
+| Start Pro Trial (auth required, Free users only)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->post('/pricing/start-trial', function () {
+    $user = auth()->user();
+
+    try {
+        (new \App\Modules\Auth\Actions\StartProTrial())->execute($user);
+    } catch (\RuntimeException $e) {
+        return back()->with('error', $e->getMessage());
+    }
+
+    return redirect()->route('pricing')->with('success', __('landing.trial_started'));
+})->name('pricing.start-trial');
+
 Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
     $user = auth()->user();
     $organizations = $user->organizations()->with('owner')->withCount(['blueprints', 'members'])->get();

@@ -182,6 +182,10 @@ return [
     'plan_cta_enterprise' => 'Contactar ventas',
     'plan_popular' => 'Más popular',
     'plan_current' => 'Tu plan actual',
+    'trial_started' => '¡Prueba de 14 días activada! Disfruta de todas las funciones Pro.',
+    'trial_days_remaining' => 'Te quedan :count días de prueba Pro.',
+    'trial_start_button' => 'Probar Pro 14 días gratis',
+    'plan_cta_trial' => 'Probar gratis 14 días',
 
     // Footer
     'footer_tagline' => 'Configuraciones que viajan contigo.',

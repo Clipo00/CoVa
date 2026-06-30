@@ -21,6 +21,13 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
 {
     use HasApiTokens, MustVerifyEmail, Notifiable;
 
+    protected static function booted(): void
+    {
+        static::retrieved(function (User $user) {
+            $user->revertTrialIfExpired();
+        });
+    }
+
     protected $fillable = [
         'name',
         'email',
@@ -32,6 +39,8 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
         'mfa_enabled',
         'mfa_prompted_at',
         'onboarding_completed_at',
+        'trial_ends_at',
+        'trial_used_at',
     ];
 
     protected $hidden = [
@@ -47,6 +56,8 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
             'mfa_enabled' => 'boolean',
             'mfa_prompted_at' => 'datetime',
             'onboarding_completed_at' => 'datetime',
+            'trial_ends_at' => 'datetime',
+            'trial_used_at' => 'datetime',
         ];
     }
 
@@ -179,6 +190,68 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
     public function canDeleteOrganization(Organization $organization): bool
     {
         return $this->isOwnerOf($organization);
+    }
+
+    /**
+     * Check if user is on an active Pro trial.
+     */
+    public function isOnProTrial(): bool
+    {
+        if ($this->trial_ends_at === null) {
+            return false;
+        }
+
+        $proPlan = Plan::where('slug', 'pro')->first();
+
+        return $this->plan_id === $proPlan?->id && $this->trial_ends_at->isFuture();
+    }
+
+    /**
+     * Revert trial to Free plan if trial has expired.
+     * Returns true if reverted, false otherwise.
+     */
+    public function revertTrialIfExpired(): bool
+    {
+        if ($this->trial_ends_at === null) {
+            return false;
+        }
+
+        if ($this->trial_ends_at->isFuture()) {
+            return false;
+        }
+
+        $freePlan = Plan::where('slug', 'free')->first();
+        if (!$freePlan) {
+            return false;
+        }
+
+        $this->update(['plan_id' => $freePlan->id]);
+
+        return true;
+    }
+
+    /**
+     * Days remaining in trial, or null if not on trial.
+     */
+    public function trialDaysRemaining(): ?int
+    {
+        if (!$this->isOnProTrial()) {
+            return null;
+        }
+
+        return max(0, (int) now()->diffInDays($this->trial_ends_at, false));
+    }
+
+    /**
+     * Check if user has API access (plan or active trial).
+     */
+    public function hasApiAccess(): bool
+    {
+        if ($this->isOnProTrial()) {
+            return true;
+        }
+
+        return $this->plan?->has_api_access ?? false;
     }
 
     /**

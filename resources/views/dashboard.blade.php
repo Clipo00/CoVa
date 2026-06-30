@@ -9,6 +9,26 @@
             <p class="mt-2 text-gray-600 dark:text-gray-300">{{ __('dashboard.welcome', ['name' => auth()->user()->name]) }}</p>
         </div>
 
+        {{-- Pro Trial Banner --}}
+        @if(auth()->user()->isOnProTrial())
+            <div class="mb-6 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <svg class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        <div>
+                            <p class="font-medium text-indigo-800 dark:text-indigo-200">{{ __('landing.trial_days_remaining', ['count' => auth()->user()->trialDaysRemaining()]) }}</p>
+                            <p class="text-sm text-indigo-600 dark:text-indigo-300">{{ __('landing.trial_started') }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('pricing') }}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
+                        {{ __('landing.nav_pricing') }} →
+                    </a>
+                </div>
+            </div>
+        @endif
+
         {{-- Deleted Organizations Banner --}}
         @if($deletedOrganizations->count() > 0)
             <div class="mb-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6">
