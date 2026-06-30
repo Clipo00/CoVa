@@ -12,7 +12,7 @@ class UserDropdown extends Component
 
     public function toggle(): void
     {
-        $this->open = ! $this->open;
+        $this->open = !$this->open;
     }
 
     public function close(): void

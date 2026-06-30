@@ -34,7 +34,7 @@ class TabRegistry
      */
     public function get(string $type): TabInterface
     {
-        if (! isset($this->tabs[$type])) {
+        if (!isset($this->tabs[$type])) {
             throw new UnknownTabTypeException($type);
         }
 

@@ -31,7 +31,7 @@ class CreateBlueprint
         $maxVariables = $plan->max_variables_per_blueprint;
 
         // Count variables + segments (each segment consumes a variable slot)
-        $variableCount = count(array_filter($variables, fn ($v) => ! empty($v['key'])));
+        $variableCount = count(array_filter($variables, fn ($v) => !empty($v['key'])));
         $segmentCount = $this->countSegmentsInTabs($tabsConfig);
         $totalCount = $variableCount + $segmentCount;
 
@@ -89,7 +89,7 @@ class CreateBlueprint
 
             $segments = $tab['config']['segments'] ?? [];
 
-            if (! is_array($segments)) {
+            if (!is_array($segments)) {
                 continue;
             }
 

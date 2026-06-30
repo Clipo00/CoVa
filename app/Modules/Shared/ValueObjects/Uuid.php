@@ -19,7 +19,7 @@ class Uuid
             return;
         }
 
-        if (! RamseyUuid::isValid($uuid)) {
+        if (!RamseyUuid::isValid($uuid)) {
             throw new InvalidArgumentException("Invalid UUID: {$uuid}");
         }
 

@@ -15,7 +15,7 @@ class JsonValidator
 
     public function validate(string $json): void
     {
-        if (! $this->isValid($json)) {
+        if (!$this->isValid($json)) {
             throw new \InvalidArgumentException('Invalid JSON: '.json_last_error_msg());
         }
     }
@@ -25,7 +25,7 @@ class JsonValidator
         $this->validate($json);
         $decoded = json_decode($json, true);
 
-        if (! is_array($decoded)) {
+        if (!is_array($decoded)) {
             throw new \InvalidArgumentException('JSON must decode to an array');
         }
 

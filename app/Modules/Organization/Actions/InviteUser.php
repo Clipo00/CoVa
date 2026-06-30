@@ -48,7 +48,7 @@ class InviteUser
         // whether the email belongs to a user in another organization.
         $userExistsInSystem = User::where('email', $email)->exists();
 
-        if (! $userExistsInSystem) {
+        if (!$userExistsInSystem) {
             Notification::route('mail', $email)
                 ->notify(new OrganizationInvitationNotification($invitation));
         }

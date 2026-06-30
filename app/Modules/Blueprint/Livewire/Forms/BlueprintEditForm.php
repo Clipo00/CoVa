@@ -108,7 +108,7 @@ class BlueprintEditForm extends Component
 
         $validated = $this->validate();
 
-        if (! auth()->user()->can('update', $this->blueprint)) {
+        if (!auth()->user()->can('update', $this->blueprint)) {
             $this->addError('title', __('blueprint.no_edit_permission'));
 
             return;
@@ -122,13 +122,13 @@ class BlueprintEditForm extends Component
         // Validar que no haya tipos de pestaña duplicados
         $tabTypes = array_column($this->tabsConfig, 'type');
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
-        if (! empty($duplicates)) {
+        if (!empty($duplicates)) {
             $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
 
             return;
         }
 
-        if (! $this->validateUniqueKeys()) {
+        if (!$this->validateUniqueKeys()) {
             return;
         }
 

@@ -25,7 +25,7 @@ class LoginUser
         ];
 
         // First validate credentials without logging in
-        if (! Auth::validate($credentials)) {
+        if (!Auth::validate($credentials)) {
             throw ValidationException::withMessages([
                 'email' => [__('auth.login_failed')],
             ]);
@@ -59,7 +59,7 @@ class LoginUser
 
         // Si el usuario eligió idioma como invitado (cookie) y no tiene locale en BD,
         // guardarlo como preferencia permanente al loguearse
-        if (! $user->locale) {
+        if (!$user->locale) {
             $cookieLocale = request()->cookie('locale');
             if ($cookieLocale && in_array($cookieLocale, ['es', 'en'], true)) {
                 $user->update(['locale' => $cookieLocale]);
@@ -89,7 +89,7 @@ class LoginUser
             ->where('token_hash', $tokenHash)
             ->first();
 
-        if ($device === null || ! $device->isValid($fingerprint)) {
+        if ($device === null || !$device->isValid($fingerprint)) {
             return null;
         }
 

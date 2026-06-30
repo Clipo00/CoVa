@@ -22,7 +22,7 @@ final class McpServersConfig
     {
         $rawServers = $data['servers'] ?? [];
 
-        if (! is_array($rawServers)) {
+        if (!is_array($rawServers)) {
             return new self([]);
         }
 

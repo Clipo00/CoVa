@@ -122,7 +122,7 @@ class BlueprintList extends Component
                     $this->filters['organizations'],
                     $organizationIds->toArray()
                 );
-                if (! empty($validIds)) {
+                if (!empty($validIds)) {
                     $query->whereIn('organization_id', $validIds);
                 }
             })

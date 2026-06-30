@@ -14,17 +14,17 @@ class VoteBlueprint
     public function execute(Blueprint $blueprint, User $user, int $vote): void
     {
         // 1. Defense-in-depth: validate vote value
-        if (! in_array($vote, [1, -1], true)) {
+        if (!in_array($vote, [1, -1], true)) {
             throw new \InvalidArgumentException('Invalid vote. Must be 1 (up) or -1 (down).');
         }
 
         // 2. Check marketplace enabled (feature flag)
-        if (! config('marketplace.enabled')) {
+        if (!config('marketplace.enabled')) {
             throw new HttpException(503, __('blueprint.vote_marketplace_disabled'));
         }
 
         // 3. Blueprint must be public
-        if (! $blueprint->is_public) {
+        if (!$blueprint->is_public) {
             throw new HttpException(403, __('blueprint.vote_denied'));
         }
 

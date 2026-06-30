@@ -18,7 +18,7 @@ class Slug
             throw new InvalidArgumentException('Slug cannot be empty after sanitization');
         }
 
-        if (! preg_match('/^[a-z0-9-]+$/', $sanitized)) {
+        if (!preg_match('/^[a-z0-9-]+$/', $sanitized)) {
             throw new InvalidArgumentException("Invalid slug format: {$sanitized}. Only lowercase letters, numbers, and hyphens are allowed.");
         }
 

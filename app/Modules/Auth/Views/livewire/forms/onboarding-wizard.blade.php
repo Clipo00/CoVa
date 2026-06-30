@@ -55,7 +55,7 @@
 
     {{-- Email verification banner (shown on all steps when email is unverified) --}}
     @php $currentUser = auth()->user(); @endphp
-    @if ($currentUser && ! $currentUser->hasVerifiedEmail())
+    @if ($currentUser && !$currentUser->hasVerifiedEmail())
         <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
             <div class="flex items-center">
                 <svg class="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -32,7 +32,7 @@ class SegmentRegistry
      */
     public function get(string $name): AgentContentSegment
     {
-        if (! isset($this->segments[$name])) {
+        if (!isset($this->segments[$name])) {
             throw new UnknownSegmentException($name);
         }
 

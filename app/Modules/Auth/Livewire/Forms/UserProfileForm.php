@@ -63,7 +63,7 @@ class UserProfileForm extends Component
         $validated = $this->validate();
 
         // Verify current password if changing password
-        if ($this->newPassword && ! \Hash::check($this->currentPassword, auth()->user()->password)) {
+        if ($this->newPassword && !\Hash::check($this->currentPassword, auth()->user()->password)) {
             $this->addError('currentPassword', __('auth.wrong_password'));
 
             return;

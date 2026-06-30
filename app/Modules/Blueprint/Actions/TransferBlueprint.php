@@ -14,12 +14,12 @@ class TransferBlueprint
     public function execute(Blueprint $blueprint, Organization $targetOrganization, User $user): Blueprint
     {
         // Validar que el user es owner de la org origen
-        if (! $user->isOwnerOf($blueprint->organization)) {
+        if (!$user->isOwnerOf($blueprint->organization)) {
             abort(403, __('blueprint.transfer_not_owner'));
         }
 
         // Validar que el user es owner de la org destino
-        if (! $user->isOwnerOf($targetOrganization)) {
+        if (!$user->isOwnerOf($targetOrganization)) {
             abort(403, __('blueprint.transfer_not_owner_target'));
         }
 

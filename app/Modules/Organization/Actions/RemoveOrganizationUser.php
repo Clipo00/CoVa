@@ -14,7 +14,7 @@ class RemoveOrganizationUser
     public function execute(Organization $organization, User $targetUser, User $actor): void
     {
         // 1. Validate actor is owner
-        if (! $actor->isOwnerOf($organization)) {
+        if (!$actor->isOwnerOf($organization)) {
             throw new HttpException(403, __('organization.no_manage_permission'));
         }
 
@@ -33,7 +33,7 @@ class RemoveOrganizationUser
             ->where('user_id', $targetUser->id)
             ->first();
 
-        if (! $membership) {
+        if (!$membership) {
             throw new HttpException(404, __('organization.not_a_member'));
         }
 

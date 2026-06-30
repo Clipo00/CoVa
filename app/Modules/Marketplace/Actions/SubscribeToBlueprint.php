@@ -32,7 +32,7 @@ class SubscribeToBlueprint
         // 2. Get user's first organization
         $organization = $user->organizations()->first();
 
-        if (! $organization) {
+        if (!$organization) {
             throw new RuntimeException(__('marketplace.no_organization'));
         }
 

@@ -21,7 +21,7 @@ final class ScriptEntry
     {
         $command = $data['command'] ?? null;
 
-        if (! is_string($command) || $command === '') {
+        if (!is_string($command) || $command === '') {
             throw new InvalidArgumentException('Command is required.');
         }
 

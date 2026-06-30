@@ -32,7 +32,7 @@ class ResolveBlueprintPreview
         $outputs = [];
 
         foreach ($tabsConfig as $tabData) {
-            if (! is_array($tabData)) {
+            if (!is_array($tabData)) {
                 continue;
             }
 
@@ -47,7 +47,7 @@ class ResolveBlueprintPreview
                 continue;
             }
 
-            if (! $this->registry->has($tabConfig->type->value)) {
+            if (!$this->registry->has($tabConfig->type->value)) {
                 Log::warning('Unknown tab type in preview resolution', [
                     'tab_type' => $tabConfig->type->value,
                 ]);

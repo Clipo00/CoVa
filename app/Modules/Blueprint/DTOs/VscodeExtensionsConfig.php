@@ -44,7 +44,7 @@ final class VscodeExtensionsConfig
 
     public function installCommand(): string
     {
-        if (! $this->hasExtensions()) {
+        if (!$this->hasExtensions()) {
             return '';
         }
 

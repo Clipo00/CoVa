@@ -52,7 +52,7 @@ class BlueprintCreateForm extends Component
         if ($this->preselectedOrg !== null) {
             // Si viene preseleccionada, validar que esta en la lista permitida
             $allowedIds = array_column($this->userOrganizations, 'id');
-            if (! in_array($this->preselectedOrg, $allowedIds, true)) {
+            if (!in_array($this->preselectedOrg, $allowedIds, true)) {
                 abort(403, __('blueprint.org_unauthorized'));
             }
 
@@ -76,7 +76,7 @@ class BlueprintCreateForm extends Component
         $userOrgIds = $user->organizations()->pluck('organizations.id')->toArray();
 
         foreach ($this->userOrganizations as $org) {
-            if (! isset($org['id']) || ! in_array($org['id'], $userOrgIds, true)) {
+            if (!isset($org['id']) || !in_array($org['id'], $userOrgIds, true)) {
                 abort(403, __('blueprint.invalid_org_data'));
             }
         }
@@ -133,7 +133,7 @@ class BlueprintCreateForm extends Component
 
         // SEGURIDAD: Validar que la organizacion seleccionada esta en la lista permitida
         $allowedIds = array_column($this->userOrganizations, 'id');
-        if (! in_array($this->organizationId, $allowedIds, true)) {
+        if (!in_array($this->organizationId, $allowedIds, true)) {
             $this->addError('organizationId', __('blueprint.org_unauthorized'));
 
             return;
@@ -143,7 +143,7 @@ class BlueprintCreateForm extends Component
         $selectedOrgData = collect($this->userOrganizations)
             ->firstWhere('id', $this->organizationId);
 
-        if (! $selectedOrgData || ! $selectedOrgData['hasAvailableSlots']) {
+        if (!$selectedOrgData || !$selectedOrgData['hasAvailableSlots']) {
             $this->addError('organizationId', __('blueprint.org_limit'));
 
             return;
@@ -152,7 +152,7 @@ class BlueprintCreateForm extends Component
         $organization = Organization::findOrFail($this->organizationId);
 
         // SEGURIDAD: Validar permisos via Policy
-        if (! auth()->user()->can('create', [Blueprint::class, $organization])) {
+        if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
             $this->addError('title', __('blueprint.no_create_permission'));
 
             return;
@@ -161,13 +161,13 @@ class BlueprintCreateForm extends Component
         // Validar que no haya tipos de pestaña duplicados
         $tabTypes = array_column($this->tabsConfig, 'type');
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
-        if (! empty($duplicates)) {
+        if (!empty($duplicates)) {
             $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
 
             return;
         }
 
-        if (! $this->validateUniqueKeys()) {
+        if (!$this->validateUniqueKeys()) {
             return;
         }
 

@@ -23,7 +23,7 @@ class MarketplaceSeeder extends Seeder
         // Obtener el plan Enterprise (ya creado por PlanSeeder)
         $enterprisePlan = Plan::where('slug', 'enterprise')->first();
 
-        if (! $enterprisePlan) {
+        if (!$enterprisePlan) {
             $this->command->error('No Enterprise plan found. Please run PlanSeeder first.');
 
             return;

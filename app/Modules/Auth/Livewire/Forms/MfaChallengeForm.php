@@ -60,7 +60,7 @@ class MfaChallengeForm extends Component
             return;
         }
 
-        if (! $verifyMfaCode->execute($user, $this->code)) {
+        if (!$verifyMfaCode->execute($user, $this->code)) {
             $this->addError('code', __('auth.mfa_invalid_code'));
             $this->code = '';
 

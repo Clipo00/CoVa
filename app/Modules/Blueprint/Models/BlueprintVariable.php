@@ -46,7 +46,7 @@ class BlueprintVariable extends Model
                     return $value;
                 }
 
-                if (! $this->is_secret) {
+                if (!$this->is_secret) {
                     return $value;
                 }
 

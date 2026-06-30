@@ -55,7 +55,7 @@ class TabManager extends Component
      */
     public function addTab(string $type): void
     {
-        if (! TabType::isValid($type)) {
+        if (!TabType::isValid($type)) {
             return;
         }
 
@@ -91,7 +91,7 @@ class TabManager extends Component
      */
     public function removeTab(int $index): void
     {
-        if (! isset($this->tabs[$index])) {
+        if (!isset($this->tabs[$index])) {
             return;
         }
 
@@ -127,7 +127,7 @@ class TabManager extends Component
      */
     public function updateVscodeExtensions(int $tabIndex, string $extensionsText): void
     {
-        if (! isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex])) {
             return;
         }
 
@@ -146,7 +146,7 @@ class TabManager extends Component
      */
     public function addMcpServer(int $tabIndex): void
     {
-        if (! isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex])) {
             return;
         }
 
@@ -164,7 +164,7 @@ class TabManager extends Component
      */
     public function removeMcpServer(int $tabIndex, int $serverIndex): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
             return;
         }
 
@@ -181,7 +181,7 @@ class TabManager extends Component
      */
     public function updateMcpServerField(int $tabIndex, int $serverIndex, string $field, string $value): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['servers'][$serverIndex])) {
             return;
         }
 
@@ -203,7 +203,7 @@ class TabManager extends Component
      */
     public function addScript(int $tabIndex): void
     {
-        if (! isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex])) {
             return;
         }
 
@@ -220,7 +220,7 @@ class TabManager extends Component
      */
     public function removeScript(int $tabIndex, int $scriptIndex): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
             return;
         }
 
@@ -237,7 +237,7 @@ class TabManager extends Component
      */
     public function updateScriptField(int $tabIndex, int $scriptIndex, string $field, string $value): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
             return;
         }
 
@@ -259,7 +259,7 @@ class TabManager extends Component
      */
     public function addSegment(int $tabIndex, string $type, string $name = ''): void
     {
-        if (! isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
             return;
         }
 
@@ -305,7 +305,7 @@ class TabManager extends Component
      */
     public function removeSegment(int $tabIndex, int $segmentIndex): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
             return;
         }
 
@@ -343,7 +343,7 @@ class TabManager extends Component
      */
     public function updateSegmentContent(int $tabIndex, int $segmentIndex, string $content): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
             return;
         }
 
@@ -357,7 +357,7 @@ class TabManager extends Component
      */
     public function updateSegmentName(int $tabIndex, int $segmentIndex, string $name): void
     {
-        if (! isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
             return;
         }
 
@@ -420,7 +420,7 @@ class TabManager extends Component
      */
     private function unusedNames(int $tabIndex, string $type, array $allNames): array
     {
-        if (! isset($this->tabs[$tabIndex]['config']['segments'])) {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'])) {
             return $allNames;
         }
 

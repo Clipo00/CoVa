@@ -19,13 +19,13 @@ class EnsureRole
             $organization = Organization::where('slug', $organization)->first();
         }
 
-        if (! $organization) {
+        if (!$organization) {
             abort(404, __('organization.not_found'));
         }
 
         $allowedRoles = explode('|', $roles);
 
-        if (! auth()->user()->hasRoleInOrganization($organization, $allowedRoles)) {
+        if (!auth()->user()->hasRoleInOrganization($organization, $allowedRoles)) {
             abort(403, __('organization.no_permission'));
         }
 

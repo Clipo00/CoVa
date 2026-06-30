@@ -59,7 +59,7 @@ class MarketplaceController
     public function subscribe(Blueprint $blueprint): RedirectResponse
     {
         // Only public blueprints can be subscribed
-        if (! $blueprint->is_public) {
+        if (!$blueprint->is_public) {
             abort(404);
         }
 
@@ -78,7 +78,7 @@ class MarketplaceController
     public function vote(Request $request, Blueprint $blueprint): JsonResponse
     {
         // Only public blueprints can be voted on
-        if (! $blueprint->is_public) {
+        if (!$blueprint->is_public) {
             abort(404);
         }
 

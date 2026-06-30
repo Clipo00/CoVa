@@ -33,7 +33,7 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/locale/{locale}', function (string $locale) {
-    if (! in_array($locale, config('app.supported_locales', ['es', 'en']), true)) {
+    if (!in_array($locale, config('app.supported_locales', ['es', 'en']), true)) {
         abort(404);
     }
 
@@ -45,7 +45,7 @@ Route::get('/locale/{locale}', function (string $locale) {
     // Prevenir open redirect: solo redirigir a URLs del mismo origen
     $back = url()->previous();
     $baseUrl = url('/');
-    if (! str_starts_with($back, $baseUrl)) {
+    if (!str_starts_with($back, $baseUrl)) {
         $back = $baseUrl;
     }
 

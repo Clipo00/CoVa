@@ -25,7 +25,7 @@ final class TabConfig
             throw new InvalidArgumentException('Tab config must have a "type" field.');
         }
 
-        if (! TabType::isValid($typeValue)) {
+        if (!TabType::isValid($typeValue)) {
             throw new InvalidArgumentException("Invalid tab type: '{$typeValue}'.");
         }
 

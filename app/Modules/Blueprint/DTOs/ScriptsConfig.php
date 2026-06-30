@@ -22,7 +22,7 @@ final class ScriptsConfig
     {
         $rawScripts = $data['scripts'] ?? [];
 
-        if (! is_array($rawScripts)) {
+        if (!is_array($rawScripts)) {
             return new self([]);
         }
 

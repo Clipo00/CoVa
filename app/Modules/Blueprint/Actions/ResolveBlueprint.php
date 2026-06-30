@@ -30,12 +30,12 @@ class ResolveBlueprint
 
         $tabsConfig = $blueprint->tabs_config ?? [];
 
-        if (! is_array($tabsConfig)) {
+        if (!is_array($tabsConfig)) {
             $tabsConfig = [];
         }
 
         foreach ($tabsConfig as $tabData) {
-            if (! is_array($tabData)) {
+            if (!is_array($tabData)) {
                 continue;
             }
 
@@ -51,7 +51,7 @@ class ResolveBlueprint
                 continue;
             }
 
-            if (! $this->registry->has($tabConfig->type->value)) {
+            if (!$this->registry->has($tabConfig->type->value)) {
                 Log::warning('Unknown tab type in blueprint', [
                     'blueprint_uuid' => $blueprint->uuid,
                     'tab_type' => $tabConfig->type->value,

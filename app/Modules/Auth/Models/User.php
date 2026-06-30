@@ -131,7 +131,7 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
             ->where('organization_id', $organization->id)
             ->first();
 
-        if (! $member) {
+        if (!$member) {
             return false;
         }
 
