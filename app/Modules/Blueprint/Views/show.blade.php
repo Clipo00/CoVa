@@ -174,7 +174,7 @@
         @endif
 
         {{-- Variables Section (collapsible) --}}
-        <div x-data="{ open: true, envContent: @json($envTemplate) }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+        <div x-data='{ open: true, envContent: @json($envTemplate) }' class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
             <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h2>
@@ -286,7 +286,7 @@
 
         {{-- Agent Context Section (collapsible) --}}
         @if($agentMd)
-            <div x-data="{ open: true, agentContent: @json($agentMd), segments: @json($segments) }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+            <div x-data='{ open: true, agentContent: @json($agentMd), segments: @json($segments) }' class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.agent_context') }}</h2>
