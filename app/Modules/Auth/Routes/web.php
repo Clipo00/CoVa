@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
 
     // MFA first-login setup interstitial
     Route::get('/mfa/setup', [AuthController::class, 'showMfaSetup'])->name('mfa.setup');
+
+    // API Token management — rate limiting handled by Livewire component RateLimiter (REQ-TOKEN-6)
 });
 
 // MFA challenge — OWASP A07: throttle to prevent brute-force (5 attempts/min)

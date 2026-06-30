@@ -13,6 +13,7 @@ use App\Modules\Auth\Livewire\Forms\OnboardingWizard;
 use App\Modules\Auth\Livewire\Forms\RegisterForm;
 use App\Modules\Auth\Livewire\Forms\ResetPasswordForm;
 use App\Modules\Auth\Livewire\Forms\UserProfileForm;
+use App\Modules\Auth\Livewire\ApiTokenManager;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -36,5 +37,6 @@ class AuthServiceProvider extends ServiceProvider
         Livewire::component('auth.forms.mfa-setup-form', MfaSetupForm::class);
         Livewire::component('auth.forms.onboarding-wizard', OnboardingWizard::class);
         Livewire::component('auth.components.user-dropdown', UserDropdown::class);
+        Livewire::component('auth.api-token-manager', ApiTokenManager::class);
     }
 }

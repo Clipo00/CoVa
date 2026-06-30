@@ -30,6 +30,13 @@ return [
     'have_account' => 'Already have an account?',
     'login_link' => 'Sign in',
 
+    // Profile tabs
+    'profile_tab_datos' => 'Profile',
+    'profile_tab_cuenta' => 'Account',
+    'profile_tab_seguridad' => 'Security',
+    'profile_seguridad_placeholder' => 'API token management will be available soon.',
+    'profile_seguridad_description' => 'Manage your personal access tokens for the API.',
+
     // Profile form
     'edit_profile' => 'Edit Profile',
     'update_profile_desc' => 'Update your personal information and profile photo',
@@ -45,6 +52,7 @@ return [
     // User dropdown
     'profile_link' => 'Profile',
     'logout_link' => 'Log out',
+    'api_tokens' => 'API Tokens',
 
     // Messages
     'login_failed' => 'The provided credentials are incorrect.',
@@ -98,4 +106,28 @@ return [
     'mfa_expired_code' => 'The code has expired. Request a new one.',
     'mfa_code_sent' => 'A new code has been sent to your email.',
     'throttle' => 'Too many attempts. Please try again in :seconds seconds.',
+
+    // API Tokens (Profile — Seguridad tab)
+    'api_tokens' => 'API Tokens',
+    'token_name' => 'Token name',
+    'token_expires_at' => 'Expiration date',
+    'token_last_used' => 'Last used',
+    'token_actions' => 'Actions',
+    'token_create' => 'Create token',
+    'token_create_button' => 'Generate token',
+    'token_revoke' => 'Revoke',
+    'token_revoke_confirm_title' => 'Revoke token',
+    'token_revoke_confirm' => 'Confirm your password to revoke this token.',
+    'token_revoke_confirm_button' => 'Yes, revoke',
+    'token_one_time_warning' => 'Copy this token now. You won\'t be able to see it again.',
+    'token_copy' => 'Copy token',
+    'token_dismiss' => 'Got it',
+    'token_empty' => 'You have no API tokens. Create one to access from the CLI.',
+    'token_plan_cta' => 'API tokens require the Pro or Enterprise plan.',
+    'token_upgrade_link' => 'View plans',
+    'token_last_used_never' => 'Never',
+    'token_revoked' => 'Token revoked successfully.',
+    'date_format' => 'm/d/Y',
+    'cancel' => 'Cancel',
+    'token_expiration_max' => 'Expiration must not exceed 1 year.',
 ];

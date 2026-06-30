@@ -30,6 +30,13 @@ return [
     'have_account' => '¿Ya tienes cuenta?',
     'login_link' => 'Iniciar sesión',
 
+    // Profile tabs
+    'profile_tab_datos' => 'Datos',
+    'profile_tab_cuenta' => 'Cuenta',
+    'profile_tab_seguridad' => 'Seguridad',
+    'profile_seguridad_placeholder' => 'La gestión de tokens de API estará disponible próximamente.',
+    'profile_seguridad_description' => 'Gestiona tus tokens de acceso personal para la API.',
+
     // Profile form
     'edit_profile' => 'Editar Perfil',
     'update_profile_desc' => 'Actualiza tu información personal y foto de perfil',
@@ -45,6 +52,7 @@ return [
     // User dropdown
     'profile_link' => 'Perfil',
     'logout_link' => 'Cerrar sesión',
+    'api_tokens' => 'Tokens de API',
 
     // Messages
     'login_failed' => 'Las credenciales proporcionadas no son correctas.',
@@ -98,4 +106,28 @@ return [
     'mfa_expired_code' => 'El código ha caducado. Solicita uno nuevo.',
     'mfa_code_sent' => 'Se ha enviado un nuevo código a tu correo electrónico.',
     'throttle' => 'Demasiados intentos. Por favor, inténtalo de nuevo en :seconds segundos.',
+
+    // API Tokens (Profile — Seguridad tab)
+    'api_tokens' => 'Tokens de API',
+    'token_name' => 'Nombre del token',
+    'token_expires_at' => 'Fecha de expiración',
+    'token_last_used' => 'Último uso',
+    'token_actions' => 'Acciones',
+    'token_create' => 'Crear token',
+    'token_create_button' => 'Generar token',
+    'token_revoke' => 'Revocar',
+    'token_revoke_confirm_title' => 'Revocar token',
+    'token_revoke_confirm' => 'Confirma tu contraseña para revocar este token.',
+    'token_revoke_confirm_button' => 'Sí, revocar',
+    'token_one_time_warning' => 'Copia este token ahora. No podrás verlo de nuevo.',
+    'token_copy' => 'Copiar token',
+    'token_dismiss' => 'Entendido',
+    'token_empty' => 'No tienes tokens de API. Crea uno para acceder desde el CLI.',
+    'token_plan_cta' => 'Los tokens de API requieren el plan Pro o Enterprise.',
+    'token_upgrade_link' => 'Ver planes',
+    'token_last_used_never' => 'Nunca',
+    'token_revoked' => 'Token revocado correctamente.',
+    'date_format' => 'd/m/Y',
+    'cancel' => 'Cancelar',
+    'token_expiration_max' => 'La expiración no puede ser superior a un año.',
 ];
