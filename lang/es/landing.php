@@ -181,6 +181,7 @@ return [
     'plan_cta_pro' => 'Prueba Pro 14 días',
     'plan_cta_enterprise' => 'Contactar ventas',
     'plan_popular' => 'Más popular',
+    'plan_current' => 'Tu plan actual',
 
     // Footer
     'footer_tagline' => 'Configuraciones que viajan contigo.',

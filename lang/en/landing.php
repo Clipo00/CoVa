@@ -181,6 +181,7 @@ return [
     'plan_cta_pro' => 'Try Pro 14 days',
     'plan_cta_enterprise' => 'Contact sales',
     'plan_popular' => 'Most popular',
+    'plan_current' => 'Your current plan',
 
     // Footer
     'footer_tagline' => 'Configurations that travel with you.',

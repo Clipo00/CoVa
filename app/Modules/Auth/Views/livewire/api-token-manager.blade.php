@@ -68,7 +68,7 @@
                 </svg>
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-300">{{ __('auth.token_plan_cta') }}</p>
-                    <a href="/pricing" class="mt-2 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                    <a href="{{ route('pricing') }}" class="mt-2 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
                         {{ __('auth.token_upgrade_link') }}
                         <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

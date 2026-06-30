@@ -79,6 +79,19 @@ Route::middleware('auth')->get('/onboarding', function () {
     return view('auth::onboarding');
 })->name('onboarding');
 
+/*
+|--------------------------------------------------------------------------
+| Pricing Page (auth required — accessible to all authenticated users)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->get('/pricing', function () {
+    $plans = \App\Modules\Shared\Models\Plan::where('is_active', true)
+        ->orderBy('price_monthly')
+        ->get();
+
+    return view('pricing', compact('plans'));
+})->name('pricing');
+
 Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
     $user = auth()->user();
     $organizations = $user->organizations()->with('owner')->withCount(['blueprints', 'members'])->get();
