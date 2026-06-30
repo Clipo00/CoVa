@@ -7,12 +7,15 @@ namespace App\Modules\Blueprint\Tests\Unit\AiContext;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\DTOs\AiContextSegment;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
-use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\CICDPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\DockerPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset;
+use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
@@ -22,23 +25,25 @@ use PHPUnit\Framework\TestCase;
 class AgentGeneratorTest extends TestCase
 {
     private AgentGenerator $generator;
+
     private SegmentRegistry $presetsRegistry;
+
     private SegmentRegistry $skillsRegistry;
 
     protected function setUp(): void
     {
-        $this->presetsRegistry = new SegmentRegistry();
-        $this->presetsRegistry->register(new PSR12Preset());
-        $this->presetsRegistry->register(new SOLIDPreset());
-        $this->presetsRegistry->register(new CleanArchitecturePreset());
-        $this->presetsRegistry->register(new LaravelConventionsPreset());
-        $this->presetsRegistry->register(new TypeScriptStrictPreset());
+        $this->presetsRegistry = new SegmentRegistry;
+        $this->presetsRegistry->register(new PSR12Preset);
+        $this->presetsRegistry->register(new SOLIDPreset);
+        $this->presetsRegistry->register(new CleanArchitecturePreset);
+        $this->presetsRegistry->register(new LaravelConventionsPreset);
+        $this->presetsRegistry->register(new TypeScriptStrictPreset);
 
-        $this->skillsRegistry = new SegmentRegistry();
-        $this->skillsRegistry->register(new StripeSkill());
-        $this->skillsRegistry->register(new TailwindSkill());
-        $this->skillsRegistry->register(new ReactExpertSkill());
-        $this->skillsRegistry->register(new VueExpertSkill());
+        $this->skillsRegistry = new SegmentRegistry;
+        $this->skillsRegistry->register(new StripeSkill);
+        $this->skillsRegistry->register(new TailwindSkill);
+        $this->skillsRegistry->register(new ReactExpertSkill);
+        $this->skillsRegistry->register(new VueExpertSkill);
 
         $this->generator = new AgentGenerator(
             $this->presetsRegistry,
@@ -48,7 +53,7 @@ class AgentGeneratorTest extends TestCase
 
     public function test_generate_returns_empty_string_for_empty_config(): void
     {
-        $config = new AiContextConfig();
+        $config = new AiContextConfig;
 
         $result = $this->generator->generate($config);
 
@@ -263,16 +268,16 @@ class AgentGeneratorTest extends TestCase
     public function test_preset_names_returns_all_7_presets_after_registration(): void
     {
         $this->presetsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Presets\DockerPreset()
+            new DockerPreset
         );
         $this->presetsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Presets\CICDPreset()
+            new CICDPreset
         );
         $this->presetsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset()
+            new LaravelConventionsPreset
         );
         $this->presetsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset()
+            new TypeScriptStrictPreset
         );
 
         $names = $this->generator->presetNames();
@@ -287,13 +292,13 @@ class AgentGeneratorTest extends TestCase
     public function test_skill_names_returns_all_5_skills_after_registration(): void
     {
         $this->skillsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill()
+            new ApiDesignSkill
         );
         $this->skillsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill()
+            new ReactExpertSkill
         );
         $this->skillsRegistry->register(
-            new \App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill()
+            new VueExpertSkill
         );
 
         $names = $this->generator->skillNames();
@@ -302,5 +307,76 @@ class AgentGeneratorTest extends TestCase
         $this->assertContains('api-design', $names);
         $this->assertContains('react-expert', $names);
         $this->assertContains('vue-expert', $names);
+    }
+
+    // --- resolveSegments ---
+
+    public function test_resolve_segments_returns_correct_array_shape(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'psr12'),
+            new AiContextSegment(type: 'skill', name: 'stripe'),
+        ]);
+
+        $segments = $this->generator->resolveSegments($config);
+
+        $this->assertCount(2, $segments);
+        $this->assertArrayHasKey('name', $segments[0]);
+        $this->assertArrayHasKey('filename', $segments[0]);
+        $this->assertArrayHasKey('content', $segments[0]);
+        // Filenames must end with .md
+        $this->assertStringEndsWith('.md', $segments[0]['filename']);
+    }
+
+    public function test_resolve_segments_sanitizes_filenames(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'custom', name: 'My Rules!!! (v2)', content: 'Test'),
+        ]);
+
+        $segments = $this->generator->resolveSegments($config);
+
+        $this->assertCount(1, $segments);
+        $this->assertSame('my-rules-v2.md', $segments[0]['filename']);
+    }
+
+    public function test_resolve_segments_handles_empty_config(): void
+    {
+        $config = new AiContextConfig;
+
+        $segments = $this->generator->resolveSegments($config);
+
+        $this->assertIsArray($segments);
+        $this->assertCount(0, $segments);
+    }
+
+    public function test_resolve_segments_generate_produces_matching_output(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'preset', name: 'solid'),
+            new AiContextSegment(type: 'skill', name: 'tailwind'),
+        ]);
+
+        $segments = $this->generator->resolveSegments($config);
+        $joined = '# Agent Context';
+        foreach ($segments as $seg) {
+            $joined .= "\n\n---\n\n".$seg['content'];
+        }
+
+        $generated = $this->generator->generate($config);
+
+        $this->assertSame($generated, $joined);
+    }
+
+    public function test_resolve_segments_content_includes_heading(): void
+    {
+        $config = new AiContextConfig(segments: [
+            new AiContextSegment(type: 'custom', name: 'My Custom Rules', content: 'Always write tests.'),
+        ]);
+
+        $segments = $this->generator->resolveSegments($config);
+
+        $this->assertStringContainsString('## My Custom Rules', $segments[0]['content']);
+        $this->assertStringContainsString('Always write tests.', $segments[0]['content']);
     }
 }

@@ -64,6 +64,13 @@ return [
     'edit_button' => 'Editar',
     'delete_confirm' => '¿Estás seguro de que quieres eliminar este blueprint?',
     'delete_button' => 'Eliminar',
+    'vault_fetch_label' => 'Acceso CLI',
+    'vault_fetch_hint' => 'Usa este comando en tu terminal para instalar el blueprint con CoVa CLI.',
+    'vault_fetch_copied' => 'Comando copiado al portapapeles',
+    'download_agent_md' => 'Descargar agent.md',
+    'download_env' => 'Descargar .env',
+    'download_segment' => 'Descargar',
+    'segment_download_title' => 'Segmentos',
 
     // Variables
     'env_variables' => 'Variables de Entorno',

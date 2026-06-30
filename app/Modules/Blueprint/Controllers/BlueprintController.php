@@ -6,13 +6,17 @@ namespace App\Modules\Blueprint\Controllers;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
+use App\Modules\Blueprint\Actions\GenerateEnvTemplate;
 use App\Modules\Blueprint\Actions\PublishBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
 use App\Modules\Blueprint\Actions\VoteBlueprint;
+use App\Modules\Blueprint\DTOs\AiContextConfig;
+use App\Modules\Blueprint\DTOs\TabConfig;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -73,12 +77,12 @@ class BlueprintController
             // Validar que la org solicitada pertenece al usuario
             $requestedOrg = collect($userOrganizations)->firstWhere('slug', $requestedOrgSlug);
 
-            if (!$requestedOrg) {
+            if (! $requestedOrg) {
                 abort(403, __('blueprint.org_unauthorized'));
             }
 
             // Si la org específica no tiene cupo, redirigir a esa org con mensaje de error
-            if (!$requestedOrg['hasAvailableSlots']) {
+            if (! $requestedOrg['hasAvailableSlots']) {
                 return redirect()
                     ->route('organizations.show', $requestedOrg['slug'])
                     ->with('error', __('blueprint.org_limit'));
@@ -89,10 +93,10 @@ class BlueprintController
         }
 
         // Si no se pidió org específica, verificar que al menos tiene 1 org con cupo
-        if (!$requestedOrgSlug) {
+        if (! $requestedOrgSlug) {
             $hasAnyAvailable = collect($userOrganizations)->contains('hasAvailableSlots', true);
 
-            if (!$hasAnyAvailable) {
+            if (! $hasAnyAvailable) {
                 return redirect()
                     ->route('dashboard')
                     ->with('error', __('blueprint.no_capacity'));
@@ -106,26 +110,59 @@ class BlueprintController
         ));
     }
 
-    public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
-    {
+    public function show(
+        string $uuid,
+        ResolveBlueprint $resolveBlueprint,
+        AgentGenerator $agentGenerator,
+        GenerateEnvTemplate $envTemplate,
+    ): View {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        if (!auth()->user()->can('view', $blueprint)) {
+        if (! auth()->user()->can('view', $blueprint)) {
             abort(403);
         }
         $output = $resolveBlueprint->execute($blueprint);
 
+        // Resolve AI Context segments for download
+        $segments = [];
+        $envTemplateString = '';
+
+        $tabsConfig = $blueprint->tabs_config ?? [];
+        if (is_array($tabsConfig)) {
+            foreach ($tabsConfig as $tabData) {
+                if (! is_array($tabData)) {
+                    continue;
+                }
+
+                try {
+                    $tabConfig = TabConfig::fromArray($tabData);
+                } catch (\InvalidArgumentException) {
+                    continue;
+                }
+
+                if ($tabConfig->type->value === 'ai_context') {
+                    $aiConfig = AiContextConfig::fromArray($tabConfig->config);
+                    $segments = $agentGenerator->resolveSegments($aiConfig);
+                }
+            }
+        }
+
+        $envTemplateString = $envTemplate->execute($blueprint);
+
         return view('blueprint::show', [
             'blueprint' => $blueprint,
             'blueprintOutput' => $output,
+            'segments' => $segments,
+            'envTemplate' => $envTemplateString,
         ]);
     }
 
     public function edit(string $uuid): View
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        if (!auth()->user()->can('update', $blueprint)) {
+        if (! auth()->user()->can('update', $blueprint)) {
             abort(403, __('blueprint.no_edit_permission'));
         }
+
         return view('blueprint::edit', compact('blueprint'));
     }
 
@@ -134,7 +171,7 @@ class BlueprintController
         /** @var User $user */
         $user = auth()->user();
         $favoriteBlueprints = $user->favoriteBlueprints()->with('organization')->get();
-        
+
         return view('blueprint::favorites', compact('favoriteBlueprints'));
     }
 
@@ -165,14 +202,14 @@ class BlueprintController
     public function destroy(string $uuid, DeleteBlueprint $deleteBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        
+
         // Authorize
-        if (!auth()->user()->can('delete', $blueprint)) {
+        if (! auth()->user()->can('delete', $blueprint)) {
             abort(403, __('blueprint.no_delete_permission'));
         }
-        
+
         $deleteBlueprint->execute($blueprint);
-        
+
         return redirect()
             ->route('organizations.show', $blueprint->organization->slug)
             ->with('success', __('blueprint.deleted_success'));
@@ -183,7 +220,7 @@ class BlueprintController
         $blueprint = Blueprint::withTrashed()->where('uuid', $uuid)->firstOrFail();
 
         // Authorize - only owner can restore
-        if (!auth()->user()->isOwnerOf($blueprint->organization)) {
+        if (! auth()->user()->isOwnerOf($blueprint->organization)) {
             abort(403, __('blueprint.no_restore_permission'));
         }
 
@@ -204,7 +241,7 @@ class BlueprintController
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
 
-        if (!auth()->user()->can('publish', $blueprint)) {
+        if (! auth()->user()->can('publish', $blueprint)) {
             abort(403, __('blueprint.publish_denied'));
         }
 
@@ -223,7 +260,7 @@ class BlueprintController
             'vote_type' => ['required', 'string', 'in:up,down'],
         ]);
 
-        if (!auth()->user()->can('vote', $blueprint)) {
+        if (! auth()->user()->can('vote', $blueprint)) {
             abort(403, __('blueprint.vote_denied'));
         }
 
@@ -238,7 +275,7 @@ class BlueprintController
     public function transfer(string $uuid, Request $request, TransferBlueprint $transferBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        if (!auth()->user()->can('update', $blueprint)) {
+        if (! auth()->user()->can('update', $blueprint)) {
             abort(403, __('blueprint.no_edit_permission'));
         }
 
@@ -249,7 +286,7 @@ class BlueprintController
         $targetOrganization = Organization::findOrFail($validated['target_organization_id']);
 
         // User must be owner of the target organization
-        if (!auth()->user()->isOwnerOf($targetOrganization)) {
+        if (! auth()->user()->isOwnerOf($targetOrganization)) {
             abort(403, __('blueprint.transfer_denied'));
         }
 

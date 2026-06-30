@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Tabs\AiContext;
 
-use App\Modules\Blueprint\Contracts\AgentContentSegment;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\DTOs\AiContextSegment;
 
@@ -27,7 +26,34 @@ class AgentGenerator
             return '';
         }
 
-        $sections = ["# Agent Context"];
+        $segments = $this->resolveSegments($config);
+
+        $sections = ['# Agent Context'];
+
+        foreach ($segments as $seg) {
+            $sections[] = $seg['content'];
+        }
+
+        return implode("\n\n---\n\n", $sections);
+    }
+
+    /**
+     * Resolve segments into structured entries with name, filename, and content.
+     *
+     * Each entry contains:
+     * - name: original segment name
+     * - filename: sanitized filename with .md extension
+     * - content: resolved markdown content (with heading)
+     *
+     * @return array<int, array{name: string, filename: string, content: string}>
+     */
+    public function resolveSegments(AiContextConfig $config): array
+    {
+        if ($config->isEmpty()) {
+            return [];
+        }
+
+        $result = [];
 
         foreach ($config->segments as $segment) {
             $content = $this->resolveContent($segment);
@@ -36,10 +62,27 @@ class AgentGenerator
                 continue;
             }
 
-            $sections[] = $content;
+            $result[] = [
+                'name' => $segment->name,
+                'filename' => $this->sanitizeFilename($segment->name),
+                'content' => $content,
+            ];
         }
 
-        return implode("\n\n---\n\n", $sections);
+        return $result;
+    }
+
+    /**
+     * Sanitize a segment name to a safe filename.
+     *
+     * Lowercase, alphanumeric and hyphens only, with .md extension.
+     */
+    private function sanitizeFilename(string $name): string
+    {
+        $filename = preg_replace('/[^a-z0-9]+/', '-', strtolower($name));
+        $filename = trim($filename, '-');
+
+        return ($filename === '' ? 'untitled' : $filename).'.md';
     }
 
     /**
