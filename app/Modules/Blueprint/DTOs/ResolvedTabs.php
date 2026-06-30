@@ -14,7 +14,7 @@ use App\Modules\Blueprint\Enums\TabType;
 final class ResolvedTabs
 {
     /**
-     * @param TabOutput[] $tabs
+     * @param  TabOutput[]  $tabs
      */
     public function __construct(
         public readonly array $tabs,
@@ -61,7 +61,7 @@ final class ResolvedTabs
             return '';
         }
 
-        return 'code --install-extension ' . implode(' --install-extension ', $extensions);
+        return 'code --install-extension '.implode(' --install-extension ', $extensions);
     }
 
     /**

@@ -18,7 +18,7 @@ class Slug
             throw new InvalidArgumentException('Slug cannot be empty after sanitization');
         }
 
-        if (!preg_match('/^[a-z0-9-]+$/', $sanitized)) {
+        if (! preg_match('/^[a-z0-9-]+$/', $sanitized)) {
             throw new InvalidArgumentException("Invalid slug format: {$sanitized}. Only lowercase letters, numbers, and hyphens are allowed.");
         }
 
@@ -45,6 +45,7 @@ class Slug
         $value = strtolower(trim($value));
         $value = preg_replace('/[^a-z0-9-]/', '-', $value);
         $value = preg_replace('/-+/', '-', $value);
+
         return trim($value, '-');
     }
 }

@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Models;
 
-use App\Modules\Auth\Models\MfaCode;
+use App\Modules\Auth\Notifications\ResetPasswordNotification;
+use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Blueprint\Models\BlueprintFavorite;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable implements MustVerifyEmailContract, CanResetPasswordContract
+class User extends Authenticatable implements CanResetPasswordContract, MustVerifyEmailContract
 {
-    use Notifiable, MustVerifyEmail;
+    use MustVerifyEmail, Notifiable;
 
     protected $fillable = [
         'name',
@@ -28,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
         'is_system',
         'mfa_enabled',
         'mfa_prompted_at',
+        'onboarding_completed_at',
     ];
 
     protected $hidden = [
@@ -42,6 +45,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
             'password' => 'hashed',
             'mfa_enabled' => 'boolean',
             'mfa_prompted_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
         ];
     }
 
@@ -74,12 +78,12 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
 
     public function favorites()
     {
-        return $this->hasMany(\App\Modules\Blueprint\Models\BlueprintFavorite::class);
+        return $this->hasMany(BlueprintFavorite::class);
     }
 
     public function favoriteBlueprints()
     {
-        return $this->belongsToMany(\App\Modules\Blueprint\Models\Blueprint::class, 'blueprint_favorites');
+        return $this->belongsToMany(Blueprint::class, 'blueprint_favorites');
     }
 
     /**
@@ -97,10 +101,10 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
                 return Storage::disk('s3')->url($this->avatar);
             }
 
-            return asset('storage/avatars/' . $this->avatar);
+            return asset('storage/avatars/'.$this->avatar);
         }
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=4f46e5&color=fff';
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=4f46e5&color=fff';
     }
 
     /**
@@ -127,7 +131,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
             ->where('organization_id', $organization->id)
             ->first();
 
-        if (!$member) {
+        if (! $member) {
             return false;
         }
 
@@ -154,7 +158,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
      */
     public function canManageMembers(Organization $organization): bool
     {
-        return $this->isOwnerOf($organization) 
+        return $this->isOwnerOf($organization)
             || $this->hasRoleInOrganization($organization, ['owner', 'maintainer']);
     }
 
@@ -181,6 +185,6 @@ class User extends Authenticatable implements MustVerifyEmailContract, CanResetP
      */
     public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
     {
-        $this->notify(new \App\Modules\Auth\Notifications\ResetPasswordNotification($token));
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

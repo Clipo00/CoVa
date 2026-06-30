@@ -19,11 +19,11 @@ class EnsureOrganizationAccess
             $organization = Organization::where('slug', $organization)->first();
         }
 
-        if (!$organization) {
+        if (! $organization) {
             abort(404, __('organization.not_found'));
         }
 
-        if (!auth()->user()->hasRoleInOrganization($organization, ['owner', 'maintainer', 'developer'])) {
+        if (! auth()->user()->hasRoleInOrganization($organization, ['owner', 'maintainer', 'developer'])) {
             abort(403, __('organization.no_access'));
         }
 

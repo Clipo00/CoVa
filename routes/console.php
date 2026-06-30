@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 
 // Schedule disposable email domain list updates (weekly via package releases)
 use Illuminate\Support\Facades\Schedule;
+
 Schedule::command('disposable:update')->weekly();

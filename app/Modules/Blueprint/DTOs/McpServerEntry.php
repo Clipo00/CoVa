@@ -22,11 +22,11 @@ final class McpServerEntry
         $name = $data['name'] ?? null;
         $command = $data['command'] ?? null;
 
-        if (!is_string($name) || $name === '') {
+        if (! is_string($name) || $name === '') {
             throw new InvalidArgumentException('MCP server must have a string "name".');
         }
 
-        if (!is_string($command) || $command === '') {
+        if (! is_string($command) || $command === '') {
             throw new InvalidArgumentException("MCP server '{$name}' must have a string 'command'.");
         }
 
@@ -38,12 +38,12 @@ final class McpServerEntry
     }
 
     /**
-     * @param mixed[] $args
+     * @param  mixed[]  $args
      * @return string[]
      */
     private static function filterArgs(array $args): array
     {
-        return array_map(fn($arg) => (string) $arg, $args);
+        return array_map(fn ($arg) => (string) $arg, $args);
     }
 
     public function toArray(): array
@@ -59,8 +59,8 @@ final class McpServerEntry
     {
         $cmd = $this->command;
 
-        if (!empty($this->args)) {
-            $cmd .= ' ' . implode(' ', array_map(fn($arg) => escapeshellarg($arg), $this->args));
+        if (! empty($this->args)) {
+            $cmd .= ' '.implode(' ', array_map(fn ($arg) => escapeshellarg($arg), $this->args));
         }
 
         return $cmd;

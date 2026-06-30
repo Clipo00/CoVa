@@ -15,7 +15,7 @@ class EmailVerificationController
      */
     public function verify(Request $request, string $id, string $hash): RedirectResponse
     {
-        if (!$request->hasValidSignature()) {
+        if (! $request->hasValidSignature()) {
             return redirect()->route('login')
                 ->with('error', __('auth.verification_failed'));
         }
@@ -24,7 +24,7 @@ class EmailVerificationController
 
         $expectedHash = sha1($user->getEmailForVerification());
 
-        if (!hash_equals((string) $hash, $expectedHash)) {
+        if (! hash_equals((string) $hash, $expectedHash)) {
             return redirect()->route('login')
                 ->with('error', __('auth.verification_failed'));
         }

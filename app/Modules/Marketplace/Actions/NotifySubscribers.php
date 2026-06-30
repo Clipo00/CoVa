@@ -52,7 +52,7 @@ class NotifySubscribers implements ShouldQueue
                     ];
                 }
 
-                if (!empty($notifications)) {
+                if (! empty($notifications)) {
                     Notification::insert($notifications);
                 }
             });

@@ -13,7 +13,7 @@ namespace App\Modules\Blueprint\DTOs;
 final class AiContextConfig
 {
     /**
-     * @param AiContextSegment[] $segments Ordered list of context segments
+     * @param  AiContextSegment[]  $segments  Ordered list of context segments
      */
     public function __construct(
         public readonly array $segments = [],
@@ -25,7 +25,7 @@ final class AiContextConfig
      * Accepts either the new format with a `segments` key, or the legacy
      * format with separate `presets`, `skills`, and `custom_rules` keys.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {
@@ -99,7 +99,7 @@ final class AiContextConfig
     }
 
     /**
-     * @param array<string, mixed> $array
+     * @param  array<string, mixed>  $array
      * @return string[]
      */
     private static function filterStringArray(array $array): array
@@ -111,7 +111,7 @@ final class AiContextConfig
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function resolveString(array $data, string $key): string
     {

@@ -14,7 +14,9 @@ use Livewire\Component;
 class LoginForm extends Component
 {
     public string $email = '';
+
     public string $password = '';
+
     public bool $remember = false;
 
     protected function rules(): array
@@ -42,9 +44,10 @@ class LoginForm extends Component
 
             // Prompt first-time users to enable MFA (only if not already enabled)
             $user = auth()->user();
-            if (!$user->mfa_prompted_at && !$user->mfa_enabled) {
+            if (! $user->mfa_prompted_at && ! $user->mfa_enabled) {
                 $user->update(['mfa_prompted_at' => now()]);
                 $this->redirect(route('mfa.setup'));
+
                 return;
             }
 

@@ -48,6 +48,6 @@ class TrustDevice
         $ip = request()->ip();
         $subnet = substr($ip, 0, (int) strrpos($ip, '.'));
 
-        return hash('sha256', $ua . '|' . ($subnet ?: $ip));
+        return hash('sha256', $ua.'|'.($subnet ?: $ip));
     }
 }

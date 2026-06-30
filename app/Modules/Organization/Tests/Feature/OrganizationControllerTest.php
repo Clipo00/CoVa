@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Organization\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,13 +19,14 @@ class OrganizationControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
         $this->withoutVite();
     }
 
     private function createUserWithPlan(): User
     {
         $plan = Plan::where('slug', 'free')->first();
+
         return User::create([
             'name' => 'John Doe',
             'email' => 'john@example.com',
@@ -68,7 +72,7 @@ class OrganizationControllerTest extends TestCase
     public function test_owner_can_access_edit_page(): void
     {
         $user = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $user->id,
@@ -76,7 +80,7 @@ class OrganizationControllerTest extends TestCase
         ]);
         $organization->members()->attach($user->id, ['role' => 'owner']);
 
-        $response = $this->actingAs($user)->get('/organizations/' . $organization->slug . '/edit');
+        $response = $this->actingAs($user)->get('/organizations/'.$organization->slug.'/edit');
 
         $response->assertStatus(200);
         $response->assertSee('Editar Organización');
@@ -85,7 +89,7 @@ class OrganizationControllerTest extends TestCase
     public function test_owner_can_update_organization(): void
     {
         $user = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $user->id,
@@ -94,7 +98,7 @@ class OrganizationControllerTest extends TestCase
         $organization->members()->attach($user->id, ['role' => 'owner']);
 
         $response = $this->actingAs($user)
-            ->post('/organizations/' . $organization->slug . '/update', [
+            ->post('/organizations/'.$organization->slug.'/update', [
                 'name' => 'Updated Org',
                 'slug' => 'updated-org',
             ]);
@@ -110,7 +114,7 @@ class OrganizationControllerTest extends TestCase
     public function test_developer_cannot_access_edit_page(): void
     {
         $owner = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $owner->id,
@@ -126,7 +130,7 @@ class OrganizationControllerTest extends TestCase
         ]);
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
-        $response = $this->actingAs($developer)->get('/organizations/' . $organization->slug . '/edit');
+        $response = $this->actingAs($developer)->get('/organizations/'.$organization->slug.'/edit');
 
         $response->assertForbidden();
     }
@@ -134,7 +138,7 @@ class OrganizationControllerTest extends TestCase
     public function test_members_page_lists_members(): void
     {
         $user = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $user->id,
@@ -142,7 +146,7 @@ class OrganizationControllerTest extends TestCase
         ]);
         $organization->members()->attach($user->id, ['role' => 'owner']);
 
-        $response = $this->actingAs($user)->get('/organizations/' . $organization->slug . '/members');
+        $response = $this->actingAs($user)->get('/organizations/'.$organization->slug.'/members');
 
         $response->assertStatus(200);
         $response->assertSee('Miembros');
@@ -152,7 +156,7 @@ class OrganizationControllerTest extends TestCase
     public function test_owner_can_invite_member(): void
     {
         $user = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $user->id,
@@ -161,7 +165,7 @@ class OrganizationControllerTest extends TestCase
         $organization->members()->attach($user->id, ['role' => 'owner']);
 
         $response = $this->actingAs($user)
-            ->post('/organizations/' . $organization->slug . '/invite', [
+            ->post('/organizations/'.$organization->slug.'/invite', [
                 'email' => 'newdev@example.com',
                 'role' => 'developer',
             ]);
@@ -177,7 +181,7 @@ class OrganizationControllerTest extends TestCase
     public function test_developer_cannot_invite_member(): void
     {
         $owner = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org',
             'name' => 'Test Org',
             'owner_id' => $owner->id,
@@ -194,7 +198,7 @@ class OrganizationControllerTest extends TestCase
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $response = $this->actingAs($developer)
-            ->post('/organizations/' . $organization->slug . '/invite', [
+            ->post('/organizations/'.$organization->slug.'/invite', [
                 'email' => 'newdev@example.com',
                 'role' => 'developer',
             ]);
@@ -213,7 +217,7 @@ class OrganizationControllerTest extends TestCase
     public function test_remove_member_denied_for_non_owner(): void
     {
         $owner = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org-rm',
             'name' => 'Test Org RM',
             'owner_id' => $owner->id,
@@ -238,7 +242,7 @@ class OrganizationControllerTest extends TestCase
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $response = $this->actingAs($maintainer)
-            ->delete('/organizations/' . $organization->slug . '/members/' . $developer->id);
+            ->delete('/organizations/'.$organization->slug.'/members/'.$developer->id);
 
         $response->assertForbidden();
     }
@@ -246,7 +250,7 @@ class OrganizationControllerTest extends TestCase
     public function test_remove_member_success(): void
     {
         $owner = $this->createUserWithPlan();
-        $organization = \App\Modules\Organization\Models\Organization::create([
+        $organization = Organization::create([
             'slug' => 'test-org-rm2',
             'name' => 'Test Org RM2',
             'owner_id' => $owner->id,
@@ -263,7 +267,7 @@ class OrganizationControllerTest extends TestCase
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         // Create a blueprint by the developer to test reassignment
-        $blueprint = \App\Modules\Blueprint\Models\Blueprint::create([
+        $blueprint = Blueprint::create([
             'uuid' => '550e8400-e29b-41d4-a716-446655440030',
             'organization_id' => $organization->id,
             'slug' => 'dev-blueprint',
@@ -273,7 +277,7 @@ class OrganizationControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($owner)
-            ->delete('/organizations/' . $organization->slug . '/members/' . $developer->id);
+            ->delete('/organizations/'.$organization->slug.'/members/'.$developer->id);
 
         $response->assertRedirect();
         $response->assertSessionHas('success');

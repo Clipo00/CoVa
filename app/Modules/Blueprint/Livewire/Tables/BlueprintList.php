@@ -13,12 +13,16 @@ use Livewire\Component;
 class BlueprintList extends Component
 {
     public string $search = '';
+
     public array $filters = [
         'organizations' => [],
         'categories' => [],
     ];
+
     public bool $showFilters = false;
+
     public bool $preserveFilters = false;
+
     public bool $publicOnly = false;
 
     // ──────────────────────────────────────────────
@@ -39,7 +43,7 @@ class BlueprintList extends Component
     public function removeFilter(string $type, int $value): void
     {
         $this->filters[$type] = array_values(
-            array_filter($this->filters[$type], fn(int $id) => $id !== $value)
+            array_filter($this->filters[$type], fn (int $id) => $id !== $value)
         );
 
         if ($this->preserveFilters) {
@@ -118,7 +122,7 @@ class BlueprintList extends Component
                     $this->filters['organizations'],
                     $organizationIds->toArray()
                 );
-                if (!empty($validIds)) {
+                if (! empty($validIds)) {
                     $query->whereIn('organization_id', $validIds);
                 }
             })

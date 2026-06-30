@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Marketplace\Livewire\NotificationBell;
 use App\Modules\Marketplace\Models\Notification;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -21,7 +23,7 @@ class NotificationBellTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -31,7 +33,7 @@ class NotificationBellTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $createOrg->execute($this->user, 'Notif Org', 'notif-org');
     }
 
@@ -46,7 +48,7 @@ class NotificationBellTest extends TestCase
         }
 
         Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class)
+            ->test(NotificationBell::class)
             ->assertSeeHtml('bg-red-500')
             ->assertSee('3');
     }
@@ -62,7 +64,7 @@ class NotificationBellTest extends TestCase
         }
 
         $html = Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class)
+            ->test(NotificationBell::class)
             ->html(false); // false = don't strip initial data
 
         // Count how many BP items are in the dropdown
@@ -82,7 +84,7 @@ class NotificationBellTest extends TestCase
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class);
+            ->test(NotificationBell::class);
 
         // Badge should be visible
         $component->assertSeeHtml('bg-red-500');
@@ -107,7 +109,7 @@ class NotificationBellTest extends TestCase
         }
 
         $component = Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class);
+            ->test(NotificationBell::class);
 
         $component->assertSeeHtml('bg-red-500');
 
@@ -122,14 +124,14 @@ class NotificationBellTest extends TestCase
     public function test_view_all_link_goes_to_notifications_page(): void
     {
         Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class)
+            ->test(NotificationBell::class)
             ->assertSee(route('notifications.index'));
     }
 
     public function test_it_shows_empty_state_when_no_notifications(): void
     {
         Livewire::actingAs($this->user)
-            ->test(\App\Modules\Marketplace\Livewire\NotificationBell::class)
+            ->test(NotificationBell::class)
             ->assertSee(__('marketplace.notifications_empty'));
     }
 }

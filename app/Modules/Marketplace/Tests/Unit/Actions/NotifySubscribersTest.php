@@ -13,6 +13,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,13 +22,15 @@ class NotifySubscribersTest extends TestCase
     use RefreshDatabase;
 
     private User $owner;
+
     private Organization $organization;
+
     private Blueprint $blueprint;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
 
@@ -38,7 +41,7 @@ class NotifySubscribersTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
 
         $this->blueprint = Blueprint::create([
@@ -150,7 +153,8 @@ class NotifySubscribersTest extends TestCase
 
     private function createSubscriberOrg(User $user, int $suffix): Organization
     {
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
+
         return $createOrg->execute($user, "Sub Org {$suffix}", "sub-org-{$suffix}");
     }
 

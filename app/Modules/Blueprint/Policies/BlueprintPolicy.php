@@ -22,7 +22,7 @@ class BlueprintPolicy
 
     public function update(User $user, Blueprint $blueprint): bool
     {
-        return $blueprint->created_by === $user->id 
+        return $blueprint->created_by === $user->id
             || $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer']);
     }
 
@@ -39,12 +39,12 @@ class BlueprintPolicy
     public function publish(User $user, Blueprint $blueprint): bool
     {
         // Marketplace must be globally enabled
-        if (!config('marketplace.enabled')) {
+        if (! config('marketplace.enabled')) {
             return false;
         }
 
         // Must be owner of the blueprint's org
-        if (!$user->isOwnerOf($blueprint->organization)) {
+        if (! $user->isOwnerOf($blueprint->organization)) {
             return false;
         }
 
@@ -52,7 +52,7 @@ class BlueprintPolicy
         if (config('marketplace.billing_enabled')) {
             // Plan belongs to the owner, not the org directly
             $plan = $blueprint->organization->owner?->plan;
-            if (!$plan || !$plan->has_marketplace_publish) {
+            if (! $plan || ! $plan->has_marketplace_publish) {
                 return false;
             }
         }
@@ -63,12 +63,12 @@ class BlueprintPolicy
     public function vote(User $user, Blueprint $blueprint): bool
     {
         // Must be public
-        if (!$blueprint->is_public) {
+        if (! $blueprint->is_public) {
             return false;
         }
 
         // Marketplace must be enabled
-        if (!config('marketplace.enabled')) {
+        if (! config('marketplace.enabled')) {
             return false;
         }
 

@@ -10,6 +10,7 @@ use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Actions\ResendInvitation;
 use App\Modules\Organization\Notifications\OrganizationInvitationNotification;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -21,7 +22,7 @@ class ResendInvitationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_resends_pending_invitation_and_resets_expiry(): void
@@ -36,10 +37,10 @@ class ResendInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         $originalExpiresAt = $invitation->fresh()->expires_at;
@@ -50,7 +51,7 @@ class ResendInvitationTest extends TestCase
         // Clear the initial invite notification from the fake
         Notification::fake();
 
-        $resendInvitation = new ResendInvitation();
+        $resendInvitation = new ResendInvitation;
         $resendInvitation->execute($invitation);
 
         $refreshed = $invitation->fresh();
@@ -75,16 +76,16 @@ class ResendInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         // Clear the fake to only count resend notification
         Notification::fake();
 
-        $resendInvitation = new ResendInvitation();
+        $resendInvitation = new ResendInvitation;
         $resendInvitation->execute($invitation);
 
         Notification::assertSentOnDemand(
@@ -107,10 +108,10 @@ class ResendInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         $originalExpiresAt = $invitation->fresh()->expires_at;
@@ -120,7 +121,7 @@ class ResendInvitationTest extends TestCase
 
         $this->travel(1)->hour();
 
-        $resendInvitation = new ResendInvitation();
+        $resendInvitation = new ResendInvitation;
         $resendInvitation->execute($invitation);
 
         // Expiry is still updated (Action doesn't check validity — controller does)

@@ -38,7 +38,7 @@ class OrganizationController
     public function show(string $slug): View
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
-        if (!auth()->user()->can('view', $organization)) {
+        if (! auth()->user()->can('view', $organization)) {
             abort(403, __('organization.no_view_permission'));
         }
 
@@ -46,12 +46,14 @@ class OrganizationController
         $maxBlueprints = $plan->max_blueprints_per_org;
         $activeBlueprintsCount = $organization->blueprints()->count();
         $canCreateBlueprint = $maxBlueprints === null || $activeBlueprintsCount < $maxBlueprints;
+        $publicBlueprintsCount = $organization->blueprints()->where('is_public', true)->count();
 
         return view('organization::show', compact(
             'organization',
             'activeBlueprintsCount',
             'maxBlueprints',
-            'canCreateBlueprint'
+            'canCreateBlueprint',
+            'publicBlueprintsCount'
         ));
     }
 
@@ -59,7 +61,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('update', $organization)) {
+        if (! auth()->user()->can('update', $organization)) {
             abort(403, __('organization.no_edit_permission'));
         }
 
@@ -70,7 +72,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('update', $organization)) {
+        if (! auth()->user()->can('update', $organization)) {
             abort(403, __('organization.no_edit_permission'));
         }
 
@@ -96,7 +98,7 @@ class OrganizationController
             ->with(['members', 'invitations'])
             ->firstOrFail();
 
-        if (!auth()->user()->can('view', $organization)) {
+        if (! auth()->user()->can('view', $organization)) {
             abort(403, __('organization.no_view_permission'));
         }
 
@@ -107,7 +109,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('manageMembers', $organization)) {
+        if (! auth()->user()->can('manageMembers', $organization)) {
             abort(403, __('organization.no_manage_permission'));
         }
 
@@ -170,12 +172,12 @@ class OrganizationController
                 ->with('error', __('organization.invitation_not_found'));
         }
 
-        if (!$invitation->isValid()) {
+        if (! $invitation->isValid()) {
             return redirect()->route('login')
                 ->with('error', __('organization.invitation_expired'));
         }
 
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             session(['invitation_token' => $token]);
 
             return redirect()->guest(route('login'));
@@ -225,7 +227,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('invite', $organization)) {
+        if (! auth()->user()->can('invite', $organization)) {
             abort(403, __('organization.no_invite_permission'));
         }
 
@@ -249,7 +251,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('revokeInvitation', $organization)) {
+        if (! auth()->user()->can('revokeInvitation', $organization)) {
             abort(403, __('organization.no_revoke_permission'));
         }
 
@@ -266,7 +268,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('resendInvitation', $organization)) {
+        if (! auth()->user()->can('resendInvitation', $organization)) {
             abort(403, __('organization.no_resend_permission'));
         }
 
@@ -283,7 +285,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('removeMember', $organization)) {
+        if (! auth()->user()->can('removeMember', $organization)) {
             abort(403, __('organization.no_manage_permission'));
         }
 
@@ -304,7 +306,7 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->can('delete', $organization)) {
+        if (! auth()->user()->can('delete', $organization)) {
             abort(403, __('organization.no_delete_permission'));
         }
 
@@ -323,7 +325,7 @@ class OrganizationController
         $organization = Organization::withTrashed()->where('slug', $slug)->firstOrFail();
 
         // Verificar que el usuario es owner de la org
-        if (!auth()->user()->isOwnerOf($organization)) {
+        if (! auth()->user()->isOwnerOf($organization)) {
             abort(403, __('organization.no_restore_permission'));
         }
 
@@ -351,7 +353,7 @@ class OrganizationController
     {
         $organization = Organization::withTrashed()->where('slug', $slug)->firstOrFail();
 
-        if (!auth()->user()->isOwnerOf($organization)) {
+        if (! auth()->user()->isOwnerOf($organization)) {
             abort(403, __('organization.no_force_delete_permission'));
         }
 

@@ -11,6 +11,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,12 +20,13 @@ class MarketplaceControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Organization $organization;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -34,7 +36,7 @@ class MarketplaceControllerTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->user, 'Marketplace Org', 'marketplace-org');
     }
 
@@ -65,7 +67,7 @@ class MarketplaceControllerTest extends TestCase
         $blueprint = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $this->organization->id,
-            'slug' => 'private-bp-' . uniqid(),
+            'slug' => 'private-bp-'.uniqid(),
             'title' => 'Private BP',
             'is_public' => false,
             'tabs_config' => [],
@@ -103,7 +105,7 @@ class MarketplaceControllerTest extends TestCase
         $plan = Plan::where('slug', 'free')->first();
         $otherUser = User::create([
             'name' => 'Other User',
-            'email' => 'other-' . uniqid() . '@example.com',
+            'email' => 'other-'.uniqid().'@example.com',
             'password' => bcrypt('password'),
             'plan_id' => $plan->id,
         ]);
@@ -179,7 +181,7 @@ class MarketplaceControllerTest extends TestCase
         return Blueprint::create(array_merge([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $this->organization->id,
-            'slug' => 'marketplace-bp-' . uniqid(),
+            'slug' => 'marketplace-bp-'.uniqid(),
             'title' => 'Marketplace Show BP',
             'is_public' => true,
             'tabs_config' => [],

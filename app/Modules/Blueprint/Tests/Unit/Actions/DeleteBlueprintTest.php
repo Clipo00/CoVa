@@ -13,6 +13,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -22,13 +23,15 @@ class DeleteBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Organization $organization;
+
     private DeleteBlueprint $action;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -38,10 +41,10 @@ class DeleteBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->user, 'Delete Org', 'delete-org');
 
-        $this->action = new DeleteBlueprint();
+        $this->action = new DeleteBlueprint;
     }
 
     public function test_deleting_public_blueprint_dispatches_notify_subscribers(): void
@@ -174,7 +177,7 @@ class DeleteBlueprintTest extends TestCase
         return Blueprint::create(array_merge([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $this->organization->id,
-            'slug' => 'delete-bp-' . uniqid(),
+            'slug' => 'delete-bp-'.uniqid(),
             'title' => 'Delete Test BP',
             'is_public' => false,
             'tabs_config' => [],
@@ -190,13 +193,13 @@ class DeleteBlueprintTest extends TestCase
         $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Subscriber',
-            'email' => 'sub-' . uniqid() . '@example.com',
+            'email' => 'sub-'.uniqid().'@example.com',
             'password' => bcrypt('password'),
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
-        $org = $createOrg->execute($user, 'Sub Org ' . uniqid(), 'sub-org-' . uniqid());
+        $createOrg = new CreateOrganization;
+        $org = $createOrg->execute($user, 'Sub Org '.uniqid(), 'sub-org-'.uniqid());
 
         return ['user' => $user, 'org' => $org];
     }
@@ -206,7 +209,7 @@ class DeleteBlueprintTest extends TestCase
         return Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $org->id,
-            'slug' => 'copy-' . uniqid(),
+            'slug' => 'copy-'.uniqid(),
             'title' => 'Copy of Blueprint',
             'is_public' => false,
             'tabs_config' => [],

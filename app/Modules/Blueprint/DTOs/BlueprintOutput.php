@@ -18,7 +18,7 @@ final class BlueprintOutput
     private readonly ResolvedTabs $resolvedTabs;
 
     /**
-     * @param TabOutput[] $tabs
+     * @param  TabOutput[]  $tabs
      */
     public function __construct(
         public readonly Blueprint $blueprint,
@@ -40,7 +40,7 @@ final class BlueprintOutput
                 'title' => $this->blueprint->title,
             ],
             'tabs' => array_map(
-                fn(TabOutput $tab) => $tab->toArray(),
+                fn (TabOutput $tab) => $tab->toArray(),
                 $this->tabs,
             ),
         ];
@@ -55,7 +55,7 @@ final class BlueprintOutput
     {
         return array_filter(
             $this->tabs,
-            fn(TabOutput $tab) => $tab->isArray(),
+            fn (TabOutput $tab) => $tab->isArray(),
         );
     }
 

@@ -16,11 +16,17 @@ class UserProfileForm extends Component
     use WithFileUploads;
 
     public string $name = '';
+
     public string $email = '';
+
     public $avatar = null; // Livewire temporary upload
+
     public ?string $currentPassword = null;
+
     public ?string $newPassword = null;
+
     public ?string $newPasswordConfirmation = null;
+
     public bool $mfaEnabled = false;
 
     public function mount(): void
@@ -57,8 +63,9 @@ class UserProfileForm extends Component
         $validated = $this->validate();
 
         // Verify current password if changing password
-        if ($this->newPassword && !\Hash::check($this->currentPassword, auth()->user()->password)) {
+        if ($this->newPassword && ! \Hash::check($this->currentPassword, auth()->user()->password)) {
             $this->addError('currentPassword', __('auth.wrong_password'));
+
             return;
         }
 

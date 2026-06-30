@@ -19,7 +19,7 @@ class ResetPasswordForm extends Component
     public string $password_confirmation = '';
 
     /**
-     * @param array<string, mixed> $params
+     * @param  array<string, mixed>  $params
      */
     public function mount(string $token, string $email = ''): void
     {

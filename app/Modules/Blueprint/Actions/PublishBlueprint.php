@@ -26,14 +26,14 @@ class PublishBlueprint
     public function execute(Blueprint $blueprint, User $user): Blueprint
     {
         // 1. Check marketplace enabled (feature flag, not auth)
-        if (!config('marketplace.enabled')) {
+        if (! config('marketplace.enabled')) {
             throw new HttpException(503, __('blueprint.publish_marketplace_disabled'));
         }
 
         // 2. Check billing gate (feature flag, not auth)
         if (config('marketplace.billing_enabled')) {
             $plan = $user->plan;
-            if (!$plan || !$plan->has_marketplace_publish) {
+            if (! $plan || ! $plan->has_marketplace_publish) {
                 throw new HttpException(403, __('blueprint.publish_plan_required'));
             }
         }
@@ -50,7 +50,7 @@ class PublishBlueprint
             // === SYNC: Update existing marketplace copy ===
             $copy = Blueprint::find($subscription->subscribed_blueprint_id);
 
-            if (!$copy) {
+            if (! $copy) {
                 throw new HttpException(500, __('blueprint.publish_sync_copy_missing'));
             }
 

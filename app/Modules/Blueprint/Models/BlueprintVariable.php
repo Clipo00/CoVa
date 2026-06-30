@@ -34,7 +34,7 @@ class BlueprintVariable extends Model
         return $this->belongsTo(Blueprint::class);
     }
 
-        /**
+    /**
      * Get the decrypted default_value when is_secret is true.
      * Falls back to raw value for backward compatibility with legacy plaintext data.
      */
@@ -46,7 +46,7 @@ class BlueprintVariable extends Model
                     return $value;
                 }
 
-                if (!$this->is_secret) {
+                if (! $this->is_secret) {
                     return $value;
                 }
 

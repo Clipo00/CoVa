@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Modules\Auth\DTOs;
 
 use App\Modules\Shared\ValueObjects\Email;
-
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class RegisterUserData
 {
     public readonly string $name;
+
     public readonly Email $email;
+
     public readonly string $password;
 
     public function __construct(

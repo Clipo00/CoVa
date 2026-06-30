@@ -31,7 +31,7 @@ class CreateBlueprint
         $maxVariables = $plan->max_variables_per_blueprint;
 
         // Count variables + segments (each segment consumes a variable slot)
-        $variableCount = count(array_filter($variables, fn($v) => !empty($v['key'])));
+        $variableCount = count(array_filter($variables, fn ($v) => ! empty($v['key'])));
         $segmentCount = $this->countSegmentsInTabs($tabsConfig);
         $totalCount = $variableCount + $segmentCount;
 
@@ -76,7 +76,7 @@ class CreateBlueprint
      * Count all segments across all AI Context tabs in the tabs config.
      * Each segment consumes a variable slot from the plan limit.
      *
-     * @param array<int, array{type: string, config: array<string, mixed>}> $tabsConfig
+     * @param  array<int, array{type: string, config: array<string, mixed>}>  $tabsConfig
      */
     private function countSegmentsInTabs(array $tabsConfig): int
     {
@@ -89,7 +89,7 @@ class CreateBlueprint
 
             $segments = $tab['config']['segments'] ?? [];
 
-            if (!is_array($segments)) {
+            if (! is_array($segments)) {
                 continue;
             }
 

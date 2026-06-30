@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Shared\Models;
 
+use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
@@ -16,6 +17,6 @@ class Category extends Model
 
     public function blueprints()
     {
-        return $this->hasMany(\App\Modules\Blueprint\Models\Blueprint::class);
+        return $this->hasMany(Blueprint::class);
     }
 }

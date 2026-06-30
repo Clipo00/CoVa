@@ -16,7 +16,7 @@ class UpdateOrganizationUserRole
         User $actor
     ): void {
         // El actor debe ser owner de la organización
-        if (!$actor->isOwnerOf($organization)) {
+        if (! $actor->isOwnerOf($organization)) {
             abort(403, __('organization.no_manage_permission'));
         }
 
@@ -26,12 +26,12 @@ class UpdateOrganizationUserRole
         }
 
         // Validar que el nuevo rol es válido
-        if (!in_array($newRole, ['developer', 'maintainer'])) {
+        if (! in_array($newRole, ['developer', 'maintainer'])) {
             abort(422, __('organization.invalid_role'));
         }
 
         // Verificar que el usuario es miembro de la organización
-        if (!$organization->members()->where('user_id', $targetUser->id)->exists()) {
+        if (! $organization->members()->where('user_id', $targetUser->id)->exists()) {
             abort(422, __('organization.not_a_member'));
         }
 

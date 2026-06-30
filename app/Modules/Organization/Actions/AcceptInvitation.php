@@ -15,13 +15,13 @@ class AcceptInvitation
     {
         $invitation = OrganizationInvitation::where('token', $token)->first();
 
-        if (!$invitation) {
+        if (! $invitation) {
             throw ValidationException::withMessages([
                 'token' => [__('organization.invitation_not_found')],
             ]);
         }
 
-        if (!$invitation->isValid()) {
+        if (! $invitation->isValid()) {
             throw ValidationException::withMessages([
                 'token' => [__('organization.invitation_expired')],
             ]);
@@ -36,7 +36,7 @@ class AcceptInvitation
 
             $user = User::where('email', $invitation->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 throw ValidationException::withMessages([
                     'email' => [__('organization.invitation_no_user')],
                 ]);

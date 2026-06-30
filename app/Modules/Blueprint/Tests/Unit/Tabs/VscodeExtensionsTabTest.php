@@ -15,7 +15,7 @@ class VscodeExtensionsTabTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->tab = new VscodeExtensionsTab();
+        $this->tab = new VscodeExtensionsTab;
     }
 
     public function test_type_returns_vscode_extensions(): void

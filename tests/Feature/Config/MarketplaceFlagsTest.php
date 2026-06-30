@@ -11,7 +11,9 @@ use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
@@ -20,14 +22,16 @@ class MarketplaceFlagsTest extends TestCase
     use RefreshDatabase;
 
     private User $owner;
+
     private Organization $organization;
+
     private Blueprint $privateBlueprint;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $proPlan = Plan::where('slug', 'pro')->first();
         $this->owner = User::create([
@@ -37,7 +41,7 @@ class MarketplaceFlagsTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
 
         // Ensure marketplace org exists (required by PublishBlueprint)
@@ -53,7 +57,7 @@ class MarketplaceFlagsTest extends TestCase
         $this->actingAs($this->owner);
 
         $this->privateBlueprint = Blueprint::create([
-            'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+            'uuid' => Str::uuid()->toString(),
             'organization_id' => $this->organization->id,
             'slug' => 'test-bp',
             'title' => 'Test Blueprint',
@@ -66,9 +70,9 @@ class MarketplaceFlagsTest extends TestCase
     private function createPublicBlueprint(): Blueprint
     {
         $bp = Blueprint::create([
-            'uuid' => \Illuminate\Support\Str::uuid()->toString(),
+            'uuid' => Str::uuid()->toString(),
             'organization_id' => $this->organization->id,
-            'slug' => 'public-' . \Illuminate\Support\Str::random(6),
+            'slug' => 'public-'.Str::random(6),
             'title' => 'Public Blueprint',
             'tabs_config' => [],
             'is_public' => true,
@@ -85,7 +89,7 @@ class MarketplaceFlagsTest extends TestCase
 
         $this->expectException(HttpException::class);
 
-        (new PublishBlueprint())->execute($this->privateBlueprint, $this->owner);
+        (new PublishBlueprint)->execute($this->privateBlueprint, $this->owner);
     }
 
     public function test_publish_succeeds_when_marketplace_enabled(): void
@@ -93,7 +97,7 @@ class MarketplaceFlagsTest extends TestCase
         config(['marketplace.enabled' => true]);
         config(['marketplace.billing_enabled' => false]);
 
-        (new PublishBlueprint())->execute($this->privateBlueprint, $this->owner);
+        (new PublishBlueprint)->execute($this->privateBlueprint, $this->owner);
 
         $this->privateBlueprint->refresh();
         $this->assertTrue($this->privateBlueprint->is_public);
@@ -105,7 +109,7 @@ class MarketplaceFlagsTest extends TestCase
         config(['marketplace.billing_enabled' => true]);
 
         // Owner has pro plan (has_marketplace_publish = true) — should succeed
-        (new PublishBlueprint())->execute($this->privateBlueprint, $this->owner);
+        (new PublishBlueprint)->execute($this->privateBlueprint, $this->owner);
 
         $this->privateBlueprint->refresh();
         $this->assertTrue($this->privateBlueprint->is_public);
@@ -118,7 +122,7 @@ class MarketplaceFlagsTest extends TestCase
 
         $this->expectException(HttpException::class);
 
-        (new VoteBlueprint())->execute($bp, $this->owner, 1);
+        (new VoteBlueprint)->execute($bp, $this->owner, 1);
     }
 
     public function test_voting_succeeds_when_marketplace_enabled(): void
@@ -126,7 +130,7 @@ class MarketplaceFlagsTest extends TestCase
         $bp = $this->createPublicBlueprint();
         config(['marketplace.enabled' => true]);
 
-        (new VoteBlueprint())->execute($bp, $this->owner, 1);
+        (new VoteBlueprint)->execute($bp, $this->owner, 1);
 
         $this->assertDatabaseHas('blueprint_votes', [
             'user_id' => $this->owner->id,

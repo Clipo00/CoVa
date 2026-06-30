@@ -26,7 +26,7 @@ class UpdateBlueprint
         $maxVariables = $plan->max_variables_per_blueprint;
 
         if ($maxVariables !== null) {
-            $variableCount = count(array_filter($variables, fn($v) => !empty($v['key'])));
+            $variableCount = count(array_filter($variables, fn ($v) => ! empty($v['key'])));
             $tabsConfig = $data['tabs_config'] ?? $blueprint->tabs_config;
             $segmentCount = $this->countSegmentsInTabs($tabsConfig);
             $totalCount = $variableCount + $segmentCount;
@@ -39,7 +39,7 @@ class UpdateBlueprint
         $blueprint->update($data);
 
         // Si hay variables, sincronizarlas — sort_order from array index preserves UI order
-        if (!empty($variables)) {
+        if (! empty($variables)) {
             // Eliminar variables existentes
             $blueprint->variables()->delete();
 
@@ -74,7 +74,7 @@ class UpdateBlueprint
      * Count all segments across all AI Context tabs in the tabs config.
      * Each segment consumes a variable slot from the plan limit.
      *
-     * @param array<int, array{type: string, config: array<string, mixed>}> $tabsConfig
+     * @param  array<int, array{type: string, config: array<string, mixed>}>  $tabsConfig
      */
     private function countSegmentsInTabs(array $tabsConfig): int
     {
@@ -87,7 +87,7 @@ class UpdateBlueprint
 
             $segments = $tab['config']['segments'] ?? [];
 
-            if (!is_array($segments)) {
+            if (! is_array($segments)) {
                 continue;
             }
 

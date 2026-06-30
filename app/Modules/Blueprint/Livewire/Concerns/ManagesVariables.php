@@ -42,7 +42,7 @@ trait ManagesVariables
 
     public function cleanEmptyVariables(): void
     {
-        $this->variables = array_values(array_filter($this->variables, fn($v) => !empty($v['key'])));
+        $this->variables = array_values(array_filter($this->variables, fn ($v) => ! empty($v['key'])));
     }
 
     /**
@@ -69,8 +69,10 @@ trait ManagesVariables
         $keys = array_column($this->variables, 'key');
         if (count($keys) !== count(array_unique($keys))) {
             $this->addError('variables', __('blueprint.unique_variable_keys'));
+
             return false;
         }
+
         return true;
     }
 
@@ -81,7 +83,7 @@ trait ManagesVariables
 
         foreach ($this->variables as $index => $variable) {
             $section = $variable['section'] ?? null;
-            if (!$section) {
+            if (! $section) {
                 continue;
             }
 
@@ -89,10 +91,11 @@ trait ManagesVariables
             $userColor = $variable['section_color'] ?? null;
             if ($userColor && $this->isValidHexColor($userColor)) {
                 $sectionColors[$section] = $userColor;
+
                 continue;
             }
 
-            if (!isset($sectionColors[$section])) {
+            if (! isset($sectionColors[$section])) {
                 $sectionColors[$section] = self::SECTION_COLORS[$colorIndex % count(self::SECTION_COLORS)];
                 $colorIndex++;
             }
@@ -107,14 +110,14 @@ trait ManagesVariables
      */
     public function updatedVariables(mixed $value, string $key): void
     {
-        if (!str_ends_with($key, '.section')) {
+        if (! str_ends_with($key, '.section')) {
             return;
         }
 
         $index = (int) explode('.', $key)[0];
         $section = $this->variables[$index]['section'] ?? null;
 
-        if (!$section) {
+        if (! $section) {
             return;
         }
 
@@ -129,8 +132,9 @@ trait ManagesVariables
             if ($i === $index) {
                 continue;
             }
-            if (($var['section'] ?? null) === $section && !empty($var['section_color'] ?? null)) {
+            if (($var['section'] ?? null) === $section && ! empty($var['section_color'] ?? null)) {
                 $this->variables[$index]['section_color'] = $var['section_color'];
+
                 return;
             }
         }
@@ -138,13 +142,13 @@ trait ManagesVariables
         // Asignar un color nuevo del palette que no esté en uso
         $usedColors = [];
         foreach ($this->variables as $var) {
-            if (!empty($var['section_color'] ?? null)) {
+            if (! empty($var['section_color'] ?? null)) {
                 $usedColors[] = $var['section_color'];
             }
         }
 
         $palette = self::SECTION_COLORS;
-        $color = collect($palette)->first(fn($c) => !in_array($c, $usedColors)) ?? $palette[0];
+        $color = collect($palette)->first(fn ($c) => ! in_array($c, $usedColors)) ?? $palette[0];
         $this->variables[$index]['section_color'] = $color;
     }
 

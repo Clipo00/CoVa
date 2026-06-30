@@ -14,7 +14,7 @@ class RemoveOrganizationUser
     public function execute(Organization $organization, User $targetUser, User $actor): void
     {
         // 1. Validate actor is owner
-        if (!$actor->isOwnerOf($organization)) {
+        if (! $actor->isOwnerOf($organization)) {
             throw new HttpException(403, __('organization.no_manage_permission'));
         }
 
@@ -33,12 +33,12 @@ class RemoveOrganizationUser
             ->where('user_id', $targetUser->id)
             ->first();
 
-        if (!$membership) {
+        if (! $membership) {
             throw new HttpException(404, __('organization.not_a_member'));
         }
 
         // 4. Transaction: reassign blueprints, detach pivot
-        DB::transaction(function () use ($organization, $targetUser, $actor) {
+        DB::transaction(function () use ($organization, $targetUser) {
             // Reassign blueprints created by the removed user to the owner
             $organization->blueprints()
                 ->where('created_by', $targetUser->id)

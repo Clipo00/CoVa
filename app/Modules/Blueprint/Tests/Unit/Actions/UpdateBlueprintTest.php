@@ -13,6 +13,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
@@ -22,13 +23,15 @@ class UpdateBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Organization $organization;
+
     private UpdateBlueprint $action;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -38,10 +41,10 @@ class UpdateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->user, 'Update Org', 'update-org');
 
-        $this->action = new UpdateBlueprint();
+        $this->action = new UpdateBlueprint;
     }
 
     public function test_it_updates_blueprint_title(): void
@@ -160,7 +163,7 @@ class UpdateBlueprintTest extends TestCase
         return Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $this->organization->id,
-            'slug' => 'update-bp-' . uniqid(),
+            'slug' => 'update-bp-'.uniqid(),
             'title' => 'Original Title',
             'is_public' => $isPublic,
             'tabs_config' => [],

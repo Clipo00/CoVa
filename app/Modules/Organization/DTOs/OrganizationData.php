@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Organization\DTOs;
 
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class OrganizationData
 {
     public readonly string $name;
+
     public readonly string $slug;
 
     public function __construct(string $name, string $slug)

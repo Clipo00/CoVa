@@ -29,12 +29,12 @@ class SetLocaleFromCookie
         }
 
         // 2. Fallback a cookie (invitados o usuarios sin locale en BD)
-        if (!$locale) {
+        if (! $locale) {
             $locale = $request->cookie('locale');
         }
 
         // 3. Default de configuración
-        if (!$locale || !in_array($locale, $supported, true)) {
+        if (! $locale || ! in_array($locale, $supported, true)) {
             $locale = config('app.locale', 'es');
         }
 

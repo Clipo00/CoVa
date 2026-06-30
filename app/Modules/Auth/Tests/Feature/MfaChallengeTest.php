@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Tests\Feature;
 
 use App\Modules\Auth\Actions\SendMfaCode;
+use App\Modules\Auth\Models\MfaCode;
 use App\Modules\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -45,7 +46,7 @@ class MfaChallengeTest extends TestCase
 
         session()->put('mfa_user_id', $user->id);
 
-        $sendMfaCode = new SendMfaCode();
+        $sendMfaCode = new SendMfaCode;
         $mfaCode = $sendMfaCode->execute($user);
 
         Livewire::test('auth.forms.mfa-challenge-form')
@@ -65,7 +66,7 @@ class MfaChallengeTest extends TestCase
 
         session()->put('mfa_user_id', $user->id);
 
-        $sendMfaCode = new SendMfaCode();
+        $sendMfaCode = new SendMfaCode;
         $sendMfaCode->execute($user);
 
         Livewire::test('auth.forms.mfa-challenge-form')
@@ -86,7 +87,7 @@ class MfaChallengeTest extends TestCase
         session()->put('mfa_user_id', $user->id);
 
         // Create an expired code directly
-        \App\Modules\Auth\Models\MfaCode::create([
+        MfaCode::create([
             'user_id' => $user->id,
             'code' => '999999',
             'expires_at' => now()->subMinutes(5),

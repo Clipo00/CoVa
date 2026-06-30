@@ -9,8 +9,8 @@ use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Organization\Actions\CreateOrganization;
-use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,8 +23,8 @@ class BlueprintPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->policy = new BlueprintPolicy();
+        $this->seed(PlanSeeder::class);
+        $this->policy = new BlueprintPolicy;
     }
 
     public function test_owner_can_update_any_blueprint(): void
@@ -37,11 +37,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Test BP', 'test-bp');
 
         $this->assertTrue($this->policy->update($owner, $blueprint));
@@ -64,12 +64,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $this->actingAs($developer);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Dev BP', 'dev-bp');
 
         $this->assertTrue($this->policy->update($developer, $blueprint));
@@ -92,12 +92,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Owner BP', 'owner-bp');
 
         $this->assertFalse($this->policy->delete($developer, $blueprint));
@@ -120,12 +120,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $this->actingAs($developer);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Dev BP', 'dev-bp');
 
         $this->assertTrue($this->policy->delete($owner, $blueprint));
@@ -148,12 +148,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 
         $this->actingAs($developer);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Dev BP', 'dev-bp');
 
         $this->assertFalse($this->policy->delete($developer, $blueprint));
@@ -176,12 +176,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Owner BP', 'owner-bp');
 
         $this->assertFalse($this->policy->delete($maintainer, $blueprint));
@@ -202,11 +202,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Pro Org', 'pro-org');
-        
+
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Pro BP', 'pro-bp');
 
         $this->assertTrue($this->policy->publish($owner, $blueprint));
@@ -225,11 +225,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $freePlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Free Org', 'free-org');
-        
+
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Free BP', 'free-bp');
 
         $this->assertFalse($this->policy->publish($owner, $blueprint));
@@ -248,11 +248,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $freePlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Free Org 2', 'free-org-2');
-        
+
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Free BP 2', 'free-bp-2');
 
         $this->assertTrue($this->policy->publish($owner, $blueprint));
@@ -278,12 +278,12 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Pub Org', 'pub-org');
         $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Pub BP', 'pub-bp');
 
         $this->assertFalse($this->policy->publish($maintainer, $blueprint));
@@ -309,11 +309,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'NM Org', 'nm-org');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'NM BP', 'nm-bp');
 
         $this->assertFalse($this->policy->publish($nonMember, $blueprint));
@@ -333,11 +333,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Vote Org', 'vote-org');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Vote BP', 'vote-bp');
         $blueprint->update(['is_public' => true]);
 
@@ -364,11 +364,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Vote Org 2', 'vote-org-2');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Vote BP 2', 'vote-bp-2');
         // is_public is false by default
 
@@ -395,11 +395,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Vote Org 3', 'vote-org-3');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Vote BP 3', 'vote-bp-3');
         $blueprint->update(['is_public' => true]);
 
@@ -425,11 +425,11 @@ class BlueprintPolicyTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Vote Org 4', 'vote-org-4');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Vote BP 4', 'vote-bp-4');
         $blueprint->update(['is_public' => true]);
 

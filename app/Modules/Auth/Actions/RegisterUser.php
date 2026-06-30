@@ -7,8 +7,8 @@ namespace App\Modules\Auth\Actions;
 use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use App\Modules\Shared\Models\Plan;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterUser
 {

@@ -23,12 +23,12 @@ class VerifyMfaCodeTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $sendAction = new SendMfaCode();
+        $sendAction = new SendMfaCode;
         $sendAction->execute($user);
 
         $code = MfaCode::where('user_id', $user->id)->first();
 
-        $verifyAction = new VerifyMfaCode();
+        $verifyAction = new VerifyMfaCode;
         $result = $verifyAction->execute($user, $code->code);
 
         $this->assertTrue($result);
@@ -48,7 +48,7 @@ class VerifyMfaCodeTest extends TestCase
             'expires_at' => now()->subMinutes(5),
         ]);
 
-        $verifyAction = new VerifyMfaCode();
+        $verifyAction = new VerifyMfaCode;
         $result = $verifyAction->execute($user, $mfaCode->code);
 
         $this->assertFalse($result);
@@ -69,7 +69,7 @@ class VerifyMfaCodeTest extends TestCase
             'used_at' => now(),
         ]);
 
-        $verifyAction = new VerifyMfaCode();
+        $verifyAction = new VerifyMfaCode;
         $result = $verifyAction->execute($user, $mfaCode->code);
 
         $this->assertFalse($result);
@@ -83,12 +83,12 @@ class VerifyMfaCodeTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $sendAction = new SendMfaCode();
+        $sendAction = new SendMfaCode;
         $sendAction->execute($user);
 
         $code = MfaCode::where('user_id', $user->id)->first();
 
-        $verifyAction = new VerifyMfaCode();
+        $verifyAction = new VerifyMfaCode;
         $verifyAction->execute($user, $code->code);
 
         $this->assertNotNull($code->fresh()->used_at);
@@ -102,10 +102,10 @@ class VerifyMfaCodeTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $sendAction = new SendMfaCode();
+        $sendAction = new SendMfaCode;
         $sendAction->execute($user);
 
-        $verifyAction = new VerifyMfaCode();
+        $verifyAction = new VerifyMfaCode;
         $result = $verifyAction->execute($user, '000000');
 
         $this->assertFalse($result);

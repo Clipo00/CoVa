@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Controllers;
 
+use App\Modules\Auth\Models\User;
 use App\Modules\Marketplace\Models\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class NotificationController
 {
     public function index(Request $request): View
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
 
         $notifications = Notification::where('user_id', $user->id)
@@ -32,7 +33,7 @@ class NotificationController
 
     public function markRead(Request $request, int $id): RedirectResponse
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
 
         Notification::where('id', $id)
@@ -44,7 +45,7 @@ class NotificationController
 
     public function markAllRead(Request $request): RedirectResponse
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = $request->user();
 
         Notification::where('user_id', $user->id)

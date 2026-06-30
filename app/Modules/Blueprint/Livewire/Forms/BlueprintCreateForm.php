@@ -11,7 +11,9 @@ use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Shared\Models\Category;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -21,16 +23,24 @@ class BlueprintCreateForm extends Component
 
     // Props pasadas desde el controller (serializables por Livewire)
     public ?int $preselectedOrg = null;
+
     public bool $lockOrganization = false;
+
     public array $userOrganizations = [];
 
     // Estado del formulario
     public ?int $organizationId = null;
+
     public string $title = '';
+
     public string $slug = '';
+
     public string $description = '';
+
     public ?int $categoryId = null;
+
     public array $tabsConfig = [];
+
     public string $selectedTemplate = '';
 
     public function mount(): void
@@ -42,7 +52,7 @@ class BlueprintCreateForm extends Component
         if ($this->preselectedOrg !== null) {
             // Si viene preseleccionada, validar que esta en la lista permitida
             $allowedIds = array_column($this->userOrganizations, 'id');
-            if (!in_array($this->preselectedOrg, $allowedIds, true)) {
+            if (! in_array($this->preselectedOrg, $allowedIds, true)) {
                 abort(403, __('blueprint.org_unauthorized'));
             }
 
@@ -66,7 +76,7 @@ class BlueprintCreateForm extends Component
         $userOrgIds = $user->organizations()->pluck('organizations.id')->toArray();
 
         foreach ($this->userOrganizations as $org) {
-            if (!isset($org['id']) || !in_array($org['id'], $userOrgIds, true)) {
+            if (! isset($org['id']) || ! in_array($org['id'], $userOrgIds, true)) {
                 abort(403, __('blueprint.invalid_org_data'));
             }
         }
@@ -91,7 +101,7 @@ class BlueprintCreateForm extends Component
 
     public function updatedTitle(): void
     {
-        $this->slug = \Illuminate\Support\Str::slug($this->title);
+        $this->slug = Str::slug($this->title);
     }
 
     public function updatedSelectedTemplate(string $value): void
@@ -123,8 +133,9 @@ class BlueprintCreateForm extends Component
 
         // SEGURIDAD: Validar que la organizacion seleccionada esta en la lista permitida
         $allowedIds = array_column($this->userOrganizations, 'id');
-        if (!in_array($this->organizationId, $allowedIds, true)) {
+        if (! in_array($this->organizationId, $allowedIds, true)) {
             $this->addError('organizationId', __('blueprint.org_unauthorized'));
+
             return;
         }
 
@@ -132,28 +143,31 @@ class BlueprintCreateForm extends Component
         $selectedOrgData = collect($this->userOrganizations)
             ->firstWhere('id', $this->organizationId);
 
-        if (!$selectedOrgData || !$selectedOrgData['hasAvailableSlots']) {
+        if (! $selectedOrgData || ! $selectedOrgData['hasAvailableSlots']) {
             $this->addError('organizationId', __('blueprint.org_limit'));
+
             return;
         }
 
         $organization = Organization::findOrFail($this->organizationId);
 
         // SEGURIDAD: Validar permisos via Policy
-        if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
+        if (! auth()->user()->can('create', [Blueprint::class, $organization])) {
             $this->addError('title', __('blueprint.no_create_permission'));
+
             return;
         }
 
         // Validar que no haya tipos de pestaña duplicados
         $tabTypes = array_column($this->tabsConfig, 'type');
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
-        if (!empty($duplicates)) {
+        if (! empty($duplicates)) {
             $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
+
             return;
         }
 
-        if (!$this->validateUniqueKeys()) {
+        if (! $this->validateUniqueKeys()) {
             return;
         }
 
@@ -164,11 +178,12 @@ class BlueprintCreateForm extends Component
 
         if ($slugExists) {
             $this->addError('slug', __('blueprint.slug_exists', ['slug' => $validated['slug']]));
+
             return;
         }
 
         // Convert tabsConfig to the format expected by tabs_config column
-        $tabsForDb = array_values(array_map(fn($tab) => [
+        $tabsForDb = array_values(array_map(fn ($tab) => [
             'type' => $tab['type'],
             'config' => $tab['config'] ?? [],
         ], $this->tabsConfig));
@@ -200,7 +215,7 @@ class BlueprintCreateForm extends Component
 
     public function render()
     {
-        $categories = \App\Modules\Shared\Models\Category::all();
+        $categories = Category::all();
         $templates = app('blueprint.templates');
 
         return view('blueprint::livewire.forms.blueprint-create-form', compact('categories', 'templates'));

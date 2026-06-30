@@ -67,6 +67,28 @@
             </div>
         @endif
 
+        {{-- Stats Row --}}
+        @if($organizations->isNotEmpty())
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('dashboard.stats_organizations') }}</h3>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $totalOrgs }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('dashboard.stats_blueprints') }}</h3>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $totalBlueprints }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('dashboard.stats_favorites') }}</h3>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $favoritesCount }}</p>
+                </div>
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('dashboard.stats_plan') }}</h3>
+                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $plan?->name ?? '—' }}</p>
+                </div>
+            </div>
+        @endif
+
         @if($organizations->isEmpty() && $deletedOrganizations->isEmpty())
             {{-- Sin organizaciones: CTA grande --}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -119,6 +141,11 @@
                             </div>
 
                             <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ $organization->slug }}</p>
+
+                            <div class="flex items-center space-x-4 mb-4 text-sm text-gray-500 dark:text-gray-400">
+                                <span>{{ __('dashboard.card_blueprints', ['count' => $organization->blueprints_count ?? 0]) }}</span>
+                                <span>{{ __('dashboard.card_members', ['count' => $organization->members_count ?? 0]) }}</span>
+                            </div>
 
                             <div class="flex items-center justify-between">
                                 <span class="text-xs text-gray-400">

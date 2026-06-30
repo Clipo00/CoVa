@@ -43,7 +43,15 @@ class BlueprintController
                 return $maxBlueprints === null || $activeCount < $maxBlueprints;
             });
 
-        return view('blueprint::index', compact('hasAvailableOrg', 'userHasOrganizations'));
+        // Total de blueprints del usuario para el badge del heading
+        $orgIds = $user->organizations()->pluck('organizations.id');
+        $totalBlueprints = Blueprint::whereIn('organization_id', $orgIds)->count();
+
+        return view('blueprint::index', compact(
+            'hasAvailableOrg',
+            'userHasOrganizations',
+            'totalBlueprints'
+        ));
     }
 
     public function create(): View|RedirectResponse

@@ -11,6 +11,7 @@ use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ class CreateBlueprintTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_creates_blueprint(): void
@@ -34,12 +35,12 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $blueprint = $action->execute(
             organization: $organization,
             title: 'My Blueprint',
@@ -63,13 +64,13 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
-        
+        $action = new CreateBlueprint;
+
         // Free plan allows 3 blueprints
         $action->execute($organization, 'BP 1', 'bp-1');
         $action->execute($organization, 'BP 2', 'bp-2');
@@ -89,13 +90,13 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
-        
+        $action = new CreateBlueprint;
+
         // Free plan allows 50 variables
         $variables = [];
         for ($i = 1; $i <= 51; $i++) {
@@ -116,12 +117,12 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
 
         // Free plan allows 50 items total (variables + segments)
         // 48 variables + 3 segments = 51 > 50 → should throw
@@ -160,12 +161,12 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
 
         // Free plan allows 50 items total — 47 variables + 3 segments = 50 OK
         $variables = [];
@@ -205,7 +206,7 @@ class CreateBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Template Org', 'tpl-org');
 
         $this->actingAs($user);
@@ -220,7 +221,7 @@ class CreateBlueprintTest extends TestCase
             ]],
         ];
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $blueprint = $action->execute(
             organization: $organization,
             title: 'Template BP',

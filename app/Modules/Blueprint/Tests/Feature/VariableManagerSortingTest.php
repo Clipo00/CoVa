@@ -12,6 +12,7 @@ use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -21,14 +22,17 @@ class VariableManagerSortingTest extends TestCase
     use RefreshDatabase;
 
     private array $initialVariables;
+
     private Plan $plan;
+
     private User $user;
+
     private Organization $organization;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $this->plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -155,7 +159,7 @@ class VariableManagerSortingTest extends TestCase
     {
         $this->actingAs($this->user);
 
-        $createBlueprint = new CreateBlueprint();
+        $createBlueprint = new CreateBlueprint;
         $blueprint = $createBlueprint->execute(
             organization: $this->organization,
             title: 'Test BP',
@@ -192,7 +196,7 @@ class VariableManagerSortingTest extends TestCase
             ['key' => 'DB_HOST', 'type' => 'fixed', 'default_value' => 'localhost'],
         ];
 
-        $updateBlueprint = new UpdateBlueprint();
+        $updateBlueprint = new UpdateBlueprint;
         $updateBlueprint->execute(
             blueprint: $blueprint,
             data: ['title' => 'Updated BP'],

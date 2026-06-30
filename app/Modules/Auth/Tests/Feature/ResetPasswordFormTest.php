@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
+use Illuminate\Auth\Events\OtherDeviceLogout;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
@@ -170,6 +171,6 @@ class ResetPasswordFormTest extends TestCase
             ->call('resetPassword')
             ->assertRedirect(route('dashboard'));
 
-        Event::assertDispatched(\Illuminate\Auth\Events\OtherDeviceLogout::class);
+        Event::assertDispatched(OtherDeviceLogout::class);
     }
 }

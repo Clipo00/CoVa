@@ -14,7 +14,9 @@ class MarketplaceList extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $sort = 'recent';
+
     public array $selectedTags = [];
 
     protected $queryString = [
@@ -25,13 +27,13 @@ class MarketplaceList extends Component
 
     public function getBlueprintsProperty()
     {
-        return Blueprint::whereHas('organization', fn($q) => $q->where('slug', 'cova-marketplace'))
+        return Blueprint::whereHas('organization', fn ($q) => $q->where('slug', 'cova-marketplace'))
             ->where('is_public', true)
-            ->when($this->search, fn($q) => $q->where('title', 'like', "%{$this->search}%"))
-            ->when($this->selectedTags, fn($q) => $q->whereHas('tags', fn($t) => $t->whereIn('tag', $this->selectedTags)))
-            ->when($this->sort === 'rating', fn($q) => $q->orderBy('votes_count', 'desc'))
-            ->when($this->sort === 'subscribers', fn($q) => $q->orderBy('subscribers_count', 'desc'))
-            ->when($this->sort === 'recent', fn($q) => $q->orderBy('created_at', 'desc'))
+            ->when($this->search, fn ($q) => $q->where('title', 'like', "%{$this->search}%"))
+            ->when($this->selectedTags, fn ($q) => $q->whereHas('tags', fn ($t) => $t->whereIn('tag', $this->selectedTags)))
+            ->when($this->sort === 'rating', fn ($q) => $q->orderBy('votes_count', 'desc'))
+            ->when($this->sort === 'subscribers', fn ($q) => $q->orderBy('subscribers_count', 'desc'))
+            ->when($this->sort === 'recent', fn ($q) => $q->orderBy('created_at', 'desc'))
             ->with(['tags', 'organization'])
             ->paginate(20);
     }
@@ -47,7 +49,7 @@ class MarketplaceList extends Component
     public function toggleTag(string $tag): void
     {
         if (in_array($tag, $this->selectedTags, true)) {
-            $this->selectedTags = array_values(array_filter($this->selectedTags, fn($t) => $t !== $tag));
+            $this->selectedTags = array_values(array_filter($this->selectedTags, fn ($t) => $t !== $tag));
         } else {
             $this->selectedTags[] = $tag;
         }

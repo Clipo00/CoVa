@@ -4,6 +4,7 @@ return [
     // Index
     'page_title' => 'Blueprints',
     'heading' => 'Blueprints',
+    'count' => ':count blueprints',
     'new_button' => 'Nuevo Blueprint',
     'all_orgs_limit' => 'Todas tus organizaciones han alcanzado el límite de blueprints. Elimina uno existente o actualiza tu plan.',
     'no_orgs' => 'No tienes ninguna organización.',

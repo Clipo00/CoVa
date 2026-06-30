@@ -9,6 +9,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -18,16 +19,21 @@ class InvitationManagementTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private User $owner;
+
     private User $maintainer;
+
     private User $developer;
+
     private User $nonMember;
+
     private Plan $plan;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $this->plan = Plan::where('slug', 'free')->first();
 
@@ -59,7 +65,7 @@ class InvitationManagementTest extends TestCase
             'plan_id' => $this->plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
 
         // Add maintainer and developer as members
@@ -69,8 +75,9 @@ class InvitationManagementTest extends TestCase
 
     private function createPendingInvitation(string $email = 'invited@example.com')
     {
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         Notification::fake(); // Prevent actual notifications during setup
+
         return $inviteUser->execute($this->organization, $email, 'developer');
     }
 
@@ -160,7 +167,7 @@ class InvitationManagementTest extends TestCase
             'password' => bcrypt('password'),
             'plan_id' => $this->plan->id,
         ]);
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $otherOrg = $createOrg->execute($otherOwner, 'Other Org', 'other-org');
 
         // Try to revoke using other org's slug

@@ -7,9 +7,13 @@ namespace App\Modules\Marketplace\Tests\Feature;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintTag;
-use App\Modules\Marketplace\Models\Vote;
+use App\Modules\Marketplace\Livewire\MarketplaceList;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Shared\Models\Plan;
+use Database\Seeders\MarketplaceSeeder;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -21,8 +25,8 @@ class MarketplaceListTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+        $this->seed(PlanSeeder::class);
+        $this->seed(MarketplaceSeeder::class);
     }
 
     private function getMarketplaceId(): int
@@ -32,7 +36,7 @@ class MarketplaceListTest extends TestCase
 
     public function test_renders_public_blueprints(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -47,7 +51,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'public-bp',
             'title' => 'Public Blueprint',
@@ -58,7 +62,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'private-bp',
             'title' => 'Private Blueprint',
@@ -67,14 +71,14 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->assertSee('Public Blueprint')
             ->assertDontSee('Private Blueprint');
     }
 
     public function test_pagination_works(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Paginated User',
             'email' => 'paginated@example.com',
@@ -91,7 +95,7 @@ class MarketplaceListTest extends TestCase
         // Create 25 public blueprints (paginate 20)
         for ($i = 1; $i <= 25; $i++) {
             Blueprint::create([
-                'uuid' => (string) \Illuminate\Support\Str::uuid(),
+                'uuid' => (string) Str::uuid(),
                 'organization_id' => $this->getMarketplaceId(),
                 'slug' => "bp-{$i}",
                 'title' => "Blueprint {$i}",
@@ -101,7 +105,7 @@ class MarketplaceListTest extends TestCase
             ]);
         }
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->assertSee('Blueprint 1')
             ->assertSee('Blueprint 20')
             ->assertDontSee('Blueprint 21');
@@ -109,7 +113,7 @@ class MarketplaceListTest extends TestCase
 
     public function test_search_filters_by_title(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Search User',
             'email' => 'search@example.com',
@@ -124,7 +128,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'laravel-bp',
             'title' => 'Laravel Setup',
@@ -135,7 +139,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'react-bp',
             'title' => 'React Setup',
@@ -145,7 +149,7 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('search', 'Laravel')
             ->assertSee('Laravel Setup')
             ->assertDontSee('React Setup');
@@ -153,7 +157,7 @@ class MarketplaceListTest extends TestCase
 
     public function test_sort_by_rating(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Sort User',
             'email' => 'sort@example.com',
@@ -168,7 +172,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $lowRated = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'low-rated',
             'title' => 'Low Rated',
@@ -180,7 +184,7 @@ class MarketplaceListTest extends TestCase
         $lowRated->save();
 
         $highRated = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'high-rated',
             'title' => 'High Rated',
@@ -191,14 +195,14 @@ class MarketplaceListTest extends TestCase
         $highRated->votes_count = 10;
         $highRated->save();
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('sort', 'rating')
             ->assertSeeInOrder(['High Rated', 'Low Rated']);
     }
 
     public function test_sort_by_subscribers(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Sub Sort User',
             'email' => 'subsort@example.com',
@@ -213,7 +217,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $lowSubs = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'low-subs',
             'title' => 'Low Subscribers',
@@ -225,7 +229,7 @@ class MarketplaceListTest extends TestCase
         $lowSubs->save();
 
         $highSubs = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'high-subs',
             'title' => 'High Subscribers',
@@ -236,14 +240,14 @@ class MarketplaceListTest extends TestCase
         $highSubs->subscribers_count = 20;
         $highSubs->save();
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('sort', 'subscribers')
             ->assertSeeInOrder(['High Subscribers', 'Low Subscribers']);
     }
 
     public function test_sort_by_recent(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Recent User',
             'email' => 'recent@example.com',
@@ -258,7 +262,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $oldBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'old-bp',
             'title' => 'Old Blueprint',
@@ -270,7 +274,7 @@ class MarketplaceListTest extends TestCase
         $oldBp->save();
 
         $recent = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'recent-bp',
             'title' => 'Recent Blueprint',
@@ -279,14 +283,14 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('sort', 'recent')
             ->assertSeeInOrder(['Recent Blueprint', 'Old Blueprint']);
     }
 
     public function test_shows_organization_name(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Org Show User',
             'email' => 'orgshow@example.com',
@@ -301,7 +305,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'org-bp',
             'title' => 'Acme Blueprint',
@@ -310,13 +314,13 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->assertSee('CoVa Marketplace');
     }
 
     public function test_shows_votes_and_subscribers_count(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Counts User',
             'email' => 'counts@example.com',
@@ -331,7 +335,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $countedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'counts-bp',
             'title' => 'Counted Blueprint',
@@ -343,14 +347,14 @@ class MarketplaceListTest extends TestCase
         $countedBp->subscribers_count = 3;
         $countedBp->save();
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->assertSee('5')
             ->assertSee('3');
     }
 
     public function test_tag_filter_by_single_tag(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Tag User',
             'email' => 'tag@example.com',
@@ -365,7 +369,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $laravelBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'laravel-tag',
             'title' => 'Laravel Blueprint',
@@ -375,7 +379,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $reactBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'react-tag',
             'title' => 'React Blueprint',
@@ -387,7 +391,7 @@ class MarketplaceListTest extends TestCase
         BlueprintTag::create(['blueprint_id' => $laravelBp->id, 'tag' => 'laravel']);
         BlueprintTag::create(['blueprint_id' => $reactBp->id, 'tag' => 'react']);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['laravel'])
             ->assertSee('Laravel Blueprint')
             ->assertDontSee('React Blueprint');
@@ -395,7 +399,7 @@ class MarketplaceListTest extends TestCase
 
     public function test_tag_filter_by_multiple_tags(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Multi Tag User',
             'email' => 'multitag@example.com',
@@ -410,7 +414,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $fullstack = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'fullstack',
             'title' => 'Fullstack App',
@@ -420,7 +424,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $pythonApp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'python',
             'title' => 'Python App',
@@ -430,7 +434,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $anotherBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'another',
             'title' => 'Another App',
@@ -444,7 +448,7 @@ class MarketplaceListTest extends TestCase
         BlueprintTag::create(['blueprint_id' => $pythonApp->id, 'tag' => 'python']);
         BlueprintTag::create(['blueprint_id' => $anotherBp->id, 'tag' => 'go']);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['laravel', 'react'])
             ->assertSee('Fullstack App')
             ->assertDontSee('Python App')
@@ -453,7 +457,7 @@ class MarketplaceListTest extends TestCase
 
     public function test_tag_filter_shows_no_results(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'No Results User',
             'email' => 'noresults@example.com',
@@ -468,7 +472,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         $bp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $this->getMarketplaceId(),
             'slug' => 'bp-no-tag',
             'title' => 'No Tags Blueprint',
@@ -479,8 +483,9 @@ class MarketplaceListTest extends TestCase
 
         BlueprintTag::create(['blueprint_id' => $bp->id, 'tag' => 'laravel']);
 
-        Livewire::test(\App\Modules\Marketplace\Livewire\MarketplaceList::class)
+        Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['nonexistent'])
-            ->assertSee(__('marketplace.no_results'));
+            ->assertSee(__('marketplace.empty_heading'))
+            ->assertSee(__('marketplace.empty_cta'));
     }
 }

@@ -40,6 +40,7 @@ class MfaChallengeForm extends Component
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $this->addError('code', __('auth.throttle', ['seconds' => $seconds]));
+
             return;
         }
 
@@ -47,6 +48,7 @@ class MfaChallengeForm extends Component
 
         if ($userId === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));
+
             return;
         }
 
@@ -54,12 +56,14 @@ class MfaChallengeForm extends Component
 
         if ($user === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));
+
             return;
         }
 
-        if (!$verifyMfaCode->execute($user, $this->code)) {
+        if (! $verifyMfaCode->execute($user, $this->code)) {
             $this->addError('code', __('auth.mfa_invalid_code'));
             $this->code = '';
+
             return;
         }
 
@@ -83,6 +87,7 @@ class MfaChallengeForm extends Component
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             $this->addError('code', __('auth.throttle', ['seconds' => $seconds]));
+
             return;
         }
 
@@ -90,6 +95,7 @@ class MfaChallengeForm extends Component
 
         if ($userId === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));
+
             return;
         }
 
@@ -97,6 +103,7 @@ class MfaChallengeForm extends Component
 
         if ($user === null) {
             $this->addError('code', __('auth.mfa_invalid_code'));
+
             return;
         }
 

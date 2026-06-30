@@ -6,13 +6,15 @@ namespace App\Modules\Marketplace\Tests\Unit\Actions;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\CreateBlueprint;
+use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Blueprint\Models\BlueprintVariable;
 use App\Modules\Marketplace\Actions\SubscribeToBlueprint;
 use App\Modules\Marketplace\Models\Subscription;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use App\Modules\Shared\ValueObjects\Uuid;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,13 +23,15 @@ class SubscribeToBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Organization $organization;
+
     private SubscribeToBlueprint $action;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -37,10 +41,10 @@ class SubscribeToBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->user, 'Subscriber Org', 'subscriber-org');
 
-        $this->action = new SubscribeToBlueprint();
+        $this->action = new SubscribeToBlueprint;
     }
 
     // 2.2.1: Subscribe creates a blueprint copy
@@ -139,9 +143,9 @@ class SubscribeToBlueprintTest extends TestCase
         // Fill the Free plan limit (3) by creating blueprints directly (bypass plan check)
         foreach (['BP 1', 'BP 2', 'BP 3'] as $title) {
             Blueprint::create([
-                'uuid' => (string) \App\Modules\Shared\ValueObjects\Uuid::generate(),
+                'uuid' => (string) Uuid::generate(),
                 'organization_id' => $this->organization->id,
-                'slug' => 'fill-bp-' . uniqid(),
+                'slug' => 'fill-bp-'.uniqid(),
                 'title' => $title,
                 'is_public' => false,
                 'tabs_config' => [],
@@ -150,7 +154,7 @@ class SubscribeToBlueprintTest extends TestCase
         }
 
         // Subscribe should now throw because plan limit is reached
-        $this->expectException(\App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException::class);
+        $this->expectException(MaxBlueprintsReachedException::class);
 
         $this->action->execute($this->user, $blueprint);
     }
@@ -158,11 +162,11 @@ class SubscribeToBlueprintTest extends TestCase
     private function createPublicBlueprintWithTabs(): Blueprint
     {
         $this->actingAs($this->user);
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $blueprint = $action->execute(
             organization: $this->organization,
             title: 'Blueprint with Tabs',
-            slug: 'bp-tabs-' . uniqid(),
+            slug: 'bp-tabs-'.uniqid(),
             tabsConfig: [
                 ['type' => 'ai_context', 'config' => [
                     'presets' => ['laravel-conventions'],
@@ -173,17 +177,18 @@ class SubscribeToBlueprintTest extends TestCase
         );
         $blueprint->is_public = true;
         $blueprint->save();
+
         return $blueprint;
     }
 
     private function createPublicBlueprintWithVariables(): Blueprint
     {
         $this->actingAs($this->user);
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $blueprint = $action->execute(
             organization: $this->organization,
             title: 'Blueprint with Vars',
-            slug: 'bp-vars-' . uniqid(),
+            slug: 'bp-vars-'.uniqid(),
             tabsConfig: [],
             variables: [
                 ['key' => 'DB_HOST', 'type' => 'fixed', 'default_value' => 'localhost'],
@@ -192,6 +197,7 @@ class SubscribeToBlueprintTest extends TestCase
         );
         $blueprint->is_public = true;
         $blueprint->save();
+
         return $blueprint;
     }
 }

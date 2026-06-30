@@ -37,6 +37,7 @@ return [
     // Show
     'back_to_dashboard' => 'Back to Dashboard',
     'edit_link' => 'Edit',
+    'public_blueprints_count' => 'Public Blueprints',
     'delete_confirm' => "Are you sure you want to delete this organization?\n\nThis action is reversible from the dashboard.\n\nTo permanently delete, go to the dashboard after deleting.",
     'delete_button' => 'Delete',
     'blueprints_count' => 'Blueprints',

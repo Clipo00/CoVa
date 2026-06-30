@@ -21,10 +21,12 @@ Route::middleware('auth')->group(function () {
     // Legacy UUID redirects (301)
     Route::get('/blueprints/{uuid}', function (string $uuid) {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+
         return redirect()->route('blueprints.show', $blueprint->slug, 301);
     });
     Route::get('/blueprints/{uuid}/edit', function (string $uuid) {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+
         return redirect()->route('blueprints.edit', $blueprint->slug, 301);
     });
 

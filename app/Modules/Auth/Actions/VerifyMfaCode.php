@@ -26,7 +26,7 @@ class VerifyMfaCode
             return false;
         }
 
-        if (!$mfaCode->isValid()) {
+        if (! $mfaCode->isValid()) {
             return false;
         }
 

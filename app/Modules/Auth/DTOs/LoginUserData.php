@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\DTOs;
 
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class LoginUserData
 {
     public readonly string $email;
+
     public readonly string $password;
+
     public readonly bool $remember;
 
     public function __construct(

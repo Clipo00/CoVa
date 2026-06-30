@@ -10,8 +10,8 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Exceptions\MaxMembersReachedException;
 use App\Modules\Organization\Models\OrganizationInvitation;
-use App\Modules\Organization\Notifications\OrganizationInvitationNotification;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
@@ -24,7 +24,7 @@ class InviteUserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_creates_invitation(): void
@@ -37,10 +37,10 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         $this->assertInstanceOf(OrganizationInvitation::class, $invitation);
@@ -67,13 +67,13 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'member@example.com', 'maintainer');
 
-        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation = new AcceptInvitation;
         $result = $acceptInvitation->execute($invitation->token, $member);
 
         $this->assertEquals($member->id, $result->id);
@@ -91,16 +91,16 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer', -1);
 
         $this->assertFalse($invitation->fresh()->isValid());
 
         $this->expectException(ValidationException::class);
-        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation = new AcceptInvitation;
         $acceptInvitation->execute($invitation->token);
     }
 
@@ -121,16 +121,16 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invited@example.com', 'developer');
 
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage(__('organization.invitation_email_mismatch'));
 
-        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation = new AcceptInvitation;
         $acceptInvitation->execute($invitation->token, $otherUser);
     }
 
@@ -151,7 +151,7 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'My Org', 'my-org');
 
         // Llenar la organización hasta el límite
@@ -168,12 +168,12 @@ class InviteUserTest extends TestCase
             }
         }
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'member@example.com', 'developer');
 
         $this->expectException(MaxMembersReachedException::class);
 
-        $acceptInvitation = new AcceptInvitation();
+        $acceptInvitation = new AcceptInvitation;
         $acceptInvitation->execute($invitation->token, $member);
     }
 
@@ -194,7 +194,7 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'My Org', 'my-org');
 
         // Add member to organization first
@@ -203,7 +203,7 @@ class InviteUserTest extends TestCase
         $this->expectException(ValidationException::class);
         $this->expectExceptionMessage(__('organization.invite_already_member'));
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $inviteUser->execute($organization, 'existing@example.com', 'developer');
     }
 
@@ -227,10 +227,10 @@ class InviteUserTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'external@example.com', 'developer');
 
         // Invitation is created normally

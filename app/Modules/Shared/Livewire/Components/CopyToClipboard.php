@@ -9,7 +9,9 @@ use Livewire\Component;
 class CopyToClipboard extends Component
 {
     public string $text;
+
     public string $label = '';
+
     public ?string $successMessage = null;
 
     public function mount(string $text, string $label = '', ?string $successMessage = null): void

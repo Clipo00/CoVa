@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Livewire;
 
+use App\Modules\Auth\Models\User;
 use App\Modules\Marketplace\Models\Notification;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -12,7 +13,7 @@ class NotificationBell extends Component
 {
     public function getUnreadCountProperty(): int
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user === null) {
@@ -26,7 +27,7 @@ class NotificationBell extends Component
 
     public function getLatestNotificationsProperty()
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user === null) {
@@ -41,7 +42,7 @@ class NotificationBell extends Component
 
     public function markAsRead(int $id): void
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user === null) {
@@ -55,7 +56,7 @@ class NotificationBell extends Component
 
     public function markAllAsRead(): void
     {
-        /** @var \App\Modules\Auth\Models\User $user */
+        /** @var User $user */
         $user = auth()->user();
 
         if ($user === null) {

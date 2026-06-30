@@ -15,10 +15,11 @@ class Uuid
     {
         if ($uuid === null) {
             $this->value = RamseyUuid::uuid4()->toString();
+
             return;
         }
 
-        if (!RamseyUuid::isValid($uuid)) {
+        if (! RamseyUuid::isValid($uuid)) {
             throw new InvalidArgumentException("Invalid UUID: {$uuid}");
         }
 
@@ -27,7 +28,7 @@ class Uuid
 
     public static function generate(): self
     {
-        return new self();
+        return new self;
     }
 
     public function __toString(): string

@@ -15,7 +15,7 @@ class McpServersTabTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->tab = new McpServersTab();
+        $this->tab = new McpServersTab;
     }
 
     public function test_type_returns_mcp_servers(): void

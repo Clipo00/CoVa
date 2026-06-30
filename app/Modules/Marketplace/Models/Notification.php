@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Modules\Marketplace\Models;
 
 use App\Modules\Auth\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder;
 
 class Notification extends Model
 {

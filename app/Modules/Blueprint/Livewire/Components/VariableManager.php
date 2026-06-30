@@ -78,7 +78,7 @@ class VariableManager extends Component
             ];
         }
 
-        if (!empty($initialVariables)) {
+        if (! empty($initialVariables)) {
             $this->dispatch('variables-updated', variables: $this->variables);
         }
     }

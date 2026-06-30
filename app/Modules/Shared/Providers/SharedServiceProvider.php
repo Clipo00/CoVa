@@ -18,7 +18,7 @@ class SharedServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'shared');
+        $this->loadViewsFrom(__DIR__.'/../Views', 'shared');
 
         Livewire::component('shared.copy-to-clipboard', CopyToClipboard::class);
         Livewire::component('shared.theme-toggle', ThemeToggle::class);

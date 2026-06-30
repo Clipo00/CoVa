@@ -16,7 +16,7 @@ interface TabInterface
     /**
      * Generates tab output from configuration.
      *
-     * @param array<string, mixed> $config
+     * @param  array<string, mixed>  $config
      */
     public function generate(array $config): TabOutput;
 }

@@ -18,7 +18,7 @@ readonly class AiContextSegment
         public string $name,
         public ?string $content = null,
     ) {
-        if (!in_array($type, ['preset', 'skill', 'custom'], true)) {
+        if (! in_array($type, ['preset', 'skill', 'custom'], true)) {
             throw new \InvalidArgumentException("Invalid segment type: {$type}");
         }
 

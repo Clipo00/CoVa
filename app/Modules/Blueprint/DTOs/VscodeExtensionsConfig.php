@@ -7,12 +7,12 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Configuration for VSCode Extensions tab.
  *
- * @param string[] $extensions List of VSCode extension IDs
+ * @param  string[]  $extensions  List of VSCode extension IDs
  */
 final class VscodeExtensionsConfig
 {
     /**
-     * @param string[] $extensions
+     * @param  string[]  $extensions
      */
     public function __construct(
         public readonly array $extensions = [],
@@ -26,14 +26,14 @@ final class VscodeExtensionsConfig
     }
 
     /**
-     * @param mixed[] $extensions
+     * @param  mixed[]  $extensions
      * @return string[]
      */
     private static function filterExtensions(array $extensions): array
     {
         return array_values(array_filter(
-            array_map(fn($ext) => is_string($ext) ? trim($ext) : null, $extensions),
-            fn($ext) => $ext !== null && $ext !== ''
+            array_map(fn ($ext) => is_string($ext) ? trim($ext) : null, $extensions),
+            fn ($ext) => $ext !== null && $ext !== ''
         ));
     }
 
@@ -44,10 +44,10 @@ final class VscodeExtensionsConfig
 
     public function installCommand(): string
     {
-        if (!$this->hasExtensions()) {
+        if (! $this->hasExtensions()) {
             return '';
         }
 
-        return 'code --install-extension ' . implode(' --install-extension ', $this->extensions);
+        return 'code --install-extension '.implode(' --install-extension ', $this->extensions);
     }
 }

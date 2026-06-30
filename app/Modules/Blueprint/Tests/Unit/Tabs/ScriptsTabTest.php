@@ -18,7 +18,7 @@ class ScriptsTabTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->tab = new ScriptsTab();
+        $this->tab = new ScriptsTab;
     }
 
     // --- ScriptsTab ---

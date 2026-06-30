@@ -10,7 +10,9 @@ use App\Modules\Marketplace\Actions\VoteOnBlueprint;
 use App\Modules\Marketplace\Models\Vote;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class VoteOnBlueprintTest extends TestCase
@@ -18,32 +20,34 @@ class VoteOnBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Blueprint $blueprint;
+
     private VoteOnBlueprint $action;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
             'name' => 'Vote Action Test',
-            'email' => 'vote-action-' . uniqid() . '@example.com',
+            'email' => 'vote-action-'.uniqid().'@example.com',
             'password' => bcrypt('password'),
             'plan_id' => $plan->id,
         ]);
 
         $organization = Organization::create([
             'name' => 'Vote Action Org',
-            'slug' => 'vote-action-org-' . uniqid(),
+            'slug' => 'vote-action-org-'.uniqid(),
             'owner_id' => $this->user->id,
         ]);
 
         $this->blueprint = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
-            'slug' => 'vote-action-bp-' . uniqid(),
+            'slug' => 'vote-action-bp-'.uniqid(),
             'title' => 'Vote Action Blueprint',
             'is_public' => true,
             'tabs_config' => [],
@@ -51,7 +55,7 @@ class VoteOnBlueprintTest extends TestCase
             'votes_count' => 0,
         ]);
 
-        $this->action = new VoteOnBlueprint();
+        $this->action = new VoteOnBlueprint;
     }
 
     public function test_upvote_creates_vote_record_and_increments_count(): void

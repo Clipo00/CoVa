@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Models;
 
 use App\Modules\Auth\Models\User;
+use App\Modules\Marketplace\Models\Vote;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -82,6 +83,6 @@ class Blueprint extends Model
 
     public function votes()
     {
-        return $this->hasMany(\App\Modules\Marketplace\Models\Vote::class, 'blueprint_id');
+        return $this->hasMany(Vote::class, 'blueprint_id');
     }
 }

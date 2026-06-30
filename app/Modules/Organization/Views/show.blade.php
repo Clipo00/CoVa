@@ -71,7 +71,7 @@
         </div>
 
         {{-- Stats / Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">{{ __('organization.blueprints_count') }}</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->blueprints()->count() }}</p>
@@ -94,6 +94,11 @@
                 <p class="mt-4 text-sm text-gray-400">
                     {{ __('organization.max_blueprints_text', ['max' => $maxBlueprints]) }}
                 </p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ __('organization.public_blueprints_count') }}</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $publicBlueprintsCount }}</p>
             </div>
         </div>
 
