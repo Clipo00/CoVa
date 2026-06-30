@@ -6,6 +6,8 @@
         </div>
 
         <form wire:submit="submit" class="px-6 py-6 space-y-6">
+            <!-- Datos Tab: Avatar, Name, Email -->
+            <div x-show="activeTab === 'datos'" x-cloak class="space-y-6">
             <!-- Avatar -->
             <div class="flex items-center space-x-6">
                 <div class="relative">
@@ -55,7 +57,10 @@
                 >
                 @error('email') <span class="text-sm text-red-600 dark:text-red-400">{{ $message }}</span> @enderror
             </div>
+            </div>
 
+            <!-- Cuenta Tab: Password Change + MFA -->
+            <div x-show="activeTab === 'cuenta'" x-cloak class="space-y-6">
             <!-- Password Change -->
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('auth.change_password') }}</h3>
@@ -150,8 +155,9 @@
                     </label>
                 </div>
             </div>
+            </div>
 
-            <!-- Submit -->
+            <!-- Submit (visible on all tabs) -->
             <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                     type="submit"

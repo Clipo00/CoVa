@@ -20,7 +20,6 @@
                     :class="{ 'border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'datos', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600': activeTab !== 'datos' }"
                     class="px-1 py-3 text-sm font-medium border-b-2 transition-colors duration-200"
                     role="tab"
-                    aria-selected="true"
                 >
                     {{ __('auth.profile_tab_datos') }}
                 </button>
@@ -29,7 +28,6 @@
                     :class="{ 'border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'cuenta', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600': activeTab !== 'cuenta' }"
                     class="px-1 py-3 text-sm font-medium border-b-2 transition-colors duration-200"
                     role="tab"
-                    aria-selected="false"
                 >
                     {{ __('auth.profile_tab_cuenta') }}
                 </button>
@@ -38,28 +36,18 @@
                     :class="{ 'border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'seguridad', 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600': activeTab !== 'seguridad' }"
                     class="px-1 py-3 text-sm font-medium border-b-2 transition-colors duration-200"
                     role="tab"
-                    aria-selected="false"
                 >
                     {{ __('auth.profile_tab_seguridad') }}
                 </button>
             </nav>
         </div>
 
-        <!-- Datos Tab Content -->
-        <div x-show="activeTab === 'datos'" x-cloak>
+        <!-- Datos + Cuenta: UserProfileForm (rendered once, sections controlled by Alpine activeTab) -->
+        <div x-show="activeTab === 'datos' || activeTab === 'cuenta'" x-cloak>
             <livewire:auth.forms.user-profile-form />
         </div>
 
-        <!-- Cuenta Tab Content -->
-        <div x-show="activeTab === 'cuenta'" x-cloak>
-            <div class="max-w-2xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                    <p class="text-gray-500 dark:text-gray-400">{{ __('auth.profile_tab_cuenta') }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Seguridad Tab Content -->
+        <!-- Seguridad: API Tokens -->
         <div x-show="activeTab === 'seguridad'" x-cloak>
             <div class="max-w-2xl mx-auto">
                 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
