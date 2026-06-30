@@ -6,6 +6,7 @@ namespace App\Modules\Auth\Livewire;
 
 use App\Modules\Auth\Actions\CreateApiToken;
 use App\Modules\Auth\Actions\RevokeApiToken;
+use App\Modules\Organization\Models\Organization;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
@@ -31,29 +32,58 @@ final class ApiTokenManager extends Component
 
     public bool $isFreePlan = false;
 
+    /** @var Collection<int, Organization> Organizations whose owner has API access */
+    public Collection $eligibleOrganizations;
+
+    public ?int $selectedOrganizationId = null;
+
     public function mount(): void
     {
         $user = auth()->user();
+
         $this->tokens = $user->tokens;
         $this->isFreePlan = !$user->hasApiAccess();
+
+        $this->eligibleOrganizations = $user->organizations()
+            ->whereHas('owner', function ($query) {
+                $query->whereHas('plan', function ($q) {
+                    $q->where('has_api_access', true);
+                });
+            })
+            ->get();
+
+        // Auto-select if only one eligible organization
+        if ($this->eligibleOrganizations->count() === 1) {
+            $this->selectedOrganizationId = $this->eligibleOrganizations->first()->id;
+        }
     }
 
     public function createToken(CreateApiToken $action): void
     {
-        $this->validate([
+        $rules = [
             'tokenName' => ['required', 'string', 'max:255'],
             'expiresAt' => ['required', 'date', 'after_or_equal:today', 'before_or_equal:' . now()->addYear()->format('Y-m-d')],
             'password' => ['required', 'string'],
-        ]);
+        ];
+
+        // Require org selection if multiple eligible orgs exist
+        if ($this->eligibleOrganizations->count() > 1) {
+            $rules['selectedOrganizationId'] = ['required', 'integer', 'in:' . $this->eligibleOrganizations->pluck('id')->join(',')];
+        }
+
+        $this->validate($rules);
 
         $this->ensureRateLimit();
 
         try {
+            $organizationId = $this->selectedOrganizationId ?? $this->eligibleOrganizations->first()?->id;
+
             $plainTextToken = $action->execute(
                 user: auth()->user(),
                 name: $this->tokenName,
                 expiresAt: \Carbon\Carbon::parse($this->expiresAt),
                 password: $this->password,
+                organizationId: $organizationId,
             );
 
             $this->newPlainTextToken = $plainTextToken;

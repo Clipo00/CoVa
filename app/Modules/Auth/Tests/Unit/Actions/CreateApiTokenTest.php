@@ -6,6 +6,7 @@ namespace App\Modules\Auth\Tests\Unit\Actions;
 
 use App\Modules\Auth\Actions\CreateApiToken;
 use App\Modules\Auth\Models\User;
+use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Carbon\Carbon;
 use Database\Seeders\PlanSeeder;
@@ -112,5 +113,48 @@ class CreateApiTokenTest extends TestCase
             expiresAt: Carbon::now()->addMonths(6),
             password: 'password123',
         );
+    }
+
+    public function test_free_user_in_pro_org_can_create_token(): void
+    {
+        $freePlan = Plan::where('slug', 'free')->first();
+        $proPlan = Plan::where('slug', 'pro')->first();
+
+        // Owner with Pro plan
+        $owner = User::create([
+            'name' => 'Pro Owner',
+            'email' => 'owner@example.com',
+            'password' => Hash::make('password123'),
+            'plan_id' => $proPlan->id,
+        ]);
+
+        // Free user (Developer in owner's Pro org)
+        $freeUser = User::create([
+            'name' => 'Free Dev',
+            'email' => 'dev@example.com',
+            'password' => Hash::make('password123'),
+            'plan_id' => $freePlan->id,
+        ]);
+
+        // Create org with Pro owner
+        $org = Organization::create([
+            'slug' => 'pro-org',
+            'name' => 'Pro Org',
+            'owner_id' => $owner->id,
+        ]);
+
+        // Add Free user as Developer
+        $org->members()->attach($freeUser->id, ['role' => 'developer']);
+
+        // Free user should be able to create API tokens (org owner has Pro)
+        $token = $this->action->execute(
+            user: $freeUser,
+            name: 'My Token via Org',
+            expiresAt: Carbon::now()->addMonths(6),
+            password: 'password123',
+        );
+
+        $this->assertIsString($token);
+        $this->assertNotEmpty($token);
     }
 }

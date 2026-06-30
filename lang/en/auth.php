@@ -130,4 +130,6 @@ return [
     'date_format' => 'm/d/Y',
     'cancel' => 'Cancel',
     'token_expiration_max' => 'Expiration must not exceed 1 year.',
+    'token_organization' => 'Organization',
+    'token_select_org' => 'Select an organization',
 ];

@@ -130,4 +130,6 @@ return [
     'date_format' => 'd/m/Y',
     'cancel' => 'Cancelar',
     'token_expiration_max' => 'La expiración no puede ser superior a un año.',
+    'token_organization' => 'Organización',
+    'token_select_org' => 'Selecciona una organización',
 ];

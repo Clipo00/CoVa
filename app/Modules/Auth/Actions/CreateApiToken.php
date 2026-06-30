@@ -13,7 +13,7 @@ final class CreateApiToken
 {
     use VerifiesPassword;
 
-    public function execute(User $user, string $name, Carbon $expiresAt, string $password): string
+    public function execute(User $user, string $name, Carbon $expiresAt, string $password, ?int $organizationId = null): string
     {
         if (!$user->hasApiAccess()) {
             throw new \RuntimeException('Your plan does not include API access.');
@@ -27,7 +27,14 @@ final class CreateApiToken
             ]);
         }
 
-        $newAccessToken = $user->createToken($name, ['*'], $expiresAt);
+        $abilities = ['*'];
+
+        // Store organization context as token ability for CLI scoping
+        if ($organizationId !== null) {
+            $abilities[] = 'org:' . $organizationId;
+        }
+
+        $newAccessToken = $user->createToken($name, $abilities, $expiresAt);
 
         return $newAccessToken->plainTextToken;
     }

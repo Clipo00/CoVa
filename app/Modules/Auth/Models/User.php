@@ -243,15 +243,29 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
     }
 
     /**
-     * Check if user has API access (plan or active trial).
+     * Check if user has API access via:
+     * 1. Own plan (Pro/Enterprise) or active Pro trial
+     * 2. Membership in any organization whose owner has Pro/Enterprise
      */
     public function hasApiAccess(): bool
     {
+        // Own plan or trial
         if ($this->isOnProTrial()) {
             return true;
         }
 
-        return $this->plan?->has_api_access ?? false;
+        if ($this->plan?->has_api_access) {
+            return true;
+        }
+
+        // Belongs to an org whose owner has API access
+        return $this->organizations()
+            ->whereHas('owner', function ($query) {
+                $query->whereHas('plan', function ($q) {
+                    $q->where('has_api_access', true);
+                });
+            })
+            ->exists();
     }
 
     /**
