@@ -120,7 +120,7 @@
 
                 <!-- Center nav links -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                    <a href="#demo" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                         {{ __('landing.cta_secondary') }}
                     </a>
                     <a href="#pricing" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
