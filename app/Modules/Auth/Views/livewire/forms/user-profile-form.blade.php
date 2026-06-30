@@ -62,7 +62,7 @@
             <!-- Cuenta Tab: Password Change + MFA -->
             <div x-show="activeTab === 'cuenta'" x-cloak class="space-y-6">
             <!-- Password Change -->
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div class="pt-6">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('auth.change_password') }}</h3>
                 <div class="space-y-4">
                     <div>
