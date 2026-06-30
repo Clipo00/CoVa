@@ -30,17 +30,17 @@
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {{ __('landing.plan_name_' . $plan->slug) }}
                     </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $plan->description }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('landing.plan_' . $plan->slug . '_desc') }}</p>
 
                     <div class="mt-4">
                         @if ($plan->price_monthly === null)
                             <span class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ __('landing.plan_price_custom') }}</span>
                         @elseif ($plan->price_monthly == 0)
                             <span class="text-3xl font-bold text-gray-900 dark:text-gray-100">0 €</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">/mes</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('landing.per_month') }}</span>
                         @else
                             <span class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ number_format((float) $plan->price_monthly, 2, ',', '.') }} €</span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">/mes</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ __('landing.per_month') }}</span>
                         @endif
                     </div>
 
