@@ -25,6 +25,10 @@ readonly class AiContextSegment
         if ($name === '') {
             throw new \InvalidArgumentException('Segment name cannot be empty.');
         }
+
+        if ($type === 'custom' && $content === null) {
+            throw new \InvalidArgumentException('Custom segments must have content. Use empty string for content-less custom segments.');
+        }
     }
 
     /**

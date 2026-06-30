@@ -46,6 +46,8 @@ class TabManager extends Component
         $generator = app()->make(AgentGenerator::class);
         $this->availablePresetNames = $generator->presetNames();
         $this->availableSkillNames = $generator->skillNames();
+
+        $this->resolveSegmentContent();
     }
 
     /**
@@ -362,6 +364,14 @@ class TabManager extends Component
             return;
         }
 
+        // Prevent duplicate names within segments (excluding the current one)
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        foreach ($segments as $i => $segment) {
+            if ($i !== $segmentIndex && $segment['name'] === $name) {
+                return; // Silently reject duplicates
+            }
+        }
+
         $this->tabs[$tabIndex]['config']['segments'][$segmentIndex]['name'] = $name;
 
         $this->syncToParent();
@@ -421,6 +431,40 @@ class TabManager extends Component
         );
 
         return array_values(array_diff($allNames, $existingNames));
+    }
+
+    /**
+     * Resolve registry content for preset/skill segments that have null content.
+     *
+     * When tabs are loaded from a template (e.g. on create form), segments only
+     * carry their names — not the registry content. This method pre-fills the
+     * content from the presets/skills registries so the UI shows actual text.
+     */
+    private function resolveSegmentContent(): void
+    {
+        $presets = app()->make('blueprint.presets');
+        $skills = app()->make('blueprint.skills');
+
+        foreach ($this->tabs as $tabIndex => &$tab) {
+            if (($tab['type'] ?? '') !== 'ai_context') {
+                continue;
+            }
+
+            $segments = $tab['config']['segments'] ?? [];
+            foreach ($segments as $segIndex => &$segment) {
+                if ($segment['content'] !== null) {
+                    continue; // Already has content (user override)
+                }
+
+                if ($segment['type'] === 'preset' && $presets->has($segment['name'])) {
+                    $segment['content'] = $presets->get($segment['name'])->content();
+                } elseif ($segment['type'] === 'skill' && $skills->has($segment['name'])) {
+                    $segment['content'] = $skills->get($segment['name'])->content();
+                }
+            }
+            $tab['config']['segments'] = $segments;
+        }
+        unset($tab, $segment); // Break references
     }
 
     /**
