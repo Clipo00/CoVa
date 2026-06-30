@@ -42,7 +42,7 @@ trait ManagesVariables
 
     public function cleanEmptyVariables(): void
     {
-        $this->variables = array_values(array_filter($this->variables, fn($v) => !empty($v['key'])));
+        $this->variables = array_values(array_filter($this->variables, fn ($v) => !empty($v['key'])));
     }
 
     /**
@@ -69,8 +69,10 @@ trait ManagesVariables
         $keys = array_column($this->variables, 'key');
         if (count($keys) !== count(array_unique($keys))) {
             $this->addError('variables', __('blueprint.unique_variable_keys'));
+
             return false;
         }
+
         return true;
     }
 
@@ -89,6 +91,7 @@ trait ManagesVariables
             $userColor = $variable['section_color'] ?? null;
             if ($userColor && $this->isValidHexColor($userColor)) {
                 $sectionColors[$section] = $userColor;
+
                 continue;
             }
 
@@ -131,6 +134,7 @@ trait ManagesVariables
             }
             if (($var['section'] ?? null) === $section && !empty($var['section_color'] ?? null)) {
                 $this->variables[$index]['section_color'] = $var['section_color'];
+
                 return;
             }
         }
@@ -144,7 +148,7 @@ trait ManagesVariables
         }
 
         $palette = self::SECTION_COLORS;
-        $color = collect($palette)->first(fn($c) => !in_array($c, $usedColors)) ?? $palette[0];
+        $color = collect($palette)->first(fn ($c) => !in_array($c, $usedColors)) ?? $palette[0];
         $this->variables[$index]['section_color'] = $color;
     }
 

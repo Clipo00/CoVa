@@ -9,6 +9,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Exceptions\MaxOrganizationsReachedException;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ class CreateOrganizationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
         $this->freePlan = Plan::where('slug', 'free')->first();
     }
 
@@ -34,7 +35,7 @@ class CreateOrganizationTest extends TestCase
             'plan_id' => $this->freePlan->id,
         ]);
 
-        $action = new CreateOrganization();
+        $action = new CreateOrganization;
         $organization = $action->execute($user, 'My Org', 'my-org');
 
         $this->assertInstanceOf(Organization::class, $organization);
@@ -53,7 +54,7 @@ class CreateOrganizationTest extends TestCase
             'plan_id' => $this->freePlan->id,
         ]);
 
-        $action = new CreateOrganization();
+        $action = new CreateOrganization;
         $organization = $action->execute($user, 'My Org', 'my-org');
 
         $this->assertTrue($organization->members->contains($user));
@@ -69,7 +70,7 @@ class CreateOrganizationTest extends TestCase
             'plan_id' => $this->freePlan->id,
         ]);
 
-        $action = new CreateOrganization();
+        $action = new CreateOrganization;
         $action->execute($user, 'Org 1', 'org-1');
         $action->execute($user, 'Org 2', 'org-2');
 

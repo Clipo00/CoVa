@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Actions;
 
+use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Actions\NotifySubscribers;
 
@@ -18,6 +19,21 @@ class UpdateBlueprint
         if (isset($data['variables'])) {
             $variables = $data['variables'];
             unset($data['variables']);
+        }
+
+        // Validar límite de variables + segmentos
+        $plan = $blueprint->organization->plan;
+        $maxVariables = $plan->max_variables_per_blueprint;
+
+        if ($maxVariables !== null) {
+            $variableCount = count(array_filter($variables, fn ($v) => !empty($v['key'])));
+            $tabsConfig = $data['tabs_config'] ?? $blueprint->tabs_config;
+            $segmentCount = $this->countSegmentsInTabs($tabsConfig);
+            $totalCount = $variableCount + $segmentCount;
+
+            if ($totalCount > $maxVariables) {
+                throw new MaxVariablesReachedException($maxVariables, $plan->name);
+            }
         }
 
         $blueprint->update($data);
@@ -52,5 +68,32 @@ class UpdateBlueprint
         }
 
         return $blueprint->fresh();
+    }
+
+    /**
+     * Count all segments across all AI Context tabs in the tabs config.
+     * Each segment consumes a variable slot from the plan limit.
+     *
+     * @param  array<int, array{type: string, config: array<string, mixed>}>  $tabsConfig
+     */
+    private function countSegmentsInTabs(array $tabsConfig): int
+    {
+        $count = 0;
+
+        foreach ($tabsConfig as $tab) {
+            if (($tab['type'] ?? '') !== 'ai_context') {
+                continue;
+            }
+
+            $segments = $tab['config']['segments'] ?? [];
+
+            if (!is_array($segments)) {
+                continue;
+            }
+
+            $count += count($segments);
+        }
+
+        return $count;
     }
 }

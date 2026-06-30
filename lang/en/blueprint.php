@@ -4,6 +4,7 @@ return [
     // Index
     'page_title' => 'Blueprints',
     'heading' => 'Blueprints',
+    'count' => ':count blueprints',
     'new_button' => 'New Blueprint',
     'all_orgs_limit' => 'All your organizations have reached the blueprint limit. Delete an existing one or upgrade your plan.',
     'no_orgs' => "You don't have any organizations yet.",
@@ -63,6 +64,13 @@ return [
     'edit_button' => 'Edit',
     'delete_confirm' => 'Are you sure you want to delete this blueprint?',
     'delete_button' => 'Delete',
+    'vault_fetch_label' => 'CLI Access',
+    'vault_fetch_hint' => 'Use this command in your terminal to install the blueprint with CoVa CLI.',
+    'vault_fetch_copied' => 'Command copied to clipboard',
+    'download_agent_md' => 'Download agent.md',
+    'download_env' => 'Download .env',
+    'download_segment' => 'Download',
+    'segment_download_title' => 'Segments',
 
     // Variables
     'env_variables' => 'Environment Variables',
@@ -177,6 +185,20 @@ return [
     'restore_button' => 'Restore',
     'restore_disabled' => 'Not available',
     'restore_permission_info' => 'Only the owner can restore',
+
+    // AI Context Segments
+    'add_preset' => 'Add Preset',
+    'add_preset_placeholder' => 'Select a preset...',
+    'add_skill' => 'Add Skill',
+    'add_skill_placeholder' => 'Select a skill...',
+    'add_custom_skill' => 'Add Custom Skill',
+    'segment_name_placeholder' => 'Segment name...',
+    'segment_content_label' => 'Content',
+    'segment_content_placeholder' => 'Write the segment content here...',
+    'segment_remove' => 'Remove segment',
+    'segment_remove_confirm' => 'Are you sure you want to remove this segment?',
+    'segment_override_hint' => 'You have modified the original content. Re-select it from the dropdown to restore.',
+    'segments_empty' => 'No segments configured. Add presets, skills, or a custom skill from above.',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

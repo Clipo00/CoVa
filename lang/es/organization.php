@@ -37,6 +37,7 @@ return [
     // Show
     'back_to_dashboard' => 'Volver al Dashboard',
     'edit_link' => 'Editar',
+    'public_blueprints_count' => 'Blueprints públicos',
     'delete_confirm' => "¿Estás seguro de que quieres eliminar esta organización?\n\nEsta acción es reversible desde el dashboard.\n\nPara eliminar permanentemente, ve al dashboard después de eliminar.",
     'delete_button' => 'Eliminar',
     'blueprints_count' => 'Blueprints',

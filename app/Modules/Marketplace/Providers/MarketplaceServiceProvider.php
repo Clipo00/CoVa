@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Providers;
 
-use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Livewire\MarketplaceList;
 use App\Modules\Marketplace\Livewire\NotificationBell;
 use App\Modules\Marketplace\Policies\MarketplacePolicy;
@@ -21,7 +20,7 @@ class MarketplaceServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'marketplace');
+        $this->loadViewsFrom(__DIR__.'/../Views', 'marketplace');
 
         // Register separate gates to avoid overriding BlueprintPolicy
         Gate::define('marketplace.subscribe', [MarketplacePolicy::class, 'subscribe']);

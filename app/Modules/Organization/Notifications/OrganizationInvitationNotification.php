@@ -36,7 +36,7 @@ class OrganizationInvitationNotification extends Notification
             ->greeting(__('organization.invitation_greeting'))
             ->line(__('organization.invitation_intro', [
                 'organization' => $this->invitation->organization->name,
-                'role' => __('organization.role_' . $this->invitation->role),
+                'role' => __('organization.role_'.$this->invitation->role),
             ]))
             ->action(__('organization.invitation_accept_button'), $url)
             ->line(__('organization.invitation_expiry', [

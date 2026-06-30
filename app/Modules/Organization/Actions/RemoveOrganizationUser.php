@@ -38,7 +38,7 @@ class RemoveOrganizationUser
         }
 
         // 4. Transaction: reassign blueprints, detach pivot
-        DB::transaction(function () use ($organization, $targetUser, $actor) {
+        DB::transaction(function () use ($organization, $targetUser) {
             // Reassign blueprints created by the removed user to the owner
             $organization->blueprints()
                 ->where('created_by', $targetUser->id)

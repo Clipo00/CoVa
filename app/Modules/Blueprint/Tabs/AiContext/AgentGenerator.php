@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Tabs\AiContext;
 
-use App\Modules\Blueprint\Contracts\AgentContentSegment;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
+use App\Modules\Blueprint\DTOs\AiContextSegment;
 
 class AgentGenerator
 {
@@ -16,6 +16,9 @@ class AgentGenerator
 
     /**
      * Generate agent.md content from AI Context config.
+     *
+     * Iterates segments in order, resolving content with precedence:
+     * segment override > registry default > empty.
      */
     public function generate(AiContextConfig $config): string
     {
@@ -23,25 +26,97 @@ class AgentGenerator
             return '';
         }
 
-        $sections = ["# Agent Context"];
+        $segments = $this->resolveSegments($config);
 
-        foreach ($config->presets as $presetName) {
-            if ($this->presets->has($presetName)) {
-                $sections[] = $this->presets->get($presetName)->content();
-            }
-        }
+        $sections = ['# Agent Context'];
 
-        foreach ($config->skills as $skillName) {
-            if ($this->skills->has($skillName)) {
-                $sections[] = $this->skills->get($skillName)->content();
-            }
-        }
-
-        if ($config->hasCustomRules()) {
-            $sections[] = "## Custom Rules\n\n" . $config->customRules;
+        foreach ($segments as $seg) {
+            $sections[] = $seg['content'];
         }
 
         return implode("\n\n---\n\n", $sections);
+    }
+
+    /**
+     * Resolve segments into structured entries with name, filename, and content.
+     *
+     * Each entry contains:
+     * - name: original segment name
+     * - filename: sanitized filename with .md extension
+     * - content: resolved markdown content (with heading)
+     *
+     * @return array<int, array{name: string, filename: string, content: string}>
+     */
+    public function resolveSegments(AiContextConfig $config): array
+    {
+        if ($config->isEmpty()) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($config->segments as $segment) {
+            $content = $this->resolveContent($segment);
+
+            if ($content === null) {
+                continue;
+            }
+
+            $result[] = [
+                'name' => $segment->name,
+                'filename' => $this->sanitizeFilename($segment->name),
+                'content' => $content,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Sanitize a segment name to a safe filename.
+     *
+     * Lowercase, alphanumeric and hyphens only, with .md extension.
+     */
+    private function sanitizeFilename(string $name): string
+    {
+        $filename = preg_replace('/[^a-z0-9]+/', '-', strtolower($name));
+        $filename = trim($filename, '-');
+
+        return ($filename === '' ? 'untitled' : $filename).'.md';
+    }
+
+    /**
+     * Resolve markdown content for a single segment.
+     *
+     * Precedence: segment override > registry default > null (skip).
+     */
+    private function resolveContent(AiContextSegment $segment): ?string
+    {
+        // Override content or custom segment: use provided content with generated heading
+        if ($segment->content !== null) {
+            $heading = "## {$segment->name}";
+
+            if ($segment->content === '') {
+                return $heading;
+            }
+
+            return "{$heading}\n\n{$segment->content}";
+        }
+
+        // Registry content (preset/skill with null content)
+        $registry = null;
+        if ($segment->isPreset()) {
+            $registry = $this->presets;
+        } elseif ($segment->isSkill()) {
+            $registry = $this->skills;
+        }
+
+        if ($registry !== null && $registry->has($segment->name)) {
+            return $registry->get($segment->name)->content();
+        }
+
+        // Segment not found in registry and no override — skip
+        return null;
     }
 
     /**

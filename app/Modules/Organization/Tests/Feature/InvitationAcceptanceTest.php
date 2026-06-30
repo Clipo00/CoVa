@@ -8,7 +8,9 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Models\OrganizationInvitation;
+use App\Modules\Organization\Notifications\OrganizationInvitationNotification;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -18,13 +20,15 @@ class InvitationAcceptanceTest extends TestCase
     use RefreshDatabase;
 
     private Organization $organization;
+
     private User $owner;
+
     private Plan $plan;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $this->plan = Plan::where('slug', 'free')->first();
         $this->owner = User::create([
@@ -233,7 +237,7 @@ class InvitationAcceptanceTest extends TestCase
         $this->actingAs($user);
 
         for ($i = 0; $i < 10; $i++) {
-            $this->get(route('invitations.show', 'different-token-' . $i));
+            $this->get(route('invitations.show', 'different-token-'.$i));
         }
 
         $response = $this->get(route('invitations.show', $invitation->token));
@@ -246,7 +250,7 @@ class InvitationAcceptanceTest extends TestCase
     {
         Notification::fake();
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute(
             organization: $this->organization,
             email: 'newmember@example.com',
@@ -254,7 +258,7 @@ class InvitationAcceptanceTest extends TestCase
         );
 
         Notification::assertSentOnDemand(
-            \App\Modules\Organization\Notifications\OrganizationInvitationNotification::class,
+            OrganizationInvitationNotification::class,
         );
     }
 }

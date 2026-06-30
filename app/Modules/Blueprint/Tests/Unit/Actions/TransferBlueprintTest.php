@@ -9,8 +9,8 @@ use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Organization\Actions\CreateOrganization;
-use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -24,8 +24,8 @@ class TransferBlueprintTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->action = new TransferBlueprint();
+        $this->seed(PlanSeeder::class);
+        $this->action = new TransferBlueprint;
     }
 
     public function test_transfer_succeeds_when_target_org_under_limit(): void
@@ -38,12 +38,12 @@ class TransferBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $sourceOrg = $createOrg->execute($owner, 'Source Org', 'source-org');
         $targetOrg = $createOrg->execute($owner, 'Target Org', 'target-org');
 
         $this->actingAs($owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($sourceOrg, 'Test BP', 'test-bp');
 
         $transferred = $this->action->execute($blueprint, $targetOrg, $owner);
@@ -62,7 +62,7 @@ class TransferBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $sourceOrg = $createOrg->execute($owner, 'Source Org', 'source-org');
         $targetOrg = $createOrg->execute($owner, 'Target Org', 'target-org');
 
@@ -70,12 +70,12 @@ class TransferBlueprintTest extends TestCase
 
         // Llenar la org destino hasta el límite (Free plan: max_blueprints_per_org = 3)
         for ($i = 0; $i < $plan->max_blueprints_per_org; $i++) {
-            $createBp = new CreateBlueprint();
+            $createBp = new CreateBlueprint;
             $createBp->execute($targetOrg, "BP $i", "bp-$i");
         }
 
         // Crear un blueprint en la org origen
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($sourceOrg, 'To Transfer', 'to-transfer');
 
         $this->expectException(MaxBlueprintsReachedException::class);
@@ -100,12 +100,12 @@ class TransferBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $sourceOrg = $createOrg->execute($owner1, 'Source Org', 'source-org');
         $targetOrg = $createOrg->execute($owner2, 'Target Org', 'target-org');
 
         $this->actingAs($owner1);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($sourceOrg, 'Test BP', 'test-bp');
 
         $this->expectException(HttpException::class);
@@ -124,14 +124,14 @@ class TransferBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $sourceOrg = $createOrg->execute($owner, 'Source Org', 'source-org');
         $targetOrg = $createOrg->execute($owner, 'Target Org', 'target-org');
 
         $this->actingAs($owner);
 
         // Create a blueprint in the target org with slug 'test-bp'
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $createBp->execute($targetOrg, 'Test BP', 'test-bp');
 
         // Create another blueprint in the source org with the same slug

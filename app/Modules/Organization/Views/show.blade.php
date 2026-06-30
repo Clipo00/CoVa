@@ -71,7 +71,7 @@
         </div>
 
         {{-- Stats / Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <div class="bg-white shadow rounded-lg p-6">
                 <h3 class="text-sm font-medium text-gray-500 mb-2">{{ __('organization.blueprints_count') }}</h3>
                 <p class="text-3xl font-bold text-gray-900">{{ $organization->blueprints()->count() }}</p>
@@ -94,6 +94,11 @@
                 <p class="mt-4 text-sm text-gray-400">
                     {{ __('organization.max_blueprints_text', ['max' => $maxBlueprints]) }}
                 </p>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{{ __('organization.public_blueprints_count') }}</h3>
+                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $publicBlueprintsCount }}</p>
             </div>
         </div>
 
@@ -150,7 +155,7 @@
                 <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($organization->blueprints()->latest()->limit(5)->get() as $blueprint)
                         <li class="py-3">
-                            <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="block hover:bg-gray-50 dark:hover:bg-gray-700 -mx-4 px-4 py-2 rounded">
+                            <a href="{{ route('blueprints.show', $blueprint->slug) }}" class="block hover:bg-gray-50 dark:hover:bg-gray-700 -mx-4 px-4 py-2 rounded">
                                 <div class="flex justify-between items-center">
                                     <span class="font-medium text-indigo-600 dark:text-indigo-400">{{ $blueprint->title }}</span>
                                     <div class="flex items-center space-x-2">

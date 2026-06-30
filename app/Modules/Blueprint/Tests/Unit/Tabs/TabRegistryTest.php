@@ -4,42 +4,40 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Tests\Unit\Tabs;
 
-use App\Modules\Blueprint\DTOs\TabConfig;
-use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Exceptions\UnknownTabTypeException;
-use App\Modules\Blueprint\Tabs\TabRegistry;
-use App\Modules\Blueprint\Tabs\ScriptsTab;
-use App\Modules\Blueprint\Tabs\VscodeExtensionsTab;
-use App\Modules\Blueprint\Tabs\McpServersTab;
-use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
-use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
+use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
+use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
+use App\Modules\Blueprint\Tabs\McpServersTab;
+use App\Modules\Blueprint\Tabs\ScriptsTab;
+use App\Modules\Blueprint\Tabs\TabRegistry;
+use App\Modules\Blueprint\Tabs\VscodeExtensionsTab;
 use PHPUnit\Framework\TestCase;
 
 class TabRegistryTest extends TestCase
 {
     private function createRegistry(): TabRegistry
     {
-        $presetsRegistry = new SegmentRegistry();
-        $presetsRegistry->register(new PSR12Preset());
-        $presetsRegistry->register(new SOLIDPreset());
-        $presetsRegistry->register(new CleanArchitecturePreset());
+        $presetsRegistry = new SegmentRegistry;
+        $presetsRegistry->register(new PSR12Preset);
+        $presetsRegistry->register(new SOLIDPreset);
+        $presetsRegistry->register(new CleanArchitecturePreset);
 
-        $skillsRegistry = new SegmentRegistry();
-        $skillsRegistry->register(new StripeSkill());
-        $skillsRegistry->register(new TailwindSkill());
+        $skillsRegistry = new SegmentRegistry;
+        $skillsRegistry->register(new StripeSkill);
+        $skillsRegistry->register(new TailwindSkill);
 
         $agentGenerator = new AgentGenerator($presetsRegistry, $skillsRegistry);
 
-        $registry = new TabRegistry();
-        $registry->register(new VscodeExtensionsTab());
-        $registry->register(new McpServersTab());
-        $registry->register(new ScriptsTab());
+        $registry = new TabRegistry;
+        $registry->register(new VscodeExtensionsTab);
+        $registry->register(new McpServersTab);
+        $registry->register(new ScriptsTab);
         $registry->register(new AiContextTab($agentGenerator));
 
         return $registry;

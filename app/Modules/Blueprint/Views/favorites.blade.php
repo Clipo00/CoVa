@@ -29,7 +29,7 @@
                         <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                             <div class="flex items-center justify-between">
                                 <div class="min-w-0 flex-1">
-                                    <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="block">
+                                    <a href="{{ route('blueprints.show', $blueprint->slug) }}" class="block">
                                         <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
                                             {{ $blueprint->title }}
                                         </p>

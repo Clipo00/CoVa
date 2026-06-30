@@ -11,7 +11,9 @@ use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Shared\Models\Category;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -21,16 +23,24 @@ class BlueprintCreateForm extends Component
 
     // Props pasadas desde el controller (serializables por Livewire)
     public ?int $preselectedOrg = null;
+
     public bool $lockOrganization = false;
+
     public array $userOrganizations = [];
 
     // Estado del formulario
     public ?int $organizationId = null;
+
     public string $title = '';
+
     public string $slug = '';
+
     public string $description = '';
+
     public ?int $categoryId = null;
+
     public array $tabsConfig = [];
+
     public string $selectedTemplate = '';
 
     public function mount(): void
@@ -91,7 +101,7 @@ class BlueprintCreateForm extends Component
 
     public function updatedTitle(): void
     {
-        $this->slug = \Illuminate\Support\Str::slug($this->title);
+        $this->slug = Str::slug($this->title);
     }
 
     public function updatedSelectedTemplate(string $value): void
@@ -125,6 +135,7 @@ class BlueprintCreateForm extends Component
         $allowedIds = array_column($this->userOrganizations, 'id');
         if (!in_array($this->organizationId, $allowedIds, true)) {
             $this->addError('organizationId', __('blueprint.org_unauthorized'));
+
             return;
         }
 
@@ -134,6 +145,7 @@ class BlueprintCreateForm extends Component
 
         if (!$selectedOrgData || !$selectedOrgData['hasAvailableSlots']) {
             $this->addError('organizationId', __('blueprint.org_limit'));
+
             return;
         }
 
@@ -142,6 +154,7 @@ class BlueprintCreateForm extends Component
         // SEGURIDAD: Validar permisos via Policy
         if (!auth()->user()->can('create', [Blueprint::class, $organization])) {
             $this->addError('title', __('blueprint.no_create_permission'));
+
             return;
         }
 
@@ -150,6 +163,7 @@ class BlueprintCreateForm extends Component
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
         if (!empty($duplicates)) {
             $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
+
             return;
         }
 
@@ -164,11 +178,12 @@ class BlueprintCreateForm extends Component
 
         if ($slugExists) {
             $this->addError('slug', __('blueprint.slug_exists', ['slug' => $validated['slug']]));
+
             return;
         }
 
         // Convert tabsConfig to the format expected by tabs_config column
-        $tabsForDb = array_values(array_map(fn($tab) => [
+        $tabsForDb = array_values(array_map(fn ($tab) => [
             'type' => $tab['type'],
             'config' => $tab['config'] ?? [],
         ], $this->tabsConfig));
@@ -184,7 +199,7 @@ class BlueprintCreateForm extends Component
                 variables: $this->variables,
             );
 
-            $this->redirect(route('blueprints.show', $blueprint->uuid));
+            $this->redirect(route('blueprints.show', $blueprint->slug));
         } catch (MaxBlueprintsReachedException $e) {
             $this->addError('organizationId', $e->getMessage());
         } catch (MaxVariablesReachedException $e) {
@@ -200,7 +215,7 @@ class BlueprintCreateForm extends Component
 
     public function render()
     {
-        $categories = \App\Modules\Shared\Models\Category::all();
+        $categories = Category::all();
         $templates = app('blueprint.templates');
 
         return view('blueprint::livewire.forms.blueprint-create-form', compact('categories', 'templates'));

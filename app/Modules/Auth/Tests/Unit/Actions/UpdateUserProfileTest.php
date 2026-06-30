@@ -8,6 +8,7 @@ use App\Modules\Auth\Actions\UpdateUserProfile;
 use App\Modules\Auth\DTOs\UpdateUserProfileData;
 use App\Modules\Auth\Models\User;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
@@ -21,7 +22,7 @@ class UpdateUserProfileTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_updates_name_and_email(): void
@@ -34,7 +35,7 @@ class UpdateUserProfileTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $action = new UpdateUserProfile();
+        $action = new UpdateUserProfile;
         $data = new UpdateUserProfileData(
             name: 'Jane Doe',
             email: 'jane@example.com',
@@ -60,7 +61,7 @@ class UpdateUserProfileTest extends TestCase
 
         $file = UploadedFile::fake()->create('avatar.jpg', 100, 'image/jpeg');
 
-        $action = new UpdateUserProfile();
+        $action = new UpdateUserProfile;
         $data = new UpdateUserProfileData(
             name: 'John Doe',
             email: 'john@example.com',
@@ -90,7 +91,7 @@ class UpdateUserProfileTest extends TestCase
 
         $file = UploadedFile::fake()->create('new-avatar.jpg', 100, 'image/jpeg');
 
-        $action = new UpdateUserProfile();
+        $action = new UpdateUserProfile;
         $data = new UpdateUserProfileData(
             name: 'John Doe',
             email: 'john@example.com',
@@ -113,7 +114,7 @@ class UpdateUserProfileTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $action = new UpdateUserProfile();
+        $action = new UpdateUserProfile;
         $data = new UpdateUserProfileData(
             name: 'John Doe',
             email: 'john@example.com',

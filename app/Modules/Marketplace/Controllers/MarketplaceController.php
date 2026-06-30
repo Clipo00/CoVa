@@ -71,7 +71,7 @@ class MarketplaceController
         $copy = app(SubscribeToBlueprint::class)->execute($user, $blueprint);
 
         return redirect()
-            ->route('blueprints.edit', $copy->uuid)
+            ->route('blueprints.edit', $copy->slug)
             ->with('success', __('marketplace.copied_success'));
     }
 

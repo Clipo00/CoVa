@@ -16,6 +16,7 @@ class MarketplaceSeeder extends Seeder
         // Verificar que no exista ya el system user
         if (User::where('email', 'system@cova.internal')->exists()) {
             $this->command->info('System user already exists, skipping.');
+
             return;
         }
 
@@ -24,6 +25,7 @@ class MarketplaceSeeder extends Seeder
 
         if (!$enterprisePlan) {
             $this->command->error('No Enterprise plan found. Please run PlanSeeder first.');
+
             return;
         }
 
@@ -40,7 +42,7 @@ class MarketplaceSeeder extends Seeder
         Organization::create([
             'slug' => 'cova-marketplace',
             'name' => 'CoVa Marketplace',
-            'owner_id' => $systemUser->id
+            'owner_id' => $systemUser->id,
         ]);
 
         $this->command->info('Marketplace organization created successfully.');

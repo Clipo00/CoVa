@@ -13,8 +13,11 @@ use Livewire\Component;
 class RegisterForm extends Component
 {
     public string $name = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
 
     protected function rules(): array
@@ -42,7 +45,7 @@ class RegisterForm extends Component
 
             auth()->login($user);
 
-            $this->redirect(route('dashboard'));
+            $this->redirect(route('onboarding'));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {

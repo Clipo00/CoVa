@@ -15,10 +15,12 @@ class ToggleFavorite
 
         if ($favorite) {
             $favorite->delete();
+
             return false;
         }
 
         $blueprint->favorites()->create(['user_id' => $user->id]);
+
         return true;
     }
 }

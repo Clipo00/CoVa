@@ -24,7 +24,7 @@ class ResolveBlueprintPreview
     /**
      * Resolve tabs from a raw config array.
      *
-     * @param array<int, array{type: string, config: array<string, mixed>}> $tabsConfig
+     * @param  array<int, array{type: string, config: array<string, mixed>}>  $tabsConfig
      * @return TabOutput[]
      */
     public function execute(array $tabsConfig): array
@@ -38,11 +38,12 @@ class ResolveBlueprintPreview
 
             try {
                 $tabConfig = TabConfig::fromArray($tabData);
-            } catch (\InvalidArgumentException | \TypeError $e) {
+            } catch (\InvalidArgumentException|\TypeError $e) {
                 Log::warning('Invalid tab config in preview resolution', [
                     'tab_data' => $tabData,
                     'error' => $e->getMessage(),
                 ]);
+
                 continue;
             }
 
@@ -50,6 +51,7 @@ class ResolveBlueprintPreview
                 Log::warning('Unknown tab type in preview resolution', [
                     'tab_type' => $tabConfig->type->value,
                 ]);
+
                 continue;
             }
 
@@ -64,6 +66,7 @@ class ResolveBlueprintPreview
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
+
                 continue;
             }
         }

@@ -8,12 +8,14 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\DTOs\OrganizationData;
 use App\Modules\Organization\Exceptions\MaxOrganizationsReachedException;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class CreateOrganizationForm extends Component
 {
     public string $name = '';
+
     public string $slug = '';
 
     protected function rules(): array
@@ -31,7 +33,7 @@ class CreateOrganizationForm extends Component
 
     public function updatedName(): void
     {
-        $this->slug = \Illuminate\Support\Str::slug($this->name);
+        $this->slug = Str::slug($this->name);
     }
 
     public function submit(CreateOrganization $createOrganization): void

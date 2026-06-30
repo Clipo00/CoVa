@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Providers;
 
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
-use App\Modules\Blueprint\Contracts\TabInterface;
 use App\Modules\Blueprint\Livewire\Components\BlueprintPreviewPanel;
+use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
 use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
-use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
@@ -43,7 +42,7 @@ class BlueprintServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'blueprint');
+        $this->loadViewsFrom(__DIR__.'/../Views', 'blueprint');
 
         Gate::policy(Blueprint::class, BlueprintPolicy::class);
 
@@ -61,22 +60,24 @@ class BlueprintServiceProvider extends ServiceProvider
     {
         // Register presets registry
         $this->app->singleton('blueprint.presets', function () {
-            $registry = new SegmentRegistry();
-            $registry->register(new PSR12Preset());
-            $registry->register(new SOLIDPreset());
-            $registry->register(new CleanArchitecturePreset());
-            $registry->register(new LaravelConventionsPreset());
-            $registry->register(new TypeScriptStrictPreset());
+            $registry = new SegmentRegistry;
+            $registry->register(new PSR12Preset);
+            $registry->register(new SOLIDPreset);
+            $registry->register(new CleanArchitecturePreset);
+            $registry->register(new LaravelConventionsPreset);
+            $registry->register(new TypeScriptStrictPreset);
+
             return $registry;
         });
 
         // Register skills registry
         $this->app->singleton('blueprint.skills', function () {
-            $registry = new SegmentRegistry();
-            $registry->register(new StripeSkill());
-            $registry->register(new TailwindSkill());
-            $registry->register(new ReactExpertSkill());
-            $registry->register(new VueExpertSkill());
+            $registry = new SegmentRegistry;
+            $registry->register(new StripeSkill);
+            $registry->register(new TailwindSkill);
+            $registry->register(new ReactExpertSkill);
+            $registry->register(new VueExpertSkill);
+
             return $registry;
         });
 
@@ -90,11 +91,12 @@ class BlueprintServiceProvider extends ServiceProvider
 
         // Register tabs registry
         $this->app->singleton(TabRegistry::class, function ($app) {
-            $registry = new TabRegistry();
+            $registry = new TabRegistry;
             $registry->register($app->make(VscodeExtensionsTab::class));
             $registry->register($app->make(McpServersTab::class));
             $registry->register($app->make(ScriptsTab::class));
             $registry->register($app->make(AiContextTab::class));
+
             return $registry;
         });
 
@@ -122,8 +124,14 @@ class BlueprintServiceProvider extends ServiceProvider
                             'shufo.vscode-blade-formatter',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['psr12', 'solid', 'clean-architecture', 'laravel-conventions'],
-                            'skills' => ['stripe', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'preset', 'name' => 'laravel-conventions', 'content' => null],
+                                ['type' => 'skill', 'name' => 'stripe', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],
@@ -135,8 +143,13 @@ class BlueprintServiceProvider extends ServiceProvider
                             'bradlc.vscode-tailwindcss',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
-                            'skills' => ['react', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],
@@ -148,8 +161,13 @@ class BlueprintServiceProvider extends ServiceProvider
                             'bradlc.vscode-tailwindcss',
                         ]]],
                         ['type' => 'ai_context', 'config' => [
-                            'presets' => ['typescript-strict', 'solid', 'clean-architecture'],
-                            'skills' => ['react', 'tailwind'],
+                            'segments' => [
+                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
                         ]],
                     ],
                 ],

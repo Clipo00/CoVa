@@ -48,7 +48,7 @@ class SubscribeToBlueprint
         $copy = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $organization->id,
-            'slug' => $blueprint->slug . '-' . substr((string) Uuid::generate(), 0, 8),
+            'slug' => $blueprint->slug.'-'.substr((string) Uuid::generate(), 0, 8),
             'title' => $blueprint->title,
             'description' => $blueprint->description,
             'category_id' => $blueprint->category_id,

@@ -30,4 +30,14 @@ return [
     'plan_limit_warning' => 'Has alcanzado el límite de organizaciones de tu plan <strong>:plan</strong>.',
     'upgrade_plan' => 'Actualiza tu plan',
     'to_create_more' => 'para crear más.',
+
+    // Stats row
+    'stats_organizations' => 'Organizaciones',
+    'stats_blueprints' => 'Blueprints',
+    'stats_favorites' => 'Favoritos',
+    'stats_plan' => 'Plan',
+
+    // Org card
+    'card_blueprints' => ':count blueprints',
+    'card_members' => ':count miembros',
 ];

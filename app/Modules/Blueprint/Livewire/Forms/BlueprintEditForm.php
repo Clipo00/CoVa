@@ -8,7 +8,9 @@ use App\Modules\Blueprint\Actions\UpdateBlueprint;
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Shared\Models\Category;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -17,11 +19,17 @@ class BlueprintEditForm extends Component
     use ManagesVariables;
 
     public Blueprint $blueprint;
+
     public string $title = '';
+
     public string $slug = '';
+
     public string $description = '';
+
     public ?int $categoryId = null;
+
     public bool $isPublic = false;
+
     public array $tabsConfig = [];
 
     public function mount(Blueprint $blueprint): void
@@ -89,7 +97,7 @@ class BlueprintEditForm extends Component
 
     public function updatedTitle(): void
     {
-        $this->slug = \Illuminate\Support\Str::slug($this->title);
+        $this->slug = Str::slug($this->title);
     }
 
     public function submit(UpdateBlueprint $updateBlueprint): void
@@ -102,6 +110,7 @@ class BlueprintEditForm extends Component
 
         if (!auth()->user()->can('update', $this->blueprint)) {
             $this->addError('title', __('blueprint.no_edit_permission'));
+
             return;
         }
 
@@ -115,6 +124,7 @@ class BlueprintEditForm extends Component
         $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
         if (!empty($duplicates)) {
             $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
+
             return;
         }
 
@@ -124,7 +134,7 @@ class BlueprintEditForm extends Component
 
         try {
             // Normalize tabsConfig: ensure each tab has type and config
-            $tabsForDb = array_values(array_map(fn($tab) => [
+            $tabsForDb = array_values(array_map(fn ($tab) => [
                 'type' => $tab['type'],
                 'config' => $tab['config'] ?? [],
             ], $this->tabsConfig));
@@ -142,7 +152,7 @@ class BlueprintEditForm extends Component
                 variables: $this->variables,
             );
 
-            $this->redirect(route('blueprints.show', $this->blueprint->uuid));
+            $this->redirect(route('blueprints.show', $this->blueprint->slug));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {
@@ -154,7 +164,8 @@ class BlueprintEditForm extends Component
 
     public function render()
     {
-        $categories = \App\Modules\Shared\Models\Category::all();
+        $categories = Category::all();
+
         return view('blueprint::livewire.forms.blueprint-edit-form', compact('categories'));
     }
 

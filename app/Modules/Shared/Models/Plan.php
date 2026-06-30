@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Shared\Models;
 
+use App\Modules\Auth\Models\User;
+use App\Modules\Organization\Models\Organization;
 use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
@@ -35,11 +37,11 @@ class Plan extends Model
 
     public function users()
     {
-        return $this->hasMany(\App\Modules\Auth\Models\User::class);
+        return $this->hasMany(User::class);
     }
 
     public function organizations()
     {
-        return $this->hasMany(\App\Modules\Organization\Models\Organization::class);
+        return $this->hasMany(Organization::class);
     }
 }

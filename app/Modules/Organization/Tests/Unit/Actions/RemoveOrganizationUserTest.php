@@ -10,6 +10,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\RemoveOrganizationUser;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -19,17 +20,20 @@ class RemoveOrganizationUserTest extends TestCase
     use RefreshDatabase;
 
     private RemoveOrganizationUser $action;
+
     private Organization $organization;
+
     private User $owner;
+
     private User $member;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
-        $this->action = new RemoveOrganizationUser();
+        $this->action = new RemoveOrganizationUser;
 
         $freePlan = Plan::where('slug', 'free')->first();
         $this->owner = User::create([
@@ -46,7 +50,7 @@ class RemoveOrganizationUserTest extends TestCase
             'plan_id' => $freePlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
         $this->organization->members()->attach($this->member->id, ['role' => 'developer']);
     }

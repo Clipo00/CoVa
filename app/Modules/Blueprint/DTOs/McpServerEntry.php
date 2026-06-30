@@ -38,12 +38,12 @@ final class McpServerEntry
     }
 
     /**
-     * @param mixed[] $args
+     * @param  mixed[]  $args
      * @return string[]
      */
     private static function filterArgs(array $args): array
     {
-        return array_map(fn($arg) => (string) $arg, $args);
+        return array_map(fn ($arg) => (string) $arg, $args);
     }
 
     public function toArray(): array
@@ -60,7 +60,7 @@ final class McpServerEntry
         $cmd = $this->command;
 
         if (!empty($this->args)) {
-            $cmd .= ' ' . implode(' ', array_map(fn($arg) => escapeshellarg($arg), $this->args));
+            $cmd .= ' '.implode(' ', array_map(fn ($arg) => escapeshellarg($arg), $this->args));
         }
 
         return $cmd;

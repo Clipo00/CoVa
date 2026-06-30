@@ -4,6 +4,7 @@ return [
     // Index
     'page_title' => 'Blueprints',
     'heading' => 'Blueprints',
+    'count' => ':count blueprints',
     'new_button' => 'Nuevo Blueprint',
     'all_orgs_limit' => 'Todas tus organizaciones han alcanzado el límite de blueprints. Elimina uno existente o actualiza tu plan.',
     'no_orgs' => 'No tienes ninguna organización.',
@@ -64,6 +65,13 @@ return [
     'edit_button' => 'Editar',
     'delete_confirm' => '¿Estás seguro de que quieres eliminar este blueprint?',
     'delete_button' => 'Eliminar',
+    'vault_fetch_label' => 'Acceso CLI',
+    'vault_fetch_hint' => 'Usa este comando en tu terminal para instalar el blueprint con CoVa CLI.',
+    'vault_fetch_copied' => 'Comando copiado al portapapeles',
+    'download_agent_md' => 'Descargar agent.md',
+    'download_env' => 'Descargar .env',
+    'download_segment' => 'Descargar',
+    'segment_download_title' => 'Segmentos',
 
     // Variables
     'env_variables' => 'Variables de Entorno',
@@ -178,6 +186,20 @@ return [
     'restore_button' => 'Restaurar',
     'restore_disabled' => 'No disponible',
     'restore_permission_info' => 'Solo el owner puede restaurar',
+
+    // AI Context Segments
+    'add_preset' => 'Añadir preset',
+    'add_preset_placeholder' => 'Selecciona un preset...',
+    'add_skill' => 'Añadir skill',
+    'add_skill_placeholder' => 'Selecciona una skill...',
+    'add_custom_skill' => 'Añadir skill personalizada',
+    'segment_name_placeholder' => 'Nombre del segmento...',
+    'segment_content_label' => 'Contenido',
+    'segment_content_placeholder' => 'Escribe el contenido del segmento aquí...',
+    'segment_remove' => 'Eliminar segmento',
+    'segment_remove_confirm' => '¿Estás seguro de que quieres eliminar este segmento?',
+    'segment_override_hint' => 'Has modificado el contenido original. Vuelve a seleccionarlo desde el desplegable para restaurarlo.',
+    'segments_empty' => 'No hay segmentos configurados. Añade presets, skills o una skill personalizada desde arriba.',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

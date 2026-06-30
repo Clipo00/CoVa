@@ -9,7 +9,9 @@ use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintVariable;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class BlueprintVariableEncryptionTest extends TestCase
@@ -22,7 +24,7 @@ class BlueprintVariableEncryptionTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
@@ -32,13 +34,13 @@ class BlueprintVariableEncryptionTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
         $this->blueprint = Blueprint::create([
-            'uuid' => \Illuminate\Support\Str::uuid(),
+            'uuid' => Str::uuid(),
             'slug' => 'test-blueprint',
             'title' => 'Test Blueprint',
             'is_public' => false,

@@ -1,6 +1,5 @@
 <?php
 
-use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
@@ -66,9 +65,23 @@ Route::middleware('auth')->prefix('notifications')->name('notifications.')->grou
     Route::post('/read-all', [NotificationController::class, 'markAllRead'])->name('readAll');
 });
 
-Route::middleware('auth')->get('/dashboard', function () {
+/*
+|--------------------------------------------------------------------------
+| Onboarding Wizard (auth required)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->get('/onboarding', function () {
     $user = auth()->user();
-    $organizations = $user->organizations()->with('owner')->get();
+    if ($user->onboarding_completed_at !== null) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('auth::onboarding');
+})->name('onboarding');
+
+Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
+    $user = auth()->user();
+    $organizations = $user->organizations()->with('owner')->withCount(['blueprints', 'members'])->get();
     $plan = $user->plan;
 
     $maxOrganizations = $plan?->max_organizations_per_user;
@@ -77,5 +90,18 @@ Route::middleware('auth')->get('/dashboard', function () {
     // Organizaciones eliminadas (soft deleted) del usuario
     $deletedOrganizations = $user->organizations()->onlyTrashed()->with('owner')->get();
 
-    return view('dashboard', compact('organizations', 'canCreateMore', 'plan', 'deletedOrganizations'));
+    // Stats row aggregates
+    $totalOrgs = $organizations->count();
+    $totalBlueprints = $organizations->sum('blueprints_count');
+    $favoritesCount = $user->favoriteBlueprints()->count();
+
+    return view('dashboard', compact(
+        'organizations',
+        'canCreateMore',
+        'plan',
+        'deletedOrganizations',
+        'totalOrgs',
+        'totalBlueprints',
+        'favoritesCount'
+    ));
 })->name('dashboard');

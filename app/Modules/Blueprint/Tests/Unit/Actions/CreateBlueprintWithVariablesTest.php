@@ -9,6 +9,7 @@ use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class CreateBlueprintWithVariablesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_creates_blueprint_with_variables(): void
@@ -32,12 +33,12 @@ class CreateBlueprintWithVariablesTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $variables = [
             [
                 'key' => 'DB_HOST',
@@ -64,7 +65,7 @@ class CreateBlueprintWithVariablesTest extends TestCase
 
         $this->assertInstanceOf(Blueprint::class, $blueprint);
         $this->assertEquals(2, $blueprint->variables()->count());
-        
+
         $dbHost = $blueprint->variables()->where('key', 'DB_HOST')->first();
         $this->assertNotNull($dbHost);
         $this->assertEquals('fixed', $dbHost->type);
@@ -90,12 +91,12 @@ class CreateBlueprintWithVariablesTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
         $variables = [
             [
                 'key' => 'VALID_KEY',

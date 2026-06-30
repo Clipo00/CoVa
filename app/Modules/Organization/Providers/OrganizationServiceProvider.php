@@ -21,7 +21,7 @@ class OrganizationServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'organization');
+        $this->loadViewsFrom(__DIR__.'/../Views', 'organization');
 
         Gate::policy(Organization::class, OrganizationPolicy::class);
 

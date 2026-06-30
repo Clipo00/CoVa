@@ -6,11 +6,11 @@ namespace App\Modules\Blueprint\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\CreateBlueprint;
-use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,12 +19,13 @@ class ShowPageTest extends TestCase
     use RefreshDatabase;
 
     private User $user;
+
     private Organization $organization;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
         $plan = Plan::where('slug', 'free')->first();
         $this->user = User::create([
@@ -34,7 +35,7 @@ class ShowPageTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->user, 'Show Org', 'show-org');
 
         $this->actingAs($this->user);
@@ -50,7 +51,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('Agent Context');
@@ -66,7 +67,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('VSCode Extensions');
@@ -85,7 +86,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('MCP Servers');
@@ -100,7 +101,7 @@ class ShowPageTest extends TestCase
             ['key' => 'APP_KEY', 'type' => 'empty', 'default_value' => '', 'is_secret' => true],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('DB_HOST');
@@ -112,33 +113,35 @@ class ShowPageTest extends TestCase
     {
         $blueprint = $this->createBlueprintWithTabs([]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         // Should not show Agent Context, VSCode, or MCP sections
         $response->assertDontSee('Agent Context');
         // Should still show variables section
-        $response->assertSee(route('blueprints.edit', $blueprint->uuid));
+        $response->assertSee(route('blueprints.edit', $blueprint->slug));
     }
 
     private function createBlueprintWithTabs(array $tabsConfig): Blueprint
     {
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
+
         return $action->execute(
             organization: $this->organization,
             title: 'Show Page Test BP',
-            slug: 'show-page-test-' . uniqid(),
+            slug: 'show-page-test-'.uniqid(),
             tabsConfig: $tabsConfig,
         );
     }
 
     private function createBlueprintWithVariables(array $variables): Blueprint
     {
-        $action = new CreateBlueprint();
+        $action = new CreateBlueprint;
+
         return $action->execute(
             organization: $this->organization,
             title: 'Show Page Vars BP',
-            slug: 'show-page-vars-' . uniqid(),
+            slug: 'show-page-vars-'.uniqid(),
             tabsConfig: [],
             variables: $variables,
         );

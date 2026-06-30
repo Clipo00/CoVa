@@ -12,6 +12,7 @@ use App\Modules\Blueprint\Models\BlueprintVote;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -21,17 +22,20 @@ class VoteBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private VoteBlueprint $action;
+
     private Organization $organization;
+
     private User $owner;
+
     private Blueprint $publicBlueprint;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
 
-        $this->action = new VoteBlueprint();
+        $this->action = new VoteBlueprint;
 
         config(['marketplace.enabled' => true]);
 
@@ -43,11 +47,11 @@ class VoteBlueprintTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
 
         $this->actingAs($this->owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $this->publicBlueprint = $createBp->execute(
             organization: $this->organization,
             title: 'Public BP',
@@ -101,7 +105,7 @@ class VoteBlueprintTest extends TestCase
     public function test_non_public_blueprint_denied(): void
     {
         $this->actingAs($this->owner);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $privateBlueprint = $createBp->execute(
             organization: $this->organization,
             title: 'Private BP',

@@ -16,6 +16,7 @@ class MfaSetupForm extends Component
         // Guard: if MFA is already enabled, skip to intended destination
         if ($user->mfa_enabled) {
             $this->redirect(route('dashboard'));
+
             return;
         }
 

@@ -12,7 +12,7 @@ class UuidGeneratorTest extends TestCase
 {
     public function test_it_generates_uuid(): void
     {
-        $generator = new UuidGenerator();
+        $generator = new UuidGenerator;
         $uuid = $generator->generate();
 
         $this->assertInstanceOf(Uuid::class, $uuid);
@@ -21,7 +21,7 @@ class UuidGeneratorTest extends TestCase
 
     public function test_it_creates_uuid_from_string(): void
     {
-        $generator = new UuidGenerator();
+        $generator = new UuidGenerator;
         $uuid = $generator->fromString('550e8400-e29b-41d4-a716-446655440000');
 
         $this->assertInstanceOf(Uuid::class, $uuid);

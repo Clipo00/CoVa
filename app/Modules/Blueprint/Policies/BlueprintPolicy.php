@@ -22,7 +22,7 @@ class BlueprintPolicy
 
     public function update(User $user, Blueprint $blueprint): bool
     {
-        return $blueprint->created_by === $user->id 
+        return $blueprint->created_by === $user->id
             || $user->hasRoleInOrganization($blueprint->organization, ['owner', 'maintainer']);
     }
 

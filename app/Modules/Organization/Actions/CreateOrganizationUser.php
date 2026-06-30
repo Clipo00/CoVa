@@ -31,7 +31,7 @@ class CreateOrganizationUser
         // Reuse existing user if they already have an account
         $user = User::where('email', $email)->first();
 
-        if (! $user) {
+        if (!$user) {
             // Create new user with temporary password
             $temporaryPassword = bin2hex(random_bytes(8));
 

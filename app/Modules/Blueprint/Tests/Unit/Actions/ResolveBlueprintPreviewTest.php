@@ -24,16 +24,16 @@ class ResolveBlueprintPreviewTest extends TestCase
     {
         parent::setUp();
 
-        $presets = new SegmentRegistry();
-        $presets->register(new LaravelConventionsPreset());
+        $presets = new SegmentRegistry;
+        $presets->register(new LaravelConventionsPreset);
 
-        $skills = new SegmentRegistry();
+        $skills = new SegmentRegistry;
 
         $generator = new AgentGenerator($presets, $skills);
 
-        $registry = new TabRegistry();
-        $registry->register(new VscodeExtensionsTab());
-        $registry->register(new McpServersTab());
+        $registry = new TabRegistry;
+        $registry->register(new VscodeExtensionsTab);
+        $registry->register(new McpServersTab);
         $registry->register(new AiContextTab($generator));
 
         $this->action = new ResolveBlueprintPreview($registry);
@@ -99,7 +99,7 @@ class ResolveBlueprintPreviewTest extends TestCase
 
         $this->assertCount(3, $outputs);
 
-        $types = array_map(fn(TabOutput $o) => $o->type->value, $outputs);
+        $types = array_map(fn (TabOutput $o) => $o->type->value, $outputs);
         $this->assertContains('vscode_extensions', $types);
         $this->assertContains('mcp_servers', $types);
         $this->assertContains('ai_context', $types);

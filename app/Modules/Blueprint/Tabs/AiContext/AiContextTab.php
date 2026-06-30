@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Tabs\AiContext;
 
-use App\Modules\Blueprint\Contracts\AgentContentSegment;
 use App\Modules\Blueprint\Contracts\TabInterface;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\DTOs\TabOutput;

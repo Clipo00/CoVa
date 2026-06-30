@@ -24,7 +24,7 @@ class SendMfaCodeTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $action = new SendMfaCode();
+        $action = new SendMfaCode;
         $action->execute($user);
 
         $this->assertDatabaseHas('mfa_codes', [
@@ -48,7 +48,7 @@ class SendMfaCodeTest extends TestCase
             'password' => bcrypt('password123'),
         ]);
 
-        $action = new SendMfaCode();
+        $action = new SendMfaCode;
         $action->execute($user);
 
         Notification::assertSentTo(
@@ -66,7 +66,7 @@ class SendMfaCodeTest extends TestCase
         ]);
 
         $before = now();
-        $action = new SendMfaCode();
+        $action = new SendMfaCode;
         $action->execute($user);
         $after = now();
 

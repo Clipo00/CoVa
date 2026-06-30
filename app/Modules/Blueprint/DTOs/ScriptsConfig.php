@@ -7,12 +7,12 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Configuration for Scripts tab.
  *
- * @param ScriptEntry[] $scripts
+ * @param  ScriptEntry[]  $scripts
  */
 final class ScriptsConfig
 {
     /**
-     * @param ScriptEntry[] $scripts
+     * @param  ScriptEntry[]  $scripts
      */
     public function __construct(
         public readonly array $scripts = [],
@@ -28,7 +28,7 @@ final class ScriptsConfig
 
         return new self(
             scripts: array_map(
-                fn(array $script) => ScriptEntry::fromArray($script),
+                fn (array $script) => ScriptEntry::fromArray($script),
                 $rawScripts,
             ),
         );
@@ -38,7 +38,7 @@ final class ScriptsConfig
     {
         return [
             'scripts' => array_map(
-                fn(ScriptEntry $script) => $script->toArray(),
+                fn (ScriptEntry $script) => $script->toArray(),
                 $this->scripts,
             ),
         ];

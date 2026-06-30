@@ -26,7 +26,7 @@ class LoginUserTest extends TestCase
             'password' => Hash::make('password123'),
         ]);
 
-        $action = new LoginUser();
+        $action = new LoginUser;
         $data = new LoginUserData(
             email: 'john@example.com',
             password: 'password123',
@@ -47,7 +47,7 @@ class LoginUserTest extends TestCase
             'password' => Hash::make('password123'),
         ]);
 
-        $action = new LoginUser();
+        $action = new LoginUser;
         $data = new LoginUserData(
             email: 'john@example.com',
             password: 'wrongpassword',
@@ -67,7 +67,7 @@ class LoginUserTest extends TestCase
             'mfa_enabled' => true,
         ]);
 
-        $action = new LoginUser(new SendMfaCode());
+        $action = new LoginUser(new SendMfaCode);
         $data = new LoginUserData(
             email: 'john@example.com',
             password: 'password123',
@@ -93,7 +93,7 @@ class LoginUserTest extends TestCase
             'mfa_enabled' => false,
         ]);
 
-        $action = new LoginUser(new SendMfaCode());
+        $action = new LoginUser(new SendMfaCode);
         $data = new LoginUserData(
             email: 'john@example.com',
             password: 'password123',

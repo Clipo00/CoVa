@@ -18,6 +18,7 @@ return [
     'remember_me' => 'Recordarme',
     'forgot_password_link' => '¿Olvidaste tu contraseña?',
     'login_button' => 'Iniciar sesión',
+    'login_processing' => 'Iniciando sesión...',
     'no_account' => '¿No tienes cuenta?',
     'create_account_link' => 'Crear cuenta',
 
@@ -25,6 +26,7 @@ return [
     'name_label' => 'Nombre',
     'password_confirm_label' => 'Confirmar contraseña',
     'register_button' => 'Crear cuenta',
+    'register_processing' => 'Creando cuenta...',
     'have_account' => '¿Ya tienes cuenta?',
     'login_link' => 'Iniciar sesión',
 

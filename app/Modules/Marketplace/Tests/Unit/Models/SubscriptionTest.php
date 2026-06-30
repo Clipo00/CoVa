@@ -8,7 +8,11 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Models\Subscription;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class SubscriptionTest extends TestCase
@@ -19,12 +23,12 @@ class SubscriptionTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_creates_subscription(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -39,7 +43,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'original-bp',
             'title' => 'Original Blueprint',
@@ -49,7 +53,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copied-bp',
             'title' => 'Copied Blueprint',
@@ -73,7 +77,7 @@ class SubscriptionTest extends TestCase
 
     public function test_enforces_unique_user_blueprint_constraint(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Test User',
             'email' => 'unique@example.com',
@@ -88,7 +92,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'original-1',
             'title' => 'Original',
@@ -98,7 +102,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copied-1',
             'title' => 'Copied',
@@ -113,7 +117,7 @@ class SubscriptionTest extends TestCase
             'copied_blueprint_id' => $copiedBp->id,
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         Subscription::create([
             'user_id' => $user->id,
@@ -124,7 +128,7 @@ class SubscriptionTest extends TestCase
 
     public function test_subscription_belongs_to_user(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'User Rel',
             'email' => 'user-rel@example.com',
@@ -139,7 +143,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'orig-rel',
             'title' => 'Original Rel',
@@ -149,7 +153,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copy-rel',
             'title' => 'Copy Rel',
@@ -170,7 +174,7 @@ class SubscriptionTest extends TestCase
 
     public function test_subscription_belongs_to_subscribed_blueprint(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Sub Rel',
             'email' => 'sub-rel@example.com',
@@ -185,7 +189,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'orig-sub',
             'title' => 'Original Sub',
@@ -195,7 +199,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copy-sub',
             'title' => 'Copy Sub',
@@ -216,7 +220,7 @@ class SubscriptionTest extends TestCase
 
     public function test_subscription_belongs_to_copied_blueprint(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Copy Rel',
             'email' => 'copy-rel@example.com',
@@ -231,7 +235,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'orig-copy',
             'title' => 'Original Copy',
@@ -241,7 +245,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copy-copy',
             'title' => 'Copy Copy',
@@ -262,7 +266,7 @@ class SubscriptionTest extends TestCase
 
     public function test_notify_on_update_defaults_to_true(): void
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Notify User',
             'email' => 'notify@example.com',
@@ -277,7 +281,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $originalBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'orig-notify',
             'title' => 'Original Notify',
@@ -287,7 +291,7 @@ class SubscriptionTest extends TestCase
         ]);
 
         $copiedBp = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => 'copy-notify',
             'title' => 'Copy Notify',

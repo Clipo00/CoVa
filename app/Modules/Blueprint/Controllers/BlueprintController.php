@@ -6,13 +6,17 @@ namespace App\Modules\Blueprint\Controllers;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
+use App\Modules\Blueprint\Actions\GenerateEnvTemplate;
 use App\Modules\Blueprint\Actions\PublishBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
 use App\Modules\Blueprint\Actions\RestoreBlueprint;
 use App\Modules\Blueprint\Actions\TransferBlueprint;
 use App\Modules\Blueprint\Actions\VoteBlueprint;
+use App\Modules\Blueprint\DTOs\AiContextConfig;
+use App\Modules\Blueprint\DTOs\TabConfig;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,7 +43,15 @@ class BlueprintController
                 return $maxBlueprints === null || $activeCount < $maxBlueprints;
             });
 
-        return view('blueprint::index', compact('hasAvailableOrg', 'userHasOrganizations'));
+        // Total de blueprints del usuario para el badge del heading
+        $orgIds = $user->organizations()->pluck('organizations.id');
+        $totalBlueprints = Blueprint::whereIn('organization_id', $orgIds)->count();
+
+        return view('blueprint::index', compact(
+            'hasAvailableOrg',
+            'userHasOrganizations',
+            'totalBlueprints'
+        ));
     }
 
     public function create(): View|RedirectResponse
@@ -106,26 +118,57 @@ class BlueprintController
         ));
     }
 
-    public function show(string $uuid, ResolveBlueprint $resolveBlueprint): View
-    {
-        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
+    public function show(
+        Blueprint $blueprint,
+        ResolveBlueprint $resolveBlueprint,
+        AgentGenerator $agentGenerator,
+        GenerateEnvTemplate $envTemplate,
+    ): View {
         if (!auth()->user()->can('view', $blueprint)) {
             abort(403);
         }
         $output = $resolveBlueprint->execute($blueprint);
 
+        // Resolve AI Context segments for download
+        $segments = [];
+        $envTemplateString = '';
+
+        $tabsConfig = $blueprint->tabs_config ?? [];
+        if (is_array($tabsConfig)) {
+            foreach ($tabsConfig as $tabData) {
+                if (!is_array($tabData)) {
+                    continue;
+                }
+
+                try {
+                    $tabConfig = TabConfig::fromArray($tabData);
+                } catch (\InvalidArgumentException) {
+                    continue;
+                }
+
+                if ($tabConfig->type->value === 'ai_context') {
+                    $aiConfig = AiContextConfig::fromArray($tabConfig->config);
+                    $segments = $agentGenerator->resolveSegments($aiConfig);
+                }
+            }
+        }
+
+        $envTemplateString = $envTemplate->execute($blueprint);
+
         return view('blueprint::show', [
             'blueprint' => $blueprint,
             'blueprintOutput' => $output,
+            'segments' => $segments,
+            'envTemplate' => $envTemplateString,
         ]);
     }
 
-    public function edit(string $uuid): View
+    public function edit(Blueprint $blueprint): View
     {
-        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
         if (!auth()->user()->can('update', $blueprint)) {
             abort(403, __('blueprint.no_edit_permission'));
         }
+
         return view('blueprint::edit', compact('blueprint'));
     }
 
@@ -134,7 +177,7 @@ class BlueprintController
         /** @var User $user */
         $user = auth()->user();
         $favoriteBlueprints = $user->favoriteBlueprints()->with('organization')->get();
-        
+
         return view('blueprint::favorites', compact('favoriteBlueprints'));
     }
 
@@ -165,14 +208,14 @@ class BlueprintController
     public function destroy(string $uuid, DeleteBlueprint $deleteBlueprint): RedirectResponse
     {
         $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
-        
+
         // Authorize
         if (!auth()->user()->can('delete', $blueprint)) {
             abort(403, __('blueprint.no_delete_permission'));
         }
-        
+
         $deleteBlueprint->execute($blueprint);
-        
+
         return redirect()
             ->route('organizations.show', $blueprint->organization->slug)
             ->with('success', __('blueprint.deleted_success'));
@@ -196,7 +239,7 @@ class BlueprintController
         }
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.restored_success'));
     }
 
@@ -211,7 +254,7 @@ class BlueprintController
         $publishBlueprint->execute($blueprint, auth()->user());
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.publish_success'));
     }
 
@@ -231,7 +274,7 @@ class BlueprintController
         $voteBlueprint->execute($blueprint, auth()->user(), $voteValue);
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.vote_registered'));
     }
 
@@ -260,7 +303,7 @@ class BlueprintController
         );
 
         return redirect()
-            ->route('blueprints.show', $blueprint->fresh()->uuid)
+            ->route('blueprints.show', $blueprint->fresh()->slug)
             ->with('success', __('blueprint.transferred_success'));
     }
 }

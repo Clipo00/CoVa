@@ -31,7 +31,7 @@
                         </a>
                     @endif
 
-                    <a href="#how-it-works"
+                    <a href="#demo"
                        class="inline-flex items-center justify-center px-6 py-3.5 text-base font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-950">
                         {{ __('landing.cta_secondary') }}
                         <svg class="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

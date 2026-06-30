@@ -11,6 +11,8 @@ use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\MarketplaceSeeder;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -20,17 +22,19 @@ class PublishBlueprintTest extends TestCase
     use RefreshDatabase;
 
     private PublishBlueprint $action;
+
     private Organization $organization;
+
     private User $owner;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+        $this->seed(PlanSeeder::class);
+        $this->seed(MarketplaceSeeder::class);
 
-        $this->action = new PublishBlueprint();
+        $this->action = new PublishBlueprint;
 
         // Enable marketplace and billing for base test setup
         config(['marketplace.enabled' => true]);
@@ -45,14 +49,15 @@ class PublishBlueprintTest extends TestCase
             'plan_id' => $proPlan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $this->organization = $createOrg->execute($this->owner, 'Test Org', 'test-org');
     }
 
     private function createPrivateBlueprint(User $user): Blueprint
     {
         $this->actingAs($user);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
+
         return $createBp->execute(
             organization: $this->organization,
             title: 'Test Blueprint',
@@ -100,9 +105,9 @@ class PublishBlueprintTest extends TestCase
             'plan_id' => $freePlan->id,
         ]);
 
-        $org = (new CreateOrganization())->execute($freeUser, 'Free Org', 'free-org');
+        $org = (new CreateOrganization)->execute($freeUser, 'Free Org', 'free-org');
         $this->actingAs($freeUser);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($org, 'Free BP', 'free-bp');
 
         $this->expectException(HttpException::class);
@@ -159,10 +164,10 @@ class PublishBlueprintTest extends TestCase
             'plan_id' => $freePlan->id,
         ]);
 
-        $org = (new CreateOrganization())->execute($freeUser, 'Free Org 2', 'free-org-2');
+        $org = (new CreateOrganization)->execute($freeUser, 'Free Org 2', 'free-org-2');
         $originalOrgId = $org->id;
         $this->actingAs($freeUser);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($org, 'Free BP 2', 'free-bp-2');
 
         // Make user owner of the org

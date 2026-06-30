@@ -6,9 +6,11 @@ namespace App\Modules\Blueprint\Tests\Feature;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Organization\Actions\CreateOrganization;
+use App\Modules\Blueprint\Models\BlueprintVariable;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\MarketplaceSeeder;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +21,7 @@ class BlueprintControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
         $this->withoutVite();
     }
 
@@ -49,7 +51,7 @@ class BlueprintControllerTest extends TestCase
     {
         [$user, $organization] = $this->createUserWithOrg();
 
-        $response = $this->actingAs($user)->get('/blueprints?org=' . $organization->slug);
+        $response = $this->actingAs($user)->get('/blueprints?org='.$organization->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Blueprints');
@@ -59,7 +61,7 @@ class BlueprintControllerTest extends TestCase
     {
         [$user, $organization] = $this->createUserWithOrg();
 
-        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->slug);
+        $response = $this->actingAs($user)->get('/blueprints/create?org='.$organization->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Crear Blueprint');
@@ -72,16 +74,16 @@ class BlueprintControllerTest extends TestCase
         // Crear blueprints hasta el límite del plan free (3)
         for ($i = 1; $i <= 3; $i++) {
             Blueprint::create([
-                'uuid' => '550e8400-e29b-41d4-a716-4466554400' . $i,
+                'uuid' => '550e8400-e29b-41d4-a716-4466554400'.$i,
                 'organization_id' => $organization->id,
-                'slug' => 'bp-' . $i,
-                'title' => 'BP ' . $i,
+                'slug' => 'bp-'.$i,
+                'title' => 'BP '.$i,
                 'tabs_config' => [],
                 'created_by' => $user->id,
             ]);
         }
 
-        $response = $this->actingAs($user)->get('/blueprints/create?org=' . $organization->slug);
+        $response = $this->actingAs($user)->get('/blueprints/create?org='.$organization->slug);
 
         $response->assertRedirect(route('organizations.show', $organization->slug));
         $response->assertSessionHas('error');
@@ -105,10 +107,10 @@ class BlueprintControllerTest extends TestCase
         // Llenar la org hasta el límite
         for ($i = 1; $i <= 3; $i++) {
             Blueprint::create([
-                'uuid' => '550e8400-e29b-41d4-a716-4466554400' . $i,
+                'uuid' => '550e8400-e29b-41d4-a716-4466554400'.$i,
                 'organization_id' => $organization->id,
-                'slug' => 'bp-' . $i,
-                'title' => 'BP ' . $i,
+                'slug' => 'bp-'.$i,
+                'title' => 'BP '.$i,
                 'tabs_config' => [],
                 'created_by' => $user->id,
             ]);
@@ -135,10 +137,74 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/blueprints/' . $blueprint->uuid);
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Test Blueprint');
+    }
+
+    public function test_show_page_has_download_elements(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449000',
+            'organization_id' => $organization->id,
+            'slug' => 'download-test',
+            'title' => 'Download Test Blueprint',
+            'description' => 'Blueprint with download elements',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'preset', 'name' => 'psr12'],
+                            ['type' => 'skill', 'name' => 'stripe'],
+                        ],
+                    ],
+                ],
+            ],
+            'created_by' => $user->id,
+        ]);
+
+        // Create variables for .env download
+        BlueprintVariable::create([
+            'blueprint_id' => $blueprint->id,
+            'key' => 'APP_NAME',
+            'type' => 'fixed',
+            'default_value' => 'MyApp',
+            'is_secret' => false,
+            'section' => 'app',
+            'sort_order' => 0,
+        ]);
+        BlueprintVariable::create([
+            'blueprint_id' => $blueprint->id,
+            'key' => 'API_KEY',
+            'type' => 'fixed',
+            'default_value' => 'should-not-appear',
+            'is_secret' => true,
+            'section' => 'secrets',
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug);
+
+        $response->assertStatus(200);
+
+        // Vault fetch card
+        $response->assertSee('vault fetch cova/download-test');
+
+        // Download agent.md button
+        $response->assertSee(__('blueprint.download_agent_md'));
+
+        // .env download button
+        $response->assertSee(__('blueprint.download_env'));
+
+        // Vault fetch label
+        $response->assertSee(__('blueprint.vault_fetch_label'));
+
+        // Segment download title
+        $response->assertSee(__('blueprint.segment_download_title'));
     }
 
     public function test_edit_page_is_accessible_to_authorized_user(): void
@@ -155,7 +221,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/blueprints/' . $blueprint->uuid . '/edit');
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug.'/edit');
 
         $response->assertStatus(200);
         $response->assertSee('Editar Blueprint');
@@ -177,7 +243,7 @@ class BlueprintControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->post('/blueprints/' . $blueprint->uuid . '/delete');
+            ->post('/blueprints/'.$blueprint->uuid.'/delete');
 
         $response->assertRedirect();
         $this->assertSoftDeleted($blueprint);
@@ -206,7 +272,7 @@ class BlueprintControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($developer)
-            ->post('/blueprints/' . $blueprint->uuid . '/delete');
+            ->post('/blueprints/'.$blueprint->uuid.'/delete');
 
         $response->assertForbidden();
         $this->assertDatabaseHas('blueprints', ['uuid' => $blueprint->uuid, 'deleted_at' => null]);
@@ -249,7 +315,7 @@ class BlueprintControllerTest extends TestCase
         $blueprint->delete();
 
         $response = $this->actingAs($user)
-            ->post('/blueprints/' . $blueprint->uuid . '/restore');
+            ->post('/blueprints/'.$blueprint->uuid.'/restore');
 
         $response->assertRedirect();
         $this->assertDatabaseHas('blueprints', [
@@ -282,7 +348,7 @@ class BlueprintControllerTest extends TestCase
         $blueprint->delete();
 
         $response = $this->actingAs($maintainer)
-            ->post('/blueprints/' . $blueprint->uuid . '/restore');
+            ->post('/blueprints/'.$blueprint->uuid.'/restore');
 
         $response->assertForbidden();
         $this->assertSoftDeleted($blueprint);
@@ -301,7 +367,7 @@ class BlueprintControllerTest extends TestCase
         config(['marketplace.enabled' => true]);
         config(['marketplace.billing_enabled' => true]);
 
-        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+        $this->seed(MarketplaceSeeder::class);
 
         $proPlan = Plan::where('slug', 'pro')->first();
         $owner = User::create([
@@ -337,7 +403,7 @@ class BlueprintControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($maintainer)
-            ->post('/blueprints/' . $blueprint->uuid . '/publish');
+            ->post('/blueprints/'.$blueprint->uuid.'/publish');
 
         $response->assertForbidden();
     }
@@ -347,7 +413,7 @@ class BlueprintControllerTest extends TestCase
         config(['marketplace.enabled' => true]);
         config(['marketplace.billing_enabled' => true]);
 
-        $this->seed(\Database\Seeders\MarketplaceSeeder::class);
+        $this->seed(MarketplaceSeeder::class);
 
         $proPlan = Plan::where('slug', 'pro')->first();
         $owner = User::create([
@@ -377,7 +443,7 @@ class BlueprintControllerTest extends TestCase
         $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
 
         $response = $this->actingAs($owner)
-            ->post('/blueprints/' . $blueprint->uuid . '/publish');
+            ->post('/blueprints/'.$blueprint->uuid.'/publish');
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
@@ -442,7 +508,7 @@ class BlueprintControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($voter)
-            ->post('/blueprints/' . $blueprint->uuid . '/vote', ['vote_type' => 'up']);
+            ->post('/blueprints/'.$blueprint->uuid.'/vote', ['vote_type' => 'up']);
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
@@ -452,6 +518,102 @@ class BlueprintControllerTest extends TestCase
             'blueprint_id' => $blueprint->id,
             'vote' => 1,
         ]);
+    }
+
+    // --- friendly URLs tests ---
+
+    public function test_slug_show_page_resolves_blueprint(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449999',
+            'organization_id' => $organization->id,
+            'slug' => 'test-bp-slug',
+            'title' => 'Slug Test',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/test-bp-slug');
+
+        $response->assertStatus(200);
+        $response->assertSee('Slug Test');
+    }
+
+    public function test_slug_edit_page_is_accessible(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449998',
+            'organization_id' => $organization->id,
+            'slug' => 'edit-via-slug',
+            'title' => 'Edit Via Slug',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/edit-via-slug/edit');
+
+        $response->assertStatus(200);
+        $response->assertSee('Editar Blueprint');
+    }
+
+    public function test_legacy_uuid_show_redirects_to_slug(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449997',
+            'organization_id' => $organization->id,
+            'slug' => 'legacy-redirect',
+            'title' => 'Legacy Redirect',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/blueprints/550e8400-e29b-41d4-a716-446655449997');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/b/legacy-redirect');
+    }
+
+    public function test_legacy_uuid_edit_redirects_to_slug_edit(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449996',
+            'organization_id' => $organization->id,
+            'slug' => 'legacy-edit-redirect',
+            'title' => 'Legacy Edit Redirect',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/blueprints/550e8400-e29b-41d4-a716-446655449996/edit');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/b/legacy-edit-redirect/edit');
+    }
+
+    public function test_invalid_slug_uppercase_returns_404(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/b/MyBlueprint');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_invalid_slug_underscore_returns_404(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/b/my_blueprint');
+
+        $response->assertStatus(404);
     }
 
     public function test_vote_throttle_exceeded(): void
@@ -487,7 +649,7 @@ class BlueprintControllerTest extends TestCase
         // Exceed the throttle limit (10 requests per minute)
         for ($i = 0; $i < 11; $i++) {
             $response = $this->actingAs($owner)
-                ->post('/blueprints/' . $blueprint->uuid . '/vote', ['vote_type' => 'up']);
+                ->post('/blueprints/'.$blueprint->uuid.'/vote', ['vote_type' => 'up']);
         }
 
         $response->assertStatus(429);

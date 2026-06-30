@@ -17,6 +17,9 @@ return [
     // States
     'no_results' => 'No results found.',
     'no_blueprints' => 'No public blueprints available yet.',
+    'empty_heading' => 'No blueprints in the marketplace',
+    'empty_description' => 'No public blueprints have been published yet. Check back later or create your own blueprint and publish it.',
+    'empty_cta' => 'Go to Dashboard',
 
     // Badges
     'public_badge' => 'Public',

@@ -45,6 +45,7 @@ class Slug
         $value = strtolower(trim($value));
         $value = preg_replace('/[^a-z0-9-]/', '-', $value);
         $value = preg_replace('/-+/', '-', $value);
+
         return trim($value, '-');
     }
 }

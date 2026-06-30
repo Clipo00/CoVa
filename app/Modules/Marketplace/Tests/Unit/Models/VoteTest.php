@@ -8,7 +8,11 @@ use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Marketplace\Models\Vote;
 use App\Modules\Organization\Models\Organization;
+use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class VoteTest extends TestCase
@@ -19,12 +23,12 @@ class VoteTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     private function createUserAndBlueprint(): array
     {
-        $plan = \App\Modules\Shared\Models\Plan::where('slug', 'free')->first();
+        $plan = Plan::where('slug', 'free')->first();
         $user = User::create([
             'name' => 'Vote User',
             'email' => fake()->unique()->safeEmail(),
@@ -39,7 +43,7 @@ class VoteTest extends TestCase
         ]);
 
         $blueprint = Blueprint::create([
-            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'organization_id' => $organization->id,
             'slug' => fake()->unique()->slug(),
             'title' => 'Test Blueprint',
@@ -90,7 +94,7 @@ class VoteTest extends TestCase
             'vote' => 1,
         ]);
 
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(QueryException::class);
 
         Vote::create([
             'user_id' => $user->id,

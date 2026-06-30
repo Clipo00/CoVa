@@ -11,6 +11,7 @@ use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -21,7 +22,7 @@ class RestoreBlueprintTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_restores_blueprint(): void
@@ -34,7 +35,7 @@ class RestoreBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $blueprint = Blueprint::create([
@@ -50,7 +51,7 @@ class RestoreBlueprintTest extends TestCase
 
         $this->assertSoftDeleted($blueprint);
 
-        $action = new RestoreBlueprint();
+        $action = new RestoreBlueprint;
         $action->execute($blueprint);
 
         $this->assertDatabaseHas('blueprints', [
@@ -69,12 +70,12 @@ class RestoreBlueprintTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         // Create 3 active blueprints (free plan limit)
         $this->actingAs($user);
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $createBp->execute($organization, 'BP 1', 'bp-1');
         $createBp->execute($organization, 'BP 2', 'bp-2');
         $createBp->execute($organization, 'BP 3', 'bp-3');
@@ -92,7 +93,7 @@ class RestoreBlueprintTest extends TestCase
 
         $this->expectException(MaxBlueprintsReachedException::class);
 
-        $action = new RestoreBlueprint();
+        $action = new RestoreBlueprint;
         $action->execute($blueprintToRestore);
     }
 }

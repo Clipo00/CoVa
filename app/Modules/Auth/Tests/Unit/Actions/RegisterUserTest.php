@@ -7,10 +7,11 @@ namespace App\Modules\Auth\Tests\Unit\Actions;
 use App\Modules\Auth\Actions\RegisterUser;
 use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
+use Database\Seeders\PlanSeeder;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
@@ -21,12 +22,12 @@ class RegisterUserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_creates_a_user(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'John Doe',
             email: 'john@example.com',
@@ -46,7 +47,7 @@ class RegisterUserTest extends TestCase
 
     public function test_it_hashes_password(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Jane Doe',
             email: 'jane@example.com',
@@ -61,7 +62,7 @@ class RegisterUserTest extends TestCase
 
     public function test_it_assigns_free_plan_by_default(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Free User',
             email: 'free@example.com',
@@ -78,7 +79,7 @@ class RegisterUserTest extends TestCase
     {
         $this->expectException(ValidationException::class);
 
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Temp User',
             email: 'user@mailinator.com',
@@ -92,7 +93,7 @@ class RegisterUserTest extends TestCase
     {
         Notification::fake();
 
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Jane Doe',
             email: 'jane@example.com',

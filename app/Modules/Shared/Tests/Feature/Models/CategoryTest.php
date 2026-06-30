@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Shared\Tests\Feature\Models;
 
 use App\Modules\Shared\Models\Category;
+use Database\Seeders\CategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,7 +31,7 @@ class CategoryTest extends TestCase
 
     public function test_seeders_create_categories(): void
     {
-        $this->seed(\Database\Seeders\CategorySeeder::class);
+        $this->seed(CategorySeeder::class);
 
         $this->assertDatabaseCount('categories', 8);
         $this->assertDatabaseHas('categories', ['slug' => 'laravel']);

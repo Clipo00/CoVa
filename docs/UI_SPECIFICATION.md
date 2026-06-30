@@ -175,7 +175,9 @@
   - `moveTab(index, direction)`: Reordenar (-1 arriba, +1 abajo)
   - `updateVscodeExtensions(index, text)`: Parsea texto a array
   - `addMcpServer(index)`, `removeMcpServer(index, serverIndex)`, `updateMcpServerField(...)`
-  - `togglePreset(index, preset)`, `toggleSkill(index, skill)`, `updateCustomRules(index, rules)`
+  - `addSegment(tabIndex, type, name)`, `removeSegment(tabIndex, segmentIndex)`
+  - `moveSegment(tabIndex, segmentIndex, direction)`
+  - `updateSegmentContent(tabIndex, segmentIndex, content)`, `updateSegmentName(tabIndex, segmentIndex, name)`
 - **Sincronización**:
   - Cada cambio dispara `$this->dispatch('tabs-updated', tabs: $this->tabs)`
   - Padre (`BlueprintCreateForm`/`BlueprintEditForm`) escucha y persiste

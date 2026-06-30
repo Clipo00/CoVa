@@ -9,6 +9,7 @@ use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Organization\Actions\InviteUser;
 use App\Modules\Organization\Actions\RevokeInvitation;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class RevokeInvitationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_revokes_pending_invitation(): void
@@ -32,15 +33,15 @@ class RevokeInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         $this->assertTrue($invitation->isValid());
 
-        $revokeInvitation = new RevokeInvitation();
+        $revokeInvitation = new RevokeInvitation;
         $revokeInvitation->execute($invitation);
 
         $this->assertFalse($invitation->fresh()->isValid());
@@ -57,17 +58,17 @@ class RevokeInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer');
 
         // Mark as already used
         $invitation->update(['used_at' => now()->subHour()]);
         $originalUsedAt = $invitation->fresh()->used_at;
 
-        $revokeInvitation = new RevokeInvitation();
+        $revokeInvitation = new RevokeInvitation;
         $revokeInvitation->execute($invitation);
 
         // used_at should be updated to now, not the original time
@@ -85,15 +86,15 @@ class RevokeInvitationTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'My Org', 'my-org');
 
-        $inviteUser = new InviteUser();
+        $inviteUser = new InviteUser;
         $invitation = $inviteUser->execute($organization, 'invite@example.com', 'developer', -1);
 
         $this->assertFalse($invitation->fresh()->isValid());
 
-        $revokeInvitation = new RevokeInvitation();
+        $revokeInvitation = new RevokeInvitation;
         $revokeInvitation->execute($invitation);
 
         $this->assertNotNull($invitation->fresh()->used_at);

@@ -46,12 +46,14 @@ class OrganizationController
         $maxBlueprints = $plan->max_blueprints_per_org;
         $activeBlueprintsCount = $organization->blueprints()->count();
         $canCreateBlueprint = $maxBlueprints === null || $activeBlueprintsCount < $maxBlueprints;
+        $publicBlueprintsCount = $organization->blueprints()->where('is_public', true)->count();
 
         return view('organization::show', compact(
             'organization',
             'activeBlueprintsCount',
             'maxBlueprints',
-            'canCreateBlueprint'
+            'canCreateBlueprint',
+            'publicBlueprintsCount'
         ));
     }
 
