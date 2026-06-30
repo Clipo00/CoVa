@@ -10,7 +10,7 @@
             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
             <a href="{{ route('organizations.show', $blueprint->organization->slug) }}" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">{{ $blueprint->organization->name }}</a>
             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-            <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">{{ $blueprint->title }}</a>
+            <a href="{{ route('blueprints.show', $blueprint->slug) }}" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">{{ $blueprint->title }}</a>
             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
             <span class="text-gray-900 dark:text-gray-100 font-medium">{{ __('blueprint.edit_breadcrumb') }}</span>
         </nav>

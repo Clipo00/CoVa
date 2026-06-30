@@ -184,7 +184,7 @@ class BlueprintCreateForm extends Component
                 variables: $this->variables,
             );
 
-            $this->redirect(route('blueprints.show', $blueprint->uuid));
+            $this->redirect(route('blueprints.show', $blueprint->slug));
         } catch (MaxBlueprintsReachedException $e) {
             $this->addError('organizationId', $e->getMessage());
         } catch (MaxVariablesReachedException $e) {

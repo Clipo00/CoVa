@@ -137,7 +137,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/blueprints/'.$blueprint->uuid);
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug);
 
         $response->assertStatus(200);
         $response->assertSee('Test Blueprint');
@@ -187,7 +187,7 @@ class BlueprintControllerTest extends TestCase
             'sort_order' => 1,
         ]);
 
-        $response = $this->actingAs($user)->get('/blueprints/'.$blueprint->uuid);
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug);
 
         $response->assertStatus(200);
 
@@ -221,7 +221,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/blueprints/'.$blueprint->uuid.'/edit');
+        $response = $this->actingAs($user)->get('/b/'.$blueprint->slug.'/edit');
 
         $response->assertStatus(200);
         $response->assertSee('Editar Blueprint');
@@ -518,6 +518,102 @@ class BlueprintControllerTest extends TestCase
             'blueprint_id' => $blueprint->id,
             'vote' => 1,
         ]);
+    }
+
+    // --- friendly URLs tests ---
+
+    public function test_slug_show_page_resolves_blueprint(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449999',
+            'organization_id' => $organization->id,
+            'slug' => 'test-bp-slug',
+            'title' => 'Slug Test',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/test-bp-slug');
+
+        $response->assertStatus(200);
+        $response->assertSee('Slug Test');
+    }
+
+    public function test_slug_edit_page_is_accessible(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449998',
+            'organization_id' => $organization->id,
+            'slug' => 'edit-via-slug',
+            'title' => 'Edit Via Slug',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/edit-via-slug/edit');
+
+        $response->assertStatus(200);
+        $response->assertSee('Editar Blueprint');
+    }
+
+    public function test_legacy_uuid_show_redirects_to_slug(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449997',
+            'organization_id' => $organization->id,
+            'slug' => 'legacy-redirect',
+            'title' => 'Legacy Redirect',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/blueprints/550e8400-e29b-41d4-a716-446655449997');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/b/legacy-redirect');
+    }
+
+    public function test_legacy_uuid_edit_redirects_to_slug_edit(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655449996',
+            'organization_id' => $organization->id,
+            'slug' => 'legacy-edit-redirect',
+            'title' => 'Legacy Edit Redirect',
+            'tabs_config' => [],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/blueprints/550e8400-e29b-41d4-a716-446655449996/edit');
+
+        $response->assertStatus(301);
+        $response->assertRedirect('/b/legacy-edit-redirect/edit');
+    }
+
+    public function test_invalid_slug_uppercase_returns_404(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/b/MyBlueprint');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_invalid_slug_underscore_returns_404(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/b/my_blueprint');
+
+        $response->assertStatus(404);
     }
 
     public function test_vote_throttle_exceeded(): void

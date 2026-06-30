@@ -111,12 +111,11 @@ class BlueprintController
     }
 
     public function show(
-        string $uuid,
+        Blueprint $blueprint,
         ResolveBlueprint $resolveBlueprint,
         AgentGenerator $agentGenerator,
         GenerateEnvTemplate $envTemplate,
     ): View {
-        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
         if (! auth()->user()->can('view', $blueprint)) {
             abort(403);
         }
@@ -156,9 +155,8 @@ class BlueprintController
         ]);
     }
 
-    public function edit(string $uuid): View
+    public function edit(Blueprint $blueprint): View
     {
-        $blueprint = Blueprint::where('uuid', $uuid)->firstOrFail();
         if (! auth()->user()->can('update', $blueprint)) {
             abort(403, __('blueprint.no_edit_permission'));
         }
@@ -233,7 +231,7 @@ class BlueprintController
         }
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.restored_success'));
     }
 
@@ -248,7 +246,7 @@ class BlueprintController
         $publishBlueprint->execute($blueprint, auth()->user());
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.publish_success'));
     }
 
@@ -268,7 +266,7 @@ class BlueprintController
         $voteBlueprint->execute($blueprint, auth()->user(), $voteValue);
 
         return redirect()
-            ->route('blueprints.show', $blueprint->uuid)
+            ->route('blueprints.show', $blueprint->slug)
             ->with('success', __('blueprint.vote_registered'));
     }
 
@@ -297,7 +295,7 @@ class BlueprintController
         );
 
         return redirect()
-            ->route('blueprints.show', $blueprint->fresh()->uuid)
+            ->route('blueprints.show', $blueprint->fresh()->slug)
             ->with('success', __('blueprint.transferred_success'));
     }
 }

@@ -142,7 +142,7 @@ class BlueprintEditForm extends Component
                 variables: $this->variables,
             );
 
-            $this->redirect(route('blueprints.show', $this->blueprint->uuid));
+            $this->redirect(route('blueprints.show', $this->blueprint->slug));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {

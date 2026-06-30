@@ -35,6 +35,11 @@ class Blueprint extends Model
         'subscribers_count' => 'integer',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function organization()
     {
         return $this->belongsTo(Organization::class);

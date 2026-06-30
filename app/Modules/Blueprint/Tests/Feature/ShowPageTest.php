@@ -50,7 +50,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('Agent Context');
@@ -66,7 +66,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('VSCode Extensions');
@@ -85,7 +85,7 @@ class ShowPageTest extends TestCase
             ]],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('MCP Servers');
@@ -100,7 +100,7 @@ class ShowPageTest extends TestCase
             ['key' => 'APP_KEY', 'type' => 'empty', 'default_value' => '', 'is_secret' => true],
         ]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         $response->assertSee('DB_HOST');
@@ -112,13 +112,13 @@ class ShowPageTest extends TestCase
     {
         $blueprint = $this->createBlueprintWithTabs([]);
 
-        $response = $this->get(route('blueprints.show', $blueprint->uuid));
+        $response = $this->get(route('blueprints.show', $blueprint->slug));
 
         $response->assertStatus(200);
         // Should not show Agent Context, VSCode, or MCP sections
         $response->assertDontSee('Agent Context');
         // Should still show variables section
-        $response->assertSee(route('blueprints.edit', $blueprint->uuid));
+        $response->assertSee(route('blueprints.edit', $blueprint->slug));
     }
 
     private function createBlueprintWithTabs(array $tabsConfig): Blueprint

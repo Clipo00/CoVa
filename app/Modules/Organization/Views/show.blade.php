@@ -150,7 +150,7 @@
                 <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($organization->blueprints()->latest()->limit(5)->get() as $blueprint)
                         <li class="py-3">
-                            <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="block hover:bg-gray-50 dark:hover:bg-gray-700 -mx-4 px-4 py-2 rounded">
+                            <a href="{{ route('blueprints.show', $blueprint->slug) }}" class="block hover:bg-gray-50 dark:hover:bg-gray-700 -mx-4 px-4 py-2 rounded">
                                 <div class="flex justify-between items-center">
                                     <span class="font-medium text-indigo-600 dark:text-indigo-400">{{ $blueprint->title }}</span>
                                     <div class="flex items-center space-x-2">

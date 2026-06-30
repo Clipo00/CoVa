@@ -222,7 +222,7 @@
                 @foreach($blueprints as $blueprint)
                     <li class="hover:bg-gray-50 dark:hover:bg-gray-700">
                         <div class="px-4 py-4 sm:px-6 flex items-center justify-between">
-                            <a href="{{ route('blueprints.show', $blueprint->uuid) }}" class="flex-1 min-w-0">
+                            <a href="{{ route('blueprints.show', $blueprint->slug) }}" class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between">
                                     <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">{{ $blueprint->title }}</p>
                                     <div class="flex items-center space-x-2 ml-4 flex-shrink-0">

@@ -145,7 +145,7 @@
 
         {{-- Submit --}}
         <div class="flex justify-between items-center pt-2">
-            <a href="{{ route('blueprints.show', $blueprint->uuid) }}" 
+            <a href="{{ route('blueprints.show', $blueprint->slug) }}" 
                 class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
                 <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
