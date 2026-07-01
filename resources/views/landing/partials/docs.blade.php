@@ -25,7 +25,7 @@
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
                         <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }}</span>
-curl -L -o cova https://co-v-a.com/downloads/cova.phar
+curl -L -o cova {{ config('app.cli_download_url') }}
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd2') }}</span>
 chmod +x cova

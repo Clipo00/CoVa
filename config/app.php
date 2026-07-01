@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | CLI Download URL
+    |--------------------------------------------------------------------------
+    |
+    | Public URL where the CLI PHAR binary can be downloaded. Used in the
+    | landing page quickstart guide and CLI README. Derives from APP_URL
+    | by default but can be overridden via CLI_DOWNLOAD_URL env variable.
+    |
+    */
+    'cli_download_url' => env('CLI_DOWNLOAD_URL', rtrim((string) env('APP_URL', 'http://localhost'), '/') . '/downloads/cova.phar'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

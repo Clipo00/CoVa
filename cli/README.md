@@ -13,7 +13,7 @@ A command-line tool to list and fetch CoVa blueprints from your terminal.
 
 ```bash
 # Download the CLI tool
-curl -L -o cova https://co-v-a.com/downloads/cova.phar
+curl -L -o cova https://cova.dev/downloads/cova.phar
 
 # Make it executable
 chmod +x cova

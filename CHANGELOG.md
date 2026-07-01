@@ -14,6 +14,7 @@
 - **✏️ Hero title más directo** — Cambiado de "Olvídate de copiar tus configuraciones de un lado a otro" a "Tu entorno, en un comando." (ES) / "Your environment, one command." (EN).
 - **⏸️ Demo carousel pausa al hover** — El auto-avance de las diapositivas se pausa cuando el usuario pasa el ratón sobre la demo, y se reanuda al quitarlo.
 - **📋 Tabla de comandos integrada en paso 3** — La referencia de comandos CLI ahora está dentro del paso "Lista y ejecuta tus blueprints", alineada visualmente con el resto del contenido.
+- **🔗 CLI download URL desde config** — Agregada key `cli_download_url` en `config/app.php` (sobreescribible con `CLI_DOWNLOAD_URL` en `.env`). La landing y el CLI README ahora usan esta URL en vez de un dominio hardcodeado.
 
 ### Added
 - **📋 CLI List + Help + README (PR 4 of 6)** — Blueprint listing, help improvements, and documentation:
