@@ -214,38 +214,51 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
 test.describe('Flow 2: Developer generates API token', () => {
     const email = `dev-${timestamp}@cova.test`;
 
-    test('register, skip onboarding, generate API token', async ({ page }) => {
+    test('register, skip onboarding, get Pro trial, generate API token', async ({ page }) => {
         // 2a. Register
         await register(page, 'Bob Developer', email);
 
         // 2b. Onboarding — skip through to dashboard
         await completeOnboarding(page, 'Dev Org');
 
-        // 2c. Navigate to Profile → Seguridad tab
+        // 2c. Activate Pro trial (API tokens require Pro/Enterprise plan)
+        await page.goto('/pricing');
+        await page.waitForLoadState('networkidle');
+
+        const trialBtn = page.locator(
+            'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), ' +
+            'button:has-text("Prueba"), a:has-text("Empezar")'
+        ).first();
+        if (await trialBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await trialBtn.click();
+            await page.waitForLoadState('networkidle');
+        }
+
+        // 2e. Navigate to Profile → Seguridad tab
         await page.click('[data-testid="user-dropdown-toggle"]');
         await page.waitForTimeout(300);
         await page.click('text=Perfil');
         await expect(page).toHaveURL(/profile/);
         await page.waitForLoadState('networkidle');
 
-        // Find and click Seguridad tab — button or link with hash
-        const seguridadBtn = page.locator(
-            'button:has-text("Seguridad"), a[href*="seguridad"], [href="#seguridad"], [x-on\\:click*="seguridad"]'
-        ).first();
-        if (await seguridadBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await seguridadBtn.click();
-            await page.waitForLoadState('networkidle');
-        }
+        // Find and click Seguridad tab — Alpine.js @click="activeTab = 'seguridad'"
+        const seguridadBtn = page.locator('button[role="tab"]').filter({ hasText: /Seguridad|Security/i });
+        await expect(seguridadBtn).toBeVisible({ timeout: 5000 });
+        await seguridadBtn.click();
+        // Wait for Alpine x-show to reveal the seguridad div
+        await page.waitForTimeout(500);
 
-        // 2d. Click "Create token" button (toggles the form)
+        // 2f. Click "Create token" button (toggles the form)
+        // The button text is __()'auth.token_create' — try multiple locators
         const toggleCreate = page.locator(
-            'button[wire\\:click*="showCreateForm"]'
-        );
+            'button[wire\\:click*="showCreateForm"], ' +
+            'button:has-text("Crear token"), button:has-text("Nuevo")'
+        ).first();
         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
         await toggleCreate.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(500);
 
-        // 2e. Fill token form
+        // 2g. Fill token form
         await expect(page.locator('input#tokenName')).toBeVisible({ timeout: 3000 });
         await page.fill('input#tokenName', 'CLI Access Token');
 
@@ -255,14 +268,14 @@ test.describe('Flow 2: Developer generates API token', () => {
             await pwdInput.fill('Password123!');
         }
 
-        // 2f. Submit token creation
+        // 2h. Submit token creation
         const submitToken = page.locator(
             'form[wire\\:submit="createToken"] button[type="submit"]'
         );
         await submitToken.click();
         await page.waitForLoadState('networkidle');
 
-        // 2g. Verify one-time token display appears (yellow warning box)
+        // 2i. Verify one-time token display appears (yellow warning box)
         const tokenBox = page.locator('.bg-yellow-50, [class*="bg-yellow"]');
         const tokenListed = page.locator('text=CLI Access Token');
         const hasToken = await tokenBox.isVisible({ timeout: 4000 }).catch(() => false)
