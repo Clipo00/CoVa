@@ -48,6 +48,7 @@ return [
     'demo_dashboard' => 'Dashboard',
     'demo_org' => 'Crear Organización',
     'demo_blueprint' => 'Crear Blueprint',
+    'demo_tabs' => 'Tabs',
     'demo_ai_context' => 'Contexto IA',
     'demo_prev' => 'Anterior',
     'demo_next' => 'Siguiente',
