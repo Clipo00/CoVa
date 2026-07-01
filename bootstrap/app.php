@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Auth\Middleware\EnsureApiAccess;
 use App\Modules\Auth\Middleware\EnsureOnboardingCompleted;
 use App\Modules\Organization\Middleware\EnsureOrganizationAccess;
 use App\Modules\Organization\Middleware\EnsureRole;
@@ -11,15 +12,18 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'api.access' => EnsureApiAccess::class,
             'org.access' => EnsureOrganizationAccess::class,
             'org.role' => EnsureRole::class,
             'onboarding' => EnsureOnboardingCompleted::class,
@@ -48,12 +52,33 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
         });
 
-        // Response JSON para peticiones AJAX/Livewire
+        // Response JSON con formato RFC 7807 para peticiones api/*
         $exceptions->render(function (Throwable $e, Request $request) {
-            if ($request->expectsJson() || $request->is('api/*')) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+                $title = 'Internal Server Error';
+
+                if ($e instanceof HttpExceptionInterface) {
+                    $status = $e->getStatusCode();
+                    $title = Response::$statusTexts[$status] ?? 'Unknown Error';
+                } elseif ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    $status = Response::HTTP_UNAUTHORIZED;
+                    $title = 'Unauthorized';
+                }
+
+                $detail = $e->getMessage() ?: $title;
+
+                // En producción, no exponer detalles internos para 500
+                if ($status === Response::HTTP_INTERNAL_SERVER_ERROR && app()->isProduction()) {
+                    $detail = 'An unexpected error occurred.';
+                }
+
                 return response()->json([
-                    'error' => 'Error interno del servidor',
-                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    'type' => "https://cova.app/errors/{$status}",
+                    'title' => $title,
+                    'status' => $status,
+                    'detail' => $detail,
+                ], $status);
             }
         });
     })->create();

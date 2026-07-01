@@ -114,4 +114,39 @@ final class BlueprintOutput
 
         return '';
     }
+
+    /**
+     * Convert the output to an API-friendly array.
+     *
+     * Returns blueprint metadata, variables with secret masking, and
+     * tab-resolved content (agent.md, VSCode extensions, MCP servers, scripts).
+     * Secret variable values are replaced with empty strings.
+     *
+     * @return array<string, mixed>
+     */
+    public function toApiArray(): array
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Modules\Blueprint\Models\BlueprintVariable> $variables */
+        $variables = $this->blueprint->variables;
+
+        return [
+            'uuid' => $this->blueprint->uuid,
+            'slug' => $this->blueprint->slug,
+            'title' => $this->blueprint->title,
+            'description' => $this->blueprint->description,
+            'variables' => $variables->map(fn ($v) => [
+                'key' => $v->key,
+                'type' => $v->type,
+                'default_value' => $v->is_secret ? '' : $v->default_value,
+                'is_secret' => $v->is_secret,
+                'section' => $v->section,
+            ])->values()->toArray(),
+            'agent_md' => $this->getAgentMdContent(),
+            'vscode_extensions' => $this->getVscodeExtensions(),
+            'vscode_install_command' => $this->getVscodeInstallCommand(),
+            'mcp_servers' => $this->getMcpServers(),
+            'scripts' => $this->getScripts(),
+            'scripts_shell' => $this->getScriptsShellScript(),
+        ];
+    }
 }

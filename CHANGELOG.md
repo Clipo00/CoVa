@@ -9,6 +9,16 @@
 
 ## [Unreleased]
 
+### Added
+- **🔌 API Foundation (PR 1 of 6)** — Sanctum-authenticated JSON API for CoVa CLI tool:
+  - `routes/api.php` with `auth:sanctum` + `throttle:60,1` middleware
+  - `EnsureApiAccess` middleware: Free plan returns 403 RFC 7807, Pro/Enterprise passes through
+  - `BlueprintApiController`: `index()` (paginated, org-scoped, plan-gated listing) and `show()` (full resolution via `ResolveBlueprint` with secret masking)
+  - `BlueprintOutput::toApiArray()`: JSON serialization with secret variable masking (`is_secret` → `value: ""`)
+  - `bootstrap/app.php`: API route registration, `api.access` middleware alias, RFC 7807 JSON error rendering for `api/*` routes
+  - **Tests**: 15 new tests (116 assertions) across middleware unit, DTO unit, and controller feature tests
+  - See `openspec/changes/covar-cli/` for full specification
+
 ### Changed
 - **Presets & Skills → Segments** — The toggle-based preset/skill system with HTML markers (`<!-- BEGIN:preset:... -->`) replaced by the new segment CRUD system in TabManager.
 - **Template data format** — Templates in `BlueprintServiceProvider` updated from flat presets/skills arrays to the new `segments[]` format with registry content.
