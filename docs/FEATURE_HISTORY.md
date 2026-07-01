@@ -328,7 +328,7 @@ Además, visitantes autenticados veían la misma landing genérica en lugar de s
 
 Una landing page de alto impacto estructurada en 6 secciones:
 
-1. **Hero**: Terminal animada ejecutando `vault fetch` para demostrar el core loop del producto en segundos
+1. **Hero**: Terminal animada ejecutando `cova vault:fetch` para demostrar el core loop del producto en segundos
 2. **The Pain**: Tres cards que crean empatía con problemas reales (caos del .env, configuración manual, falta de estandarización)
 3. **How it Works**: Define → Publish → Fetch, el flujo completo explicado en 30 segundos
 4. **Marketplace Preview**: Grid con 6 plantillas populares (mock data) que muestran el valor inmediato

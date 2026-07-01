@@ -175,11 +175,11 @@
                 finished: false,
                 running: false,
                 content: customLines || [
-                    { text: '$ vault fetch cova-marketplace/laravel-inertia', cls: 'terminal-prompt' },
+                    { text: '$ cova vault:fetch laravel-inertia', cls: 'terminal-prompt' },
                     { text: '', cls: '' },
                     { text: '> Descargando blueprint...', cls: 'terminal-info' },
                     { text: '> Variables cargadas: 12', cls: 'terminal-info' },
-                    { text: '> Archivos generados: .env, agent.md, .cursorrules', cls: 'terminal-info' },
+                    { text: '> Archivos generados: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json', cls: 'terminal-info' },
                     { text: '', cls: '' },
                     { text: '✅ Entorno listo en 2.4s', cls: 'terminal-success' },
                 ],

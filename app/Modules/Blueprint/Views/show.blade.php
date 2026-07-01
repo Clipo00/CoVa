@@ -131,10 +131,10 @@
                 </div>
                 <div class="mt-3 flex items-center space-x-2">
                     <code class="flex-1 bg-white dark:bg-gray-800 px-3 py-2 rounded text-sm font-mono text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600 select-all">
-                        vault fetch cova/{{ $blueprint->slug }}
+                        cova vault:fetch {{ $blueprint->slug }}
                     </code>
                     <livewire:shared.copy-to-clipboard
-                        :text="'vault fetch cova/' . $blueprint->slug"
+                        :text="'cova vault:fetch ' . $blueprint->slug"
                         :label="__('blueprint.copy_button')"
                         :success-message="__('blueprint.vault_fetch_copied')"
                     />

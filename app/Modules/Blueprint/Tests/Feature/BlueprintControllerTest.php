@@ -192,7 +192,7 @@ class BlueprintControllerTest extends TestCase
         $response->assertStatus(200);
 
         // Vault fetch card
-        $response->assertSee('vault fetch cova/download-test');
+        $response->assertSee('cova vault:fetch download-test');
 
         // Download agent.md button
         $response->assertSee(__('blueprint.download_agent_md'));

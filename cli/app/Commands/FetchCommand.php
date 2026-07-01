@@ -17,15 +17,15 @@ use Illuminate\Console\Command;
  * writing decrypted values.
  *
  * Usage:
- *   covar fetch laravel-api
- *   covar fetch my-blueprint
+ *   cova vault:fetch laravel-api
+ *   cova vault:fetch my-blueprint
  */
 class FetchCommand extends Command
 {
     /**
      * @var string The console command signature.
      */
-    protected $signature = 'fetch
+    protected $signature = 'vault:fetch
         {slug : The blueprint slug to fetch and scaffold}';
 
     /**

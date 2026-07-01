@@ -8,15 +8,15 @@ use App\ApiClient;
 use Illuminate\Console\Command;
 
 /**
- * Store the API key in ~/.config/covar/config.json with restricted permissions (0600).
+ * Store the API key in ~/.config/cova/config.json with restricted permissions (0600).
  *
  * Validates connectivity by calling GET /api/me before saving. Does NOT save
  * invalid or expired keys. The base_url defaults to https://api.cova.app
  * and can be overridden via the --base-url option.
  *
  * Usage:
- *   covar config set-key covar_abc123
- *   covar config set-key covar_abc123 --base-url=https://staging.cova.app
+ *   cova config:set-key cova_abc123
+ *   cova config:set-key cova_abc123 --base-url=https://staging.cova.app
  */
 class ConfigSetKeyCommand extends Command
 {
@@ -24,7 +24,7 @@ class ConfigSetKeyCommand extends Command
      * @var string The console command signature.
      */
     protected $signature = 'config:set-key
-        {key : The API key to store (prefix: covar_)}
+        {key : The API key to store (prefix: cova_)}
         {--base-url= : Override the default API base URL}';
 
     /**
@@ -55,9 +55,9 @@ class ConfigSetKeyCommand extends Command
     {
         $key = $this->argument('key');
 
-        // Validate key format: must start with 'covar_' and meet minimum length
-        if (!str_starts_with($key, 'covar_')) {
-            $this->error('Invalid API key format. Key must start with "covar_".');
+        // Validate key format: must start with 'cova_' and meet minimum length
+        if (!str_starts_with($key, 'cova_')) {
+            $this->error('Invalid API key format. Key must start with "cova_".');
 
             return 1;
         }
@@ -154,6 +154,6 @@ class ConfigSetKeyCommand extends Command
     {
         $home = getenv('HOME') ?: getenv('USERPROFILE');
 
-        return $home . '/.config/covar/config.json';
+        return $home . '/.config/cova/config.json';
     }
 }

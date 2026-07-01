@@ -15,16 +15,16 @@ use Illuminate\Console\Command;
  * description column for each blueprint.
  *
  * Usage:
- *   covar list
- *   covar list -g
- *   covar list --with-descriptions
+ *   cova vault:list
+ *   cova vault:list -g
+ *   cova vault:list --with-descriptions
  */
 class ListCommand extends Command
 {
     /**
      * @var string The console command signature.
      */
-    protected $signature = 'list
+    protected $signature = 'vault:list
         {-g|--with-descriptions : Include the description column}';
 
     /**

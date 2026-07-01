@@ -51,7 +51,7 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
     await page.waitForTimeout(800); // Let Livewire wire:model.live sync
 
     // Click submit — button text is "Crear Organización" (translated)
-    const orgSubmit = page.getByRole('button', { name: /Crear|Create|Guardar/i }).first();
+    const orgSubmit = page.getByRole('button', { name: /Crear Organización|Create Organization/i });
     // Wait for button to be enabled (Livewire validation cleared)
     await expect(orgSubmit).toBeEnabled({ timeout: 5000 });
     await orgSubmit.click();
@@ -171,7 +171,7 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         }
 
         // 1h. Submit form
-        const submitBtn = page.getByRole('button', { name: /Crear|Guardar|Create|Save/i }).last();
+        const submitBtn = page.locator('button[type="submit"]').last();
         await submitBtn.click();
         await page.waitForTimeout(2000);
 
@@ -255,11 +255,7 @@ test.describe('Flow 2: Developer generates API token', () => {
         await page.waitForTimeout(500);
 
         // 2f. Click "Create token" button (toggles the form)
-        // The button text is __()'auth.token_create' — try multiple locators
-        const toggleCreate = page.locator(
-            'button[wire\\:click*="showCreateForm"], ' +
-            'button:has-text("Crear token"), button:has-text("Nuevo")'
-        ).first();
+        const toggleCreate = page.getByRole('button', { name: /Crear token|Create token/i });
         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
         await toggleCreate.click();
         await page.waitForTimeout(500);
@@ -275,9 +271,7 @@ test.describe('Flow 2: Developer generates API token', () => {
         }
 
         // 2h. Submit token creation
-        const submitToken = page.locator(
-            'form[wire\\:submit="createToken"] button[type="submit"]'
-        );
+        const submitToken = page.getByRole('button', { name: /Generar token|Generate token/i });
         await submitToken.click();
         await page.waitForLoadState('networkidle');
 
@@ -343,17 +337,14 @@ test.describe('Flow 3: Pro user subscribes and votes', () => {
         }
 
         // 3f. Subscribe
-        const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i }).first();
+        const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i });
         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await subscribeBtn.click();
             await page.waitForLoadState('networkidle');
         }
 
-        // 3g. Vote up — button with thumbs-up text or vote-up text
-        const upvoteBtn = page.locator(
-            'button:has-text("👍"), [title*="votar positivo"], [aria-label*="upvote"], ' +
-            'button:has-text("Votar positivo"), button:has-text("Upvote")'
-        ).first();
+        // 3g. Vote up — button with title="Votar positivo" (ES) or "Vote up" (EN)
+        const upvoteBtn = page.locator('button[title*="Votar positivo"], button[title*="Vote up"], button[title*="Upvote"]');
         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await upvoteBtn.click();
             await page.waitForTimeout(800);

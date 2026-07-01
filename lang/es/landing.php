@@ -11,7 +11,7 @@ return [
     // Hero
     'hero_title' => 'Olvídate de copiar tus configuraciones de un lado a otro',
     'site_title' => 'CoVa, tu propio espacio',
-    'hero_subtitle' => 'CoVa es tu vault de configuraciones. Define, publica y ejecuta <strong>vault fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
+    'hero_subtitle' => 'CoVa es tu vault de configuraciones. Define, publica y ejecuta <strong>cova vault:fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
     'cta_primary' => 'Empieza gratis',
     'cta_secondary' => 'Ver cómo funciona',
 
@@ -29,8 +29,8 @@ return [
     'step1_title' => 'Crea tu Blueprint',
     'step1_desc' => 'Define variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal.',
     'step2_title' => 'Publícalo o guárdalo',
-    'step2_desc' => 'Mantenlo privado para tu organización o compártelo en el Marketplace para que la comunidad lo use.',
-    'step3_title' => 'Ejecuta vault fetch',
+    'step2_desc' => 'Mantenlo privado para tu organización o compártelo en el Marketplace. Tus secretos nunca abandonan el vault: se quedan cifrados en tu organización. Viaje CERO.',
+    'step3_title' => 'Ejecuta cova vault:fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar.',
     'step3_note' => 'Incluye reglas de contexto IA, scripts post-instalación, extensiones VS Code y servidores MCP.',
 
@@ -122,19 +122,19 @@ return [
     'cta_final_note' => 'No requiere tarjeta de crédito. Plan gratuito disponible.',
 
     // Terminal
-    'terminal_aria_label' => 'Demostración de terminal ejecutando vault fetch',
+    'terminal_aria_label' => 'Demostración de terminal ejecutando cova vault:fetch',
     'terminal_title' => 'Terminal',
     'terminal_caption' => 'un solo comando, todo listo',
-    'terminal_cmd_fetch' => '$ vault fetch cova-marketplace/laravel-inertia',
+    'terminal_cmd_fetch' => '$ cova vault:fetch laravel-inertia',
     'terminal_downloading' => '> Descargando blueprint...',
     'terminal_variables' => '> Variables cargadas: 12',
-    'terminal_files' => '> Archivos generados: .env, agent.md, .cursorrules',
+    'terminal_files' => '> Archivos generados: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json',
     'terminal_presets' => '> Contexto IA: PSR-12, Clean Architecture, React',
     'terminal_scripts' => '> Scripts post-instalación: composer install, npm run build',
     'terminal_ready' => '✅ Entorno listo en 2.4s',
 
     // Hero trust
-    'hero_trust' => 'Tus datos siempre cifrados. Privacidad desde el diseño.',
+    'hero_trust' => 'Tus secretos nunca abandonan el vault. Cifrado de extremo a extremo.',
 
     // Marketplace extra
     'marketplace_more' => 'y muchas plantillas más creadas por la comunidad',

@@ -3,7 +3,7 @@
 > **Objetivo**: Reemplazar la landing default de Laravel por una página de alto impacto que comunique los valores clave de CoVa: **ahorro de tiempo** y **seguridad**.
 > **Estado**: ✅ Implementado — en uso productivo  
 > **Creado**: 2026-05-23  
-> **Última actualización**: 2026-05-28
+> **Última actualización**: 2026-07-01
 
 ---
 
@@ -33,7 +33,7 @@
 |   TÍTULO PRINCIPAL                        +------------------+
 |   Subtítulo explicativo                   |  Terminal        |
 |                                           |  Animada         |
-|   [CTA Primario] [CTA Secundario]         |  (vault fetch)   |
+|   [CTA Primario] [CTA Secundario]         |  (cova vault:fetch) |
 |                                           +------------------+
 |                                                  |
 +--------------------------------------------------+
@@ -41,7 +41,7 @@
 
 **Contenido sugerido**:
 - **Título**: "Olvidate de copiar `.env` de un Slack a otro"
-- **Subtítulo**: "CoVa es tu vault de configuraciones. Definí, publicá y ejecutá `vault fetch`. Tu entorno listo en 3 segundos."
+- **Subtítulo**: "CoVa es tu vault de configuraciones. Definí, publicá y ejecutá `cova vault:fetch`. Tu entorno listo en 3 segundos."
 - **CTA Primario**: "Comenzá Gratis →" (lleva a `/register`)
 - **CTA Secundario**: "Ver cómo funciona" (scroll suave a #how-it-works)
 
@@ -49,10 +49,10 @@
 - Componente visual que simula una terminal oscura (estilo iTerm2 / VS Code terminal).
 - Debe ejecutar una animación de typing que muestre:
   ```
-  $ vault fetch cova-marketplace/laravel-inertia
+  $ cova vault:fetch laravel-inertia
   > Descargando blueprint...
   > Variables cargadas: 12
-  > Archivos generados: .env, agent.md, .cursorrules
+  > Archivos generados: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json
   ✅ Entorno listo en 2.4s
   ```
 - La animación debe ser en loop o reproducirse al entrar en viewport (IntersectionObserver).
@@ -111,7 +111,7 @@
 
 #### Paso 3: Fetch
 - **Icono**: ⚡
-- **Título**: "Ejecutá `vault fetch`"
+   - **Título**: "Ejecutá `cova vault:fetch`"
 - **Descripción**: *"Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar."*
 - **Visual**: Repetición corta del bloque de terminal del Hero.
 
@@ -318,7 +318,7 @@ Agregar en el `<head>` de la landing:
 <meta name="description" content="CoVa: Configurá entornos de desarrollo en segundos. Vault seguro para variables de entorno, blueprints reutilizables y marketplace de plantillas.">
 <meta name="keywords" content="vault, environment variables, developer tools, devops, blueprints, laravel, env">
 <meta property="og:title" content="CoVa — Configuraciones que viajan contigo">
-<meta property="og:description" content="Olvidate de copiar .env de un Slack a otro. Definí, publicá y ejecutá vault fetch.">
+<meta property="og:description" content="Olvidate de copiar .env de un Slack a otro. Definí, publicá y ejecutá cova vault:fetch.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cova.dev"> <!-- ajustar URL real -->
 <meta property="og:image" content="https://cova.dev/og-image.png"> <!-- crear imagen OG -->
@@ -358,7 +358,7 @@ return [
     'step1_desc' => 'Definí variables, archivos...',
     'step2_title' => 'Publicá o Guardalo',
     'step2_desc' => 'Mantenlo privado...',
-    'step3_title' => 'Ejecutá vault fetch',
+    'step3_title' => 'Ejecutá cova vault:fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo...',
 
     // Marketplace

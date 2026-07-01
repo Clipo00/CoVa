@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\RequestException;
 /**
  * Guzzle HTTP client wrapper for the CoVa API.
  *
- * Reads configuration from ~/.config/covar/config.json and handles
+ * Reads configuration from ~/.config/cova/config.json and handles
  * authentication via Bearer token. Maps HTTP errors to user-friendly messages.
  */
 class ApiClient
@@ -172,7 +172,7 @@ class ApiClient
         $status = $response ? $response->getStatusCode() : 0;
 
         $message = match (true) {
-            $status === 401 => 'Authentication failed. Run covar config set-key <key>',
+            $status === 401 => 'Authentication failed. Run cova config:set-key <key>',
             $status === 403 => 'API access requires Pro or Enterprise plan',
             $status === 404 => 'Not found',
             $status === 429 => 'Rate limit exceeded',
@@ -183,7 +183,7 @@ class ApiClient
     }
 
     /**
-     * Load configuration from ~/.config/covar/config.json.
+     * Load configuration from ~/.config/cova/config.json.
      *
      * @return array{base_url: string, api_key: string}
      *
@@ -192,16 +192,16 @@ class ApiClient
     private function loadConfig(): array
     {
         $home = getenv('HOME') ?: getenv('USERPROFILE');
-        $path = $home . '/.config/covar/config.json';
+        $path = $home . '/.config/cova/config.json';
 
         if (!file_exists($path)) {
-            throw new \RuntimeException('Config file not found. Run covar config set-key <key>');
+            throw new \RuntimeException('Config file not found. Run cova config:set-key <key>');
         }
 
         $config = json_decode(file_get_contents($path), true);
 
         if (!is_array($config) || !isset($config['api_key'])) {
-            throw new \RuntimeException('API key not configured. Run covar config set-key <key>');
+            throw new \RuntimeException('API key not configured. Run cova config:set-key <key>');
         }
 
         if (!isset($config['base_url'])) {

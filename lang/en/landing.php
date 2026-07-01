@@ -11,7 +11,7 @@ return [
     // Hero
     'hero_title' => 'Stop copying your configs from one place to another',
     'site_title' => 'CoVa, your own space',
-    'hero_subtitle' => 'CoVa is your configuration vault. Define, publish, and run <strong>vault fetch</strong>. Your environment is ready in seconds, no matter the stack.',
+    'hero_subtitle' => 'CoVa is your configuration vault. Define, publish, and run <strong>cova vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',
 
@@ -29,8 +29,8 @@ return [
     'step1_title' => 'Create your Blueprint',
     'step1_desc' => 'Define variables, config files, and environment rules visually in the dashboard. No terminal needed.',
     'step2_title' => 'Publish or keep it private',
-    'step2_desc' => 'Keep it private for your organization or share it on the Marketplace for the community to use.',
-    'step3_title' => 'Run vault fetch',
+    'step2_desc' => 'Keep it private for your organization or share it on the Marketplace. Your secrets never leave the vault — they stay encrypted in your organization. Zero data travel.',
+    'step3_title' => 'Run cova vault:fetch',
     'step3_desc' => 'A single command and your environment is ready. Variables loaded, files generated, everything in place.',
     'step3_note' => 'Includes AI context rules, post-install scripts, VS Code extensions, and MCP servers.',
 
@@ -122,19 +122,19 @@ return [
     'cta_final_note' => 'No credit card required. Free plan available.',
 
     // Terminal
-    'terminal_aria_label' => 'Terminal demo running vault fetch',
+    'terminal_aria_label' => 'Terminal demo running cova vault:fetch',
     'terminal_title' => 'Terminal',
     'terminal_caption' => 'one command, everything ready',
-    'terminal_cmd_fetch' => '$ vault fetch cova-marketplace/laravel-inertia',
+    'terminal_cmd_fetch' => '$ cova vault:fetch laravel-inertia',
     'terminal_downloading' => '> Downloading blueprint...',
     'terminal_variables' => '> Variables loaded: 12',
-    'terminal_files' => '> Files generated: .env, agent.md, .cursorrules',
+    'terminal_files' => '> Files generated: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json',
     'terminal_presets' => '> AI context: PSR-12, Clean Architecture, React',
     'terminal_scripts' => '> Post-install scripts: composer install, npm run build',
     'terminal_ready' => '✅ Environment ready in 2.4s',
 
     // Hero trust
-    'hero_trust' => 'Your data is always encrypted. Privacy by design.',
+    'hero_trust' => 'Your secrets never leave the vault. End-to-end encrypted.',
 
     // Marketplace extra
     'marketplace_more' => 'and many more templates created by the community',

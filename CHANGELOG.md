@@ -11,15 +11,15 @@
 
 ### Added
 - **📋 CLI List + Help + README (PR 4 of 6)** — Blueprint listing, help improvements, and documentation:
-  - `ListCommand` — `covar list [-g|--with-descriptions]` displays accessible blueprints as a formatted table with slug and title (and descriptions with `-g` flag)
+  - `ListCommand` — `cova vault:list [-g|--with-descriptions]` displays accessible blueprints as a formatted table with slug and title (and descriptions with `-g` flag)
   - Error handling: 401 "Authentication failed", 403 "Plan required", network errors with friendly messages
-  - Clear command descriptions for all commands (visible via `covar help`)
+  - Clear command descriptions for all commands (visible via `cova help`)
   - `cli/README.md` — full installation guide, API key setup, usage examples, troubleshooting, and build instructions
   - **Tests**: 6 new tests for ListCommand (table display, `-g` descriptions, 401/403/network errors, empty state)
   - See `openspec/changes/covar-cli/` for full specification
+- **⏬ CLI Fetch (PR 5 of 6)** — `cova vault:fetch <slug>` scaffolds a full project from a blueprint:
 
-- **⏬ CLI Fetch (PR 5 of 6)** — `covar fetch <slug>` scaffolds a full project from a blueprint:
-  - `FetchCommand` — `covar fetch <slug>` resolves blueprint via `GET /api/blueprints/{slug}` and scaffolds `.agent.md`, `.vscode/extensions.json`, `.vscode/mcp.json`, and `.env` with blueprint variables
+  - `FetchCommand` — `cova vault:fetch <slug>` resolves blueprint via `GET /api/blueprints/{slug}` and scaffolds `.agent.md`, `.vscode/extensions.json`, `.vscode/mcp.json`, and `.env` with blueprint variables
   - Secret double-auth flow: detects `is_secret=true` variables, prompts for password via hidden input (`$this->secret()`), calls `POST /api/fetch/{slug}/verify`, writes decrypted values on success, warns with empty values on failure
   - MCP server mapping: transforms `mcp_servers` array into `{ "mcpServers": { name: { command, args } } }` format for VSCode
   - Graceful 404 handling: "Blueprint not found: {slug}" instead of generic "Not found"
@@ -30,15 +30,15 @@
 - **📦 PHAR Build & E2E Verification (PR 6 of 6)** — Final PR wrapping up the CLI tool with PHAR build, smoke test, and build documentation:
   - `build-phar.php` — standalone build script that replicates Laravel Zero's `app:build` command without needing the Application bootstrap (bypasses PHP 8.4 `method_exists` incompatibility in Laravel Zero v2.0)
   - `cli/BUILD.md` — complete build documentation covering prerequisites, quick build, smoke test, known issues (PHP 8.4 compat, eager command instantiation), CI integration, and release checklist
-  - PHAR binary (~11.5 MB): `php -d phar.readonly=0 build-phar.php` → `cli/builds/covar`
-  - Smoke test passes: `php builds/covar help` shows command list with valid config
+  - PHAR binary (~11.5 MB): `php -d phar.readonly=0 build-phar.php` → `cli/builds/cova`
+  - Smoke test passes: `php builds/cova help` shows command list with valid config
   - Vendor patch documented: PHP 8.4 `method_exists(null, ...)` fix in `vendor/laravel-zero/laravel-zero/app/Console/Application.php`
   - See `openspec/changes/covar-cli/` for full specification
 
 - **🖥️ CLI Foundation (PR 3 of 6)** — Standalone CLI tool in `cli/` for fetching blueprints via API:
-  - Laravel Zero v2.0.14 scaffold: `cli/composer.json`, `cli/config/config.php`, `cli/box.json`, `cli/covar` entry point, `cli/bootstrap/init.php`
-  - `ApiClient` — Guzzle HTTP wrapper with config from `~/.config/covar/config.json`, Bearer token auth, error mapping (401→auth, 403→plan required, 404→not found, 429→rate limit, 500→server error, network→friendly message), methods `get()`, `post()`, `validateConnectivity()`
-  - `ConfigSetKeyCommand` — `covar config set-key <key>` with `--base-url` option, validates via `GET /api/me` before saving, 0600 permissions on Unix, preserves existing `base_url`
+  - Laravel Zero v2.0.14 scaffold: `cli/composer.json`, `cli/config/config.php`, `cli/box.json`, `cli/cova` entry point, `cli/bootstrap/init.php`
+  - `ApiClient` — Guzzle HTTP wrapper with config from `~/.config/cova/config.json`, Bearer token auth, error mapping (401→auth, 403→plan required, 404→not found, 429→rate limit, 500→server error, network→friendly message), methods `get()`, `post()`, `validateConnectivity()`
+  - `ConfigSetKeyCommand` — `cova config:set-key <key>` with `--base-url` option, validates via `GET /api/me` before saving, 0600 permissions on Unix, preserves existing `base_url`
   - **Tests**: 14 tests (ApiClient: auth headers, error mapping, connectivity validation, base_url config; ConfigSetKeyCommand: valid/invalid key, existing config preservation, base-url override, permissions, network errors)
   - See `openspec/changes/covar-cli/` for full specification
 
@@ -241,7 +241,7 @@
 - **💾 Persistencia de idioma en BD** — preferencia de usuario guardada en `users.locale`:
   - Migración `add_locale_to_users_table` — columna `locale` nullable
 - **🏠 Landing Page** — nueva home de alto impacto que comunica ahorro de tiempo y seguridad:
-  - Hero con terminal animada ejecutando `vault fetch` (Alpine.js typing animation)
+  - Hero con terminal animada ejecutando `cova vault:fetch` (Alpine.js typing animation)
   - Sección "Pain Point": 3 cards sobre el caos de compartir .env por Slack
   - Sección "How it Works": 3 pasos (Define → Publish → Fetch) con conectores visuales
   - Marketplace Preview: grid con 6 plantillas populares (mock data)

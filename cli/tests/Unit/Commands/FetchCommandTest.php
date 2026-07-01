@@ -22,7 +22,7 @@ class FetchCommandTest extends TestCase
         parent::setUp();
 
         $this->container = new Container();
-        $this->tempDir = sys_get_temp_dir() . '/covar-fetch-' . bin2hex(random_bytes(4));
+        $this->tempDir = sys_get_temp_dir() . '/cova-fetch-' . bin2hex(random_bytes(4));
         mkdir($this->tempDir, 0755, true);
         $this->originalCwd = getcwd();
         chdir($this->tempDir);
@@ -381,7 +381,7 @@ class FetchCommandTest extends TestCase
     public function handles_401_authentication_error(): void
     {
         $mock = $this->mockApiClient(
-            getException: new \RuntimeException('Authentication failed. Run covar config set-key <key>'),
+            getException: new \RuntimeException('Authentication failed. Run cova config:set-key <key>'),
         );
         $tester = $this->createCommandTester($mock);
 

@@ -133,7 +133,7 @@ class ListCommandTest extends TestCase
     {
         $mock = $this->mockApiClient(
             null,
-            new \RuntimeException('Authentication failed. Run covar config set-key <key>')
+            new \RuntimeException('Authentication failed. Run cova config:set-key <key>')
         );
         $tester = $this->createCommandTester($mock);
 

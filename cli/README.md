@@ -13,13 +13,13 @@ A command-line tool to list and fetch CoVa blueprints from your terminal.
 
 ```bash
 # Download the CLI tool
-curl -L -o covar https://co-v-a.com/downloads/covar.phar
+curl -L -o cova https://co-v-a.com/downloads/cova.phar
 
 # Make it executable
-chmod +x covar
+chmod +x cova
 
 # Move it to a directory in your PATH
-sudo mv covar /usr/local/bin/
+sudo mv cova /usr/local/bin/
 ```
 
 ### Option 2: Run from source
@@ -32,7 +32,7 @@ cd cli
 composer install
 
 # Run the CLI
-php covar help
+php cova help
 ```
 
 ## Quick Start
@@ -40,15 +40,15 @@ php covar help
 ### 1. Set your API key
 
 ```bash
-covar config:set-key covar_your_api_token_here
+cova config:set-key cova_your_api_token_here
 ```
 
-The CLI validates the key immediately by connecting to the CoVa API. If the key is valid, it's saved to `~/.config/covar/config.json` with restricted permissions.
+The CLI validates the key immediately by connecting to the CoVa API. If the key is valid, it's saved to `~/.config/cova/config.json` with restricted permissions.
 
 ### 2. List your blueprints
 
 ```bash
-covar list
+cova vault:list
 ```
 
 Shows a table of all blueprints you have access to:
@@ -65,7 +65,7 @@ Shows a table of all blueprints you have access to:
 Include descriptions:
 
 ```bash
-covar list -g
+cova vault:list -g
 ```
 
 ```
@@ -79,7 +79,7 @@ covar list -g
 ### 3. Fetch a blueprint
 
 ```bash
-covar fetch <slug>
+cova vault:fetch <slug>
 ```
 
 Scaffolds the blueprint files in your current directory: `.agent.md`, VSCode extensions, MCP configuration, and `.env`.
@@ -91,8 +91,8 @@ If the blueprint contains secret variables, you will be prompted for a password 
 | Command | Description |
 |---------|-------------|
 | `config:set-key <key>` | Set and validate your CoVa API key |
-| `list` | List accessible blueprints |
-| `fetch <slug>` | Fetch and scaffold a blueprint |
+| `vault:list` | List accessible blueprints |
+| `vault:fetch <slug>` | Fetch and scaffold a blueprint |
 | `help` | Show help and available commands |
 
 ## Troubleshooting
@@ -102,7 +102,7 @@ If the blueprint contains secret variables, you will be prompted for a password 
 Your API key is invalid or expired. Generate a new one from your CoVa profile settings and run:
 
 ```bash
-covar config:set-key covar_your_new_token
+cova config:set-key cova_your_new_token
 ```
 
 ### "API access requires Pro or Enterprise plan"
@@ -118,7 +118,7 @@ Check your internet connection and ensure the CoVa API is accessible. If you're 
 You haven't set an API key yet. Run:
 
 ```bash
-covar config:set-key covar_your_token_here
+cova config:set-key cova_your_token_here
 ```
 
 ### Using a custom API base URL
@@ -126,12 +126,12 @@ covar config:set-key covar_your_token_here
 If you're using a staging or self-hosted version of CoVa:
 
 ```bash
-covar config:set-key covar_your_token --base-url=https://your-instance.cova.app
+cova config:set-key cova_your_token --base-url=https://your-instance.cova.app
 ```
 
 ## Security
 
-- Your API key is stored in `~/.config/covar/config.json` with `0600` permissions (Unix only)
+- Your API key is stored in `~/.config/cova/config.json` with `0600` permissions (Unix only)
 - The key is sent as a Bearer token in the `Authorization` header for all API requests
 - All communication uses HTTPS
 - Secret variables are never displayed in plain text — password verification is required to decrypt them
@@ -141,7 +141,7 @@ covar config:set-key covar_your_token --base-url=https://your-instance.cova.app
 ```bash
 cd cli
 composer install
-php covar app:build
+php cova app:build
 ```
 
 The PHAR will be created in `builds/`.
