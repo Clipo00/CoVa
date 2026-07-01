@@ -80,7 +80,7 @@
                         <div class="flex flex-wrap gap-1 mb-4">
                             @foreach($blueprint->tags as $tag)
                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                                    {{ $tag->tag }}
+                                    {{ $tag->name }}
                                 </span>
                             @endforeach
                         </div>

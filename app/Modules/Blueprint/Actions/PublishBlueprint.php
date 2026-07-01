@@ -92,7 +92,6 @@ class PublishBlueprint
             'slug' => $blueprint->slug,
             'title' => $blueprint->title,
             'description' => $blueprint->description,
-            'category_id' => $blueprint->category_id,
             'is_public' => true,
             'tabs_config' => $blueprint->tabs_config,
             'created_by' => $user->id,
@@ -113,7 +112,6 @@ class PublishBlueprint
         $copy->update([
             'title' => $original->title,
             'description' => $original->description,
-            'category_id' => $original->category_id,
             'tabs_config' => $original->tabs_config,
         ]);
 
@@ -133,9 +131,6 @@ class PublishBlueprint
         }
 
         // Sync tags
-        $copy->tags()->delete();
-        foreach ($original->tags as $tag) {
-            $copy->tags()->create(['tag' => $tag->tag]);
-        }
+        $copy->tags()->sync($original->tags->pluck('id'));
     }
 }
