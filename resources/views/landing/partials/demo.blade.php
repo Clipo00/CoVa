@@ -16,16 +16,27 @@
             x-data="{
                 current: 0,
                 interval: null,
+                paused: false,
                 slides: [
                     { id: 'dashboard', label: '{{ __('landing.demo_dashboard') }}' },
                     { id: 'org', label: '{{ __('landing.demo_org') }}' },
                     { id: 'blueprint', label: '{{ __('landing.demo_blueprint') }}' },
-                    { id: 'ai-context', label: '{{ __('landing.demo_ai_context') }}' }
+                    { id: 'tabs', label: '{{ __('landing.demo_tabs') }}' }
                 ],
                 start() {
+                    if (this.paused) return;
+                    clearInterval(this.interval);
                     this.interval = setInterval(() => {
                         this.next();
-                    }, 4000);
+                    }, 5000);
+                },
+                pause() {
+                    this.paused = true;
+                    clearInterval(this.interval);
+                },
+                resume() {
+                    this.paused = false;
+                    this.start();
                 },
                 next() {
                     this.current = (this.current + 1) % this.slides.length;
@@ -36,10 +47,12 @@
                 go(index) {
                     clearInterval(this.interval);
                     this.current = index;
-                    this.start();
+                    if (!this.paused) this.start();
                 }
             }"
             x-init="start()"
+            @mouseenter="pause()"
+            @mouseleave="resume()"
         >
             {{-- Slides container --}}
             <div class="relative aspect-[16/10] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -55,7 +68,6 @@
                     x-transition:leave-end="opacity-0 -translate-x-8"
                     class="absolute inset-0 flex flex-col"
                 >
-                    {{-- Browser chrome --}}
                     <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                         <div class="flex gap-1.5">
                             <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -68,7 +80,6 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Dashboard content --}}
                     <div class="flex-1 p-6 overflow-hidden">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ __('landing.demo_dash_title') }}</h3>
@@ -78,7 +89,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Stats row --}}
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
                                 <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">3</p>
@@ -93,7 +103,6 @@
                                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_dash_vars') }}</p>
                             </div>
                         </div>
-                        {{-- Org cards --}}
                         <div class="space-y-2">
                             <div class="flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
                                 <div class="flex items-center gap-3">
@@ -130,7 +139,6 @@
                     x-transition:leave-end="opacity-0 -translate-x-8"
                     class="absolute inset-0 flex flex-col"
                 >
-                    {{-- Browser chrome --}}
                     <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                         <div class="flex gap-1.5">
                             <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -143,21 +151,16 @@
                             </div>
                         </div>
                     </div>
-                    {{-- Form content --}}
                     <div class="flex-1 p-6 overflow-hidden">
                         <div class="max-w-md mx-auto">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">{{ __('landing.demo_org_title') }}</h3>
-
                             <div class="space-y-4">
-                                {{-- Name field --}}
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_org_name_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
                                         {{ __('landing.demo_org_name_placeholder') }}
                                     </div>
                                 </div>
-
-                                {{-- Slug field --}}
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_org_slug_label') }}</label>
                                     <div class="block w-full px-3 py-2 bg-gray-100 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg text-sm text-gray-500 dark:text-gray-400">
@@ -165,8 +168,6 @@
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_org_slug_help') }}</p>
                                 </div>
-
-                                {{-- Plan selector --}}
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('landing.demo_org_plan_label') }}</label>
                                     <div class="space-y-2">
@@ -190,8 +191,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- Submit button --}}
                                 <div class="pt-4">
                                     <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg text-center opacity-90">
                                         {{ __('landing.demo_org_submit') }}
@@ -202,86 +201,7 @@
                     </div>
                 </div>
 
-                {{-- AI Context slide --}}
-                <div
-                    x-show="current === 3"
-                    x-transition:enter="transition ease-out duration-500"
-                    x-transition:enter-start="opacity-0 translate-x-8"
-                    x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition ease-in duration-300"
-                    x-transition:leave-start="opacity-100 translate-x-0"
-                    x-transition:leave-end="opacity-0 -translate-x-8"
-                    class="absolute inset-0 flex flex-col"
-                >
-                    {{-- Browser chrome --}}
-                    <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                        <div class="flex gap-1.5">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
-                        </div>
-                        <div class="flex-1 mx-4">
-                            <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                cova.app/blueprints/configure
-                            </div>
-                        </div>
-                    </div>
-                    {{-- AI Context content --}}
-                    <div class="flex-1 p-6 overflow-hidden">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{{ __('landing.demo_ai_title') }}</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('landing.demo_ai_desc') }}</p>
-                        <div class="grid grid-cols-2 gap-4 h-[calc(100%-5rem)]">
-                            {{-- Left: Presets --}}
-                            <div class="space-y-2">
-                                <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{{ __('landing.demo_ai_presets') }}</h4>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_preset_psr12') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_solid') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_preset_clean') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_laravel') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_preset_ts') }}</span>
-                                </div>
-                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ __('landing.demo_ai_count') }}</p>
-                            </div>
-                            {{-- Right: Skills --}}
-                            <div class="space-y-2">
-                                <h4 class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{{ __('landing.demo_ai_skills') }}</h4>
-                                <div class="flex flex-wrap gap-1.5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_skill_stripe') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_skill_tailwind') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-300 dark:ring-indigo-700">{{ __('landing.demo_ai_skill_react') }}</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">{{ __('landing.demo_ai_skill_vue') }}</span>
-                                </div>
-                                {{-- Output preview --}}
-                                <div class="mt-4 bg-gray-50 dark:bg-gray-700/50 rounded-md p-3">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="px-1.5 py-0.5 text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 rounded">agent.md</span>
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_ai_output') }}</span>
-                                    </div>
-                                    <pre class="text-xs text-gray-600 dark:text-gray-400 font-mono leading-relaxed overflow-hidden"># Agent Context
-
-## PSR-12 Coding Standard
-Follow PSR-12 coding standard...
-
-## Clean Architecture
-Follow Clean Architecture principles...
-
----
-
-## Stripe Integration
-When integrating Stripe payments...
-
----
-
-## React Expert
-Follow React best practices...</pre>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Create Blueprint slide --}}
+                {{-- Create Blueprint slide (single column, card-based) --}}
                 <div
                     x-show="current === 2"
                     x-transition:enter="transition ease-out duration-500"
@@ -292,7 +212,6 @@ Follow React best practices...</pre>
                     x-transition:leave-end="opacity-0 -translate-x-8"
                     class="absolute inset-0 flex flex-col"
                 >
-                    {{-- Browser chrome --}}
                     <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                         <div class="flex gap-1.5">
                             <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -305,99 +224,252 @@ Follow React best practices...</pre>
                             </div>
                         </div>
                     </div>
-                    {{-- Blueprint form content --}}
-                    <div class="flex-1 p-6 overflow-hidden">
-                        <div class="grid grid-cols-2 gap-6 h-full">
-                            {{-- Left: Form --}}
-                            <div class="space-y-4">
+                    <div class="flex-1 p-4 overflow-y-auto space-y-3">
+                        {{-- Card 1: General Information --}}
+                        <div class="bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                            <div class="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 border-b border-indigo-100 dark:border-indigo-800/30">
+                                <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                <span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300">{{ __('landing.demo_bp_title') }}</span>
+                            </div>
+                            <div class="p-4 space-y-3">
+                                {{-- Organization selector --}}
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_title_label') }}</label>
-                                    <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
-                                        {{ __('landing.demo_bp_title_placeholder') }}
+                                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_org_label') }}</label>
+                                    <div class="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
+                                        <span class="w-5 h-5 rounded bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400">M</span>
+                                        {{ __('landing.demo_dash_org_name') }}
+                                        <svg class="w-3.5 h-3.5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_desc_label') }}</label>
-                                    <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                        {{ __('landing.demo_bp_desc_placeholder') }}
+                                {{-- Title + Slug --}}
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div class="col-span-2">
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_title_label') }}</label>
+                                        <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100">
+                                            {{ __('landing.demo_bp_title_placeholder') }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Slug</label>
+                                        <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 font-mono">
+                                            laravel-inertia
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('landing.demo_bp_cat_label') }}</label>
-                                    <div class="block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                        {{ __('landing.demo_bp_cat_placeholder') }}
+                                {{-- Category + Description --}}
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_cat_label') }}</label>
+                                        <div class="flex items-center px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('landing.demo_bp_cat_placeholder') }}
+                                            <svg class="w-3.5 h-3.5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_desc_label') }}</label>
+                                        <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
+                                            {{ __('landing.demo_bp_desc_placeholder') }}
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="pt-2">
-                                    <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg text-center opacity-90">
-                                        {{ __('landing.demo_bp_submit') }}
+                        {{-- Card 2: Environment Variables --}}
+                        <div class="bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                            <div class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-100 dark:border-emerald-800/30">
+                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-4.25-4.25 7.07-7.07 4.25 4.25-7.07 7.07z"/></svg>
+                                <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-300">{{ __('landing.demo_bp_vars_title') }}</span>
+                                <span class="ml-auto text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/40 px-2 py-0.5 rounded-full">5</span>
+                            </div>
+                            <div class="p-3">
+                                {{-- Simplified table --}}
+                                <div class="text-xs">
+                                    <div class="grid grid-cols-12 gap-2 mb-1.5 px-2 text-gray-400 dark:text-gray-500">
+                                        <span class="col-span-4">KEY</span>
+                                        <span class="col-span-3">GROUP</span>
+                                        <span class="col-span-5">VALUE</span>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <div class="grid grid-cols-12 gap-2 items-center px-2 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded">
+                                            <span class="col-span-4 font-mono text-gray-700 dark:text-gray-300 text-[11px]">{{ __('landing.demo_bp_var_host') }}</span>
+                                            <span class="col-span-3"><span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-gray-500 dark:text-gray-400">database</span></span></span>
+                                            <span class="col-span-5 font-mono text-gray-600 dark:text-gray-400 text-[11px]">{{ __('landing.demo_bp_var_value_localhost') }}</span>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 items-center px-2 py-1.5 rounded">
+                                            <span class="col-span-4 font-mono text-gray-700 dark:text-gray-300 text-[11px]">{{ __('landing.demo_bp_var_db') }}</span>
+                                            <span class="col-span-3"><span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-gray-500 dark:text-gray-400">database</span></span></span>
+                                            <span class="col-span-5 font-mono text-gray-600 dark:text-gray-400 text-[11px]">{{ __('landing.demo_bp_var_value_myapp') }}</span>
+                                        </div>
+                                        <div class="grid grid-cols-12 gap-2 items-center px-2 py-1.5 bg-gray-50 dark:bg-gray-700/50 rounded">
+                                            <span class="col-span-4 font-mono text-gray-700 dark:text-gray-300 text-[11px]">{{ __('landing.demo_bp_var_app_name') }}</span>
+                                            <span class="col-span-3"><span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-gray-500 dark:text-gray-400">app</span></span></span>
+                                            <span class="col-span-5 font-mono text-gray-600 dark:text-gray-400 text-[11px]">{{ __('landing.demo_bp_var_value_app') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Card 3: Tabs (preview of AI Context inside) --}}
+                        <div class="bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                            <div class="flex items-center gap-2 px-4 py-2.5 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30">
+                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                                <span class="text-xs font-semibold text-amber-700 dark:text-amber-300">Tabs</span>
+                                <span class="ml-auto text-[10px] text-gray-400">1 tab</span>
+                            </div>
+                            <div class="p-3">
+                                {{-- AI Context tab card --}}
+                                <div class="border border-indigo-200 dark:border-indigo-700 rounded-lg overflow-hidden">
+                                    <div class="flex items-center gap-2 px-3 py-2 bg-indigo-50 dark:bg-indigo-900/20">
+                                        <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">IA</span>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400">agent.md</span>
+                                        <svg class="w-3.5 h-3.5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                    <div class="p-3 grid grid-cols-2 gap-2">
+                                        <div>
+                                            <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">{{ __('landing.demo_tabs_presets_label') }}</span>
+                                            <div class="mt-1 flex flex-wrap gap-1">
+                                                <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_ai_preset_psr12') }}</span>
+                                                <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_ai_preset_clean') }}</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">{{ __('landing.demo_tabs_skills_label') }}</span>
+                                            <div class="mt-1 flex flex-wrap gap-1">
+                                                <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_stripe') }}</span>
+                                                <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_react') }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Submit button --}}
+                        <div class="pt-1">
+                            <div class="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl text-center shadow-sm">
+                                {{ __('landing.demo_bp_submit') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tabs Configuration slide (replaces old AI Context) --}}
+                <div
+                    x-show="current === 3"
+                    x-transition:enter="transition ease-out duration-500"
+                    x-transition:enter-start="opacity-0 translate-x-8"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    x-transition:leave="transition ease-in duration-300"
+                    x-transition:leave-start="opacity-100 translate-x-0"
+                    x-transition:leave-end="opacity-0 -translate-x-8"
+                    class="absolute inset-0 flex flex-col"
+                >
+                    <div class="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                        <div class="flex gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <div class="flex-1 mx-4">
+                            <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
+                                cova.app/blueprints/create
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-4 overflow-y-auto">
+                        <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">{{ __('landing.demo_tabs_title') }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">{{ __('landing.demo_tabs_subtitle') }}</p>
+
+                        {{-- Tab cards stack --}}
+                        <div class="space-y-2 mb-4">
+                            {{-- VSCode Extensions tab --}}
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden opacity-50">
+                                <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20">
+                                    <span class="text-[10px] font-bold text-blue-600 dark:text-blue-400">EXT</span>
+                                    <span class="text-xs text-gray-500">.vscode/extensions.json</span>
+                                    <span class="ml-auto text-[10px] text-gray-400">0 items</span>
+                                </div>
+                            </div>
+
+                            {{-- MCP Servers tab --}}
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden opacity-50">
+                                <div class="flex items-center gap-2 px-3 py-2 bg-purple-50 dark:bg-purple-900/20">
+                                    <span class="text-[10px] font-bold text-purple-600 dark:text-purple-400">MCP</span>
+                                    <span class="text-xs text-gray-500">.vscode/mcp.json</span>
+                                    <span class="ml-auto text-[10px] text-gray-400">0 servers</span>
+                                </div>
+                            </div>
+
+                            {{-- AI Context tab (expanded, active) --}}
+                            <div class="border-2 border-indigo-300 dark:border-indigo-700 rounded-lg overflow-hidden shadow-sm">
+                                <div class="flex items-center gap-2 px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/30">
+                                    <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">IA</span>
+                                    <span class="text-xs font-medium text-gray-700 dark:text-gray-300">agent.md</span>
+                                    <span class="ml-auto text-[10px] text-indigo-500">2 presets · 2 skills</span>
+                                </div>
+                                <div class="p-3 bg-white dark:bg-gray-800 space-y-2.5">
+                                    {{-- Presets dropdown --}}
+                                    <div>
+                                        <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_tabs_presets_label') }}</label>
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_ai_preset_psr12') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_ai_preset_clean') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
+                                            <span class="px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-[11px] text-gray-400">+</span>
+                                        </div>
+                                    </div>
+                                    {{-- Skills dropdown --}}
+                                    <div>
+                                        <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_tabs_skills_label') }}</label>
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_ai_skill_stripe') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_ai_skill_react') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
+                                            <span class="px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-[11px] text-gray-400">+</span>
+                                        </div>
+                                    </div>
+                                    {{-- Generated content preview --}}
+                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded p-2.5">
+                                        <span class="text-[10px] font-semibold text-amber-600 dark:text-amber-400"># agent.md</span>
+                                        <pre class="text-[10px] text-gray-500 dark:text-gray-400 font-mono mt-1 leading-relaxed overflow-hidden">## PSR-12 Coding Standard
+Follow PSR-12 coding standard for all PHP files...
+
+## Clean Architecture
+Follow Clean Architecture principles with domain layer...</pre>
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- Right: Variables preview --}}
-                            <div class="border-l border-gray-200 dark:border-gray-600 pl-6">
-                                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('landing.demo_bp_vars_title') }}</h4>
-                                
-                                {{-- Group: .env --}}
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-1.5 mb-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_env') }}</span>
-                                    </div>
-                                    <div class="space-y-1 pl-3.5 border-l-2 border-emerald-200 dark:border-emerald-800/50">
-                                        <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_host') }}</span>
-                                            <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_localhost') }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_db') }}</span>
-                                            <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_myapp') }}</span>
-                                        </div>
-                                    </div>
+                            {{-- Scripts tab --}}
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden opacity-50">
+                                <div class="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20">
+                                    <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">SH</span>
+                                    <span class="text-xs text-gray-500">post-install scripts</span>
+                                    <span class="ml-auto text-[10px] text-gray-400">0 scripts</span>
                                 </div>
+                            </div>
+                        </div>
 
-                                {{-- Group: .env.testing --}}
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-1.5 mb-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_testing') }}</span>
-                                    </div>
-                                    <div class="space-y-1 pl-3.5 border-l-2 border-blue-200 dark:border-blue-800/50">
-                                        <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_db') }}</span>
-                                            <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_test') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Group: config/app.php --}}
-                                <div class="mb-3">
-                                    <div class="flex items-center gap-1.5 mb-1.5">
-                                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                                        <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 font-mono">{{ __('landing.demo_bp_file_config') }}</span>
-                                    </div>
-                                    <div class="space-y-1 pl-3.5 border-l-2 border-amber-200 dark:border-amber-800/50">
-                                        <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_app_name') }}</span>
-                                            <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ __('landing.demo_bp_var_value_app') }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-2 py-1">
-                                            <span class="text-xs font-mono text-gray-700 dark:text-gray-300">{{ __('landing.demo_bp_var_app_key') }}</span>
-                                            <span class="text-xs text-gray-500">=</span>
-                                            <span class="text-xs text-gray-500">{{ __('landing.demo_bp_var_value_hidden') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">{{ __('landing.demo_bp_vars_count') }}</p>
+                        {{-- Add Tab buttons row --}}
+                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                            <p class="text-[10px] font-medium text-gray-400 dark:text-gray-500 mb-2">{{ __('landing.demo_tabs_add') }}</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1.5 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-medium">{{ __('landing.demo_tabs_vscode') }}</span>
+                                <span class="px-2.5 py-1.5 border border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 rounded-lg text-[10px] font-medium">{{ __('landing.demo_tabs_mcp') }}</span>
+                                <span class="px-2.5 py-1.5 border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 rounded-lg text-[10px] font-medium">{{ __('landing.demo_tabs_scripts') }}</span>
+                                <span class="px-2.5 py-1.5 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 rounded-lg text-[10px] font-medium bg-indigo-50 dark:bg-indigo-900/20">{{ __('landing.demo_tabs_ai') }}</span>
                             </div>
                         </div>
                     </div>
