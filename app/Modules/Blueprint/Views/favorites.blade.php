@@ -12,7 +12,7 @@
         </div>
 
         @if($favoriteBlueprints->isEmpty())
-            <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-12 text-center">
+            <div class=" bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-12 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
@@ -39,12 +39,6 @@
                                                 <span class="mx-1">·</span>
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">
                                                     {{ __('blueprint.badge_public') }}
-                                                </span>
-                                            @endif
-                                            @if($blueprint->category)
-                                                <span class="mx-1">·</span>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">
-                                                    {{ $blueprint->category->name }}
                                                 </span>
                                             @endif
                                         </p>

@@ -62,11 +62,6 @@
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             {{ $blueprint->title }}
                         </h3>
-                        @if($blueprint->category)
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300">
-                                {{ $blueprint->category->name }}
-                            </span>
-                        @endif
                     </div>
 
                     @if($blueprint->description)

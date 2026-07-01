@@ -26,12 +26,6 @@
                             </span>
                         </div>
 
-                        @if($blueprint->category)
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">
-                                {{ $blueprint->category->name }}
-                            </span>
-                        @endif
-
                         @if($blueprint->description)
                             <p class="mt-4 text-gray-600 dark:text-gray-300">{{ $blueprint->description }}</p>
                         @endif

@@ -159,11 +159,6 @@
                                 <div class="flex justify-between items-center">
                                     <span class="font-medium text-indigo-600 dark:text-indigo-400">{{ $blueprint->title }}</span>
                                     <div class="flex items-center space-x-2">
-                                        @if($blueprint->category)
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-                                                {{ $blueprint->category->name }}
-                                            </span>
-                                        @endif
                                         <span class="text-xs text-gray-400">{{ $blueprint->created_at->diffForHumans() }}</span>
                                     </div>
                                 </div>
