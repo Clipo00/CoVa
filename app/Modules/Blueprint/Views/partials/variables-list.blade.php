@@ -3,7 +3,7 @@
     $canViewSecrets = $canViewSecrets ?? false;
 @endphp
 
-<div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+<div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
     <button type="button" @click="open = !open" class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
         <div class="flex items-center space-x-3">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h2>

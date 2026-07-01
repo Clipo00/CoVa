@@ -39,14 +39,18 @@
         </div>
 
         {{-- Header --}}
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-6 mb-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $blueprint->title }}</h1>
-                    @if($blueprint->category)
-                        <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">
-                            {{ $blueprint->category->name }}
-                        </span>
+                    @if($blueprint->tags->isNotEmpty())
+                        <div class="flex flex-wrap items-center gap-2 mt-2">
+                            @foreach($blueprint->tags as $tag)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
+                                    {{ $tag->name }}
+                                </span>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
                 <div class="mt-4 sm:mt-0 flex items-center space-x-3">
@@ -145,7 +149,7 @@
         {{-- Vote Section --}}
         @if(config('marketplace.enabled') && $blueprint->is_public)
             @can('vote', $blueprint)
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 p-4 mb-6">
                     <div class="flex items-center justify-center space-x-6">
                         <form method="POST" action="{{ route('blueprints.vote', $blueprint->uuid) }}" class="inline">
                             @csrf
@@ -174,7 +178,7 @@
         @endif
 
         {{-- Variables Section (collapsible) --}}
-        <div x-data='{ open: true, envContent: @json($envTemplate) }' class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+        <div x-data='{ open: true, envContent: @json($envTemplate) }' class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
             <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h2>
@@ -286,7 +290,7 @@
 
         {{-- Agent Context Section (collapsible) --}}
         @if($agentMd)
-            <div x-data='{ open: true, agentContent: @json($agentMd), segments: @json($segments) }' class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+            <div x-data='{ open: true, agentContent: @json($agentMd), segments: @json($segments) }' class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.agent_context') }}</h2>
@@ -342,7 +346,7 @@
 
         {{-- VSCode Extensions Section (collapsible) --}}
         @if(count($extensions) > 0)
-            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.vscode_extensions') }}</h2>
@@ -379,7 +383,7 @@
 
         {{-- Scripts Section (collapsible) --}}
         @if(!empty($scripts))
-            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.scripts_section') }}</h2>
@@ -421,7 +425,7 @@
 
         {{-- MCP Servers Section (collapsible) --}}
         @if(!empty($mcpServers))
-            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow rounded-lg mb-6 overflow-hidden">
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
                 <button type="button" @click="open = !open" class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <div class="flex items-center space-x-3">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.mcp_servers') }}</h2>
