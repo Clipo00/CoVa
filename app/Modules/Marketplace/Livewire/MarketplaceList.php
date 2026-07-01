@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Livewire;
 
+use App\Models\Tag;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Blueprint\Models\BlueprintTag;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -30,7 +30,7 @@ class MarketplaceList extends Component
         return Blueprint::whereHas('organization', fn ($q) => $q->where('slug', 'cova-marketplace'))
             ->where('is_public', true)
             ->when($this->search, fn ($q) => $q->where('title', 'like', "%{$this->search}%"))
-            ->when($this->selectedTags, fn ($q) => $q->whereHas('tags', fn ($t) => $t->whereIn('tag', $this->selectedTags)))
+            ->when($this->selectedTags, fn ($q) => $q->whereHas('tags', fn ($t) => $t->whereIn('name', $this->selectedTags)))
             ->when($this->sort === 'rating', fn ($q) => $q->orderBy('votes_count', 'desc'))
             ->when($this->sort === 'subscribers', fn ($q) => $q->orderBy('subscribers_count', 'desc'))
             ->when($this->sort === 'recent', fn ($q) => $q->orderBy('created_at', 'desc'))
@@ -40,10 +40,10 @@ class MarketplaceList extends Component
 
     public function getAvailableTagsProperty()
     {
-        return BlueprintTag::select('tag')
+        return Tag::select('name')
             ->distinct()
-            ->orderBy('tag')
-            ->pluck('tag');
+            ->orderBy('name')
+            ->pluck('name');
     }
 
     public function toggleTag(string $tag): void

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Marketplace\Tests\Feature;
 
+use App\Models\Tag;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Blueprint\Models\BlueprintTag;
 use App\Modules\Marketplace\Livewire\MarketplaceList;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
@@ -388,8 +388,8 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        BlueprintTag::create(['blueprint_id' => $laravelBp->id, 'tag' => 'laravel']);
-        BlueprintTag::create(['blueprint_id' => $reactBp->id, 'tag' => 'react']);
+        $laravelBp->tags()->attach(Tag::findOrCreate('laravel')->id);
+        $reactBp->tags()->attach(Tag::findOrCreate('react')->id);
 
         Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['laravel'])
@@ -443,10 +443,10 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        BlueprintTag::create(['blueprint_id' => $fullstack->id, 'tag' => 'laravel']);
-        BlueprintTag::create(['blueprint_id' => $fullstack->id, 'tag' => 'react']);
-        BlueprintTag::create(['blueprint_id' => $pythonApp->id, 'tag' => 'python']);
-        BlueprintTag::create(['blueprint_id' => $anotherBp->id, 'tag' => 'go']);
+        $fullstack->tags()->attach(Tag::findOrCreate('laravel')->id);
+        $fullstack->tags()->attach(Tag::findOrCreate('react')->id);
+        $pythonApp->tags()->attach(Tag::findOrCreate('python')->id);
+        $anotherBp->tags()->attach(Tag::findOrCreate('go')->id);
 
         Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['laravel', 'react'])
@@ -481,7 +481,7 @@ class MarketplaceListTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        BlueprintTag::create(['blueprint_id' => $bp->id, 'tag' => 'laravel']);
+        $bp->tags()->attach(Tag::findOrCreate('laravel')->id);
 
         Livewire::test(MarketplaceList::class)
             ->set('selectedTags', ['nonexistent'])
