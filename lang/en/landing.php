@@ -9,7 +9,7 @@ return [
     'register' => 'Register',
 
     // Hero
-    'hero_title' => 'Stop copying your configs from one place to another',
+    'hero_title' => 'Your environment, one command.',
     'site_title' => 'CoVa, your own space',
     'hero_subtitle' => 'CoVa is your configuration vault. Define, publish, and run <strong>cova vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
     'cta_primary' => 'Get Started Free',
@@ -48,6 +48,7 @@ return [
     'demo_dashboard' => 'Dashboard',
     'demo_org' => 'Create Organization',
     'demo_blueprint' => 'Create Blueprint',
+    'demo_tabs' => 'Tabs',
     'demo_ai_context' => 'AI Context',
     'demo_prev' => 'Previous',
     'demo_next' => 'Next',
@@ -78,6 +79,7 @@ return [
     'demo_org_submit' => 'Create Organization',
 
     // Demo slides - Create Blueprint
+    'demo_bp_org_label' => 'Organization',
     'demo_bp_title' => 'Create Blueprint',
     'demo_bp_title_label' => 'Title',
     'demo_bp_title_placeholder' => 'Laravel + Inertia + Tailwind',
@@ -100,6 +102,17 @@ return [
     'demo_bp_var_value_app' => 'MyApp',
     'demo_bp_var_value_hidden' => '••••••••',
     'demo_bp_vars_count' => '5 variables in 3 files',
+
+    // Demo slides - Tabs
+    'demo_tabs_title' => 'Tab Configuration',
+    'demo_tabs_subtitle' => 'Each aspect of your blueprint is configured in its own tab: extensions, MCP, scripts, and AI context.',
+    'demo_tabs_presets_label' => 'Presets',
+    'demo_tabs_skills_label' => 'Skills',
+    'demo_tabs_add' => 'Add Tab',
+    'demo_tabs_vscode' => 'Extensions',
+    'demo_tabs_mcp' => 'MCP',
+    'demo_tabs_scripts' => 'Scripts',
+    'demo_tabs_ai' => 'AI',
 
     // Demo slides - AI Context
     'demo_ai_title' => 'AI Context Configuration',

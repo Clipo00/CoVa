@@ -40,7 +40,7 @@
 ```
 
 **Contenido sugerido**:
-- **Título**: "Olvidate de copiar `.env` de un Slack a otro"
+- **Título**: "Tu entorno, en un comando."
 - **Subtítulo**: "CoVa es tu vault de configuraciones. Definí, publicá y ejecutá `cova vault:fetch`. Tu entorno listo en 3 segundos."
 - **CTA Primario**: "Comenzá Gratis →" (lleva a `/register`)
 - **CTA Secundario**: "Ver cómo funciona" (scroll suave a #how-it-works)
@@ -318,7 +318,7 @@ Agregar en el `<head>` de la landing:
 <meta name="description" content="CoVa: Configurá entornos de desarrollo en segundos. Vault seguro para variables de entorno, blueprints reutilizables y marketplace de plantillas.">
 <meta name="keywords" content="vault, environment variables, developer tools, devops, blueprints, laravel, env">
 <meta property="og:title" content="CoVa — Configuraciones que viajan contigo">
-<meta property="og:description" content="Olvidate de copiar .env de un Slack a otro. Definí, publicá y ejecutá cova vault:fetch.">
+<meta property="og:description" content="Tu entorno, en un comando. Definí, publicá y ejecutá cova vault:fetch.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cova.dev"> <!-- ajustar URL real -->
 <meta property="og:image" content="https://cova.dev/og-image.png"> <!-- crear imagen OG -->
@@ -338,7 +338,7 @@ Ejemplo de estructura:
 
 return [
     // Hero
-    'hero_title' => 'Olvidate de copiar .env de un Slack a otro',
+    'hero_title' => 'Tu entorno, en un comando.',
     'hero_subtitle' => 'CoVa es tu vault de configuraciones...',
     'cta_primary' => 'Comenzá Gratis',
     'cta_secondary' => 'Ver cómo funciona',

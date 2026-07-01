@@ -9,7 +9,7 @@ return [
     'register' => 'Registrarse',
 
     // Hero
-    'hero_title' => 'Olvídate de copiar tus configuraciones de un lado a otro',
+    'hero_title' => 'Tu entorno, en un comando.',
     'site_title' => 'CoVa, tu propio espacio',
     'hero_subtitle' => 'CoVa es tu vault de configuraciones. Define, publica y ejecuta <strong>cova vault:fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
     'cta_primary' => 'Empieza gratis',
@@ -79,6 +79,7 @@ return [
     'demo_org_submit' => 'Crear Organización',
 
     // Demo slides - Crear Blueprint
+    'demo_bp_org_label' => 'Organización',
     'demo_bp_title' => 'Crear Blueprint',
     'demo_bp_title_label' => 'Título',
     'demo_bp_title_placeholder' => 'Laravel + Inertia + Tailwind',
@@ -101,6 +102,17 @@ return [
     'demo_bp_var_value_app' => 'MyApp',
     'demo_bp_var_value_hidden' => '••••••••',
     'demo_bp_vars_count' => '5 variables en 3 ficheros',
+
+    // Demo slides - Tabs
+    'demo_tabs_title' => 'Configuración por Tabs',
+    'demo_tabs_subtitle' => 'Cada aspecto de tu blueprint se configura en su propia pestaña: extensiones, MCP, scripts y contexto IA.',
+    'demo_tabs_presets_label' => 'Presets',
+    'demo_tabs_skills_label' => 'Skills',
+    'demo_tabs_add' => 'Añadir Tab',
+    'demo_tabs_vscode' => 'Extensiones',
+    'demo_tabs_mcp' => 'MCP',
+    'demo_tabs_scripts' => 'Scripts',
+    'demo_tabs_ai' => 'IA',
 
     // Demo slides - AI Context
     'demo_ai_title' => 'Configuración de Contexto IA',
