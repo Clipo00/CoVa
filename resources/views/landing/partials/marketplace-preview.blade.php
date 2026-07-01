@@ -13,7 +13,7 @@
                 @foreach ($publicBlueprints as $blueprint)
                     <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200/60 dark:border-gray-700/60 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 focus:outline-none" tabindex="0" role="article" x-data x-reveal>
                         {{-- Card header --}}
-                        <div class="flex items-start gap-3 mb-4">
+                        <div class="flex items-start gap-3 mb-3">
                             <span class="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center font-bold text-sm text-indigo-600 dark:text-indigo-400" aria-hidden="true">
                                 {{ strtoupper(mb_substr($blueprint->title, 0, 1)) }}
                             </span>
@@ -21,25 +21,28 @@
                                 <h3 class="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
                                     {{ $blueprint->title }}
                                 </h3>
-                                @if($blueprint->category)
-                                    <span class="inline-block mt-1 text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                                        {{ $blueprint->category->name }}
-                                    </span>
-                                @endif
                             </div>
                         </div>
 
-                        {{-- Description --}}
-                        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-3">
-                            {{ $blueprint->description ?: __('landing.marketplace_no_desc') }}
+                        {{-- Description (truncated) --}}
+                        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-2 mb-3">
+                            {{ \Illuminate\Support\Str::limit($blueprint->description ?: __('landing.marketplace_no_desc'), 100) }}
                         </p>
 
-                        {{-- Footer: organization name --}}
-                        @if($blueprint->organization)
-                            <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700/50">
-                                <span class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $blueprint->organization->name }}
-                                </span>
+                        {{-- Tags --}}
+                        @php
+                            $blueprintTags = $blueprint->tags()->take(4)->get();
+                        @endphp
+                        @if($blueprintTags->isNotEmpty())
+                            <div class="flex flex-wrap gap-1 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                                @foreach($blueprintTags as $tag)
+                                    <span class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full text-[10px] font-medium">
+                                        {{ $tag->name }}
+                                    </span>
+                                @endforeach
+                                @if($blueprint->tags()->count() > 4)
+                                    <span class="px-2 py-0.5 text-[10px] text-gray-400">+{{ $blueprint->tags()->count() - 4 }}</span>
+                                @endif
                             </div>
                         @endif
                     </div>

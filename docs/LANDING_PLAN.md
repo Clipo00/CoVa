@@ -9,16 +9,39 @@
 
 ## 1. Mensaje Clave y Proposición de Valor
 
-**Mensaje principal**: *"Configurá entornos de desarrollo en segundos, no en horas. Seguro, privado y reproducible."*
+**Mensaje principal**: *"Configura entornos de desarrollo en segundos, no en horas. Seguro, privado y reproducible."*
 
 **Pilares comunicativos**:
 1. **Tiempo**: El caos de configurar proyectos desde cero es real. CoVa lo elimina.
-2. **Seguridad**: No más `.env` en Slack. Las variables viven en un vault cifrado.
-3. **Reusabilidad**: Creá una vez, usá siempre. Compartí en tu equipo o con la comunidad.
+2. **Seguridad**: No más `.env` en Slack. Las variables viven en un vault cifrado. Tus secretos nunca abandonan el vault.
+3. **Reusabilidad**: Crea una vez, usa siempre. Comparte en tu equipo o con la comunidad.
 
 ---
 
 ## 2. Estructura de la Landing
+
+La landing usa una **barra de navegación única** con tabs integrados:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 🔒 CoVa │ Inicio Demo Precios Marketplace Guía rápida │ 🌙 🌐 👤 │
+└──────────────────────────────────────────────────────────┘
+```
+
+**Tabs:**
+| Tab | Contenido |
+|-----|-----------|
+| **Inicio** | Hero section + Pain Points + How it Works (3 pasos) |
+| **Demo** | Carrusel de 4 slides (Dashboard → Crear Org → Crear Blueprint → Tabs) |
+| **Precios** | Tabla de planes Free / Pro / Enterprise |
+| **Marketplace** | Blueprints públicos de la DB — tarjetas con nombre, descripción, categoría |
+| **Guía rápida** | Instalación del CLI en 3 pasos + tabla de comandos |
+
+**Componentes:**
+- El `x-data` de Alpine.js está en el `<body>` del layout, compartido entre nav y contenido
+- Los tabs sincronizan con el hash de la URL (`#demo`, `#precios`)
+- El CTA Final está fuera de los tabs, siempre visible al final de la página
+- Login/Register condensados en un solo icono de usuario
 
 ### 2.1 Hero Section
 
@@ -98,22 +121,16 @@
 **Pasos**:
 
 #### Paso 1: Define
-- **Icono**: 🎨 o un ícono de editar/crear
 - **Título**: "Crea tu Blueprint"
-- **Descripción**: *"Definí variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal."*
-- **Visual**: Mockup pequeño del formulario de creación de blueprint (screenshot o representación simplificada).
+- **Descripción**: *"Define variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal."*
 
 #### Paso 2: Publish
-- **Icono**: 🚀
-- **Título**: "Publicá o Guardalo"
-- **Descripción**: *"Mantenlo privado para tu organización o compartilo en el CoVa Marketplace para que la comunidad lo use."*
-- **Visual**: Badge/toggle animado que muestra "Privado → Público".
+- **Título**: "Publícalo o guárdalo"
+- **Descripción**: *"Mantenlo privado para tu organización o compártelo en el Marketplace. Tus secretos nunca abandonan el vault: se quedan cifrados en tu organización. Viaje CERO."*
 
 #### Paso 3: Fetch
-- **Icono**: ⚡
-   - **Título**: "Ejecutá `cova vault:fetch`"
+- **Título**: "Ejecuta cova vault:fetch"
 - **Descripción**: *"Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar."*
-- **Visual**: Repetición corta del bloque de terminal del Hero.
 
 **Conectores**: Líneas o flechas entre los pasos (en desktop) que indiquen progresión.
 
@@ -123,56 +140,20 @@
 
 ### 2.4 Marketplace Preview
 
-**Posición**: Siguiente sección, fondo alternativo.
-
-**Título**: "Empezá con una plantilla lista para usar"
-
-**Layout**: Grid de cards (3 columnas en desktop, 1 en mobile).
-
-**Cards de ejemplo** (mockup, no requiere datos reales de BD para la landing):
+El tab Marketplace muestra blueprints públicos directamente desde la base de datos. Solo se muestran tarjetas con nombre, descripción y categoría — sin votaciones ni enlaces de interacción. Si no hay blueprints públicos, se muestra un empty state.
 1. **"Laravel + Inertia + Tailwind"**
    - Badge: "Popular"
    - Descripción corta: "Configuración completa para un stack moderno de Laravel."
-   - Stats: "1.2k descargas" (mock)
-   - Autor: "CoVa Team"
+### 2.5 Guía rápida (Docs)
 
-2. **"React + TypeScript + Vite"**
-   - Badge: "Nuevo"
-   - Descripción corta: "Entorno frontend con reglas de Cursor y MCP listos."
-   - Stats: "850 descargas" (mock)
-   - Autor: "CoVa Team"
+Tab con la guía de instalación del CLI en 3 pasos:
+1. Instalar la CLI (descargar PHAR, hacer ejecutable, mover a PATH)
+2. Autenticarse con API key (`cova config:set-key`)
+3. Listar y ejecutar blueprints (`cova vault:list`, `cova vault:fetch`)
 
-3. **"Node.js API + PostgreSQL"**
-   - Badge: "Backend"
-   - Descripción corta: "Variables de conexión, seeds y configuración de Docker."
-   - Stats: "600 descargas" (mock)
-   - Autor: "CoVa Team"
+Incluye una tabla de referencia de comandos y una nota de seguridad sobre el almacenamiento local de la API key y el cifrado de secretos.
 
-4. **"Python + FastAPI + SQLModel"**
-   - Badge: "Backend"
-   - Descripción corta: "Stack Python moderno con configuración de entorno lista."
-   - Stats: "430 descargas" (mock)
-   - Autor: "CoVa Team"
-
-5. **"Vue 3 + Nuxt + Supabase"**
-   - Badge: "Fullstack"
-   - Descripción corta: "Configuración completa para apps Vue con backend serverless."
-   - Stats: "720 descargas" (mock)
-   - Autor: "CoVa Team"
-
-6. **"Go + Gin + PostgreSQL"**
-   - Badge: "Backend"
-   - Descripción corta: "API en Go con configuración de entorno y Docker."
-   - Stats: "310 descargas" (mock)
-   - Autor: "CoVa Team"
-
-**CTA debajo del grid**: "Explorar el Marketplace →" (lleva a `/blueprints` o una ruta de marketplace futura).
-
-**Animación**: Cards aparecen con stagger al hacer scroll. Hover: elevación sutil (`translateY(-4px)` + sombra).
-
----
-
-### 2.5 CTA Final
+### 2.6 CTA Final
 
 **Posición**: Última sección antes del footer.
 
@@ -238,17 +219,21 @@
 
 | Ruta | Descripción |
 |------|-------------|
-| `resources/views/landing/index.blade.php` | Vista principal de la landing (reemplaza a `welcome.blade.php`) |
-| `resources/views/landing/partials/hero.blade.php` | Sección Hero (reutilizable) |
+| `resources/views/layouts/landing.blade.php` | Layout con nav única (logo + tabs + acciones) y x-data Alpine |
+| `resources/views/landing/index.blade.php` | Vista principal con tab panels |
+| `resources/views/landing/partials/hero.blade.php` | Sección Hero con terminal animada |
 | `resources/views/landing/partials/pain-point.blade.php` | Sección de dolor |
 | `resources/views/landing/partials/how-it-works.blade.php` | 3 pasos |
-| `resources/views/landing/partials/marketplace-preview.blade.php` | Preview del marketplace |
+| `resources/views/landing/partials/demo.blade.php` | Carrusel de 4 slides |
+| `resources/views/landing/partials/pricing.blade.php` | Tabla de precios |
+| `resources/views/landing/partials/marketplace-preview.blade.php` | Tarjetas de blueprints públicos (DB real) |
+| `resources/views/landing/partials/docs.blade.php` | Guía rápida de instalación del CLI |
 | `resources/views/landing/partials/cta-final.blade.php` | CTA final |
-| `resources/views/landing/partials/footer.blade.php` | Footer de la landing |
+| `resources/views/landing/partials/footer.blade.php` | Footer |
 | `resources/views/components/animated-terminal.blade.php` | Componente Blade reutilizable de terminal |
 | `resources/js/landing.js` | JS específico de la landing (terminal, scroll reveal) |
-| `lang/es/landing.php` | Traducciones en español |
-| `lang/en/landing.php` | Traducciones en inglés |
+| `lang/es/landing.php` | Traducciones en español (~230 claves) |
+| `lang/en/landing.php` | Traducciones en inglés (~230 claves) |
 
 ### Archivos a Modificar
 
@@ -407,7 +392,8 @@ resources/views/landing/index.blade.php    <-- incluye partials
 
 El `landing.blade.php` incluye:
 - `<head>` con meta tags SEO
-- Nav minimalista (solo logo, login, register, theme toggle)
+- Nav única con logo, tabs de navegación y acciones (tema, idioma, usuario)
+- El `x-data` de Alpine.js en el `<body>` para compartir estado entre nav y contenido
 - `@yield('content')`
 - Footer
 - Script de `landing.js`
@@ -441,9 +427,13 @@ Usar los colores existentes del tema de CoVa (indigo/slate), pero para la landin
 
 1. **✅ Landing implementada**: Todos los items del checklist completados.
 2. **Refinamientos posteriores**:
-   - ~~Simplificar logo~~ ✅ (2026-05-28): Sin recuadro, dial más grande
-   - ~~Agregar favicon~~ ✅ (2026-05-28): Logo SVG en pestañas del navegador
-   - ~~Fix i18n demo + terminal~~ ✅ (2026-05-28): Textos hardcodeados extraídos a traducciones
+   - ~~Simplificar logo~~ ✅ (2026-05-28)
+   - ~~Agregar favicon~~ ✅ (2026-05-28)
+   - ~~Fix i18n demo + terminal~~ ✅ (2026-05-28)
+   - ~~Reestructura en tabs~~ ✅ (2026-07-01): 5 tabs con nav única, demo actualizado, marketplace con datos reales
+   - ~~Sección Docs~~ ✅ (2026-07-01): Guía rápida de instalación del CLI
+   - ~~Demo alineado con UI real~~ ✅ (2026-07-01): Slides reflejan el layout de cards actual
+   - ~~Estilos visuales unificados~~ ✅ (2026-07-01): Formularios y vistas con rounded-xl, headers coloreados
    - Auditoría Lighthouse Performance/Accessibility
    - Imagen OG para social sharing
    - Analytics en CTAs (futuro)
