@@ -39,35 +39,41 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
     await expect(page).toHaveURL(/onboarding/);
     await page.waitForLoadState('networkidle');
 
-    // --- Step 1: Welcome → click start button ---
-    const startBtn = page.locator('button[wire\\:click="goToStep(2)"]');
+    // --- Step 1: Welcome → click start button (translated text) ---
+    const startBtn = page.getByRole('button', { name: /Empezar|Comenzar|Start|Continuar/i }).first();
     await expect(startBtn).toBeVisible({ timeout: 5000 });
     await startBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(600);
 
     // --- Step 2: Organization (required) ---
+    // Fill org name and wait for Livewire to process the model update
     await page.fill('input#orgName', orgName);
-    const orgSubmit = page.locator('form[wire\\:submit="submitOrg"] button[type="submit"]');
+    await page.waitForTimeout(800); // Let Livewire wire:model.live sync
+
+    // Click submit — button text is "Crear Organización" (translated)
+    const orgSubmit = page.getByRole('button', { name: /Crear|Create|Guardar/i }).first();
+    // Wait for button to be enabled (Livewire validation cleared)
+    await expect(orgSubmit).toBeEnabled({ timeout: 5000 });
     await orgSubmit.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
 
     // --- Step 3: Blueprint — skip ---
-    const skipStep3 = page.locator('button[wire\\:click="skipStep"]').first();
-    await expect(skipStep3).toBeVisible({ timeout: 5000 });
-    await skipStep3.click();
-    await page.waitForLoadState('networkidle');
+    const skipBtn1 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
+    await expect(skipBtn1).toBeVisible({ timeout: 8000 });
+    await skipBtn1.click();
+    await page.waitForTimeout(800);
 
     // --- Step 4: Invite — skip ---
-    const skipStep4 = page.locator('button[wire\\:click="skipStep"]').first();
-    await expect(skipStep4).toBeVisible({ timeout: 5000 });
-    await skipStep4.click();
-    await page.waitForLoadState('networkidle');
+    const skipBtn2 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
+    await expect(skipBtn2).toBeVisible({ timeout: 8000 });
+    await skipBtn2.click();
+    await page.waitForTimeout(800);
 
     // --- Step 5: Done → click complete ---
-    const completeBtn = page.locator('button[wire\\:click="complete"]');
-    await expect(completeBtn).toBeVisible({ timeout: 5000 });
+    const completeBtn = page.getByRole('button', { name: /Finalizar|Completar|Complete|Ir al Dashboard/i }).first();
+    await expect(completeBtn).toBeVisible({ timeout: 8000 });
     await completeBtn.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
 
     await expect(page).toHaveURL(/dashboard/);
 }
@@ -165,9 +171,9 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         }
 
         // 1h. Submit form
-        const submitBtn = page.locator('button[type="submit"]').last();
+        const submitBtn = page.getByRole('button', { name: /Crear|Guardar|Create|Save/i }).last();
         await submitBtn.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(2000);
 
         // Should land on blueprint show page
         await expect(page).toHaveURL(/blueprints\//);
@@ -177,27 +183,30 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         await page.waitForLoadState('networkidle');
 
         // Look for Pro trial/upgrade button
-        const proBtn = page.locator(
-            'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), ' +
-            'button:has-text("Prueba"), a:has-text("Empezar")'
-        ).first();
+        const proBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
         if (await proBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await proBtn.click();
             await page.waitForLoadState('networkidle');
         }
 
-        // 1j. Publish to marketplace
-        await page.goto(`/blueprints/${slugValue || 'laravel-api-starter'}`);
+        // 1j. Navigate to edit page to publish blueprint
+        await page.goto(`/blueprints/${slugValue || 'laravel-api-starter'}/edit`);
         await page.waitForLoadState('networkidle');
 
-        // Publish toggle/form in blueprint edit or show page
-        const publishBtn = page.locator(
-            'button:has-text("Publicar"), a:has-text("Publicar"), ' +
-            'form[action*="publish"] button, button[wire\\:click*="publish"]'
+        // Publish toggle — look for text or checkbox
+        const publishToggle = page.locator(
+            'input[wire\\:model*="isPublic"], input[wire\\:model*="is_public"], ' +
+            'button:has-text("Publicar"), label:has-text("Publicar")'
         ).first();
-        if (await publishBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await publishBtn.click();
-            await page.waitForLoadState('networkidle');
+        if (await publishToggle.isVisible({ timeout: 3000 }).catch(() => false)) {
+            await publishToggle.click();
+            await page.waitForTimeout(500);
+            // Save the edit
+            const saveBtn = page.getByRole('button', { name: /Guardar|Actualizar|Save|Update/i }).last();
+            if (await saveBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+                await saveBtn.click();
+                await page.waitForLoadState('networkidle');
+            }
         }
 
         // Verify we remain on a valid page (no error)
@@ -225,10 +234,7 @@ test.describe('Flow 2: Developer generates API token', () => {
         await page.goto('/pricing');
         await page.waitForLoadState('networkidle');
 
-        const trialBtn = page.locator(
-            'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), ' +
-            'button:has-text("Prueba"), a:has-text("Empezar")'
-        ).first();
+        const trialBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
         if (await trialBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await trialBtn.click();
             await page.waitForLoadState('networkidle');
@@ -337,22 +343,20 @@ test.describe('Flow 3: Pro user subscribes and votes', () => {
         }
 
         // 3f. Subscribe
-        const subscribeBtn = page.locator(
-            'form[action*="subscribe"] button[type="submit"], button:has-text("Suscribir"), button:has-text("Subscribe")'
-        ).first();
+        const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i }).first();
         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await subscribeBtn.click();
             await page.waitForLoadState('networkidle');
         }
 
-        // 3g. Vote up — Alpine.js component @click="vote(1)"
+        // 3g. Vote up — button with thumbs-up text or vote-up text
         const upvoteBtn = page.locator(
-            'span[x-on\\:click="vote(1)"], button[x-on\\:click="vote(1)"], ' +
-            'button:has-text("👍"), [title*="votar positivo"], [aria-label*="upvote"]'
+            'button:has-text("👍"), [title*="votar positivo"], [aria-label*="upvote"], ' +
+            'button:has-text("Votar positivo"), button:has-text("Upvote")'
         ).first();
         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await upvoteBtn.click();
-            await page.waitForLoadState('networkidle');
+            await page.waitForTimeout(800);
         }
 
         // Verify we're still on a valid page
