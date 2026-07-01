@@ -29,4 +29,12 @@ $app->add(
     $app['app']->make(App\Commands\ConfigSetKeyCommand::class)
 );
 
+$app->add(
+    $app['app']->make(App\Commands\ListCommand::class)
+);
+
+$app->add(
+    $app['app']->make(App\Commands\FetchCommand::class)
+);
+
 $app->run();

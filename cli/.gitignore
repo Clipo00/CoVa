@@ -1,3 +1,4 @@
 /vendor/
 /builds/*.phar
+/builds/covar
 /.phpunit.result.cache
