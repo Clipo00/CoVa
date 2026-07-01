@@ -94,9 +94,17 @@
                 const h = window.location.hash.replace('#', '');
                 if (this.tabs.includes(h)) {
                     this.activeTab = h;
-                    // Scroll to top when coming from footer links (user is scrolled down)
-                    if (window.scrollY > window.innerHeight) {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    // When coming from footer links (scrolled down), scroll to the section
+                    // after the tab panel becomes visible via x-show transition
+                    if (window.scrollY > 200) {
+                        setTimeout(() => {
+                            const el = document.getElementById(h);
+                            if (el) {
+                                const navHeight = 56;
+                                const top = el.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                                window.scrollTo({ top, behavior: 'smooth' });
+                            }
+                        }, 300);
                     }
                 }
             });
