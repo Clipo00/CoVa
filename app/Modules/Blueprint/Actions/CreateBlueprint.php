@@ -17,9 +17,9 @@ class CreateBlueprint
         string $title,
         string $slug,
         ?string $description = null,
-        ?int $categoryId = null,
         array $tabsConfig = [],
         array $variables = [],
+        array $tagIds = [],
     ): Blueprint {
         $plan = $organization->plan;
         $maxBlueprints = $plan->max_blueprints_per_org;
@@ -42,7 +42,6 @@ class CreateBlueprint
         $blueprint = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $organization->id,
-            'category_id' => $categoryId,
             'slug' => $slug,
             'title' => $title,
             'description' => $description,
@@ -67,6 +66,11 @@ class CreateBlueprint
                 'section_color' => $variableData['section_color'] ?? null,
                 'sort_order' => $index,
             ]);
+        }
+
+        // Sync tags (limit enforced at form validation level — max 6)
+        if (!empty($tagIds)) {
+            $blueprint->tags()->sync($tagIds);
         }
 
         return $blueprint;

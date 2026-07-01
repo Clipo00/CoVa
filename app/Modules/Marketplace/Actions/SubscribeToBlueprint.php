@@ -51,7 +51,6 @@ class SubscribeToBlueprint
             'slug' => $blueprint->slug.'-'.substr((string) Uuid::generate(), 0, 8),
             'title' => $blueprint->title,
             'description' => $blueprint->description,
-            'category_id' => $blueprint->category_id,
             'is_public' => false,
             'tabs_config' => $blueprint->tabs_config,
             'created_by' => $user->id,

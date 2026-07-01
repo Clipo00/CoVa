@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Livewire\Forms;
 
+use App\Models\Tag;
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Shared\Models\Category;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -26,11 +26,11 @@ class BlueprintEditForm extends Component
 
     public string $description = '';
 
-    public ?int $categoryId = null;
-
     public bool $isPublic = false;
 
     public array $tabsConfig = [];
+
+    public array $selectedTags = [];
 
     public function mount(Blueprint $blueprint): void
     {
@@ -38,8 +38,8 @@ class BlueprintEditForm extends Component
         $this->title = $blueprint->title;
         $this->slug = $blueprint->slug;
         $this->description = $blueprint->description ?? '';
-        $this->categoryId = $blueprint->category_id;
         $this->isPublic = (bool) $blueprint->is_public;
+        $this->selectedTags = $blueprint->tags()->pluck('tags.id')->toArray();
 
         // Ensure tabs_config is a proper array (not null)
         $raw = $blueprint->tabs_config;
@@ -68,7 +68,8 @@ class BlueprintEditForm extends Component
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'selectedTags' => ['array', 'max:6'],
+            'selectedTags.*' => ['integer', 'exists:tags,id'],
             'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());
     }
@@ -90,11 +91,6 @@ class BlueprintEditForm extends Component
         $this->tabsConfig = $tabs;
     }
 
-    public function updatingCategoryId($value): void
-    {
-        $this->categoryId = $value === '' ? null : $value;
-    }
-
     public function updatedTitle(): void
     {
         $this->slug = Str::slug($this->title);
@@ -102,7 +98,6 @@ class BlueprintEditForm extends Component
 
     public function submit(UpdateBlueprint $updateBlueprint): void
     {
-        $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
         $this->cleanEmptyVariables();
         $this->assignSectionColors();
 
@@ -132,6 +127,18 @@ class BlueprintEditForm extends Component
             return;
         }
 
+        // Validate unique slug within the organization (excluding self)
+        $slugExists = Blueprint::where('organization_id', $this->blueprint->organization_id)
+            ->where('slug', $validated['slug'])
+            ->where('id', '!=', $this->blueprint->id)
+            ->exists();
+
+        if ($slugExists) {
+            $this->addError('slug', __('blueprint.slug_exists', ['slug' => $validated['slug']]));
+
+            return;
+        }
+
         try {
             // Normalize tabsConfig: ensure each tab has type and config
             $tabsForDb = array_values(array_map(fn ($tab) => [
@@ -145,11 +152,11 @@ class BlueprintEditForm extends Component
                     'title' => $validated['title'],
                     'slug' => $validated['slug'],
                     'description' => $validated['description'] ?: null,
-                    'category_id' => $validated['categoryId'],
                     'is_public' => $this->isPublic,
                     'tabs_config' => $tabsForDb,
                 ],
                 variables: $this->variables,
+                tagIds: $validated['selectedTags'] ?? [],
             );
 
             $this->redirect(route('blueprints.show', $this->blueprint->slug));
@@ -164,9 +171,9 @@ class BlueprintEditForm extends Component
 
     public function render()
     {
-        $categories = Category::all();
+        $allTags = Tag::orderBy('name')->get();
 
-        return view('blueprint::livewire.forms.blueprint-edit-form', compact('categories'));
+        return view('blueprint::livewire.forms.blueprint-edit-form', compact('allTags'));
     }
 
     /**

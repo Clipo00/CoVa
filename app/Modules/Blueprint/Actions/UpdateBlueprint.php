@@ -13,7 +13,8 @@ class UpdateBlueprint
     public function execute(
         Blueprint $blueprint,
         array $data,
-        array $variables = []
+        array $variables = [],
+        array $tagIds = [],
     ): Blueprint {
         // Extraer variables del data si viene ahí
         if (isset($data['variables'])) {
@@ -66,6 +67,9 @@ class UpdateBlueprint
         if ($blueprint->is_public && $blueprint->subscribers_count > 0) {
             NotifySubscribers::dispatch($blueprint->id, 'blueprint_updated');
         }
+
+        // Sync tags
+        $blueprint->tags()->sync($tagIds);
 
         return $blueprint->fresh();
     }

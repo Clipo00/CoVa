@@ -6,7 +6,6 @@ namespace App\Modules\Blueprint\Livewire\Tables;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
-use App\Modules\Shared\Models\Category;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -16,7 +15,6 @@ class BlueprintList extends Component
 
     public array $filters = [
         'organizations' => [],
-        'categories' => [],
     ];
 
     public bool $showFilters = false;
@@ -53,7 +51,7 @@ class BlueprintList extends Component
 
     public function clearFilters(): void
     {
-        $this->filters = ['organizations' => [], 'categories' => []];
+        $this->filters = ['organizations' => []];
         $this->showFilters = false;
 
         if ($this->preserveFilters) {
@@ -84,21 +82,9 @@ class BlueprintList extends Component
             ->get();
     }
 
-    public function getCategoriesProperty()
-    {
-        $userOrgIds = auth()->user()->organizations()->pluck('organizations.id');
-
-        return Category::select('id', 'name')
-            ->whereHas('blueprints', function ($query) use ($userOrgIds) {
-                $query->whereIn('organization_id', $userOrgIds);
-            })
-            ->orderBy('name')
-            ->get();
-    }
-
     public function getActiveFilterCountProperty(): int
     {
-        return count($this->filters['organizations']) + count($this->filters['categories']);
+        return count($this->filters['organizations']);
     }
 
     // ──────────────────────────────────────────────
@@ -126,13 +112,10 @@ class BlueprintList extends Component
                     $query->whereIn('organization_id', $validIds);
                 }
             })
-            ->when($this->filters['categories'], function ($query) {
-                $query->whereIn('category_id', $this->filters['categories']);
-            })
             ->when($this->publicOnly, function ($query) {
                 $query->where('is_public', true);
             })
-            ->with(['organization', 'category'])
+            ->with(['organization', 'tags'])
             ->orderBy('created_at', 'desc')
             ->get();
 

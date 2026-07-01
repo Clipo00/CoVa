@@ -18,7 +18,7 @@ Route::get('/', function () {
     $publicBlueprints = $marketplaceEnabled
         ? Blueprint::query()
             ->where('is_public', true)
-            ->with(['organization', 'category'])
+            ->with(['organization', 'tags'])
             ->latest()
             ->take(6)
             ->get()

@@ -16,7 +16,8 @@ class DatabaseMigrationTest extends TestCase
     {
         $this->assertTrue(Schema::hasTable('blueprint_subscriptions'));
         $this->assertTrue(Schema::hasTable('blueprint_votes'));
-        $this->assertTrue(Schema::hasTable('blueprint_tags'));
+        $this->assertTrue(Schema::hasTable('blueprint_tag'));
+        $this->assertTrue(Schema::hasTable('tags'));
         $this->assertTrue(Schema::hasTable('notifications'));
     }
 
@@ -53,13 +54,16 @@ class DatabaseMigrationTest extends TestCase
 
     public function test_blueprint_tags_schema(): void
     {
-        $columns = Schema::getColumnListing('blueprint_tags');
+        // Tags table
+        $tagColumns = Schema::getColumnListing('tags');
+        $this->assertContains('id', $tagColumns);
+        $this->assertContains('name', $tagColumns);
+        $this->assertContains('slug', $tagColumns);
 
-        $this->assertContains('id', $columns);
-        $this->assertContains('blueprint_id', $columns);
-        $this->assertContains('tag', $columns);
-        $this->assertContains('created_at', $columns);
-        $this->assertContains('updated_at', $columns);
+        // Pivot table
+        $pivotColumns = Schema::getColumnListing('blueprint_tag');
+        $this->assertContains('blueprint_id', $pivotColumns);
+        $this->assertContains('tag_id', $pivotColumns);
     }
 
     public function test_notifications_schema(): void

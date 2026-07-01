@@ -124,6 +124,18 @@ class OnboardingWizard extends Component
 
         try {
             $slug = Str::slug($this->bpTitle);
+
+            // Validate unique slug within the organization
+            $slugExists = \App\Modules\Blueprint\Models\Blueprint::where('organization_id', $org->id)
+                ->where('slug', $slug)
+                ->exists();
+
+            if ($slugExists) {
+                $this->addError('bpTitle', __('blueprint.slug_exists', ['slug' => $slug]));
+
+                return;
+            }
+
             $createBlueprint->execute(
                 organization: $org,
                 title: $this->bpTitle,

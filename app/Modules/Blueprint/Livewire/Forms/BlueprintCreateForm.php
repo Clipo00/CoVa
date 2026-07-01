@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Livewire\Forms;
 
+use App\Models\Tag;
 use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Exceptions\MaxBlueprintsReachedException;
@@ -11,7 +12,6 @@ use App\Modules\Blueprint\Exceptions\MaxVariablesReachedException;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Organization\Models\Organization;
-use App\Modules\Shared\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -37,11 +37,11 @@ class BlueprintCreateForm extends Component
 
     public string $description = '';
 
-    public ?int $categoryId = null;
-
     public array $tabsConfig = [];
 
     public string $selectedTemplate = '';
+
+    public array $selectedTags = [];
 
     public function mount(): void
     {
@@ -89,14 +89,10 @@ class BlueprintCreateForm extends Component
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'selectedTags' => ['array', 'max:6'],
+            'selectedTags.*' => ['integer', 'exists:tags,id'],
             'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());
-    }
-
-    public function updatingCategoryId($value): void
-    {
-        $this->categoryId = $value === '' ? null : $value;
     }
 
     public function updatedTitle(): void
@@ -125,7 +121,6 @@ class BlueprintCreateForm extends Component
 
     public function submit(CreateBlueprint $createBlueprint): void
     {
-        $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
         $this->cleanEmptyVariables();
         $this->assignSectionColors();
 
@@ -194,9 +189,9 @@ class BlueprintCreateForm extends Component
                 title: $validated['title'],
                 slug: $validated['slug'],
                 description: $validated['description'] ?: null,
-                categoryId: $validated['categoryId'],
                 tabsConfig: $tabsForDb,
                 variables: $this->variables,
+                tagIds: $validated['selectedTags'] ?? [],
             );
 
             $this->redirect(route('blueprints.show', $blueprint->slug));
@@ -215,10 +210,10 @@ class BlueprintCreateForm extends Component
 
     public function render()
     {
-        $categories = Category::all();
         $templates = app('blueprint.templates');
+        $allTags = Tag::orderBy('name')->get();
 
-        return view('blueprint::livewire.forms.blueprint-create-form', compact('categories', 'templates'));
+        return view('blueprint::livewire.forms.blueprint-create-form', compact('templates', 'allTags'));
     }
 
     /**
