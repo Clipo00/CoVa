@@ -79,42 +79,42 @@ sudo mv cova /usr/local/bin/</code></pre>
 <span class="text-green-400"># {{ __('landing.docs_step3_cmd2') }}</span>
 <span class="text-cyan-400">$</span> cova vault:fetch mi-blueprint</code></pre>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        {{-- Command reference table --}}
-        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-200/60 dark:border-gray-700/60" x-data x-reveal>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                {{ __('landing.docs_commands_title') }}
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b border-gray-200 dark:border-gray-700">
-                            <th class="text-left py-2 pr-4 font-medium text-gray-500 dark:text-gray-400">{{ __('landing.docs_col_command') }}</th>
-                            <th class="text-left py-2 font-medium text-gray-500 dark:text-gray-400">{{ __('landing.docs_col_desc') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
-                        <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova config:set-key &lt;key&gt;</td>
-                            <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_set_key') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:list</td>
-                            <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_list') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:fetch &lt;slug&gt;</td>
-                            <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_fetch') }}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova help</td>
-                            <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_help') }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    {{-- Command reference table --}}
+                    <div class="mt-6 bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                            {{ __('landing.docs_commands_title') }}
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                        <th class="text-left py-2 pr-4 font-medium text-gray-500 dark:text-gray-400">{{ __('landing.docs_col_command') }}</th>
+                                        <th class="text-left py-2 font-medium text-gray-500 dark:text-gray-400">{{ __('landing.docs_col_desc') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
+                                    <tr>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova config:set-key &lt;key&gt;</td>
+                                        <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_set_key') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:list</td>
+                                        <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_list') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:fetch &lt;slug&gt;</td>
+                                        <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_fetch') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova help</td>
+                                        <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_help') }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

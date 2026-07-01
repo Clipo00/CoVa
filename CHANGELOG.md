@@ -13,6 +13,7 @@
 - **🦶 Footer de landing alineado con tabs del nav** — La sección "Producto" ahora refleja los tabs de navegación (Demo, Precios, Marketplace, Guía rápida). Marketplace ahora es un link clickeable. Agregado scroll suave al tope cuando se hace clic en links del footer estando scrolleado abajo.
 - **✏️ Hero title más directo** — Cambiado de "Olvídate de copiar tus configuraciones de un lado a otro" a "Tu entorno, en un comando." (ES) / "Your environment, one command." (EN).
 - **⏸️ Demo carousel pausa al hover** — El auto-avance de las diapositivas se pausa cuando el usuario pasa el ratón sobre la demo, y se reanuda al quitarlo.
+- **📋 Tabla de comandos integrada en paso 3** — La referencia de comandos CLI ahora está dentro del paso "Lista y ejecuta tus blueprints", alineada visualmente con el resto del contenido.
 
 ### Added
 - **📋 CLI List + Help + README (PR 4 of 6)** — Blueprint listing, help improvements, and documentation:
