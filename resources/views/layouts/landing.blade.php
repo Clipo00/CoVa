@@ -92,7 +92,13 @@
             }
             window.addEventListener('hashchange', () => {
                 const h = window.location.hash.replace('#', '');
-                if (this.tabs.includes(h)) this.activeTab = h;
+                if (this.tabs.includes(h)) {
+                    this.activeTab = h;
+                    // Scroll to top when coming from footer links (user is scrolled down)
+                    if (window.scrollY > window.innerHeight) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
             });
         },
         switchTab(tab) {

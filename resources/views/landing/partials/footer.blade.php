@@ -34,7 +34,7 @@
                 </p>
             </div>
 
-            {{-- Links --}}
+            {{-- Product --}}
             <div>
                 <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-4">
                     {{ __('landing.footer_product') }}
@@ -42,26 +42,26 @@
                 <ul class="space-y-2">
                     <li>
                         <a href="#demo" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
-                            {{ __('landing.cta_secondary') }}
+                            {{ __('landing.tab_demo') }}
                         </a>
                     </li>
                     <li>
                         <a href="#pricing" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
-                            {{ __('landing.nav_pricing') }}
+                            {{ __('landing.tab_precios') }}
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
-                            {{ __('landing.footer_links_register') }}
-                        </a>
-                    </li>
-                    <li>
-                        <span class="text-sm text-gray-500 dark:text-gray-400 cursor-default">
+                        <a href="#marketplace" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
                             {{ __('landing.footer_links_marketplace') }}
                             @if(!config('marketplace.enabled'))
                                 <span class="text-xs text-gray-400 dark:text-gray-500">({{ __('landing.coming_soon') }})</span>
                             @endif
-                        </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#docs" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 focus-visible:text-gray-900 dark:focus-visible:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900 rounded">
+                            {{ __('landing.tab_docs') }}
+                        </a>
                     </li>
                 </ul>
             </div>

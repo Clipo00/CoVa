@@ -9,6 +9,9 @@
 
 ## [Unreleased]
 
+### Changed
+- **🦶 Footer de landing alineado con tabs del nav** — La sección "Producto" ahora refleja los tabs de navegación (Demo, Precios, Marketplace, Guía rápida). Marketplace ahora es un link clickeable. Agregado scroll suave al tope cuando se hace clic en links del footer estando scrolleado abajo.
+
 ### Added
 - **📋 CLI List + Help + README (PR 4 of 6)** — Blueprint listing, help improvements, and documentation:
   - `ListCommand` — `cova vault:list [-g|--with-descriptions]` displays accessible blueprints as a formatted table with slug and title (and descriptions with `-g` flag)
