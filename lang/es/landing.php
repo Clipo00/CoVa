@@ -15,6 +15,14 @@ return [
     'cta_primary' => 'Empieza gratis',
     'cta_secondary' => 'Ver cómo funciona',
 
+    // Tabs
+    'tabs_nav_label' => 'Navegación de secciones',
+    'tab_inicio' => 'Inicio',
+    'tab_demo' => 'Demo',
+    'tab_precios' => 'Precios',
+    'tab_marketplace' => 'Marketplace',
+    'tab_docs' => 'Guía rápida',
+
     // Pain Point
     'pain_title' => '¿Te suena familiar?',
     'pain_env_title' => 'Configuraciones dispersas',
@@ -113,6 +121,8 @@ return [
     // Marketplace
     'marketplace_title' => 'Empieza con una plantilla lista para usar',
     'marketplace_empty' => 'Aún no hay blueprints públicos en el Marketplace. Publica el primero.',
+    'marketplace_empty_title' => 'Marketplace vacío',
+    'marketplace_no_desc' => 'Sin descripción',
     'marketplace_cta' => 'Explorar el Marketplace →',
 
     // CTA Final
@@ -196,4 +206,27 @@ return [
     'footer_links_register' => 'Registrarse',
     'footer_links_marketplace' => 'Marketplace',
     'footer_copyright' => '© 2026 CoVa. Todos los derechos reservados.',
+
+    // Docs (Guía rápida)
+    'docs_title' => 'Empieza con la CLI en 3 pasos',
+    'docs_subtitle' => 'Instala la herramienta de línea de comandos de CoVa y trae tus blueprints al instante.',
+    'docs_step1_title' => 'Instala la CLI',
+    'docs_step1_desc' => 'Descarga el binario PHAR, hazlo ejecutable y muévelo a tu PATH. Requiere PHP 8.3+.',
+    'docs_step1_cmd1' => 'Descarga el binario',
+    'docs_step1_cmd2' => 'Hazlo ejecutable',
+    'docs_step1_cmd3' => 'Muévelo a tu PATH',
+    'docs_step2_title' => 'Autentícate con tu API key',
+    'docs_step2_desc' => 'Genera un token desde tu perfil de CoVa (pestaña Seguridad) y configúralo con <code>config:set-key</code>. La CLI valida la conexión al instante.',
+    'docs_step3_title' => 'Lista y ejecuta tus blueprints',
+    'docs_step3_desc' => 'Explora los blueprints disponibles con vault:list y despliega cualquiera con vault:fetch. Archivos generados, variables cargadas, todo listo.',
+    'docs_step3_cmd1' => 'Lista tus blueprints',
+    'docs_step3_cmd2' => 'Despliega un blueprint en el directorio actual',
+    'docs_commands_title' => 'Comandos disponibles',
+    'docs_col_command' => 'Comando',
+    'docs_col_desc' => 'Descripción',
+    'docs_cmd_set_key' => 'Configura y valida tu API key de CoVa',
+    'docs_cmd_list' => 'Lista los blueprints que tienes disponibles',
+    'docs_cmd_fetch' => 'Descarga y despliega un blueprint con sus archivos',
+    'docs_cmd_help' => 'Muestra la ayuda y comandos disponibles',
+    'docs_security_note' => 'Tu API key se guarda en local con permisos restringidos. La comunicación con la API usa HTTPS. Las variables secretas requieren verificación de contraseña y nunca se muestran en texto plano.',
 ];

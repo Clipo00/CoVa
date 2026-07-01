@@ -15,6 +15,14 @@ return [
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',
 
+    // Tabs
+    'tabs_nav_label' => 'Section navigation',
+    'tab_inicio' => 'Home',
+    'tab_demo' => 'Demo',
+    'tab_precios' => 'Pricing',
+    'tab_marketplace' => 'Marketplace',
+    'tab_docs' => 'Quickstart',
+
     // Pain Point
     'pain_title' => 'Does this sound familiar?',
     'pain_env_title' => 'Scattered configs',
@@ -113,6 +121,8 @@ return [
     // Marketplace
     'marketplace_title' => 'Start with a ready-to-use template',
     'marketplace_empty' => 'No public blueprints in the Marketplace yet. Be the first to publish.',
+    'marketplace_empty_title' => 'Empty Marketplace',
+    'marketplace_no_desc' => 'No description',
     'marketplace_cta' => 'Explore the Marketplace →',
 
     // CTA Final
@@ -196,4 +206,27 @@ return [
     'footer_links_register' => 'Register',
     'footer_links_marketplace' => 'Marketplace',
     'footer_copyright' => '© 2026 CoVa. All rights reserved.',
+
+    // Docs (Quickstart guide)
+    'docs_title' => 'Get started with the CLI in 3 steps',
+    'docs_subtitle' => 'Install the CoVa command-line tool and bring your blueprints to life instantly.',
+    'docs_step1_title' => 'Install the CLI',
+    'docs_step1_desc' => 'Download the PHAR binary, make it executable, and move it to your PATH. Requires PHP 8.3+.',
+    'docs_step1_cmd1' => 'Download the binary',
+    'docs_step1_cmd2' => 'Make it executable',
+    'docs_step1_cmd3' => 'Move it to your PATH',
+    'docs_step2_title' => 'Authenticate with your API key',
+    'docs_step2_desc' => 'Generate a token from your CoVa profile (Security tab) and configure it with <code>config:set-key</code>. The CLI validates the connection instantly.',
+    'docs_step3_title' => 'List and fetch your blueprints',
+    'docs_step3_desc' => 'Browse available blueprints with vault:list and scaffold any with vault:fetch. Files generated, variables loaded, everything in place.',
+    'docs_step3_cmd1' => 'List your blueprints',
+    'docs_step3_cmd2' => 'Scaffold a blueprint in the current directory',
+    'docs_commands_title' => 'Available commands',
+    'docs_col_command' => 'Command',
+    'docs_col_desc' => 'Description',
+    'docs_cmd_set_key' => 'Set and validate your CoVa API key',
+    'docs_cmd_list' => 'List blueprints you have access to',
+    'docs_cmd_fetch' => 'Download and scaffold a blueprint with its files',
+    'docs_cmd_help' => 'Show help and available commands',
+    'docs_security_note' => 'Your API key is stored locally with restricted permissions. All API communication uses HTTPS. Secret variables require password verification and are never shown in plain text.',
 ];

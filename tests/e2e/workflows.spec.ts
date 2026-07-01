@@ -53,7 +53,7 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
     // Fill org name and wait for Livewire to process the model update
     await page.fill('input#orgName', orgName);
     // Wait for Livewire's wire:model.live to sync and validation to clear
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
 
     // Click submit — button text is "Crear Organización" (translated)
     const orgSubmit = page.getByRole('button', { name: /Crear Organización|Create Organization/i });
@@ -61,11 +61,9 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
     await expect(orgSubmit).toBeEnabled({ timeout: 8000 });
     await orgSubmit.click();
     // Wait for Livewire AJAX response to advance to step 3
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
 
     // --- Step 3: Blueprint — skip ---
-    // Wait for step 3 content to load
-    await page.waitForTimeout(500);
     const skipBtn1 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
     await expect(skipBtn1).toBeVisible({ timeout: 8000 });
     await skipBtn1.click();

@@ -120,10 +120,10 @@
 
                 <!-- Center nav links -->
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="#demo" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                    <a href="#demo" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('switch-tab', {detail:'demo'}))" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors cursor-pointer">
                         {{ __('landing.cta_secondary') }}
                     </a>
-                    <a href="#pricing" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                    <a href="#precios" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('switch-tab', {detail:'precios'}))" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors cursor-pointer">
                         {{ __('landing.nav_pricing') }}
                     </a>
                 </div>

@@ -17,6 +17,9 @@
                     const h = window.location.hash.replace('#', '');
                     if (this.tabs.includes(h)) this.activeTab = h;
                 });
+                window.addEventListener('switch-tab', (e) => {
+                    if (this.tabs.includes(e.detail)) this.switchTab(e.detail);
+                });
             },
             switchTab(tab) {
                 this.activeTab = tab;
@@ -31,7 +34,7 @@
         {{-- Tab Navigation --}}
         <nav class="sticky top-16 z-30 bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50" role="tablist" aria-label="{{ __('landing.tabs_nav_label') }}">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex overflow-x-auto scrollbar-hide -mb-px">
+                <div class="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mb-px">
                     {{-- Inicio --}}
                     <button type="button" role="tab" id="tab-inicio"
                         aria-selected="true" aria-controls="panel-inicio" tabindex="0"
