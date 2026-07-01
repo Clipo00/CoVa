@@ -272,16 +272,24 @@ test.describe('Flow 2: Developer generates API token', () => {
         await expect(page.locator('input#tokenName')).toBeVisible({ timeout: 3000 });
         await page.fill('input#tokenName', 'CLI Access Token');
 
+        // Set expiration date to 1 year from now (required field)
+        const nextYear = new Date();
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        const expiryDate = nextYear.toISOString().split('T')[0]; // YYYY-MM-DD
+        await page.fill('input#expiresAt', expiryDate);
+
         // Password confirmation (inside form, wire:model="password")
         const pwdInput = page.locator('form[wire\\:submit="createToken"] input#password');
         if (await pwdInput.isVisible({ timeout: 2000 }).catch(() => false)) {
             await pwdInput.fill('Password123!');
         }
 
-        // 2h. Submit token creation
+        // 2h. Submit token creation — wait for Livewire validation to enable button
+        await page.waitForTimeout(800);
         const submitToken = page.getByRole('button', { name: /Generar token|Generate token/i });
+        await expect(submitToken).toBeEnabled({ timeout: 5000 });
         await submitToken.click();
-        await page.waitForLoadState('networkidle');
+        await page.waitForTimeout(1000);
 
         // 2i. Verify one-time token display appears (yellow warning box)
         const tokenBox = page.locator('.bg-yellow-50, [class*="bg-yellow"]');

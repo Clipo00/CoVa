@@ -12,91 +12,80 @@
 # Error details
 
 ```
-Error: expect(locator).toBeVisible() failed
+Error: expect(received).toBeTruthy()
 
-Locator: getByRole('button', { name: /Crear token|Create token/i })
-Expected: visible
-Timeout: 5000ms
-Error: element(s) not found
-
-Call log:
-  - Expect "toBeVisible" with timeout 5000ms
-  - waiting for getByRole('button', { name: /Crear token|Create token/i })
-
+Received: false
 ```
 
+# Page snapshot
+
 ```yaml
-- navigation:
-  - link "CoVa":
-    - /url: http://127.0.0.1:8000/dashboard
-  - link "Dashboard":
-    - /url: http://127.0.0.1:8000/dashboard
-  - link "Organizaciones":
-    - /url: http://127.0.0.1:8000/organizations
-  - link "Blueprints":
-    - /url: http://127.0.0.1:8000/blueprints
-  - link "Marketplace":
-    - /url: http://127.0.0.1:8000/marketplace
-  - link "Eliminados":
-    - /url: http://127.0.0.1:8000/blueprints/deleted
-  - button "Cambiar tema":
-    - img
-  - button "Idioma":
-    - img
-    - text: es
-    - img
-  - button "Notificaciones":
-    - img
-  - button "BD Bob Developer":
-    - text: BD Bob Developer
-    - img
-- main:
-  - heading "Mi Perfil" [level=1]
-  - paragraph: Gestiona tu información personal
-  - navigation "Tabs":
-    - tab "Datos"
-    - tab "Cuenta"
-    - tab "Seguridad"
-  - heading "Tokens de API" [level=2]
-  - paragraph: Gestiona tus tokens de acceso personal para la API.
-  - img
-  - paragraph: No tienes tokens de API. Crea uno para acceder desde el CLI.
-  - img
-  - paragraph: Los tokens de API requieren el plan Pro o Enterprise.
-  - link "Ver planes":
-    - /url: http://127.0.0.1:8000/pricing
-    - text: Ver planes
-    - img
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "CoVa" [ref=e7] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/dashboard
+        - generic [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/dashboard
+          - link "Organizaciones" [ref=e10] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/organizations
+          - link "Blueprints" [ref=e11] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/blueprints
+          - link "Marketplace" [ref=e12] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/marketplace
+          - link "Eliminados" [ref=e13] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/blueprints/deleted
+      - generic [ref=e14]:
+        - button "Cambiar tema" [ref=e16]:
+          - img [ref=e17]
+        - button "Idioma" [ref=e24]:
+          - img [ref=e25]
+          - generic [ref=e27]: es
+          - img [ref=e28]
+        - button "Notificaciones" [ref=e31]:
+          - img [ref=e32]
+        - button "BD Bob Developer" [ref=e35]:
+          - generic [ref=e36]: BD
+          - generic [ref=e37]: Bob Developer
+          - img [ref=e38]
+  - main [ref=e40]:
+    - generic [ref=e41]:
+      - generic [ref=e42]:
+        - heading "Mi Perfil" [level=1] [ref=e43]
+        - paragraph [ref=e44]: Gestiona tu información personal
+      - generic [ref=e45]:
+        - navigation "Tabs" [ref=e47]:
+          - tab "Datos" [ref=e48]
+          - tab "Cuenta" [ref=e49]
+          - tab "Seguridad" [ref=e50]
+        - generic [ref=e53]:
+          - heading "Tokens de API" [level=2] [ref=e54]
+          - paragraph [ref=e55]: Gestiona tus tokens de acceso personal para la API.
+          - generic [ref=e56]:
+            - generic [ref=e57]:
+              - img [ref=e58]
+              - paragraph [ref=e60]: No tienes tokens de API. Crea uno para acceder desde el CLI.
+            - button "Crear token" [ref=e62]:
+              - img [ref=e63]
+              - text: Crear token
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]: Nombre del token
+                - textbox "Nombre del token" [ref=e69]: CLI Access Token
+              - generic [ref=e70]:
+                - generic [ref=e71]: Fecha de expiración
+                - textbox "Fecha de expiración" [ref=e72]
+              - generic [ref=e73]:
+                - generic [ref=e74]: Contraseña actual
+                - textbox "Contraseña actual" [ref=e75]: Password123!
+              - button "Generar token" [disabled] [ref=e77]
 ```
 
 # Test source
 
 ```ts
-  167 |             }
-  168 |         }
-  169 | 
-  170 |         // 1g. Add a secret variable
-  171 |         const addSecretBtn = page.locator('button[wire\\:click*="secret"], button:has-text("Secreto"), input[type="checkbox"][wire\\:model*="secret"]');
-  172 |         if (await addSecretBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-  173 |             await addSecretBtn.click();
-  174 |             await page.waitForTimeout(300);
-  175 |         }
-  176 | 
-  177 |         // 1h. Submit form
-  178 |         const submitBtn = page.locator('button[type="submit"]').last();
-  179 |         await submitBtn.click();
-  180 |         await page.waitForTimeout(2000);
-  181 | 
-  182 |         // Should land on blueprint show page
-  183 |         await expect(page).toHaveURL(/blueprints\//);
-  184 | 
-  185 |         // 1i. Start Pro Trial — visit pricing
-  186 |         await page.goto('/pricing');
-  187 |         await page.waitForLoadState('networkidle');
-  188 | 
-  189 |         // Look for Pro trial/upgrade button
-  190 |         const proBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
-  191 |         if (await proBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
   192 |             await proBtn.click();
   193 |             await page.waitForLoadState('networkidle');
   194 |         }
@@ -146,7 +135,7 @@ Call log:
   238 |         await page.goto('/pricing');
   239 |         await page.waitForLoadState('networkidle');
   240 | 
-  241 |         const trialBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
+  241 |         const trialBtn = page.getByRole('button', { name: /Probar gratis|Try free|Prueba|Trial|Empezar/i }).first();
   242 |         if (await trialBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
   243 |             await trialBtn.click();
   244 |             await page.waitForLoadState('networkidle');
@@ -172,8 +161,7 @@ Call log:
   264 | 
   265 |         // 2f. Click "Create token" button (toggles the form)
   266 |         const toggleCreate = page.getByRole('button', { name: /Crear token|Create token/i });
-> 267 |         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
-      |                                    ^ Error: expect(locator).toBeVisible() failed
+  267 |         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
   268 |         await toggleCreate.click();
   269 |         await page.waitForTimeout(500);
   270 | 
@@ -198,7 +186,8 @@ Call log:
   289 |         const hasToken = await tokenBox.isVisible({ timeout: 4000 }).catch(() => false)
   290 |             || await tokenListed.isVisible({ timeout: 2000 }).catch(() => false);
   291 | 
-  292 |         expect(hasToken).toBeTruthy();
+> 292 |         expect(hasToken).toBeTruthy();
+      |                          ^ Error: expect(received).toBeTruthy()
   293 | 
   294 |         console.log('✅ Flow 2: Bob — registered, reached Seguridad, created API token');
   295 |     });
@@ -221,57 +210,56 @@ Call log:
   312 |         await page.goto('/pricing');
   313 |         await page.waitForLoadState('networkidle');
   314 | 
-  315 |         const upgradeBtn = page.locator(
-  316 |             'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), button:has-text("Prueba")'
-  317 |         ).first();
-  318 |         if (await upgradeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  319 |             await upgradeBtn.click();
-  320 |             await page.waitForLoadState('networkidle');
-  321 |         }
-  322 | 
-  323 |         // 3d. Browse Marketplace
-  324 |         await page.goto('/marketplace');
-  325 |         await page.waitForLoadState('networkidle');
-  326 |         await expect(page).toHaveURL(/marketplace/);
-  327 | 
-  328 |         // 3e. Click first blueprint card to view details
-  329 |         // Marketplace items link to /marketplace/{uuid} or /blueprints/{slug}
-  330 |         const blueprintLink = page.locator(
-  331 |             'a[href*="/marketplace/"], a[href*="/blueprints/"]'
-  332 |         ).first();
-  333 |         if (await blueprintLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-  334 |             await blueprintLink.click();
-  335 |             await page.waitForLoadState('networkidle');
-  336 |         } else {
-  337 |             // Try direct navigation to Flow 1's blueprint
-  338 |             await page.goto('/marketplace');
-  339 |             await page.waitForLoadState('networkidle');
-  340 |             const anyCard = page.locator('a[href*="/marketplace/"], a[href*="/blueprints/"]').first();
-  341 |             if (await anyCard.isVisible({ timeout: 3000 }).catch(() => false)) {
-  342 |                 await anyCard.click();
-  343 |                 await page.waitForLoadState('networkidle');
-  344 |             }
-  345 |         }
-  346 | 
-  347 |         // 3f. Subscribe
-  348 |         const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i });
-  349 |         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  350 |             await subscribeBtn.click();
-  351 |             await page.waitForLoadState('networkidle');
-  352 |         }
-  353 | 
-  354 |         // 3g. Vote up — button with title="Votar positivo" (ES) or "Vote up" (EN)
-  355 |         const upvoteBtn = page.locator('button[title*="Votar positivo"], button[title*="Vote up"], button[title*="Upvote"]');
-  356 |         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  357 |             await upvoteBtn.click();
-  358 |             await page.waitForTimeout(800);
-  359 |         }
-  360 | 
-  361 |         // Verify we're still on a valid page
-  362 |         const url = page.url();
-  363 |         expect(url).toMatch(/blueprints|marketplace/);
-  364 | 
-  365 |         console.log('✅ Flow 3: Charlie — registered Pro, subscribed and voted');
-  366 |     });
-  367 | });
+  315 |         const upgradeBtn = page.getByRole('button', { name: /Probar gratis|Try free|Prueba|Trial/i }).first();
+  316 |         if (await upgradeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  317 |             await upgradeBtn.click();
+  318 |             await page.waitForLoadState('networkidle');
+  319 |         }
+  320 | 
+  321 |         // 3d. Browse Marketplace
+  322 |         await page.goto('/marketplace');
+  323 |         await page.waitForLoadState('networkidle');
+  324 |         await expect(page).toHaveURL(/marketplace/);
+  325 | 
+  326 |         // 3e. Click first blueprint card to view details
+  327 |         // Marketplace items link to /marketplace/{uuid} or /blueprints/{slug}
+  328 |         const blueprintLink = page.locator(
+  329 |             'a[href*="/marketplace/"], a[href*="/blueprints/"]'
+  330 |         ).first();
+  331 |         if (await blueprintLink.isVisible({ timeout: 5000 }).catch(() => false)) {
+  332 |             await blueprintLink.click();
+  333 |             await page.waitForLoadState('networkidle');
+  334 |         } else {
+  335 |             // Try direct navigation to Flow 1's blueprint
+  336 |             await page.goto('/marketplace');
+  337 |             await page.waitForLoadState('networkidle');
+  338 |             const anyCard = page.locator('a[href*="/marketplace/"], a[href*="/blueprints/"]').first();
+  339 |             if (await anyCard.isVisible({ timeout: 3000 }).catch(() => false)) {
+  340 |                 await anyCard.click();
+  341 |                 await page.waitForLoadState('networkidle');
+  342 |             }
+  343 |         }
+  344 | 
+  345 |         // 3f. Subscribe
+  346 |         const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i });
+  347 |         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  348 |             await subscribeBtn.click();
+  349 |             await page.waitForLoadState('networkidle');
+  350 |         }
+  351 | 
+  352 |         // 3g. Vote up — button with title="Votar positivo" (ES) or "Vote up" (EN)
+  353 |         const upvoteBtn = page.locator('button[title*="Votar positivo"], button[title*="Vote up"], button[title*="Upvote"]');
+  354 |         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  355 |             await upvoteBtn.click();
+  356 |             await page.waitForTimeout(800);
+  357 |         }
+  358 | 
+  359 |         // Verify we're still on a valid page
+  360 |         const url = page.url();
+  361 |         expect(url).toMatch(/blueprints|marketplace/);
+  362 | 
+  363 |         console.log('✅ Flow 3: Charlie — registered Pro, subscribed and voted');
+  364 |     });
+  365 | });
+  366 | 
 ```
