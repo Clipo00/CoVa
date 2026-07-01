@@ -16,8 +16,9 @@ use GuzzleHttp\Exception\RequestException;
  */
 class ApiClient
 {
-    private Client $http;
-    private array $config;
+    private ?Client $http = null;
+    private ?array $config = null;
+    private bool $initialized = false;
 
     /**
      * @param Client|null $http  Optional Guzzle client (for testing/mocking)
@@ -25,8 +26,36 @@ class ApiClient
      */
     public function __construct(?Client $http = null, ?array $config = null)
     {
-        $this->config = $config ?? $this->loadConfig();
-        $this->http = $http ?? $this->createHttpClient();
+        // Lazy: defer config loading until first HTTP call.
+        // This allows commands like 'help' and 'config:set-key' to work
+        // without an existing config file.
+        if ($config !== null) {
+            $this->config = $config;
+        }
+        if ($http !== null) {
+            $this->http = $http;
+            $this->initialized = true;
+        }
+    }
+
+    /**
+     * Ensure config and HTTP client are initialized.
+     *
+     * Called lazily on first HTTP request. Config is only loaded
+     * from disk when an actual API call is made — never in the constructor.
+     */
+    private function ensureInitialized(): void
+    {
+        if ($this->initialized) {
+            return;
+        }
+
+        if ($this->config === null) {
+            $this->config = $this->loadConfig();
+        }
+
+        $this->http = $this->createHttpClient();
+        $this->initialized = true;
     }
 
     /**
@@ -38,6 +67,8 @@ class ApiClient
      */
     public function get(string $endpoint): array
     {
+        $this->ensureInitialized();
+
         try {
             $response = $this->http->get($endpoint, [
                 'headers' => $this->authHeaders(),
@@ -60,6 +91,8 @@ class ApiClient
      */
     public function post(string $endpoint, array $data = []): array
     {
+        $this->ensureInitialized();
+
         try {
             $response = $this->http->post($endpoint, [
                 'headers' => $this->authHeaders(),
@@ -81,6 +114,8 @@ class ApiClient
      */
     public function validateConnectivity(): bool
     {
+        $this->ensureInitialized();
+
         try {
             $this->get('/api/me');
 
