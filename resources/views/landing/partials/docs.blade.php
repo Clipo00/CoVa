@@ -98,19 +98,19 @@ sudo mv cova /usr/local/bin/</code></pre>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
                         <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">config:set-key &lt;key&gt;</td>
+                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova config:set-key &lt;key&gt;</td>
                             <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_set_key') }}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">vault:list</td>
+                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:list</td>
                             <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_list') }}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">vault:fetch &lt;slug&gt;</td>
+                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:fetch &lt;slug&gt;</td>
                             <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_fetch') }}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">help</td>
+                            <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova help</td>
                             <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_help') }}</td>
                         </tr>
                     </tbody>

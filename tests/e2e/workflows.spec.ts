@@ -187,7 +187,7 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         await page.waitForLoadState('networkidle');
 
         // Look for Pro trial/upgrade button
-        const proBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
+        const proBtn = page.getByRole('button', { name: /Probar gratis|Try free|Prueba|Trial/i }).first();
         if (await proBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await proBtn.click();
             await page.waitForLoadState('networkidle');
@@ -238,7 +238,7 @@ test.describe('Flow 2: Developer generates API token', () => {
         await page.goto('/pricing');
         await page.waitForLoadState('networkidle');
 
-        const trialBtn = page.getByRole('link', { name: /Pro|Prueba|Trial|Empezar|Upgrade/i }).first();
+        const trialBtn = page.getByRole('button', { name: /Probar gratis|Try free|Prueba|Trial|Empezar/i }).first();
         if (await trialBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await trialBtn.click();
             await page.waitForLoadState('networkidle');
@@ -312,9 +312,7 @@ test.describe('Flow 3: Pro user subscribes and votes', () => {
         await page.goto('/pricing');
         await page.waitForLoadState('networkidle');
 
-        const upgradeBtn = page.locator(
-            'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), button:has-text("Prueba")'
-        ).first();
+        const upgradeBtn = page.getByRole('button', { name: /Probar gratis|Try free|Prueba|Trial/i }).first();
         if (await upgradeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
             await upgradeBtn.click();
             await page.waitForLoadState('networkidle');

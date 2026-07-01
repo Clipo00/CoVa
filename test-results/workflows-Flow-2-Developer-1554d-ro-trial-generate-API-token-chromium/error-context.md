@@ -72,10 +72,6 @@ Call log:
 # Test source
 
 ```ts
-  163 |                 const valInput2 = page.locator('input[wire\\:model*="default_value"], input[placeholder*="valor"]').last();
-  164 |                 if (await valInput2.isVisible({ timeout: 500 }).catch(() => false)) {
-  165 |                     await valInput2.fill('false');
-  166 |                 }
   167 |             }
   168 |         }
   169 | 
@@ -156,122 +152,126 @@ Call log:
   244 |             await page.waitForLoadState('networkidle');
   245 |         }
   246 | 
-  247 |         // 2e. Navigate to Profile → Seguridad tab
-  248 |         await page.click('[data-testid="user-dropdown-toggle"]');
-  249 |         await page.waitForTimeout(300);
-  250 |         await page.click('text=Perfil');
-  251 |         await expect(page).toHaveURL(/profile/);
-  252 |         await page.waitForLoadState('networkidle');
-  253 | 
-  254 |         // Find and click Seguridad tab — Alpine.js @click="activeTab = 'seguridad'"
-  255 |         const seguridadBtn = page.locator('button[role="tab"]').filter({ hasText: /Seguridad|Security/i });
-  256 |         await expect(seguridadBtn).toBeVisible({ timeout: 5000 });
-  257 |         await seguridadBtn.click();
-  258 |         // Wait for Alpine x-show to reveal the seguridad div
-  259 |         await page.waitForTimeout(500);
-  260 | 
-  261 |         // 2f. Click "Create token" button (toggles the form)
-  262 |         const toggleCreate = page.getByRole('button', { name: /Crear token|Create token/i });
-> 263 |         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
+  247 |         // Navigate to dashboard to refresh user session with new plan
+  248 |         await page.goto('/dashboard');
+  249 |         await page.waitForLoadState('networkidle');
+  250 | 
+  251 |         // 2e. Navigate to Profile → Seguridad tab
+  252 |         await page.click('[data-testid="user-dropdown-toggle"]');
+  253 |         await page.waitForTimeout(300);
+  254 |         await page.click('text=Perfil');
+  255 |         await expect(page).toHaveURL(/profile/);
+  256 |         await page.waitForLoadState('networkidle');
+  257 | 
+  258 |         // Find and click Seguridad tab — Alpine.js @click="activeTab = 'seguridad'"
+  259 |         const seguridadBtn = page.locator('button[role="tab"]').filter({ hasText: /Seguridad|Security/i });
+  260 |         await expect(seguridadBtn).toBeVisible({ timeout: 5000 });
+  261 |         await seguridadBtn.click();
+  262 |         // Wait for Alpine x-show to reveal the seguridad div
+  263 |         await page.waitForTimeout(500);
+  264 | 
+  265 |         // 2f. Click "Create token" button (toggles the form)
+  266 |         const toggleCreate = page.getByRole('button', { name: /Crear token|Create token/i });
+> 267 |         await expect(toggleCreate).toBeVisible({ timeout: 5000 });
       |                                    ^ Error: expect(locator).toBeVisible() failed
-  264 |         await toggleCreate.click();
-  265 |         await page.waitForTimeout(500);
-  266 | 
-  267 |         // 2g. Fill token form
-  268 |         await expect(page.locator('input#tokenName')).toBeVisible({ timeout: 3000 });
-  269 |         await page.fill('input#tokenName', 'CLI Access Token');
+  268 |         await toggleCreate.click();
+  269 |         await page.waitForTimeout(500);
   270 | 
-  271 |         // Password confirmation (inside form, wire:model="password")
-  272 |         const pwdInput = page.locator('form[wire\\:submit="createToken"] input#password');
-  273 |         if (await pwdInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-  274 |             await pwdInput.fill('Password123!');
-  275 |         }
-  276 | 
-  277 |         // 2h. Submit token creation
-  278 |         const submitToken = page.getByRole('button', { name: /Generar token|Generate token/i });
-  279 |         await submitToken.click();
-  280 |         await page.waitForLoadState('networkidle');
-  281 | 
-  282 |         // 2i. Verify one-time token display appears (yellow warning box)
-  283 |         const tokenBox = page.locator('.bg-yellow-50, [class*="bg-yellow"]');
-  284 |         const tokenListed = page.locator('text=CLI Access Token');
-  285 |         const hasToken = await tokenBox.isVisible({ timeout: 4000 }).catch(() => false)
-  286 |             || await tokenListed.isVisible({ timeout: 2000 }).catch(() => false);
-  287 | 
-  288 |         expect(hasToken).toBeTruthy();
-  289 | 
-  290 |         console.log('✅ Flow 2: Bob — registered, reached Seguridad, created API token');
-  291 |     });
-  292 | });
+  271 |         // 2g. Fill token form
+  272 |         await expect(page.locator('input#tokenName')).toBeVisible({ timeout: 3000 });
+  273 |         await page.fill('input#tokenName', 'CLI Access Token');
+  274 | 
+  275 |         // Password confirmation (inside form, wire:model="password")
+  276 |         const pwdInput = page.locator('form[wire\\:submit="createToken"] input#password');
+  277 |         if (await pwdInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+  278 |             await pwdInput.fill('Password123!');
+  279 |         }
+  280 | 
+  281 |         // 2h. Submit token creation
+  282 |         const submitToken = page.getByRole('button', { name: /Generar token|Generate token/i });
+  283 |         await submitToken.click();
+  284 |         await page.waitForLoadState('networkidle');
+  285 | 
+  286 |         // 2i. Verify one-time token display appears (yellow warning box)
+  287 |         const tokenBox = page.locator('.bg-yellow-50, [class*="bg-yellow"]');
+  288 |         const tokenListed = page.locator('text=CLI Access Token');
+  289 |         const hasToken = await tokenBox.isVisible({ timeout: 4000 }).catch(() => false)
+  290 |             || await tokenListed.isVisible({ timeout: 2000 }).catch(() => false);
+  291 | 
+  292 |         expect(hasToken).toBeTruthy();
   293 | 
-  294 | // ---------------------------------------------------------------------------
-  295 | // Flow 3: Pro user subscribes and votes
-  296 | // ---------------------------------------------------------------------------
-  297 | test.describe('Flow 3: Pro user subscribes and votes', () => {
-  298 |     const email = `pro-${timestamp}@cova.test`;
-  299 | 
-  300 |     test('register, org, marketplace → subscribe → vote up', async ({ page }) => {
-  301 |         // 3a. Register
-  302 |         await register(page, 'Charlie Pro', email);
+  294 |         console.log('✅ Flow 2: Bob — registered, reached Seguridad, created API token');
+  295 |     });
+  296 | });
+  297 | 
+  298 | // ---------------------------------------------------------------------------
+  299 | // Flow 3: Pro user subscribes and votes
+  300 | // ---------------------------------------------------------------------------
+  301 | test.describe('Flow 3: Pro user subscribes and votes', () => {
+  302 |     const email = `pro-${timestamp}@cova.test`;
   303 | 
-  304 |         // 3b. Onboarding → creates org
-  305 |         await completeOnboarding(page, `Charlie Co ${timestamp}`);
-  306 | 
-  307 |         // 3c. Ensure Pro access (pricing page)
-  308 |         await page.goto('/pricing');
-  309 |         await page.waitForLoadState('networkidle');
+  304 |     test('register, org, marketplace → subscribe → vote up', async ({ page }) => {
+  305 |         // 3a. Register
+  306 |         await register(page, 'Charlie Pro', email);
+  307 | 
+  308 |         // 3b. Onboarding → creates org
+  309 |         await completeOnboarding(page, `Charlie Co ${timestamp}`);
   310 | 
-  311 |         const upgradeBtn = page.locator(
-  312 |             'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), button:has-text("Prueba")'
-  313 |         ).first();
-  314 |         if (await upgradeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  315 |             await upgradeBtn.click();
-  316 |             await page.waitForLoadState('networkidle');
-  317 |         }
-  318 | 
-  319 |         // 3d. Browse Marketplace
-  320 |         await page.goto('/marketplace');
-  321 |         await page.waitForLoadState('networkidle');
-  322 |         await expect(page).toHaveURL(/marketplace/);
-  323 | 
-  324 |         // 3e. Click first blueprint card to view details
-  325 |         // Marketplace items link to /marketplace/{uuid} or /blueprints/{slug}
-  326 |         const blueprintLink = page.locator(
-  327 |             'a[href*="/marketplace/"], a[href*="/blueprints/"]'
-  328 |         ).first();
-  329 |         if (await blueprintLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-  330 |             await blueprintLink.click();
-  331 |             await page.waitForLoadState('networkidle');
-  332 |         } else {
-  333 |             // Try direct navigation to Flow 1's blueprint
-  334 |             await page.goto('/marketplace');
+  311 |         // 3c. Ensure Pro access (pricing page)
+  312 |         await page.goto('/pricing');
+  313 |         await page.waitForLoadState('networkidle');
+  314 | 
+  315 |         const upgradeBtn = page.locator(
+  316 |             'a[href*="trial"], a[href*="subscribe"], button:has-text("Pro"), button:has-text("Prueba")'
+  317 |         ).first();
+  318 |         if (await upgradeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  319 |             await upgradeBtn.click();
+  320 |             await page.waitForLoadState('networkidle');
+  321 |         }
+  322 | 
+  323 |         // 3d. Browse Marketplace
+  324 |         await page.goto('/marketplace');
+  325 |         await page.waitForLoadState('networkidle');
+  326 |         await expect(page).toHaveURL(/marketplace/);
+  327 | 
+  328 |         // 3e. Click first blueprint card to view details
+  329 |         // Marketplace items link to /marketplace/{uuid} or /blueprints/{slug}
+  330 |         const blueprintLink = page.locator(
+  331 |             'a[href*="/marketplace/"], a[href*="/blueprints/"]'
+  332 |         ).first();
+  333 |         if (await blueprintLink.isVisible({ timeout: 5000 }).catch(() => false)) {
+  334 |             await blueprintLink.click();
   335 |             await page.waitForLoadState('networkidle');
-  336 |             const anyCard = page.locator('a[href*="/marketplace/"], a[href*="/blueprints/"]').first();
-  337 |             if (await anyCard.isVisible({ timeout: 3000 }).catch(() => false)) {
-  338 |                 await anyCard.click();
-  339 |                 await page.waitForLoadState('networkidle');
-  340 |             }
-  341 |         }
-  342 | 
-  343 |         // 3f. Subscribe
-  344 |         const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i });
-  345 |         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  346 |             await subscribeBtn.click();
-  347 |             await page.waitForLoadState('networkidle');
-  348 |         }
-  349 | 
-  350 |         // 3g. Vote up — button with title="Votar positivo" (ES) or "Vote up" (EN)
-  351 |         const upvoteBtn = page.locator('button[title*="Votar positivo"], button[title*="Vote up"], button[title*="Upvote"]');
-  352 |         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-  353 |             await upvoteBtn.click();
-  354 |             await page.waitForTimeout(800);
-  355 |         }
-  356 | 
-  357 |         // Verify we're still on a valid page
-  358 |         const url = page.url();
-  359 |         expect(url).toMatch(/blueprints|marketplace/);
+  336 |         } else {
+  337 |             // Try direct navigation to Flow 1's blueprint
+  338 |             await page.goto('/marketplace');
+  339 |             await page.waitForLoadState('networkidle');
+  340 |             const anyCard = page.locator('a[href*="/marketplace/"], a[href*="/blueprints/"]').first();
+  341 |             if (await anyCard.isVisible({ timeout: 3000 }).catch(() => false)) {
+  342 |                 await anyCard.click();
+  343 |                 await page.waitForLoadState('networkidle');
+  344 |             }
+  345 |         }
+  346 | 
+  347 |         // 3f. Subscribe
+  348 |         const subscribeBtn = page.getByRole('button', { name: /Suscribir|Subscribe|Seguir/i });
+  349 |         if (await subscribeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  350 |             await subscribeBtn.click();
+  351 |             await page.waitForLoadState('networkidle');
+  352 |         }
+  353 | 
+  354 |         // 3g. Vote up — button with title="Votar positivo" (ES) or "Vote up" (EN)
+  355 |         const upvoteBtn = page.locator('button[title*="Votar positivo"], button[title*="Vote up"], button[title*="Upvote"]');
+  356 |         if (await upvoteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+  357 |             await upvoteBtn.click();
+  358 |             await page.waitForTimeout(800);
+  359 |         }
   360 | 
-  361 |         console.log('✅ Flow 3: Charlie — registered Pro, subscribed and voted');
-  362 |     });
-  363 | });
+  361 |         // Verify we're still on a valid page
+  362 |         const url = page.url();
+  363 |         expect(url).toMatch(/blueprints|marketplace/);
+  364 | 
+  365 |         console.log('✅ Flow 3: Charlie — registered Pro, subscribed and voted');
+  366 |     });
+  367 | });
 ```
