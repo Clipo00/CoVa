@@ -37,4 +37,16 @@ $app->add(
     $app['app']->make(App\Commands\FetchCommand::class)
 );
 
-$app->run();
+try {
+    $app->run();
+} catch (\Throwable $e) {
+    $debug = getenv('COVAR_DEBUG') || getenv('APP_DEBUG');
+
+    if ($debug) {
+        fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
+    } else {
+        fwrite(STDERR, "An error occurred. Set COVAR_DEBUG=1 for details.\n");
+    }
+
+    exit(1);
+}

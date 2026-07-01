@@ -111,13 +111,12 @@ class AuthApiControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertJsonStructure([
-            'user' => ['id', 'name', 'email'],
+            'user' => ['name', 'email'],
             'orgs' => [
-                '*' => ['id', 'name', 'slug'],
+                '*' => ['name', 'slug'],
             ],
         ]);
 
-        $this->assertEquals($user->id, $response->json('user.id'));
         $this->assertEquals($user->name, $response->json('user.name'));
         $this->assertEquals($user->email, $response->json('user.email'));
         $this->assertCount(1, $response->json('orgs'));
@@ -295,5 +294,59 @@ class AuthApiControllerTest extends TestCase
         ]);
 
         $response->assertUnauthorized();
+    }
+
+    public function test_verify_password_returns_404_for_blueprint_in_other_org(): void
+    {
+        [$user, $org] = $this->createProUserWithOrg();
+
+        // Create another org that the user does NOT belong to
+        $otherOwner = User::create([
+            'name' => 'Other Owner',
+            'email' => 'other-owner-verify@example.com',
+            'password' => Hash::make('password'),
+            'plan_id' => $this->proPlan->id,
+        ]);
+        $otherOrg = Organization::create([
+            'slug' => 'other-org-verify',
+            'name' => 'Other Org',
+            'owner_id' => $otherOwner->id,
+        ]);
+        $otherOrg->members()->attach($otherOwner->id, ['role' => 'owner']);
+
+        // Blueprint in the other org
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440500',
+            'organization_id' => $otherOrg->id,
+            'slug' => 'other-org-secret-bp',
+            'title' => 'Other Org Secret Blueprint',
+            'tabs_config' => [],
+            'created_by' => $otherOwner->id,
+        ]);
+
+        $blueprint->variables()->createMany([
+            [
+                'key' => 'SECRET_KEY',
+                'type' => 'fixed',
+                'default_value' => 'should-not-be-exposed',
+                'is_secret' => true,
+                'is_interactive' => false,
+                'section' => 'secrets',
+                'sort_order' => 0,
+            ],
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->postJson('/api/fetch/other-org-secret-bp/verify', [
+            'password' => 'password',
+        ]);
+
+        // Must return 404 to prevent org-bypass (don't leak that blueprint exists)
+        $response->assertNotFound();
+        $response->assertJson([
+            'title' => 'Not Found',
+            'status' => 404,
+        ]);
     }
 }

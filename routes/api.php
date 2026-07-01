@@ -34,7 +34,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Blueprint resolution (full output via ResolveBlueprint)
     Route::get('/blueprints/{slug}', [BlueprintApiController::class, 'show'])
         ->name('api.blueprints.show')
-        ->middleware('api.access');
+        ->middleware('api.access')
+        ->where('slug', '[a-z0-9-]+');
 
     // Auth: user profile + accessible organizations (no plan gate)
     Route::get('/me', [AuthApiController::class, 'me'])
@@ -43,5 +44,6 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Auth: password-gated secret decryption (rate limited to 5/min)
     Route::post('/fetch/{slug}/verify', [AuthApiController::class, 'verifyPassword'])
         ->name('api.fetch.verify')
-        ->middleware('throttle:5,1');
+        ->middleware('throttle:5,1')
+        ->where('slug', '[a-z0-9-]+');
 });

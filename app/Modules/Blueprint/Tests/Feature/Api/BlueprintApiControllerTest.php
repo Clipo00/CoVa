@@ -306,6 +306,46 @@ class BlueprintApiControllerTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_show_returns_404_for_blueprint_in_other_org(): void
+    {
+        [$user, $org] = $this->createProUserWithOrg();
+
+        // Create another org that the user does NOT belong to
+        $otherOwner = User::create([
+            'name' => 'Other Owner',
+            'email' => 'other-owner@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $this->proPlan->id,
+        ]);
+        $otherOrg = Organization::create([
+            'slug' => 'other-org-for-show',
+            'name' => 'Other Org',
+            'owner_id' => $otherOwner->id,
+        ]);
+        $otherOrg->members()->attach($otherOwner->id, ['role' => 'owner']);
+
+        // Blueprint in the other org (user has no access)
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440400',
+            'organization_id' => $otherOrg->id,
+            'slug' => 'other-org-blueprint',
+            'title' => 'Other Org Blueprint',
+            'tabs_config' => [],
+            'created_by' => $otherOwner->id,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $response = $this->getJson('/api/blueprints/other-org-blueprint');
+
+        $response->assertNotFound();
+        $response->assertJson([
+            'title' => 'Not Found',
+            'status' => 404,
+            'detail' => 'Blueprint not found.',
+        ]);
+    }
+
     public function test_show_returns_401_without_auth(): void
     {
         $response = $this->getJson('/api/blueprints/some-slug');

@@ -55,9 +55,24 @@ class ConfigSetKeyCommand extends Command
     {
         $key = $this->argument('key');
 
+        // Validate key format: must start with 'covar_' and meet minimum length
+        if (!str_starts_with($key, 'covar_')) {
+            $this->error('Invalid API key format. Key must start with "covar_".');
+
+            return 1;
+        }
+
+        if (strlen($key) < 16) {
+            $this->error('Invalid API key. Key must be at least 16 characters long.');
+
+            return 1;
+        }
+
         $client = $this->apiClient ?? $this->createApiClient($key);
 
-        if (!$client->validateConnectivity()) {
+        try {
+            $client->validateConnectivity();
+        } catch (\Throwable $e) {
             $this->error('Invalid API key or token expired');
 
             return 1;
@@ -92,7 +107,11 @@ class ConfigSetKeyCommand extends Command
         $dir = dirname($path);
 
         if (!is_dir($dir)) {
-            @mkdir($dir, 0755, true);
+            $mkdirResult = @mkdir($dir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->warn('Unable to create config directory: ' . $dir);
+            }
         }
 
         $config = [];
@@ -118,7 +137,11 @@ class ConfigSetKeyCommand extends Command
 
         // Set restricted permissions on non-Windows systems
         if (DIRECTORY_SEPARATOR !== '\\') {
-            @chmod($path, 0600);
+            $chmodResult = @chmod($path, 0600);
+
+            if (!$chmodResult) {
+                $this->warn('Unable to set restricted permissions (0600) on config file. This may expose your API key.');
+            }
         }
     }
 

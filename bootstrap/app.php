@@ -43,13 +43,19 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         // Loggear excepciones no capturadas con contexto completo
         $exceptions->report(function (Throwable $e) {
-            Log::error('Unhandled exception', [
+            $context = [
                 'message' => $e->getMessage(),
                 'class' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            ];
+
+            // Only include stack trace in debug mode
+            if (config('app.debug')) {
+                $context['trace'] = $e->getTraceAsString();
+            }
+
+            Log::error('Unhandled exception', $context);
         });
 
         // Response JSON con formato RFC 7807 para peticiones api/*
@@ -62,6 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 $status = Response::HTTP_INTERNAL_SERVER_ERROR;
                 $title = 'Internal Server Error';
+                $detail = $e->getMessage() ?: $title;
 
                 if ($e instanceof HttpExceptionInterface) {
                     $status = $e->getStatusCode();
@@ -69,9 +76,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 } elseif ($e instanceof \Illuminate\Auth\AuthenticationException) {
                     $status = Response::HTTP_UNAUTHORIZED;
                     $title = 'Unauthorized';
+                } elseif ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                    $status = Response::HTTP_NOT_FOUND;
+                    $title = 'Not Found';
+                    $detail = 'Resource not found.';
+                } elseif ($e instanceof \Illuminate\Auth\AuthorizationException) {
+                    $status = Response::HTTP_FORBIDDEN;
+                    $title = 'Forbidden';
+                    $detail = 'Access denied.';
                 }
-
-                $detail = $e->getMessage() ?: $title;
 
                 // En producción, no exponer detalles internos para 500
                 if ($status === Response::HTTP_INTERNAL_SERVER_ERROR && app()->isProduction()) {

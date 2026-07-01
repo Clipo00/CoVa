@@ -62,10 +62,36 @@ class BlueprintApiController
      *
      * Resolves the blueprint via ResolveBlueprint action and returns
      * the output as JSON (with secret variable values masked).
+     * Returns 404 if the blueprint does not belong to any of the
+     * authenticated user's organizations (prevents org-bypass).
      */
-    public function show(string $slug, ResolveBlueprint $resolveBlueprint): JsonResponse
+    public function show(string $slug, ResolveBlueprint $resolveBlueprint, Request $request): JsonResponse
     {
-        $blueprint = Blueprint::where('slug', $slug)->firstOrFail();
+        /** @var User $user */
+        $user = $request->user();
+
+        $blueprint = Blueprint::where('slug', $slug)->first();
+
+        if (!$blueprint) {
+            return response()->json([
+                'type' => config('app.url') . '/errors/not-found',
+                'title' => 'Not Found',
+                'status' => 404,
+                'detail' => 'Blueprint not found.',
+            ], 404);
+        }
+
+        // Verify blueprint belongs to one of the user's organizations
+        $orgIds = $user->organizations()->pluck('organizations.id');
+
+        if (!$blueprint->organization_id || !$orgIds->contains($blueprint->organization_id)) {
+            return response()->json([
+                'type' => config('app.url') . '/errors/not-found',
+                'title' => 'Not Found',
+                'status' => 404,
+                'detail' => 'Blueprint not found.',
+            ], 404);
+        }
 
         $output = $resolveBlueprint->execute($blueprint);
 

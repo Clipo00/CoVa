@@ -227,7 +227,10 @@ class ApiClientTest extends TestCase
 
         $client = $this->createClientWithMock($mock);
 
-        $this->assertFalse($client->validateConnectivity());
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Authentication failed');
+
+        $client->validateConnectivity();
     }
 
     #[Test]
@@ -242,7 +245,10 @@ class ApiClientTest extends TestCase
 
         $client = $this->createClientWithMock($mock);
 
-        $this->assertFalse($client->validateConnectivity());
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Network error');
+
+        $client->validateConnectivity();
     }
 
     #[Test]

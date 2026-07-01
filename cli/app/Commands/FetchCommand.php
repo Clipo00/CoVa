@@ -120,7 +120,13 @@ class FetchCommand extends Command
         $vscodeDir = $outputDir . '/.vscode';
 
         if (!is_dir($vscodeDir)) {
-            @mkdir($vscodeDir, 0755, true);
+            $mkdirResult = mkdir($vscodeDir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->error("Failed to create directory: {$vscodeDir}");
+
+                return;
+            }
         }
 
         file_put_contents(
@@ -151,7 +157,13 @@ class FetchCommand extends Command
         $vscodeDir = $outputDir . '/.vscode';
 
         if (!is_dir($vscodeDir)) {
-            @mkdir($vscodeDir, 0755, true);
+            $mkdirResult = mkdir($vscodeDir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->error("Failed to create directory: {$vscodeDir}");
+
+                return;
+            }
         }
 
         $mcpServers = [];
@@ -200,6 +212,7 @@ class FetchCommand extends Command
 
             $isSecret = (bool) ($variable['is_secret'] ?? false);
             $value = $isSecret ? '' : ($variable['default_value'] ?? '');
+            $value = $this->escapeEnvValue($value);
 
             $lines[] = $key . '=' . $value;
         }
@@ -254,6 +267,13 @@ class FetchCommand extends Command
         }
 
         $decryptedSecrets = $response['secrets'] ?? [];
+
+        if (!is_array($decryptedSecrets)) {
+            $this->warn('Unexpected response from password verification. Secret variables written with empty values — fill them manually in .env');
+
+            return;
+        }
+
         $envPath = $outputDir . '/.env';
         $envContent = file_get_contents($envPath);
 
@@ -265,11 +285,13 @@ class FetchCommand extends Command
             }
 
             $value = $secret['value'] ?? '';
-            $line = $key . '=' . $value;
+            $escapedValue = $this->escapeEnvValue($value);
+            $line = $key . '=' . $escapedValue;
             $pattern = '/^' . preg_quote($key, '/') . '=.*/m';
 
             if ((bool) preg_match($pattern, $envContent)) {
-                $envContent = (string) preg_replace($pattern, $line, $envContent);
+                $escapedLine = preg_replace('/\$/', '\\\\$', $line);
+                $envContent = (string) preg_replace($pattern, $escapedLine, $envContent);
             } else {
                 $envContent .= $line . "\n";
             }
@@ -277,6 +299,23 @@ class FetchCommand extends Command
 
         file_put_contents($envPath, $envContent);
         $this->info('✓ Secrets decrypted and written to .env');
+    }
+
+    /**
+     * Escape a value for safe inclusion in a .env file.
+     *
+     * Wraps the value in double quotes and escapes internal quotes
+     * if it contains spaces, hash (#), or quote characters.
+     */
+    private function escapeEnvValue(string $value): string
+    {
+        if ($value === '' || preg_match('/[\s"#]/', $value) === 0) {
+            return $value;
+        }
+
+        $escaped = str_replace('"', '\\"', $value);
+
+        return '"' . $escaped . '"';
     }
 
     /**

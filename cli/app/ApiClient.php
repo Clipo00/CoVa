@@ -74,7 +74,14 @@ class ApiClient
                 'headers' => $this->authHeaders(),
             ]);
 
-            return json_decode((string) $response->getBody(), true) ?? [];
+            $body = (string) $response->getBody();
+            $decoded = json_decode($body, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \RuntimeException('Invalid JSON response from API: ' . json_last_error_msg());
+            }
+
+            return $decoded;
         } catch (ConnectException $e) {
             throw new \RuntimeException('Network error: unable to reach the CoVa API');
         } catch (RequestException $e) {
@@ -99,7 +106,14 @@ class ApiClient
                 'json' => $data,
             ]);
 
-            return json_decode((string) $response->getBody(), true) ?? [];
+            $body = (string) $response->getBody();
+            $decoded = json_decode($body, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new \RuntimeException('Invalid JSON response from API: ' . json_last_error_msg());
+            }
+
+            return $decoded;
         } catch (ConnectException $e) {
             throw new \RuntimeException('Network error: unable to reach the CoVa API');
         } catch (RequestException $e) {
@@ -110,19 +124,16 @@ class ApiClient
     /**
      * Validate connectivity by calling GET /api/me.
      *
-     * Returns true if the API responds successfully, false on any error.
+     * Returns true if the API responds successfully.
+     * Re-throws RuntimeException on failure so callers can distinguish error types.
      */
     public function validateConnectivity(): bool
     {
         $this->ensureInitialized();
 
-        try {
-            $this->get('/api/me');
+        $this->get('/api/me');
 
-            return true;
-        } catch (\RuntimeException $e) {
-            return false;
-        }
+        return true;
     }
 
     /**

@@ -17,10 +17,14 @@ class ConfigSetKeyCommandTest extends TestCase
     private string $configDir;
     private string $configPath;
     private Container $container;
+    private ?string $originalHome;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Save original HOME to restore in tearDown
+        $this->originalHome = getenv('HOME') ?: null;
 
         // Create a temporary home directory for config isolation
         $this->tempHome = sys_get_temp_dir() . '/covar-test-' . bin2hex(random_bytes(4));
@@ -43,7 +47,12 @@ class ConfigSetKeyCommandTest extends TestCase
             $this->removeDirectory($this->tempHome);
         }
 
-        putenv('HOME');
+        // Restore original HOME
+        if ($this->originalHome !== null) {
+            putenv('HOME=' . $this->originalHome);
+        } else {
+            putenv('HOME');
+        }
 
         parent::tearDown();
     }
@@ -65,11 +74,19 @@ class ConfigSetKeyCommandTest extends TestCase
 
     /**
      * Create a mock ApiClient and bind it in the container.
+     *
+     * @param bool $shouldSucceed If true, validateConnectivity() returns true; if false, throws exception
      */
-    private function mockApiClient(bool $connectivityResult): ApiClient
+    private function mockApiClient(bool $shouldSucceed): ApiClient
     {
         $mock = $this->createMock(ApiClient::class);
-        $mock->method('validateConnectivity')->willReturn($connectivityResult);
+
+        if ($shouldSucceed) {
+            $mock->method('validateConnectivity')->willReturn(true);
+        } else {
+            $mock->method('validateConnectivity')
+                ->willThrowException(new \RuntimeException('Invalid API key or token expired'));
+        }
 
         $this->container->instance(ApiClient::class, $mock);
 
@@ -93,7 +110,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $mockClient = $this->mockApiClient(true);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_valid123']);
+        $exitCode = $tester->execute(['key' => 'covar_valid1234567']);
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString(
@@ -107,7 +124,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $config = json_decode(file_get_contents($this->configPath), true);
 
         $this->assertIsArray($config);
-        $this->assertSame('covar_valid123', $config['api_key']);
+        $this->assertSame('covar_valid1234567', $config['api_key']);
         $this->assertSame('https://api.cova.app', $config['base_url']);
     }
 
@@ -117,7 +134,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $mockClient = $this->mockApiClient(false);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_invalid']);
+        $exitCode = $tester->execute(['key' => 'covar_invalid_short']);
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
@@ -135,13 +152,13 @@ class ConfigSetKeyCommandTest extends TestCase
         // Create an existing config file with a valid key
         file_put_contents($this->configPath, json_encode([
             'base_url' => 'https://api.cova.app',
-            'api_key' => 'covar_existing_valid',
+            'api_key' => 'covar_existing_valid_key',
         ]));
 
         $mockClient = $this->mockApiClient(false);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_invalid']);
+        $exitCode = $tester->execute(['key' => 'covar_invalid_short']);
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
@@ -152,7 +169,7 @@ class ConfigSetKeyCommandTest extends TestCase
         // Existing config should remain untouched
         $config = json_decode(file_get_contents($this->configPath), true);
 
-        $this->assertSame('covar_existing_valid', $config['api_key']);
+        $this->assertSame('covar_existing_valid_key', $config['api_key']);
     }
 
     #[Test]
@@ -161,13 +178,13 @@ class ConfigSetKeyCommandTest extends TestCase
         // Create existing config with custom base_url
         file_put_contents($this->configPath, json_encode([
             'base_url' => 'https://custom.cova.app',
-            'api_key' => 'covar_old',
+            'api_key' => 'covar_old_key_short',
         ]));
 
         $mockClient = $this->mockApiClient(true);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_new']);
+        $exitCode = $tester->execute(['key' => 'covar_new_key_short']);
 
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString(
@@ -178,7 +195,7 @@ class ConfigSetKeyCommandTest extends TestCase
         // base_url should be preserved, key should be updated
         $config = json_decode(file_get_contents($this->configPath), true);
 
-        $this->assertSame('covar_new', $config['api_key']);
+        $this->assertSame('covar_new_key_short', $config['api_key']);
         $this->assertSame('https://custom.cova.app', $config['base_url']);
     }
 
@@ -189,7 +206,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $tester = $this->createCommandTester($mockClient);
 
         $exitCode = $tester->execute([
-            'key' => 'covar_valid',
+            'key' => 'covar_valid_short_key',
             '--base-url' => 'https://staging.cova.app',
         ]);
 
@@ -210,7 +227,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $mockClient = $this->mockApiClient(true);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_valid123']);
+        $exitCode = $tester->execute(['key' => 'covar_valid1234567']);
 
         $this->assertSame(0, $exitCode);
 
@@ -229,7 +246,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $mockClient = $this->mockApiClient(false);
         $tester = $this->createCommandTester($mockClient);
 
-        $exitCode = $tester->execute(['key' => 'covar_somekey']);
+        $exitCode = $tester->execute(['key' => 'covar_somekey_longer']);
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
