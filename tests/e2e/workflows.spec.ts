@@ -244,6 +244,10 @@ test.describe('Flow 2: Developer generates API token', () => {
             await page.waitForLoadState('networkidle');
         }
 
+        // Navigate to dashboard to refresh user session with new plan
+        await page.goto('/dashboard');
+        await page.waitForLoadState('networkidle');
+
         // 2e. Navigate to Profile → Seguridad tab
         await page.click('[data-testid="user-dropdown-toggle"]');
         await page.waitForTimeout(300);

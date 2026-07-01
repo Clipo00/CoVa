@@ -44,7 +44,7 @@ return [
 
     // Demo
     'demo_title' => 'Mira cómo funciona',
-    'demo_subtitle' => 'Crea tu primera organización, define tus blueprints y ejecutalos con un solo comando.',
+    'demo_subtitle' => 'Crea tu primera organización, define tus blueprints y ejecútalos con un solo comando.',
     'demo_dashboard' => 'Dashboard',
     'demo_org' => 'Crear Organización',
     'demo_blueprint' => 'Crear Blueprint',
