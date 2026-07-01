@@ -24,7 +24,7 @@ class EnsureApiAccess
 
         if (!$user || !$user->hasApiAccess()) {
             return response()->json([
-                'type' => 'https://cova.app/errors/forbidden',
+                'type' => config('app.url') . '/errors/forbidden',
                 'title' => 'Forbidden',
                 'status' => 403,
                 'detail' => 'Your current plan does not include API access. Please upgrade to Pro or Enterprise.',

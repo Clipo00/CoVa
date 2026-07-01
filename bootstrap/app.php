@@ -74,7 +74,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 }
 
                 return response()->json([
-                    'type' => "https://cova.app/errors/{$status}",
+                    'type' => config('app.url') . "/errors/{$status}",
                     'title' => $title,
                     'status' => $status,
                     'detail' => $detail,
