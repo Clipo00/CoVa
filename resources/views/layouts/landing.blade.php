@@ -80,74 +80,136 @@
 
     @stack('styles')
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body
+    class="font-sans antialiased min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+    x-data="{
+        activeTab: 'inicio',
+        tabs: ['inicio', 'demo', 'precios', 'marketplace', 'docs'],
+        init() {
+            const hash = window.location.hash.replace('#', '');
+            if (this.tabs.includes(hash)) {
+                this.activeTab = hash;
+            }
+            window.addEventListener('hashchange', () => {
+                const h = window.location.hash.replace('#', '');
+                if (this.tabs.includes(h)) this.activeTab = h;
+            });
+        },
+        switchTab(tab) {
+            this.activeTab = tab;
+            window.location.hash = tab;
+            this.$nextTick(() => {
+                document.getElementById('tab-' + tab)?.focus();
+            });
+        }
+    }"
+    x-cloak
+>
     <!-- Skip to content (a11y) -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg focus:outline-none">
         {{ __('shared.skip_to_content') }}
     </a>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50">
+    <!-- Single Navigation Bar: Logo | Tabs | Actions -->
+    <nav class="fixed top-0 left-0 right-0 z-40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50" role="tablist" aria-label="{{ __('landing.tabs_nav_label') }}">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="/" class="flex items-center space-x-2 text-xl font-bold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                    <svg class="w-10 h-10" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <!-- Fondo redondeado azul -->
+            <div class="flex items-center h-14 gap-4">
+                {{-- Left: Logo --}}
+                <a href="/"
+                   @click.prevent="switchTab('inicio')"
+                   class="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex-shrink-0 cursor-pointer">
+                    <svg class="w-8 h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect width="32" height="32" rx="8" fill="currentColor" class="text-indigo-600"/>
-                        <!-- Rueda de combinación circular principal -->
                         <circle cx="16" cy="15" r="7" stroke="white" stroke-width="1.5" fill="none"/>
-                        <!-- Marcas de la rueda (principales) -->
                         <line x1="16" y1="6" x2="16" y2="8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
                         <line x1="16" y1="22" x2="16" y2="24" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
                         <line x1="7" y1="15" x2="9" y2="15" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
                         <line x1="23" y1="15" x2="25" y2="15" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-                        <!-- Marcas diagonales -->
                         <line x1="9.6" y1="8.6" x2="11" y2="10" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
                         <line x1="21" y1="10" x2="22.4" y2="8.6" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
                         <line x1="9.6" y1="21.4" x2="11" y2="20" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
                         <line x1="21" y1="20" x2="22.4" y2="21.4" stroke="white" stroke-width="0.8" stroke-linecap="round"/>
-                        <!-- Centro de la rueda -->
                         <circle cx="16" cy="15" r="2" fill="white"/>
-                        <!-- Indicador/puntero arriba -->
                         <path d="M14 7 L16 5 L18 7" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                        <!-- Manija/Lock debajo -->
                         <rect x="13" y="25" width="6" height="2" rx="1" fill="white"/>
                         <circle cx="16" cy="26" r="0.8" fill="#4f46e5"/>
                     </svg>
-                    <span>{{ config('app.name', 'CoVa') }}</span>
+                    <span class="hidden sm:inline">{{ config('app.name', 'CoVa') }}</span>
                 </a>
 
-                <!-- Center nav links -->
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="#demo" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('switch-tab', {detail:'demo'}))" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors cursor-pointer">
-                        {{ __('landing.cta_secondary') }}
-                    </a>
-                    <a href="#precios" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('switch-tab', {detail:'precios'}))" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors cursor-pointer">
-                        {{ __('landing.nav_pricing') }}
-                    </a>
+                {{-- Center: Tabs --}}
+                <div class="flex-1 flex items-center justify-center overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <div class="flex items-center -mb-[1px]">
+                        <button type="button" role="tab" id="tab-inicio"
+                            aria-selected="true" aria-controls="panel-inicio" tabindex="0"
+                            @click="switchTab('inicio')"
+                            :class="activeTab === 'inicio'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                            class="flex-shrink-0 px-3 sm:px-4 py-4 text-xs sm:text-sm font-medium border-b-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset">
+                            {{ __('landing.tab_inicio') }}
+                        </button>
+                        <button type="button" role="tab" id="tab-demo"
+                            aria-selected="false" aria-controls="panel-demo" tabindex="-1"
+                            @click="switchTab('demo')"
+                            :class="activeTab === 'demo'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                            class="flex-shrink-0 px-3 sm:px-4 py-4 text-xs sm:text-sm font-medium border-b-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset">
+                            {{ __('landing.tab_demo') }}
+                        </button>
+                        <button type="button" role="tab" id="tab-precios"
+                            aria-selected="false" aria-controls="panel-precios" tabindex="-1"
+                            @click="switchTab('precios')"
+                            :class="activeTab === 'precios'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                            class="flex-shrink-0 px-3 sm:px-4 py-4 text-xs sm:text-sm font-medium border-b-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset">
+                            {{ __('landing.tab_precios') }}
+                        </button>
+                        <button type="button" role="tab" id="tab-marketplace"
+                            aria-selected="false" aria-controls="panel-marketplace" tabindex="-1"
+                            @click="switchTab('marketplace')"
+                            :class="activeTab === 'marketplace'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                            class="flex-shrink-0 px-3 sm:px-4 py-4 text-xs sm:text-sm font-medium border-b-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset">
+                            {{ __('landing.tab_marketplace') }}
+                        </button>
+                        <button type="button" role="tab" id="tab-docs"
+                            aria-selected="false" aria-controls="panel-docs" tabindex="-1"
+                            @click="switchTab('docs')"
+                            :class="activeTab === 'docs'
+                                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                            class="flex-shrink-0 px-3 sm:px-4 py-4 text-xs sm:text-sm font-medium border-b-2 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset">
+                            {{ __('landing.tab_docs') }}
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Right side -->
-                <div class="flex items-center space-x-3">
+                {{-- Right: Actions --}}
+                <div class="flex items-center gap-2 flex-shrink-0">
                     <livewire:shared.theme-toggle />
                     <x-locale-switcher />
 
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                                {{ __('landing.go_to_dashboard') }}
+                            <a href="{{ route('dashboard') }}"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                               title="{{ __('landing.go_to_dashboard') }}">
+                                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                </svg>
                             </a>
                         @else
-                            <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
-                                {{ __('landing.login') }}
+                            <a href="{{ route('login') }}"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                               title="{{ __('landing.login') }}">
+                                <svg class="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
                             </a>
-
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm">
-                                    {{ __('landing.register') }}
-                                </a>
-                            @endif
                         @endauth
                     @endif
                 </div>
@@ -156,7 +218,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main id="main-content" class="flex-1">
+    <main id="main-content" class="flex-1 pt-14">
         @yield('content')
     </main>
 
@@ -219,7 +281,6 @@
 
                     if (this.currentChar < line.text.length) {
                         const currentText = line.text.slice(0, this.currentChar + 1);
-                        // Replace last line with current progress
                         if (this.lines.length > this.currentLine) {
                             this.lines[this.currentLine] = currentText;
                         } else {
@@ -229,7 +290,6 @@
                         const delay = line.text[this.currentChar - 1] === ' ' ? 40 : 25;
                         setTimeout(() => this.typeLine(), delay);
                     } else {
-                        // Store class info for styling
                         this.lines[this.currentLine] = line.text;
                         this.currentLine++;
                         this.currentChar = 0;

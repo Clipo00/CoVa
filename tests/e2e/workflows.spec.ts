@@ -93,7 +93,7 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         await register(page, 'Alice Owner', email);
 
         // 1b. Onboarding → creates "Acme Corp"
-        await completeOnboarding(page, 'Acme Corp');
+        await completeOnboarding(page, `Acme Corp ${timestamp}`);
 
         // 1c. Go to Blueprints → Create
         await page.goto('/blueprints');
@@ -232,7 +232,7 @@ test.describe('Flow 2: Developer generates API token', () => {
         await register(page, 'Bob Developer', email);
 
         // 2b. Onboarding — skip through to dashboard
-        await completeOnboarding(page, 'Dev Org');
+        await completeOnboarding(page, `Dev Org ${timestamp}`);
 
         // 2c. Activate Pro trial (API tokens require Pro/Enterprise plan)
         await page.goto('/pricing');
@@ -302,7 +302,7 @@ test.describe('Flow 3: Pro user subscribes and votes', () => {
         await register(page, 'Charlie Pro', email);
 
         // 3b. Onboarding → creates org
-        await completeOnboarding(page, 'Charlie Co');
+        await completeOnboarding(page, `Charlie Co ${timestamp}`);
 
         // 3c. Ensure Pro access (pricing page)
         await page.goto('/pricing');
