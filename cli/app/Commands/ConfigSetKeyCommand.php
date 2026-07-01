@@ -1,0 +1,136 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Commands;
+
+use App\ApiClient;
+use Illuminate\Console\Command;
+
+/**
+ * Store the API key in ~/.config/covar/config.json with restricted permissions (0600).
+ *
+ * Validates connectivity by calling GET /api/me before saving. Does NOT save
+ * invalid or expired keys. The base_url defaults to https://api.cova.app
+ * and can be overridden via the --base-url option.
+ *
+ * Usage:
+ *   covar config set-key covar_abc123
+ *   covar config set-key covar_abc123 --base-url=https://staging.cova.app
+ */
+class ConfigSetKeyCommand extends Command
+{
+    /**
+     * @var string The console command signature.
+     */
+    protected $signature = 'config:set-key
+        {key : The API key to store (prefix: covar_)}
+        {--base-url= : Override the default API base URL}';
+
+    /**
+     * @var string The console command description.
+     */
+    protected $description = 'Set and validate the CoVa API key';
+
+    private ?ApiClient $apiClient;
+
+    /**
+     * @param ApiClient|null $apiClient Optional injected client for testing
+     */
+    public function __construct(?ApiClient $apiClient = null)
+    {
+        parent::__construct();
+        $this->apiClient = $apiClient;
+    }
+
+    /**
+     * Execute the console command.
+     *
+     * 1. Reads the API key argument and optional --base-url
+     * 2. Validates connectivity via GET /api/me
+     * 3. On success: saves to config, confirms
+     * 4. On failure: shows error, does NOT save
+     */
+    public function handle(): int
+    {
+        $key = $this->argument('key');
+
+        $client = $this->apiClient ?? $this->createApiClient($key);
+
+        if (!$client->validateConnectivity()) {
+            $this->error('Invalid API key or token expired');
+
+            return 1;
+        }
+
+        $this->saveConfig($key);
+        $this->info('API key saved and verified');
+
+        return 0;
+    }
+
+    /**
+     * Create an ApiClient with the given key.
+     */
+    private function createApiClient(string $key): ApiClient
+    {
+        return new ApiClient(null, [
+            'base_url' => $this->option('base-url') ?? 'https://api.cova.app',
+            'api_key' => $key,
+        ]);
+    }
+
+    /**
+     * Save the API key to the config file.
+     *
+     * Creates the config directory if it doesn't exist. Preserves any
+     * existing base_url. Sets restricted permissions (0600) on Unix.
+     */
+    private function saveConfig(string $key): void
+    {
+        $path = $this->getConfigPath();
+        $dir = dirname($path);
+
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0755, true);
+        }
+
+        $config = [];
+
+        if (file_exists($path)) {
+            $existing = json_decode(file_get_contents($path), true);
+
+            if (is_array($existing)) {
+                $config = $existing;
+            }
+        }
+
+        $config['api_key'] = $key;
+
+        if (!isset($config['base_url'])) {
+            $config['base_url'] = $this->option('base-url') ?? 'https://api.cova.app';
+        }
+
+        file_put_contents(
+            $path,
+            json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+
+        // Set restricted permissions on non-Windows systems
+        if (DIRECTORY_SEPARATOR !== '\\') {
+            @chmod($path, 0600);
+        }
+    }
+
+    /**
+     * Get the config file path.
+     *
+     * Uses HOME (Unix) or USERPROFILE (Windows) environment variable.
+     */
+    private function getConfigPath(): string
+    {
+        $home = getenv('HOME') ?: getenv('USERPROFILE');
+
+        return $home . '/.config/covar/config.json';
+    }
+}

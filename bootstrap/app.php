@@ -55,6 +55,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Response JSON con formato RFC 7807 para peticiones api/*
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
+                // Let the framework handle ValidationException (422) natively
+                if ($e instanceof \Illuminate\Validation\ValidationException) {
+                    return;
+                }
+
                 $status = Response::HTTP_INTERNAL_SERVER_ERROR;
                 $title = 'Internal Server Error';
 

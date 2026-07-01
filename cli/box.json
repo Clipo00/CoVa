@@ -1,0 +1,6 @@
+{
+    "main": "covar",
+    "output": "builds/covar.phar",
+    "directories": ["app", "config", "vendor"],
+    "files": ["covar"]
+}

@@ -10,6 +10,13 @@
 ## [Unreleased]
 
 ### Added
+- **🖥️ CLI Foundation (PR 3 of 6)** — Standalone CLI tool in `cli/` for fetching blueprints via API:
+  - Laravel Zero v2.0.14 scaffold: `cli/composer.json`, `cli/config/config.php`, `cli/box.json`, `cli/covar` entry point, `cli/bootstrap/init.php`
+  - `ApiClient` — Guzzle HTTP wrapper with config from `~/.config/covar/config.json`, Bearer token auth, error mapping (401→auth, 403→plan required, 404→not found, 429→rate limit, 500→server error, network→friendly message), methods `get()`, `post()`, `validateConnectivity()`
+  - `ConfigSetKeyCommand` — `covar config set-key <key>` with `--base-url` option, validates via `GET /api/me` before saving, 0600 permissions on Unix, preserves existing `base_url`
+  - **Tests**: 14 tests (ApiClient: auth headers, error mapping, connectivity validation, base_url config; ConfigSetKeyCommand: valid/invalid key, existing config preservation, base-url override, permissions, network errors)
+  - See `openspec/changes/covar-cli/` for full specification
+
 - **🔌 API Foundation (PR 1 of 6)** — Sanctum-authenticated JSON API for CoVa CLI tool:
   - `routes/api.php` with `auth:sanctum` + `throttle:60,1` middleware
   - `EnsureApiAccess` middleware: Free plan returns 403 RFC 7807, Pro/Enterprise passes through
@@ -18,6 +25,13 @@
   - `bootstrap/app.php`: API route registration, `api.access` middleware alias, RFC 7807 JSON error rendering for `api/*` routes
   - **Tests**: 15 new tests (116 assertions) across middleware unit, DTO unit, and controller feature tests
   - See `openspec/changes/covar-cli/` for full specification
+
+- **🔐 Auth API (PR 2 of 6)** — Sanctum-authenticated user profile and password-gated secret decryption:
+  - `AuthApiController`: `me()` returns authenticated user + accessible organizations; `verifyPassword()` checks `Hash::check()` and returns decrypted secret variables
+  - `routes/api.php`: Added `GET /api/me` (no plan gate) and `POST /api/fetch/{slug}/verify` (throttled to 5/min)
+  - `bootstrap/app.php`: Fixed exception handler — `ValidationException` no longer incorrectly returns 500 for `api/*` routes
+  - **Tests**: 10 new tests (41 assertions) covering user profile, multiple orgs, 401 without auth, password verification success/failure, empty secrets, 404 not found, missing password validation, and rate limiting
+  - See `openspec/changes/covar-cli/specs/auth/spec.md` for full specification
 
 ### Changed
 - **Presets & Skills → Segments** — The toggle-based preset/skill system with HTML markers (`<!-- BEGIN:preset:... -->`) replaced by the new segment CRUD system in TabManager.

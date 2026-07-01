@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Auth\Controllers\Api\AuthApiController;
 use App\Modules\Blueprint\Controllers\Api\BlueprintApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,11 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 | @see openspec/specs/api/spec.md
 |
-| PR 1 (this PR): Blueprint endpoints
+| PR 1: Blueprint endpoints
 |   - GET  /api/blueprints         — Paginated, org-scoped, plan-gated listing
 |   - GET  /api/blueprints/{slug}  — Fully resolved blueprint JSON
 |
-| PR 2 (upcoming): Auth endpoints
+| PR 2: Auth endpoints
 |   - GET  /api/me                 — User profile + organizations
 |   - POST /api/fetch/{slug}/verify — Password verification for secrets
 */
@@ -35,5 +36,12 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
         ->name('api.blueprints.show')
         ->middleware('api.access');
 
-    // ↓ PR 2 will insert /me and /fetch/{slug}/verify here
+    // Auth: user profile + accessible organizations (no plan gate)
+    Route::get('/me', [AuthApiController::class, 'me'])
+        ->name('api.me');
+
+    // Auth: password-gated secret decryption (rate limited to 5/min)
+    Route::post('/fetch/{slug}/verify', [AuthApiController::class, 'verifyPassword'])
+        ->name('api.fetch.verify')
+        ->middleware('throttle:5,1');
 });
