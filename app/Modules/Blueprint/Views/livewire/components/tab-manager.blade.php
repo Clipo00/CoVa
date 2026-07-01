@@ -18,7 +18,9 @@
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                         </button>
                     @endif
-                    <button type="button" wire:click="removeTab({{ $index }})" class="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300" title="{{ __('blueprint.tab_delete') }}">
+                    <button type="button"
+                        @click="$store.confirm.ask({message:'{{ __('blueprint.tab_remove_confirm') }}', onConfirm(){ $wire.removeTab({{ $index }}) }})"
+                        class="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300" title="{{ __('blueprint.tab_delete') }}">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
@@ -56,7 +58,9 @@
                         <div class="bg-gray-50 dark:bg-gray-700/50 rounded-md p-3 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('blueprint.server_label', ['index' => $serverIndex + 1]) }}</span>
-                                <button type="button" wire:click="removeMcpServer({{ $index }}, {{ $serverIndex }})" class="text-red-400 hover:text-red-600 text-xs">
+                                <button type="button"
+                                    @click="$store.confirm.ask({message:'{{ __('blueprint.server_remove_confirm') }}', onConfirm(){ $wire.removeMcpServer({{ $index }}, {{ $serverIndex }}) }})"
+                                    class="text-red-400 hover:text-red-600 text-xs">
                                     {{ __('blueprint.server_delete') }}
                                 </button>
                             </div>
@@ -117,7 +121,9 @@
                         <div class="bg-gray-50 dark:bg-gray-700/50 rounded-md p-3 space-y-2">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-medium text-gray-500 dark:text-gray-400">{{ __('blueprint.script_label', ['index' => $scriptIndex + 1]) }}</span>
-                                <button type="button" wire:click="removeScript({{ $index }}, {{ $scriptIndex }})" class="text-red-400 hover:text-red-600 text-xs">
+                                <button type="button"
+                                    @click="$store.confirm.ask({message:'{{ __('blueprint.script_remove_confirm') }}', onConfirm(){ $wire.removeScript({{ $index }}, {{ $scriptIndex }}) }})"
+                                    class="text-red-400 hover:text-red-600 text-xs">
                                     {{ __('blueprint.script_delete') }}
                                 </button>
                             </div>
@@ -251,8 +257,7 @@
                                             @endif
                                             <button
                                                 type="button"
-                                                wire:click="removeSegment({{ $index }}, {{ $segIndex }})"
-                                                wire:confirm="{{ __('blueprint.segment_remove_confirm') }}"
+                                                @click="$store.confirm.ask({message:'{{ __('blueprint.segment_remove_confirm') }}', onConfirm(){ $wire.removeSegment({{ $index }}, {{ $segIndex }}) }})"
                                                 class="p-1 text-red-400 hover:text-red-600 dark:hover:text-red-300"
                                                 title="{{ __('blueprint.segment_remove') }}"
                                             >

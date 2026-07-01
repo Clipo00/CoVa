@@ -1,8 +1,8 @@
 <div>
     <form wire:submit="submit" class="space-y-6">
         {{-- Información básica --}}
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-5 py-3 bg-indigo-50/50 dark:bg-indigo-900/20 border-b border-indigo-100 dark:border-indigo-800/30">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
                         <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -79,41 +79,53 @@
                     </div>
                 </div>
 
-                {{-- Category & Description --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div class="md:col-span-1">
-                        <label for="categoryId" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.category_label') }}</label>
-                        <div class="relative">
-                            <select wire:model="categoryId" id="categoryId" 
-                                class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all appearance-none cursor-pointer">
-                                <option value="">{{ __('blueprint.category_none') }}</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pl-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        </div>
-                        @error('categoryId') <span class="text-red-500 text-sm mt-1.5">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.description_label') }}</label>
-                        <textarea wire:model="description" id="description" rows="3" 
+                {{-- Description --}}
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">{{ __('blueprint.description_label') }}</label>
+                    <textarea wire:model="description" id="description" rows="3" 
                             class="block w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:focus:ring-indigo-500/30 transition-all resize-none" 
                             placeholder="{{ __('blueprint.description_placeholder') }}"></textarea>
                         @error('description') <span class="text-red-500 text-sm mt-1.5">{{ $message }}</span> @enderror
-                    </div>
                 </div>
             </div>
         </div>
 
+        {{-- Tags --}}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-5 py-3 bg-purple-50/50 dark:bg-purple-900/20 border-b border-purple-100 dark:border-purple-800/30">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.tags_section') }}</h2>
+                    <span class="ml-auto text-xs text-gray-400">{{ __('blueprint.tags_hint') }}</span>
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="flex flex-wrap gap-2">
+                    @foreach($allTags as $tag)
+                        <label class="cursor-pointer">
+                            <input type="checkbox" wire:model="selectedTags" value="{{ $tag->id }}" class="sr-only peer">
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium border transition-all
+                                peer-checked:bg-purple-100 peer-checked:text-purple-700 peer-checked:border-purple-300
+                                dark:peer-checked:bg-purple-900/40 dark:peer-checked:text-purple-300 dark:peer-checked:border-purple-700
+                                bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-600
+                                hover:border-purple-300 dark:hover:border-purple-700">
+                                {{ $tag->name }}
+                            </span>
+                        </label>
+                    @endforeach
+                </div>
+                @error('selectedTags') <span class="text-red-500 text-sm mt-2 flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</span> @enderror
+            </div>
+        </div>
+
         {{-- Variables --}}
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-5 py-3 bg-emerald-50/50 dark:bg-emerald-900/20 border-b border-emerald-100 dark:border-emerald-800/30">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
                         <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -137,8 +149,8 @@
         </div>
 
         {{-- Tabs --}}
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
-            <div class="px-6 py-4 bg-gray-50/50 dark:bg-gray-700/30 border-b border-gray-100 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">
+            <div class="px-5 py-3 bg-amber-50/50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/30">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
                         <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
