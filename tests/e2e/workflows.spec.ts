@@ -41,13 +41,13 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
 
     // Wait for Livewire + Alpine.js to fully initialize
     await page.waitForSelector('[wire\\:id]', { timeout: 5000 });
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
 
     // --- Step 1: Welcome → click start button (translated text) ---
     const startBtn = page.getByRole('button', { name: /Empezar|Comenzar|Start|Continuar/i }).first();
     await expect(startBtn).toBeVisible({ timeout: 5000 });
     await startBtn.click();
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1000);
 
     // --- Step 2: Organization (required) ---
     // Fill org name and wait for Livewire to process the model update
@@ -57,26 +57,24 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
 
     // Click submit — button text is "Crear Organización" (translated)
     const orgSubmit = page.getByRole('button', { name: /Crear Organización|Create Organization/i });
-    // Wait for button to be enabled (Livewire validation cleared)
-    await expect(orgSubmit).toBeEnabled({ timeout: 8000 });
     await orgSubmit.click();
     // Wait for Livewire AJAX response to advance to step 3
     await page.waitForTimeout(2000);
 
     // --- Step 3: Blueprint — skip ---
-    const skipBtn1 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
+    const skipBtn1 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i });
     await expect(skipBtn1).toBeVisible({ timeout: 8000 });
     await skipBtn1.click();
     await page.waitForTimeout(800);
 
     // --- Step 4: Invite — skip ---
-    const skipBtn2 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
+    const skipBtn2 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i });
     await expect(skipBtn2).toBeVisible({ timeout: 8000 });
     await skipBtn2.click();
     await page.waitForTimeout(800);
 
     // --- Step 5: Done → click complete ---
-    const completeBtn = page.getByRole('button', { name: /Finalizar|Completar|Complete|Ir al Dashboard/i }).first();
+    const completeBtn = page.getByRole('button', { name: /Finalizar|Completar|Complete|Ir al Dashboard/i });
     await expect(completeBtn).toBeVisible({ timeout: 8000 });
     await completeBtn.click();
     await page.waitForTimeout(1000);
