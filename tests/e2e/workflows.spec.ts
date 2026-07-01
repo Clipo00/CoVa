@@ -39,25 +39,33 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
     await expect(page).toHaveURL(/onboarding/);
     await page.waitForLoadState('networkidle');
 
+    // Wait for Livewire + Alpine.js to fully initialize
+    await page.waitForSelector('[wire\\:id]', { timeout: 5000 });
+    await page.waitForTimeout(500);
+
     // --- Step 1: Welcome → click start button (translated text) ---
     const startBtn = page.getByRole('button', { name: /Empezar|Comenzar|Start|Continuar/i }).first();
     await expect(startBtn).toBeVisible({ timeout: 5000 });
     await startBtn.click();
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(800);
 
     // --- Step 2: Organization (required) ---
     // Fill org name and wait for Livewire to process the model update
     await page.fill('input#orgName', orgName);
-    await page.waitForTimeout(800); // Let Livewire wire:model.live sync
+    // Wait for Livewire's wire:model.live to sync and validation to clear
+    await page.waitForTimeout(1000);
 
     // Click submit — button text is "Crear Organización" (translated)
     const orgSubmit = page.getByRole('button', { name: /Crear Organización|Create Organization/i });
     // Wait for button to be enabled (Livewire validation cleared)
-    await expect(orgSubmit).toBeEnabled({ timeout: 5000 });
+    await expect(orgSubmit).toBeEnabled({ timeout: 8000 });
     await orgSubmit.click();
-    await page.waitForTimeout(1000);
+    // Wait for Livewire AJAX response to advance to step 3
+    await page.waitForTimeout(1500);
 
     // --- Step 3: Blueprint — skip ---
+    // Wait for step 3 content to load
+    await page.waitForTimeout(500);
     const skipBtn1 = page.getByRole('button', { name: /Omitir|Skip|Saltar/i }).first();
     await expect(skipBtn1).toBeVisible({ timeout: 8000 });
     await skipBtn1.click();
