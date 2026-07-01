@@ -86,10 +86,13 @@ class PublishBlueprint
      */
     private function createMarketplaceCopy(Blueprint $blueprint, User $user, Organization $marketplaceOrg): Blueprint
     {
+        // Ensure unique slug within marketplace org
+        $slug = $this->uniqueMarketplaceSlug($blueprint->slug, $marketplaceOrg->id);
+
         $copy = Blueprint::create([
             'uuid' => (string) Uuid::generate(),
             'organization_id' => $marketplaceOrg->id,
-            'slug' => $blueprint->slug,
+            'slug' => $slug,
             'title' => $blueprint->title,
             'description' => $blueprint->description,
             'is_public' => true,
@@ -100,6 +103,25 @@ class PublishBlueprint
         $this->syncCopy($blueprint, $copy);
 
         return $copy;
+    }
+
+    /**
+     * Generate a unique slug for the marketplace org by appending a counter
+     * if the base slug already exists.
+     */
+    private function uniqueMarketplaceSlug(string $baseSlug, int $organizationId): string
+    {
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Blueprint::where('organization_id', $organizationId)
+            ->where('slug', $slug)
+            ->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     /**
