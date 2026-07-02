@@ -222,10 +222,16 @@
                     @else
                         <div class="space-y-3">
                             @foreach($segments as $segIndex => $segment)
-                                <div x-data="{ open: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg">
+                                <div x-data="{ open: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
                                     {{-- Segment Header (clickable to collapse) --}}
-                                    <button type="button" @click="open = !open" class="w-full px-4 py-2.5 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-t-lg">
-                                        <div class="flex items-center gap-2 min-w-0">
+                                    <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                                        <div
+                                            class="flex-1 flex items-center gap-2 min-w-0 px-4 py-2.5 cursor-pointer"
+                                            @click="open = !open"
+                                            role="button"
+                                            tabindex="0"
+                                            @keydown.enter.prevent="open = !open"
+                                        >
                                             <svg :class="{'rotate-180': !open}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                             </svg>
@@ -248,7 +254,7 @@
                                                 {{ $segment['type'] }}
                                             </span>
                                         </div>
-                                        <div class="flex items-center gap-1 flex-shrink-0 ml-2" @click.stop="">
+                                        <div class="flex items-center gap-1 flex-shrink-0 px-2">
                                             @if($segIndex > 0)
                                             <button type="button" wire:click="moveSegment({{ $index }}, {{ $segIndex }}, -1)" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="{{ __('blueprint.var_move_up') }}">
                                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
@@ -268,10 +274,10 @@
                                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                             </button>
                                         </div>
-                                    </button>
+                                    </div>
 
                                     {{-- Segment Content (collapsible) --}}
-                                    <div x-show="open">
+                                    <div x-show="open" x-cloak>
                                         <div class="px-4 pb-3 pt-3 border-t border-gray-100 dark:border-gray-700/50">
                                             <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                                                 {{ __('blueprint.segment_content_label') }}
