@@ -169,6 +169,8 @@ return [
     'tabs_empty_hint' => 'Add a tab to get started',
     'add_tab' => 'Add',
     'live_preview' => 'Live Preview',
+    'preview_tab_extensions' => 'Extensions',
+    'preview_tab_mcp' => 'MCP',
 
     // Favorites
     'favorites_title' => 'Favorites',

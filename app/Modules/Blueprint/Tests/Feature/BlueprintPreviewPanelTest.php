@@ -56,7 +56,7 @@ class BlueprintPreviewPanelTest extends TestCase
             ['type' => 'vscode_extensions', 'config' => ['extensions' => ['test-ext.vscode']]],
         ]);
 
-        $component->assertSee('VSCode Extensions');
+        $component->assertSee(__('blueprint.preview_tab_extensions'));
         $component->assertSee('test-ext.vscode');
     }
 
@@ -70,9 +70,9 @@ class BlueprintPreviewPanelTest extends TestCase
 
         $component->dispatch('preview-refresh', tabsConfig: []);
 
-        $component->assertDontSee('VSCode Extensions');
-        $component->assertDontSee('Agent Context');
-        $component->assertDontSee('MCP Servers');
+        $component->assertDontSee(__('blueprint.preview_tab_extensions'));
+        $component->assertDontSee(__('blueprint.agent_context'));
+        $component->assertDontSee(__('blueprint.preview_tab_mcp'));
     }
 
     public function test_panel_updates_when_tabs_change(): void

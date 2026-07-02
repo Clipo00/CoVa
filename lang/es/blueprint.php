@@ -170,6 +170,8 @@ return [
     'tabs_empty_hint' => 'Agrega una pestaña para comenzar',
     'add_tab' => 'Agregar',
     'live_preview' => 'Vista previa',
+    'preview_tab_extensions' => 'Extensiones',
+    'preview_tab_mcp' => 'MCP',
 
     // Favorites
     'favorites_title' => 'Favoritos',
