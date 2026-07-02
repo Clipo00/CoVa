@@ -28,6 +28,7 @@ return [
     'description_label' => 'Description',
     'description_placeholder' => 'Describe the purpose of this blueprint...',
     'tabs_section' => 'Tabs',
+    'tab_count' => ':count tab|:count tabs',
     'tags_section' => 'Tags',
     'tags_hint' => 'Max 6',
     'create_blueprint_button' => 'Create Blueprint',

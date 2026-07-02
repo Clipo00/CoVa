@@ -28,6 +28,7 @@ return [
     'description_label' => 'Descripción',
     'description_placeholder' => 'Describe el propósito de este blueprint...',
     'tabs_section' => 'Pestañas',
+    'tab_count' => ':count pestaña|:count pestañas',
     'tags_section' => 'Etiquetas',
     'tags_hint' => 'Máx. 6',
     'create_blueprint_button' => 'Crear Blueprint',
