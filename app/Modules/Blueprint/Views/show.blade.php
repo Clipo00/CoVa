@@ -290,14 +290,19 @@
 
         {{-- Agent Context Section (collapsible) --}}
         @if($agentMd)
-            <div x-data='{ open: true, agentContent: @json($agentMd), segments: @json($segments) }' class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
+            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
+                {{-- Safely expose segments + agent.md for download buttons (avoids JSON-in-attribute quoting issues) --}}
+                <script>
+                    window.__blueprintSegments = @json($segments);
+                    window.__blueprintAgentMd = @json($agentMd);
+                </script>
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.agent_context') }}</h2>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">{{ __('blueprint.agent_md_badge') }}</span>
                     </button>
                     <div class="flex items-center space-x-3">
-                        <button type="button" @click="$downloadTextFile(agentContent, '.agent.md')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_agent_md') }}">
+                        <button type="button" @click="$downloadTextFile(window.__blueprintAgentMd, '.agent.md')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_agent_md') }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -328,7 +333,7 @@
                                             <span class="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">{{ $segment['filename'] }}</span>
                                         </div>
                                         <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                                            <button type="button" @click.stop="$downloadTextFile(segments[{{ $index }}].content, segments[{{ $index }}].filename)" class="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_segment') }}">
+                                            <button type="button" @click.stop="$downloadTextFile(window.__blueprintSegments[{{ $index }}].content, window.__blueprintSegments[{{ $index }}].filename)" class="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_segment') }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
