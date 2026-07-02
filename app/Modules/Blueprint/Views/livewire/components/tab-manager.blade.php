@@ -222,9 +222,9 @@
                     @else
                         <div class="space-y-3">
                             @foreach($segments as $segIndex => $segment)
-                                <div x-data="{ open: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                                <div x-data="{ open: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg">
                                     {{-- Segment Header (clickable to collapse) --}}
-                                    <button type="button" @click="open = !open" class="w-full px-4 py-2.5 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                                    <button type="button" @click="open = !open" class="w-full px-4 py-2.5 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-t-lg">
                                         <div class="flex items-center gap-2 min-w-0">
                                             <svg :class="{'rotate-180': !open}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -271,9 +271,9 @@
                                     </button>
 
                                     {{-- Segment Content (collapsible) --}}
-                                    <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                                        <div class="px-4 pb-3">
-                                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1 mt-3">
+                                    <div x-show="open">
+                                        <div class="px-4 pb-3 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                                            <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                                                 {{ __('blueprint.segment_content_label') }}
                                             </label>
                                             <textarea
