@@ -109,16 +109,16 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         }
         await page.waitForLoadState('networkidle');
 
-        // 1d. Fill basic info
+        // 1d. Fill basic info (use timestamp for unique slug across runs)
         await expect(page.locator('input#title')).toBeVisible({ timeout: 5000 });
-        await page.fill('input#title', 'Laravel API Starter');
+        await page.fill('input#title', `Laravel API ${timestamp}`);
 
         // Slug auto-generated from title by Livewire — wait then verify
         await page.waitForTimeout(800);
         const slugInput = page.locator('input#slug');
         const slugValue = await slugInput.inputValue();
         if (!slugValue) {
-            await slugInput.fill('laravel-api-starter');
+            await slugInput.fill(`laravel-api-${timestamp}`);
         }
 
         // 1e. Add tabs via Livewire TabManager component
@@ -180,7 +180,12 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
         await page.waitForTimeout(2000);
 
         // Should land on blueprint show page
-        await expect(page).toHaveURL(/blueprints\//);
+        await expect(page).toHaveURL(/\/b\//);
+
+        // Capture the actual slug from the show page URL (handles auto-suffixed slugs)
+        const showUrl = page.url();
+        const slugMatch = showUrl.match(/\/b\/([^\/\?]+)/);
+        const actualSlug = slugMatch ? slugMatch[1] : (slugValue || `laravel-api-${timestamp}`);
 
         // 1i. Start Pro Trial — visit pricing
         await page.goto('/pricing');
@@ -193,17 +198,17 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
             await page.waitForLoadState('networkidle');
         }
 
-        // 1j. Navigate to edit page to publish blueprint
-        await page.goto(`/blueprints/${slugValue || 'laravel-api-starter'}/edit`);
+        // 1j. Navigate to edit page to set blueprint public
+        await page.goto(`/b/${actualSlug}/edit`);
         await page.waitForLoadState('networkidle');
 
-        // Publish toggle — look for text or checkbox
+        // Publish toggle — Tailwind switch with sr-only checkbox + overlay div
         const publishToggle = page.locator(
-            'input[wire\\:model*="isPublic"], input[wire\\:model*="is_public"], ' +
-            'button:has-text("Publicar"), label:has-text("Publicar")'
+            'input[wire\\:model*="isPublic"], input[wire\\:model*="is_public"]'
         ).first();
         if (await publishToggle.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await publishToggle.click();
+            // Force click bypasses the Tailwind toggle overlay div
+            await publishToggle.check({ force: true });
             await page.waitForTimeout(500);
             // Save the edit
             const saveBtn = page.getByRole('button', { name: /Guardar|Actualizar|Save|Update/i }).last();
@@ -215,7 +220,7 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
 
         // Verify we remain on a valid page (no error)
         const currentUrl = page.url();
-        expect(currentUrl).toMatch(/blueprints|dashboard|marketplace/);
+        expect(currentUrl).toMatch(/\/b\/|blueprints|dashboard|marketplace/);
 
         console.log('✅ Flow 1: Alice — registered, org, blueprint, trial, published');
     });
