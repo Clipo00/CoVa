@@ -290,12 +290,12 @@
 
         {{-- Agent Context Section (collapsible) --}}
         @if($agentMd)
-            <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
-                {{-- Safely expose segments + agent.md for download buttons (avoids JSON-in-attribute quoting issues) --}}
-                <script>
-                    window.__blueprintSegments = @json($segments);
-                    window.__blueprintAgentMd = @json($agentMd);
-                </script>
+            {{-- Safely expose segments + agent.md for download buttons (avoids JSON-in-attribute quoting issues) --}}
+            <script>
+                window.__blueprintSegments = @json($segments);
+                window.__blueprintAgentMd = @json($agentMd);
+            </script>
+            <div x-data="{ open: true, segOpen: [{{ implode(',', array_fill(0, count($segments), 'true')) }}] }" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 mb-6 overflow-hidden">
                 <div class="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <button type="button" @click="open = !open" class="flex items-center space-x-3 flex-1 text-left">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.agent_context') }}</h2>
@@ -326,8 +326,8 @@
                         {{-- Individual segment panels — one collapsible card per segment --}}
                         <div class="space-y-3">
                             @foreach($segments as $index => $segment)
-                                <div x-data="{ segOpen: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
-                                    <button type="button" @click="segOpen = !segOpen" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                                    <button type="button" @click="segOpen[{{ $index }}] = !segOpen[{{ $index }}]" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
                                         <div class="flex items-center space-x-3 min-w-0">
                                             <span class="text-sm font-mono font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $segment['name'] }}</span>
                                             <span class="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">{{ $segment['filename'] }}</span>
@@ -339,12 +339,12 @@
                                                 </svg>
                                                 <span class="hidden sm:inline">{{ __('blueprint.download_segment') }}</span>
                                             </button>
-                                            <svg :class="{'rotate-180': !segOpen}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg :class="{'rotate-180': !segOpen[{{ $index }}]}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                             </svg>
                                         </div>
                                     </button>
-                                    <div x-show="segOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700/50">
+                                    <div x-show="segOpen[{{ $index }}]" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700/50">
                                         <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $segment['content'] }}</pre>
                                     </div>
                                 </div>
