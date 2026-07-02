@@ -317,27 +317,38 @@
                 </div>
 
                 <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-6">
-                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 overflow-x-auto">
-                        <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
-                    </div>
-
-                    {{-- Per-segment downloads --}}
                     @if(count($segments) > 0)
-                        <div class="mt-4">
-                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{{ __('blueprint.segment_download_title') }}</h3>
-                            <div class="space-y-2">
-                                @foreach($segments as $segment)
-                                    <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 rounded-lg px-3 py-2">
-                                        <span class="text-sm font-mono text-gray-700 dark:text-gray-300">{{ $segment['name'] }}</span>
-                                        <button type="button" @click="$downloadTextFile(segments[{{ $loop->index }}].content, segments[{{ $loop->index }}].filename)" class="inline-flex items-center px-2.5 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        {{-- Individual segment panels — one collapsible card per segment --}}
+                        <div class="space-y-3">
+                            @foreach($segments as $index => $segment)
+                                <div x-data="{ segOpen: true }" class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                                    <button type="button" @click="segOpen = !segOpen" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
+                                        <div class="flex items-center space-x-3 min-w-0">
+                                            <span class="text-sm font-mono font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $segment['name'] }}</span>
+                                            <span class="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">{{ $segment['filename'] }}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
+                                            <button type="button" @click.stop="$downloadTextFile(segments[{{ $index }}].content, segments[{{ $index }}].filename)" class="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_segment') }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <span class="hidden sm:inline">{{ __('blueprint.download_segment') }}</span>
+                                            </button>
+                                            <svg :class="{'rotate-180': !segOpen}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                             </svg>
-                                            {{ __('blueprint.download_segment') }}
-                                        </button>
+                                        </div>
+                                    </button>
+                                    <div x-show="segOpen" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700/50">
+                                        <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $segment['content'] }}</pre>
                                     </div>
-                                @endforeach
-                            </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Fallback: show merged agent.md when no individual segments are resolved --}}
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
                         </div>
                     @endif
                 </div>
