@@ -59,7 +59,8 @@
                         $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
                     @endphp
                     @if($userOrgsWhereOwner->count() > 0)
-                        <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" x-data class="inline flex items-center space-x-2" @submit.prevent="const f=$el; const s=$refs.targetOrg; if (s.value) { f.submit(); } else { $store.confirm.ask({message:'{{ __('blueprint.transfer_select_org') }}', confirmText:'{{ __('shared.understood') }}', onConfirm(){ s.focus(); }}); }">">
+                        <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" x-data class="inline flex items-center space-x-2" @submit.prevent="const f=$el; const s=$refs.targetOrg; if (s.value) { f.submit(); } else { $store.confirm.ask({message:'{{ __('blueprint.transfer_select_org') }}', confirmText:'{{ __('shared.understood') }}', onConfirm(){ s.focus(); }}); }"
+>
                             @csrf
                             <select x-ref="targetOrg" name="target_organization_id" class="block w-full px-3 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2">
                                 <option value="">{{ __('blueprint.transfer_to') }}</option>
@@ -185,319 +186,291 @@
             $scriptsShell = $blueprintOutput->getScriptsShellScript();
 
             // Determine which tabs are available
-            $hasVariables = $blueprint->variables->isNotEmpty() || $envTemplate;
+            $hasVariables = $blueprint->variables->isNotEmpty();
             $hasAiContext = !empty($agentMd);
             $hasExtensions = count($extensions) > 0;
             $hasScripts = !empty($scripts);
             $hasMcpServers = !empty($mcpServers);
 
-            // Build tab list with default active
+            // Build ordered tab list — first available is default
             $tabs = [];
             if ($hasVariables) $tabs[] = 'variables';
             if ($hasAiContext) $tabs[] = 'ai-context';
             if ($hasExtensions) $tabs[] = 'vscode';
             if ($hasScripts) $tabs[] = 'scripts';
             if ($hasMcpServers) $tabs[] = 'mcp';
-            $defaultTab = $tabs[0] ?? '';
+            $defaultTab = $tabs[0] ?? 'variables';
+
+            // Group variables by section for the variables tab
+            $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
+            $sectionColors = [];
+            foreach($groupedVars as $section => $vars) {
+                $rawColor = $vars->first()->section_color ?? '#6b7280';
+                $sectionColors[$section] = preg_match('/^#[a-fA-F0-9]{6}$/', $rawColor) ? $rawColor : '#6B7280';
+            }
         @endphp
 
-        @if(count($tabs) > 0)
-            {{-- Safely expose segments + agent.md for download buttons --}}
-            @if($hasAiContext)
-                <script>
-                    window.__blueprintSegments = @json($segments);
-                    window.__blueprintAgentMd = @json($agentMd);
-                </script>
-            @endif
+        {{-- Expose segments data for download buttons (avoids Alpine attribute quoting issues) --}}
+        @if($hasAiContext && count($segments) > 0)
+            <script>window.__blueprintSegments = @json($segments);</script>
+        @endif
+        @if($hasAiContext)
+            <script>window.__blueprintAgentMd = @json($agentMd);</script>
+        @endif
 
-            {{-- Tabbed Content Interface --}}
-            <div x-data="{ activeTab: '{{ $defaultTab }}' }" class="mb-6">
-                {{-- Tab Navigation --}}
-                <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto mb-0">
-                    @if($hasVariables)
-                        <button type="button"
-                            @click="activeTab = 'variables'"
-                            :class="activeTab === 'variables'
-                                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
-                            class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
-                        >
+        {{-- Tabbed Content Interface --}}
+        <div x-data="{ tab: '{{ $defaultTab }}' }" class="mb-6">
+            {{-- Tab Navigation --}}
+            <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+                @foreach($tabs as $tabId)
+                    <button type="button"
+                        @click="tab = '{{ $tabId }}'"
+                        :class="tab === '{{ $tabId }}'
+                            ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
+                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
+                        class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
+                    >
+                        @if($tabId === 'variables')
                             {{ __('blueprint.env_variables') }}
                             <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                                 {{ $blueprint->variables->count() }}
                             </span>
-                        </button>
-                    @endif
-                    @if($hasAiContext)
-                        <button type="button"
-                            @click="activeTab = 'ai-context'"
-                            :class="activeTab === 'ai-context'
-                                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
-                            class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
-                        >
+                        @elseif($tabId === 'ai-context')
                             {{ __('blueprint.agent_context') }}
-                        </button>
-                    @endif
-                    @if($hasExtensions)
-                        <button type="button"
-                            @click="activeTab = 'vscode'"
-                            :class="activeTab === 'vscode'
-                                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
-                            class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
-                        >
+                            <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300">
+                                {{ count($segments) }}
+                            </span>
+                        @elseif($tabId === 'vscode')
                             {{ __('blueprint.vscode_extensions') }}
                             <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
                                 {{ count($extensions) }}
                             </span>
-                        </button>
-                    @endif
-                    @if($hasScripts)
-                        <button type="button"
-                            @click="activeTab = 'scripts'"
-                            :class="activeTab === 'scripts'
-                                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
-                            class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
-                        >
+                        @elseif($tabId === 'scripts')
                             {{ __('blueprint.scripts_section') }}
                             <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
                                 {{ count($scripts) }}
                             </span>
-                        </button>
-                    @endif
-                    @if($hasMcpServers)
-                        <button type="button"
-                            @click="activeTab = 'mcp'"
-                            :class="activeTab === 'mcp'
-                                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400'
-                                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'"
-                            class="flex-1 min-w-0 whitespace-nowrap px-4 py-3 text-sm font-medium text-center border-b-2 transition-colors"
-                        >
+                        @elseif($tabId === 'mcp')
                             {{ __('blueprint.mcp_servers') }}
                             <span class="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">
                                 {{ count($mcpServers['mcp_servers'] ?? []) }}
                             </span>
-                        </button>
+                        @endif
+                    </button>
+                @endforeach
+            </div>
+
+            {{-- Tab Content Panel --}}
+            <div class="bg-white dark:bg-gray-800 rounded-b-xl rounded-tr-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 border-t-0 p-6">
+
+                {{-- Variables Tab --}}
+                <div x-show="tab === 'variables'" class="tab-panel">
+                    @if($blueprint->variables->isEmpty())
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                            <p>{{ __('blueprint.variables_empty') }}</p>
+                            <p class="text-sm mt-1">{{ __('blueprint.variables_empty_hint') }}</p>
+                        </div>
+                    @else
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h3>
+                            @if($envTemplate)
+                                <button type="button" onclick="downloadTextFile(@json($envTemplate), '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    {{ __('blueprint.download_env') }}
+                                </button>
+                            @endif
+                        </div>
+                        <div class="space-y-5">
+                            @foreach($groupedVars as $section => $vars)
+                                @php $color = $sectionColors[$section] ?? '#6B7280'; @endphp
+                                <div class="relative">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ $color }}"></span>
+                                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{{ $section }}</span>
+                                        <span class="text-xs text-gray-400">{{ __('blueprint.variable_count', ['count' => $vars->count()]) }}</span>
+                                    </div>
+                                    <div class="pl-4 space-y-1" style="border-left: 2px solid {{ $color }}33">
+                                        @foreach($vars as $variable)
+                                            <div class="flex items-center gap-3 py-2 px-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                                <span class="text-sm font-mono text-gray-900 dark:text-gray-100 min-w-[140px]">{{ $variable->key }}</span>
+                                                <span class="text-xs text-gray-400">=</span>
+                                                <span class="text-sm text-gray-600 dark:text-gray-400 flex-1">
+                                                    @if($variable->is_secret)
+                                                        <span class="text-gray-400 tracking-wider">{{ __('blueprint.secret_value') }}</span>
+                                                    @else
+                                                        {{ $variable->default_value ?? '-' }}
+                                                    @endif
+                                                </span>
+                                                <div class="flex items-center gap-2">
+                                                    @if($variable->type === 'fixed')
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">{{ __('blueprint.var_type_fixed') }}</span>
+                                                    @else
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">{{ __('blueprint.var_type_empty') }}</span>
+                                                    @endif
+                                                    @if($variable->is_interactive)
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">{{ __('blueprint.var_interactive') }}</span>
+                                                    @endif
+                                                    @if($variable->is_secret)
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">{{ __('blueprint.var_secret') }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
 
-                {{-- Tab Content --}}
-                <div class="bg-white dark:bg-gray-800 rounded-b-xl rounded-tr-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 border-t-0 p-6">
-
-                    {{-- Variables Tab --}}
-                    @if($hasVariables)
-                        <div x-show="activeTab === 'variables'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                            @if($blueprint->variables->isEmpty())
-                                <div class="text-center py-8 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                                    </svg>
-                                    <p>{{ __('blueprint.variables_empty') }}</p>
-                                    <p class="text-sm mt-1">{{ __('blueprint.variables_empty_hint') }}</p>
-                                </div>
-                            @else
-                                @php
-                                    $groupedVars = $blueprint->variables->groupBy(fn($v) => $v->section ?? 'General');
-                                    $sectionColors = [];
-                                    foreach($groupedVars as $section => $vars) {
-                                        $firstVar = $vars->first();
-                                        $rawColor = $firstVar->section_color ?? '#6b7280';
-                                        $sectionColors[$section] = preg_match('/^#[a-fA-F0-9]{6}$/', $rawColor) ? $rawColor : '#6B7280';
-                                    }
-                                @endphp
-
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h3>
-                                    @if($envTemplate)
-                                        <button type="button" @click="$downloadTextFile(window.__envTemplate || '{{ json_encode($envTemplate) }}', '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                            </svg>
-                                            {{ __('blueprint.download_env') }}
-                                        </button>
-                                    @endif
-                                </div>
-
-                                <div class="space-y-5">
-                                    @foreach($groupedVars as $section => $vars)
-                                        @php $color = $sectionColors[$section] ?? '#6B7280'; @endphp
-                                        <div class="relative">
-                                            <div class="flex items-center gap-2 mb-2">
-                                                <span class="w-3 h-3 rounded-full" style="background-color: {{ $color }}"></span>
-                                                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 font-mono">{{ $section }}</span>
-                                                <span class="text-xs text-gray-400">{{ __('blueprint.variable_count', ['count' => $vars->count()]) }}</span>
-                                            </div>
-                                            <div class="pl-4 space-y-1" style="border-left: 2px solid {{ $color }}33">
-                                                @foreach($vars as $variable)
-                                                    <div class="flex items-center gap-3 py-2 px-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                                        <span class="text-sm font-mono text-gray-900 dark:text-gray-100 min-w-[140px]">{{ $variable->key }}</span>
-                                                        <span class="text-xs text-gray-400">=</span>
-                                                        <span class="text-sm text-gray-600 dark:text-gray-400 flex-1">
-                                                            @if($variable->is_secret)
-                                                                <span class="text-gray-400 tracking-wider">{{ __('blueprint.secret_value') }}</span>
-                                                            @else
-                                                                {{ $variable->default_value ?? '-' }}
-                                                            @endif
-                                                        </span>
-                                                        <div class="flex items-center gap-2">
-                                                            @if($variable->type === 'fixed')
-                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">{{ __('blueprint.var_type_fixed') }}</span>
-                                                            @else
-                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">{{ __('blueprint.var_type_empty') }}</span>
-                                                            @endif
-                                                            @if($variable->is_interactive)
-                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">{{ __('blueprint.var_interactive') }}</span>
-                                                            @endif
-                                                            @if($variable->is_secret)
-                                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">{{ __('blueprint.var_secret') }}</span>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
+                {{-- AI Context Tab --}}
+                <div x-show="tab === 'ai-context'" class="tab-panel">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">{{ __('blueprint.agent_md_badge') }}</span>
                         </div>
-                    @endif
+                        <div class="flex items-center space-x-2">
+                            <button type="button" onclick="downloadTextFile(window.__blueprintAgentMd, '.agent.md')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                {{ __('blueprint.download_agent_md') }}
+                            </button>
+                            <livewire:shared.copy-to-clipboard
+                                :text="$agentMd ?? ''"
+                                :label="__('blueprint.copy_button')"
+                                :success-message="__('blueprint.agent_md_copied')"
+                            />
+                        </div>
+                    </div>
 
-                    {{-- AI Context Tab --}}
-                    @if($hasAiContext)
-                        <div x-show="activeTab === 'ai-context'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center space-x-2">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200">{{ __('blueprint.agent_md_badge') }}</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button type="button" @click="$downloadTextFile(window.__blueprintAgentMd, '.agent.md')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        {{ __('blueprint.download_agent_md') }}
-                                    </button>
-                                    <livewire:shared.copy-to-clipboard
-                                        :text="$agentMd"
-                                        :label="__('blueprint.copy_button')"
-                                        :success-message="__('blueprint.agent_md_copied')"
-                                    />
-                                </div>
-                            </div>
-
-                            @if(count($segments) > 0)
-                                {{-- Individual segment panels --}}
-                                <div class="space-y-3">
-                                    @foreach($segments as $index => $segment)
-                                        <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden" x-data="{ open: true }">
-                                            <button type="button" @click="open = !open" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">
-                                                <div class="flex items-center space-x-3 min-w-0">
-                                                    <span class="text-sm font-mono font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $segment['name'] }}</span>
-                                                    <span class="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">{{ $segment['filename'] }}</span>
-                                                </div>
-                                                <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
-                                                    <button type="button" @click.stop="$downloadTextFile(window.__blueprintSegments[{{ $index }}].content, window.__blueprintSegments[{{ $index }}].filename)" class="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors" title="{{ __('blueprint.download_segment') }}">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                        <span class="hidden sm:inline">{{ __('blueprint.download_segment') }}</span>
-                                                    </button>
-                                                    <svg :class="{'rotate-180': !open}" class="h-4 w-4 text-gray-400 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                    </svg>
-                                                </div>
+                    @if(count($segments) > 0)
+                        {{-- Individual segment panels using native <details> — zero Alpine, zero JS issues --}}
+                        <div class="space-y-3">
+                            @foreach($segments as $index => $segment)
+                                <details open class="group border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                                    <summary class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                                        <div class="flex items-center space-x-3 min-w-0">
+                                            <span class="text-sm font-mono font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $segment['name'] }}</span>
+                                            <span class="text-xs text-gray-400 flex-shrink-0 hidden sm:inline">{{ $segment['filename'] }}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
+                                            <button type="button"
+                                                onclick="event.preventDefault(); event.stopPropagation(); downloadTextFile(window.__blueprintSegments[{{ $index }}].content, window.__blueprintSegments[{{ $index }}].filename)"
+                                                class="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500 transition-colors cursor-pointer"
+                                                title="{{ __('blueprint.download_segment') }}"
+                                            >
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 sm:mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <span class="hidden sm:inline">{{ __('blueprint.download_segment') }}</span>
                                             </button>
-                                            <div x-show="open" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700/50">
-                                                <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $segment['content'] }}</pre>
-                                            </div>
+                                            <svg class="h-4 w-4 text-gray-400 transform transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                {{-- Fallback: merged agent.md --}}
-                                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 overflow-x-auto">
-                                    <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-
-                    {{-- VSCode Extensions Tab --}}
-                    @if($hasExtensions)
-                        <div x-show="activeTab === 'vscode'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">{{ count($extensions) }}</span>
-                                <livewire:shared.copy-to-clipboard
-                                    :text="$installCommand"
-                                    :label="__('blueprint.copy_install_command')"
-                                    :success-message="__('blueprint.command_copied')"
-                                />
-                            </div>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                @foreach($extensions as $ext)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                                        {{ $ext }}
-                                    </span>
-                                @endforeach
-                            </div>
-                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                                <code class="text-sm text-gray-600 dark:text-gray-300 font-mono break-all">{{ $installCommand }}</code>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Scripts Tab --}}
-                    @if($hasScripts)
-                        <div x-show="activeTab === 'scripts'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                            <div class="flex items-center justify-between mb-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">{{ count($scripts) }}</span>
-                                <livewire:shared.copy-to-clipboard
-                                    :text="$scriptsShell"
-                                    :label="__('blueprint.copy_scripts_command')"
-                                    :success-message="__('blueprint.scripts_copied')"
-                                />
-                            </div>
-                            <div class="space-y-2">
-                                <ol class="list-decimal list-inside space-y-3">
-                                    @foreach($scripts as $script)
-                                        <li class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                                            <code class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all">{{ $script['command'] }}</code>
-                                            @if(!empty($script['description']))
-                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $script['description'] }}</p>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ol>
-                            </div>
-                            <div class="mt-3">
-                                <p class="text-xs text-amber-600 dark:text-amber-400">{{ __('blueprint.scripts_doc_only') }}</p>
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- MCP Servers Tab --}}
-                    @if($hasMcpServers)
-                        <div x-show="activeTab === 'mcp'" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-                            <div class="space-y-3">
-                                @foreach($mcpServers['mcp_servers'] ?? [] as $server)
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="font-medium text-gray-900 dark:text-gray-100">{{ $server['name'] }}</span>
-                                        </div>
-                                        <code class="text-sm text-gray-600 dark:text-gray-300 block font-mono">
-                                            {{ $server['command'] }}
-                                            @if(!empty($server['args']))
-                                                {{ implode(' ', array_map(fn($a) => "'" . $a . "'", is_array($server['args'] ?? []) ? $server['args'] : [])) }}
-                                            @endif
-                                        </code>
+                                    </summary>
+                                    <div class="px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700/50">
+                                        <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $segment['content'] }}</pre>
                                     </div>
-                                @endforeach
-                            </div>
+                                </details>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-sm text-gray-700 dark:text-gray-200 whitespace-pre-wrap font-mono">{{ $agentMd }}</pre>
                         </div>
                     @endif
+                </div>
+
+                {{-- VSCode Extensions Tab --}}
+                <div x-show="tab === 'vscode'" class="tab-panel">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">{{ count($extensions) }}</span>
+                        <livewire:shared.copy-to-clipboard
+                            :text="$installCommand ?? ''"
+                            :label="__('blueprint.copy_install_command')"
+                            :success-message="__('blueprint.command_copied')"
+                        />
+                    </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        @foreach($extensions as $ext)
+                            <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-mono bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                                {{ $ext }}
+                            </span>
+                        @endforeach
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                        <code class="text-sm text-gray-600 dark:text-gray-300 font-mono break-all">{{ $installCommand }}</code>
+                    </div>
+                </div>
+
+                {{-- Scripts Tab --}}
+                <div x-show="tab === 'scripts'" class="tab-panel">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">{{ count($scripts) }}</span>
+                        <livewire:shared.copy-to-clipboard
+                            :text="$scriptsShell ?? ''"
+                            :label="__('blueprint.copy_scripts_command')"
+                            :success-message="__('blueprint.scripts_copied')"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <ol class="list-decimal list-inside space-y-3">
+                            @foreach($scripts as $script)
+                                <li class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+                                    <code class="text-sm font-mono text-gray-800 dark:text-gray-200 break-all">{{ $script['command'] }}</code>
+                                    @if(!empty($script['description']))
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $script['description'] }}</p>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                    <div class="mt-3">
+                        <p class="text-xs text-amber-600 dark:text-amber-400">{{ __('blueprint.scripts_doc_only') }}</p>
+                    </div>
+                </div>
+
+                {{-- MCP Servers Tab --}}
+                <div x-show="tab === 'mcp'" class="tab-panel">
+                    <div class="space-y-3">
+                        @foreach($mcpServers['mcp_servers'] ?? [] as $server)
+                            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">{{ $server['name'] }}</span>
+                                </div>
+                                <code class="text-sm text-gray-600 dark:text-gray-300 block font-mono">
+                                    {{ $server['command'] }}
+                                    @if(!empty($server['args']))
+                                        {{ implode(' ', array_map(fn($a) => "'" . $a . "'", is_array($server['args'] ?? []) ? $server['args'] : [])) }}
+                                    @endif
+                                </code>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        @endif
+        </div>
+
+        {{-- Global download helper (also accessible outside Alpine scope) --}}
+        <script>
+            function downloadTextFile(content, filename) {
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        </script>
     </div>
 @endsection
