@@ -48,13 +48,10 @@ class BlueprintPolicy
             return false;
         }
 
-        // If billing is enabled, check plan
-        if (config('marketplace.billing_enabled')) {
-            // Plan belongs to the owner, not the org directly
-            $plan = $blueprint->organization->owner?->plan;
-            if (!$plan || !$plan->has_marketplace_publish) {
-                return false;
-            }
+        // Marketplace publish is a plan-gated feature — always check the plan
+        $plan = $blueprint->organization->owner?->plan;
+        if (!$plan || !$plan->has_marketplace_publish) {
+            return false;
         }
 
         return true;

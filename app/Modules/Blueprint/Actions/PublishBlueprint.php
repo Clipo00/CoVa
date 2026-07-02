@@ -30,12 +30,10 @@ class PublishBlueprint
             throw new HttpException(503, __('blueprint.publish_marketplace_disabled'));
         }
 
-        // 2. Check billing gate (feature flag, not auth)
-        if (config('marketplace.billing_enabled')) {
-            $plan = $user->plan;
-            if (!$plan || !$plan->has_marketplace_publish) {
-                throw new HttpException(403, __('blueprint.publish_plan_required'));
-            }
+        // 2. Marketplace publish is plan-gated — always check the plan
+        $plan = $user->plan;
+        if (!$plan || !$plan->has_marketplace_publish) {
+            throw new HttpException(403, __('blueprint.publish_plan_required'));
         }
 
         $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->firstOrFail();
