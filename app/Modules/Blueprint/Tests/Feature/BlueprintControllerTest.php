@@ -203,8 +203,10 @@ class BlueprintControllerTest extends TestCase
         // Vault fetch label
         $response->assertSee(__('blueprint.vault_fetch_label'));
 
-        // Segment download title
-        $response->assertSee(__('blueprint.segment_download_title'));
+        // Individual segment panels (psr12, stripe) are rendered
+        $response->assertSee('psr12');
+        $response->assertSee('stripe');
+        $response->assertSee(__('blueprint.download_segment'));
     }
 
     public function test_edit_page_is_accessible_to_authorized_user(): void

@@ -95,8 +95,9 @@ class PublishBlueprintTest extends TestCase
         ]);
     }
 
-    public function test_free_plan_denied_when_billing_enabled(): void
+    public function test_free_plan_is_denied(): void
     {
+        // Free plan users can never publish — plan check is always enforced
         $freePlan = Plan::where('slug', 'free')->first();
         $freeUser = User::create([
             'name' => 'Free User',
@@ -152,8 +153,9 @@ class PublishBlueprintTest extends TestCase
         $this->action->execute($blueprint, $this->owner);
     }
 
-    public function test_billing_disabled_skips_plan_check(): void
+    public function test_free_plan_denied_regardless_of_billing(): void
     {
+        // Even with billing disabled, free plan users cannot publish
         config(['marketplace.billing_enabled' => false]);
 
         $freePlan = Plan::where('slug', 'free')->first();
@@ -165,7 +167,6 @@ class PublishBlueprintTest extends TestCase
         ]);
 
         $org = (new CreateOrganization)->execute($freeUser, 'Free Org 2', 'free-org-2');
-        $originalOrgId = $org->id;
         $this->actingAs($freeUser);
         $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($org, 'Free BP 2', 'free-bp-2');
@@ -175,10 +176,9 @@ class PublishBlueprintTest extends TestCase
             $freeUser->id => ['role' => 'owner'],
         ]);
 
-        $result = $this->action->execute($blueprint, $freeUser);
+        $this->expectException(HttpException::class);
+        $this->expectExceptionMessage(__('blueprint.publish_plan_required'));
 
-        // Original stays in its org with billing check skipped
-        $this->assertTrue($result->fresh()->is_public);
-        $this->assertEquals($originalOrgId, $result->fresh()->organization_id);
+        $this->action->execute($blueprint, $freeUser);
     }
 }

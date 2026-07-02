@@ -235,10 +235,10 @@ class BlueprintPolicyTest extends TestCase
         $this->assertFalse($this->policy->publish($owner, $blueprint));
     }
 
-    public function test_owner_with_free_can_publish_when_billing_disabled(): void
+    public function test_owner_with_free_plan_cannot_publish_regardless_of_billing(): void
     {
+        // Marketplace publish is always plan-gated — free users can never publish
         config(['marketplace.enabled' => true]);
-        config(['marketplace.billing_enabled' => false]);
 
         $freePlan = Plan::where('slug', 'free')->first();
         $owner = User::create([
@@ -255,7 +255,7 @@ class BlueprintPolicyTest extends TestCase
         $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'Free BP 2', 'free-bp-2');
 
-        $this->assertTrue($this->policy->publish($owner, $blueprint));
+        $this->assertFalse($this->policy->publish($owner, $blueprint));
     }
 
     public function test_non_owner_cannot_publish(): void
