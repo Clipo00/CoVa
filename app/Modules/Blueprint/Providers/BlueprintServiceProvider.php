@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Providers;
 
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
-use App\Modules\Blueprint\Livewire\Components\BlueprintPreviewPanel;
 use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
@@ -50,7 +49,6 @@ class BlueprintServiceProvider extends ServiceProvider
         Livewire::component('blueprint.forms.blueprint-edit-form', BlueprintEditForm::class);
         Livewire::component('blueprint.tables.blueprint-list', BlueprintList::class);
         Livewire::component('blueprint.components.tab-manager', TabManager::class);
-        Livewire::component('blueprint.components.preview-panel', BlueprintPreviewPanel::class);
     }
 
     /**

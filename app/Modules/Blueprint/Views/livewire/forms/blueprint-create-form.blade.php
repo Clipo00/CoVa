@@ -212,27 +212,4 @@
     </form>
 
     {{-- Live Preview Panel --}}
-    <div x-data="{
-        timeout: null,
-        init() {
-            Livewire.on('tabs-updated', (event) => {
-                clearTimeout(this.timeout);
-                this.timeout = setTimeout(() => {
-                    Livewire.dispatch('preview-refresh', {
-                        tabsConfig: event.tabs,
-                        variables: $wire.variables
-                    });
-                }, 300);
-            });
-            // Initial preview if tabs already populated (template selection)
-            if ($wire.tabsConfig && $wire.tabsConfig.length > 0) {
-                Livewire.dispatch('preview-refresh', {
-                    tabsConfig: $wire.tabsConfig,
-                    variables: $wire.variables
-                });
-            }
-        }
-    }" class="mt-6">
-        <livewire:blueprint.components.preview-panel :can-view-secrets="$this->isOwner" wire:key="create-preview-panel" />
-    </div>
 </div>
