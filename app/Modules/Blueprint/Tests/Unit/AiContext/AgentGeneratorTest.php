@@ -7,6 +7,7 @@ namespace App\Modules\Blueprint\Tests\Unit\AiContext;
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\DTOs\AiContextSegment;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CICDPreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\DockerPreset;
@@ -45,9 +46,12 @@ class AgentGeneratorTest extends TestCase
         $this->skillsRegistry->register(new ReactExpertSkill);
         $this->skillsRegistry->register(new VueExpertSkill);
 
+        $agentsRegistry = new AgentRegistry;
+
         $this->generator = new AgentGenerator(
             $this->presetsRegistry,
             $this->skillsRegistry,
+            $agentsRegistry,
         );
     }
 

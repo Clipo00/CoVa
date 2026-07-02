@@ -166,6 +166,13 @@ return [
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
     'custom_rules_hint' => 'When you toggle presets or skills, their content loads here for editing. Toggling off removes the block automatically.',
+
+    // Agents
+    'load_agent' => 'Load agent',
+    'load_agent_placeholder' => 'Select an agent...',
+    'agent_laravel_developer' => 'Laravel Developer',
+    'agent_frontend_developer' => 'Frontend Developer',
+    'agent_fullstack_developer' => 'Full-Stack Developer',
     'tabs_empty' => 'No tabs configured',
     'tabs_empty_hint' => 'Add a tab to get started',
     'add_tab' => 'Add',

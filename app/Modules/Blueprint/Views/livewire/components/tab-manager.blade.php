@@ -166,6 +166,32 @@
                     $unusedSkills = array_values(array_diff($availableSkillNames, $usedSkillNames));
                 @endphp
                 <div class="space-y-4">
+                    {{-- Load Agent Dropdown --}}
+                    @if(!empty($availableAgentNames))
+                        @php
+                            $usedAgentNames = array_map(fn($s) => $s['name'], array_filter($segments, fn($s) => $s['type'] === 'agent'));
+                            $unusedAgents = array_values(array_diff($availableAgentNames, $usedAgentNames));
+                        @endphp
+                        @if(!empty($unusedAgents))
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                    {{ __('blueprint.load_agent') }}
+                                </label>
+                                <select
+                                    wire:change="loadAgent({{ $index }}, $event.target.value)"
+                                    class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                >
+                                    <option value="">{{ __('blueprint.load_agent_placeholder') }}</option>
+                                    @foreach($unusedAgents as $agent)
+                                        <option value="{{ $agent }}">
+                                            {{ __('blueprint.agent_' . str_replace('-', '_', $agent)) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+                    @endif
+
                     {{-- Add Preset Dropdown --}}
                     @if(!empty($unusedPresets))
                         <div>
@@ -250,7 +276,12 @@
                                                 </span>
                                             @endif
                                             <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium
-                                                {{ $segment['type'] === 'preset' ? 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300' : ($segment['type'] === 'skill' ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300') }}">
+                                                {{ match($segment['type']) {
+                                                    'preset' => 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300',
+                                                    'skill' => 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300',
+                                                    'agent' => 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+                                                    default => 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+                                                } }}">
                                                 {{ $segment['type'] }}
                                             </span>
                                         </div>

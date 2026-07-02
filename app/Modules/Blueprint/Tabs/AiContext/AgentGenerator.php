@@ -6,12 +6,14 @@ namespace App\Modules\Blueprint\Tabs\AiContext;
 
 use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\DTOs\AiContextSegment;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
 
 class AgentGenerator
 {
     public function __construct(
         private readonly SegmentRegistry $presets,
         private readonly SegmentRegistry $skills,
+        private readonly AgentRegistry $agents,
     ) {}
 
     /**
@@ -92,7 +94,7 @@ class AgentGenerator
      */
     private function resolveContent(AiContextSegment $segment): ?string
     {
-        // Override content or custom segment: use provided content with generated heading
+        // Override content (custom, agent with user edits): use provided content with heading
         if ($segment->content !== null) {
             $heading = "## {$segment->name}";
 
@@ -103,12 +105,14 @@ class AgentGenerator
             return "{$heading}\n\n{$segment->content}";
         }
 
-        // Registry content (preset/skill with null content)
+        // Registry content (preset/skill/agent with null content)
         $registry = null;
         if ($segment->isPreset()) {
             $registry = $this->presets;
         } elseif ($segment->isSkill()) {
             $registry = $this->skills;
+        } elseif ($segment->isAgent()) {
+            $registry = $this->agents;
         }
 
         if ($registry !== null && $registry->has($segment->name)) {
@@ -137,5 +141,15 @@ class AgentGenerator
     public function skillNames(): array
     {
         return $this->skills->names();
+    }
+
+    /**
+     * Get all available agent names.
+     *
+     * @return string[]
+     */
+    public function agentNames(): array
+    {
+        return $this->agents->names();
     }
 }

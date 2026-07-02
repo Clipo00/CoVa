@@ -167,6 +167,13 @@ return [
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
     'custom_rules_hint' => 'Al activar presets o skills, su contenido se carga aquí para que puedas editarlo. Al desactivarlos, el bloque se elimina automáticamente.',
+
+    // Agents
+    'load_agent' => 'Cargar agente',
+    'load_agent_placeholder' => 'Selecciona un agente...',
+    'agent_laravel_developer' => 'Desarrollador Laravel',
+    'agent_frontend_developer' => 'Desarrollador Frontend',
+    'agent_fullstack_developer' => 'Desarrollador Full-Stack',
     'tabs_empty' => 'No hay pestañas configuradas',
     'tabs_empty_hint' => 'Agrega una pestaña para comenzar',
     'add_tab' => 'Agregar',

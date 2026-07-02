@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Tests\Unit\Tabs;
 
 use App\Modules\Blueprint\Exceptions\UnknownTabTypeException;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
 use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
@@ -32,7 +33,9 @@ class TabRegistryTest extends TestCase
         $skillsRegistry->register(new StripeSkill);
         $skillsRegistry->register(new TailwindSkill);
 
-        $agentGenerator = new AgentGenerator($presetsRegistry, $skillsRegistry);
+        $agentsRegistry = new AgentRegistry;
+
+        $agentGenerator = new AgentGenerator($presetsRegistry, $skillsRegistry, $agentsRegistry);
 
         $registry = new TabRegistry;
         $registry->register(new VscodeExtensionsTab);

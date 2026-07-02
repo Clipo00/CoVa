@@ -30,6 +30,9 @@ class TabManager extends Component
     /** @var string[] */
     public array $availableSkillNames = [];
 
+    /** @var string[] */
+    public array $availableAgentNames = [];
+
     public string $tabError = '';
 
     public function mount(?array $tabs = null): void
@@ -46,6 +49,7 @@ class TabManager extends Component
         $generator = app()->make(AgentGenerator::class);
         $this->availablePresetNames = $generator->presetNames();
         $this->availableSkillNames = $generator->skillNames();
+        $this->availableAgentNames = $generator->agentNames();
 
         $this->resolveSegmentContent();
     }
@@ -251,6 +255,56 @@ class TabManager extends Component
     // ──────────────────────────────────────────────
 
     /**
+     * Load an agent and its referenced skills into an AI Context tab.
+     *
+     * Inserts an agent segment with the agent's content and router,
+     * followed by skill segments for each skill the agent references.
+     */
+    public function loadAgent(int $tabIndex, string $agentName): void
+    {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
+            return;
+        }
+
+        $registry = app()->make('blueprint.agents');
+        if (!$registry->has($agentName)) {
+            return;
+        }
+
+        $agent = $registry->get($agentName);
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+
+        // Check if this agent is already loaded
+        foreach ($segments as $segment) {
+            if ($segment['type'] === 'agent' && $segment['name'] === $agentName) {
+                return; // Silently ignore duplicate agent load
+            }
+        }
+
+        // Add agent segment with content and skills metadata
+        $segments[] = [
+            'type' => 'agent',
+            'name' => $agentName,
+            'content' => $agent->content(),
+            'skills' => $agent->skills(),
+        ];
+
+        // Add skill segments for each referenced skill
+        foreach ($agent->skills() as $skillName) {
+            $segments[] = [
+                'type' => 'skill',
+                'name' => $skillName,
+                'content' => null,
+            ];
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->resolveSegmentContent();
+        $this->syncToParent();
+    }
+
+    /**
      * Add a segment to an AI Context tab.
      *
      * For preset and skill types, the default content is loaded from the
@@ -444,6 +498,7 @@ class TabManager extends Component
     {
         $presets = app()->make('blueprint.presets');
         $skills = app()->make('blueprint.skills');
+        $agents = app()->make('blueprint.agents');
 
         foreach ($this->tabs as $tabIndex => &$tab) {
             if (($tab['type'] ?? '') !== 'ai_context') {
@@ -460,6 +515,8 @@ class TabManager extends Component
                     $segment['content'] = $presets->get($segment['name'])->content();
                 } elseif ($segment['type'] === 'skill' && $skills->has($segment['name'])) {
                     $segment['content'] = $skills->get($segment['name'])->content();
+                } elseif ($segment['type'] === 'agent' && $agents->has($segment['name'])) {
+                    $segment['content'] = $agents->get($segment['name'])->content();
                 }
             }
             $tab['config']['segments'] = $segments;

@@ -18,7 +18,7 @@ readonly class AiContextSegment
         public string $name,
         public ?string $content = null,
     ) {
-        if (!in_array($type, ['preset', 'skill', 'custom'], true)) {
+        if (!in_array($type, ['preset', 'skill', 'custom', 'agent'], true)) {
             throw new \InvalidArgumentException("Invalid segment type: {$type}");
         }
 
@@ -79,5 +79,13 @@ readonly class AiContextSegment
     public function isCustom(): bool
     {
         return $this->type === 'custom';
+    }
+
+    /**
+     * Whether this is an agent segment that composes skills.
+     */
+    public function isAgent(): bool
+    {
+        return $this->type === 'agent';
     }
 }
