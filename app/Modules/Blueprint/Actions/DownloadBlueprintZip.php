@@ -74,9 +74,9 @@ class DownloadBlueprintZip
         $zipOpen = false;
 
         try {
-            $zip = new ZipArchive;
+            $zip = new \ZipArchive;
 
-            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
                 throw new \RuntimeException('Cannot create ZIP archive.');
             }
             $zipOpen = true;
