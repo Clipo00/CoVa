@@ -34,7 +34,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 | **Inicio** | Hero section + Pain Points + How it Works (3 pasos) |
 | **Demo** | Carrusel de 4 slides (Dashboard → Crear Org → Crear Blueprint → Tabs) |
 | **Precios** | Tabla de planes Free / Pro / Enterprise |
-| **Marketplace** | Blueprints públicos de la DB — tarjetas con nombre, descripción, categoría |
+| **Marketplace** | Blueprints públicos de la DB — tarjetas con nombre, descripción, tags |
 | **Guía rápida** | Instalación del CLI en 3 pasos + tabla de comandos |
 
 **Componentes:**
@@ -140,7 +140,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 
 ### 2.4 Marketplace Preview
 
-El tab Marketplace muestra blueprints públicos directamente desde la base de datos. Solo se muestran tarjetas con nombre, descripción y categoría — sin votaciones ni enlaces de interacción. Si no hay blueprints públicos, se muestra un empty state.
+El tab Marketplace muestra blueprints públicos directamente desde la base de datos. Solo se muestran tarjetas con nombre, descripción y tags — sin votaciones ni enlaces de interacción. Si no hay blueprints públicos, se muestra un empty state.
 1. **"Laravel + Inertia + Tailwind"**
    - Badge: "Popular"
    - Descripción corta: "Configuración completa para un stack moderno de Laravel."

@@ -305,7 +305,6 @@ final readonly class CreateBlueprintData
         public string $title,
         public ?string $description,
         public int $organizationId,
-        public ?int $categoryId,
     ) {}
 }
 ```
@@ -395,7 +394,7 @@ class BlueprintPolicy
 
 The AI Context tab uses a segment-based model:
 
-- `AiContextSegment` DTO: `type` (preset|skill|custom enum), `name`, `content`
+- `AiContextSegment` DTO: `type` (skill|custom|agent enum), `name`, `content`
 - `AiContextConfig`: wraps ordered `segments[]` array
 - `AgentGenerator::resolveSegments()`: resolves registry content per segment
 - `AgentGenerator::generate()`: iterates segments, generates per-segment markdown
@@ -454,7 +453,7 @@ The Auth module manages API tokens via Laravel Sanctum:
 **Tradeoff**: Menos capas de abstracción. Si en el futuro se necesita cambiar de Eloquent a Doctrine, habría que refactorizar.
 
 ### 7.5 ¿Por qué JSON para Tabs en lugar de Tablas Relacionales?
-**Contexto**: Cada tab tiene estructura diferente (extensions[], servers[], presets[], segments[]).  
+**Contexto**: Cada tab tiene estructura diferente (extensions[], servers[], segments[]).  
 **Decisión**: `tabs_config` JSON en tabla `blueprints` (incluye segments de AI Context).  
 **Tradeoff**: No se puede indexar/search fácilmente por contenido de tab. Pero las tabs son siempre accedidas via blueprint (por UUID), así que el lookup es O(1) por índice.
 
