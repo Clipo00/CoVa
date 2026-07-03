@@ -656,4 +656,122 @@ class BlueprintControllerTest extends TestCase
 
         $response->assertStatus(429);
     }
+
+    // --- download tests ---
+
+    public function test_download_returns_zip_for_authorized_user(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440100',
+            'organization_id' => $organization->id,
+            'slug' => 'download-test-bp',
+            'title' => 'Download Test BP',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'skill', 'name' => 'psr12'],
+                        ],
+                    ],
+                ],
+            ],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/download-test-bp/download');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/zip');
+        $response->assertHeader('Content-Disposition', 'attachment; filename="download-test-bp.zip"');
+    }
+
+    public function test_download_returns_403_without_access(): void
+    {
+        [$owner, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440101',
+            'organization_id' => $organization->id,
+            'slug' => 'no-access-bp',
+            'title' => 'No Access BP',
+            'tabs_config' => [],
+            'created_by' => $owner->id,
+        ]);
+
+        $outsideUser = User::create([
+            'name' => 'Outside',
+            'email' => 'outside@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $organization->plan_id,
+        ]);
+
+        $response = $this->actingAs($outsideUser)->get('/b/no-access-bp/download');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_download_returns_404_for_missing_blueprint(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $response = $this->actingAs($user)->get('/b/non-existent-bp/download');
+
+        $response->assertStatus(404);
+    }
+
+    public function test_download_requires_authentication(): void
+    {
+        $response = $this->get('/b/some-blueprint/download');
+
+        $response->assertRedirect('/login');
+    }
+
+    public function test_download_content_is_valid_zip(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440102',
+            'organization_id' => $organization->id,
+            'slug' => 'valid-zip-bp',
+            'title' => 'Valid ZIP BP',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'skill', 'name' => 'psr12'],
+                            ['type' => 'skill', 'name' => 'solid'],
+                        ],
+                    ],
+                ],
+            ],
+            'created_by' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get('/b/valid-zip-bp/download');
+
+        $response->assertStatus(200);
+
+        // Capture content
+        $content = $response->streamedContent();
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'zip-feature-');
+        file_put_contents($tempFile, $content);
+
+        try {
+            $zip = new \ZipArchive;
+            $this->assertTrue($zip->open($tempFile), 'Response content should be a valid ZIP');
+            $this->assertNotFalse($zip->locateName('.agents/agent.md'), 'ZIP should contain agent.md');
+            $this->assertNotFalse($zip->locateName('.agents/.skills/psr12.md'), 'ZIP should contain skill file');
+            $zip->close();
+        } finally {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
+    }
 }

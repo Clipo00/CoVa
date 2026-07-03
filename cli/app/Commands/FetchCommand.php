@@ -90,10 +90,23 @@ class FetchCommand extends Command
     }
 
     /**
-     * Write .agent.md from the agent_md field.
+     * Scaffold agent context files.
+     *
+     * If the response contains ai_context_segments (new format), creates the
+     * .agents/ directory structure with agent.md and .skills/*.md files.
+     * Otherwise falls back to the legacy .agent.md single file.
      */
     private function scaffoldAgentMd(array $result, string $outputDir): void
     {
+        $segments = $result['ai_context_segments'] ?? [];
+
+        if (!empty($segments)) {
+            $this->scaffoldAgentsDirectory($segments, $outputDir);
+
+            return;
+        }
+
+        // Legacy: write .agent.md from agent_md field
         $content = $result['agent_md'] ?? null;
 
         if ($content === null || $content === '') {
@@ -102,6 +115,159 @@ class FetchCommand extends Command
 
         file_put_contents($outputDir . '/.agent.md', $content);
         $this->line('  <info>✓</info> .agent.md');
+    }
+
+    /**
+     * Create .agents/ directory structure with router table and skill files.
+     *
+     * @param array<int, array{type: string, name: string, filename: string, content: string}> $segments
+     */
+    private function scaffoldAgentsDirectory(array $segments, string $outputDir): void
+    {
+        $agentsDir = $outputDir . '/.agents';
+
+        if (!is_dir($agentsDir)) {
+            $mkdirResult = mkdir($agentsDir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->error("Failed to create directory: {$agentsDir}");
+
+                return;
+            }
+        }
+
+        $skillsDir = $agentsDir . '/.skills';
+
+        if (!is_dir($skillsDir)) {
+            $mkdirResult = mkdir($skillsDir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->error("Failed to create directory: {$skillsDir}");
+
+                return;
+            }
+        }
+
+        // Build agent.md with router table
+        $agentMd = $this->buildAgentMdFromSegments($segments);
+        file_put_contents($agentsDir . '/agent.md', $agentMd);
+        $this->line('  <info>✓</info> .agents/agent.md');
+
+        // Write individual skill files (skip agent-type segments — they are included in the preamble)
+        $seenNames = [];
+
+        foreach ($segments as $segment) {
+            $name = $segment['name'] ?? '';
+
+            if ($name === '') {
+                continue;
+            }
+
+            if (($segment['type'] ?? '') === 'agent') {
+                continue;
+            }
+
+            if (isset($seenNames[$name])) {
+                $this->warn("Duplicate segment name '{$name}' — keeping first occurrence");
+
+                continue;
+            }
+
+            $seenNames[$name] = true;
+
+            file_put_contents(
+                $skillsDir . '/' . ($segment['filename'] ?? $this->sanitizeFilename($name)),
+                $segment['content'] ?? '',
+            );
+            $this->line("  <info>✓</info> .agents/.skills/{$segment['filename']}");
+        }
+    }
+
+    /**
+     * Build agent.md content with a Project Skills router table
+     * and optional agent preamble content.
+     *
+     * Format:
+     *   # Agent Context
+     *
+     *   ## Project Skills
+     *
+     *   | Name | File |
+     *   |------|------|
+     *   | {description} | `URL_SKILL/{filename}` |
+     *   ...
+     *
+     *   {agent preamble content}
+     *
+     * @param array<int, array{type: string, name: string, filename: string, content: string}> $segments
+     */
+    private function buildAgentMdFromSegments(array $segments): string
+    {
+        $lines = [
+            '# Agent Context',
+            '',
+            '## Project Skills',
+            '',
+            '| Name | File |',
+            '|------|------|',
+        ];
+
+        // Add skill + custom segments as table rows
+        foreach ($segments as $segment) {
+            if (($segment['type'] ?? '') === 'agent') {
+                continue;
+            }
+
+            $description = $this->extractDescription(
+                $segment['content'] ?? '',
+                $segment['name'] ?? '',
+            );
+            $lines[] = "| {$description} | `URL_SKILL/{$segment['filename']}` |";
+        }
+
+        // Add agent preamble content after the table
+        $hasAgentContent = false;
+
+        foreach ($segments as $segment) {
+            if (($segment['type'] ?? '') !== 'agent') {
+                continue;
+            }
+
+            if (!$hasAgentContent) {
+                $lines[] = '';
+                $hasAgentContent = true;
+            }
+
+            $lines[] = $segment['content'] ?? '';
+        }
+
+        return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * Extract the first ## heading from markdown content as the description.
+     * Falls back to the segment name if no heading is found.
+     */
+    private function extractDescription(string $content, string $fallback): string
+    {
+        if (preg_match('/^## (.+)$/m', $content, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return $fallback;
+    }
+
+    /**
+     * Sanitize a segment name to a safe filename.
+     *
+     * Lowercase, alphanumeric and hyphens only, with .md extension.
+     */
+    private function sanitizeFilename(string $name): string
+    {
+        $filename = preg_replace('/[^a-z0-9]+/', '-', strtolower($name));
+        $filename = trim($filename, '-');
+
+        return ($filename === '' ? 'untitled' : $filename) . '.md';
     }
 
     /**

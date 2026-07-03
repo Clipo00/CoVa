@@ -104,6 +104,92 @@ class FetchCommandTest extends TestCase
     }
 
     /**
+     * Create a blueprint response with ai_context_segments (new format).
+     *
+     * @return array<string, mixed>
+     */
+    private function makeBlueprintWithSegments(): array
+    {
+        return [
+            'uuid' => '880e8400-e29b-41d4-a716-446655440003',
+            'slug' => 'modern-stack',
+            'title' => 'Modern Stack',
+            'description' => 'A blueprint with segments',
+            'variables' => [
+                [
+                    'key' => 'APP_NAME',
+                    'type' => 'text',
+                    'default_value' => 'MyApp',
+                    'is_secret' => false,
+                    'section' => null,
+                ],
+            ],
+            'agent_md' => null,
+            'vscode_extensions' => [],
+            'vscode_install_command' => '',
+            'mcp_servers' => [],
+            'scripts' => [],
+            'scripts_shell' => '',
+            'ai_context_segments' => [
+                [
+                    'type' => 'skill',
+                    'name' => 'PHP Laravel',
+                    'filename' => 'php-laravel.md',
+                    'content' => "## PHP Laravel\n\nLaravel best practices for Eloquent, validation, and testing.",
+                ],
+                [
+                    'type' => 'skill',
+                    'name' => 'Vue.js SPA',
+                    'filename' => 'vue-js-spa.md',
+                    'content' => "## Vue.js SPA\n\nComposition API patterns, Pinia store, Vue Router lazy-loading.",
+                ],
+                [
+                    'type' => 'agent',
+                    'name' => 'Custom Agent',
+                    'filename' => 'custom-agent.md',
+                    'content' => "## Custom Agent\n\nYou are a senior full-stack developer. Focus on architecture and testing.\n\nRefer to the skill files for specific framework guidance.",
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Create a blueprint response with duplicate segment names.
+     *
+     * @return array<string, mixed>
+     */
+    private function makeBlueprintWithDuplicateSegments(): array
+    {
+        return [
+            'uuid' => '990e8400-e29b-41d4-a716-446655440004',
+            'slug' => 'dupes',
+            'title' => 'Duplicate Segments',
+            'description' => 'Has duplicate names',
+            'variables' => [],
+            'agent_md' => null,
+            'vscode_extensions' => [],
+            'vscode_install_command' => '',
+            'mcp_servers' => [],
+            'scripts' => [],
+            'scripts_shell' => '',
+            'ai_context_segments' => [
+                [
+                    'type' => 'skill',
+                    'name' => 'PHP',
+                    'filename' => 'php.md',
+                    'content' => "## PHP\n\nVersion one.",
+                ],
+                [
+                    'type' => 'skill',
+                    'name' => 'PHP',
+                    'filename' => 'php.md',
+                    'content' => "## PHP\n\nVersion two — should be skipped.",
+                ],
+            ],
+        ];
+    }
+
+    /**
      * Create a blueprint response WITH secret variables.
      *
      * @return array<string, mixed>
@@ -460,5 +546,148 @@ class FetchCommandTest extends TestCase
             'Network error: unable to reach the CoVa API',
             $tester->getDisplay()
         );
+    }
+
+    // ----------------------------------------------------------------
+    //  Fetch with ai_context_segments (new format)
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function scaffolds_agents_directory_with_segments(): void
+    {
+        $data = $this->makeBlueprintWithSegments();
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'modern-stack']);
+
+        $this->assertSame(0, $exitCode);
+
+        // Directory structure
+        $this->assertDirectoryExists($this->tempDir . '/.agents');
+        $this->assertDirectoryExists($this->tempDir . '/.agents/.skills');
+
+        // agent.md must exist with router table
+        $this->assertFileExists($this->tempDir . '/.agents/agent.md');
+        $agentMd = file_get_contents($this->tempDir . '/.agents/agent.md');
+        $this->assertStringContainsString('# Agent Context', $agentMd);
+        $this->assertStringContainsString('## Project Skills', $agentMd);
+        $this->assertStringContainsString('| Name | File |', $agentMd);
+        $this->assertStringContainsString('| PHP Laravel | `URL_SKILL/php-laravel.md` |', $agentMd);
+        $this->assertStringContainsString('| Vue.js SPA | `URL_SKILL/vue-js-spa.md` |', $agentMd);
+
+        // Agent preamble must be included
+        $this->assertStringContainsString('## Custom Agent', $agentMd);
+        $this->assertStringContainsString('senior full-stack developer', $agentMd);
+
+        // Individual skill files must exist
+        $this->assertFileExists($this->tempDir . '/.agents/.skills/php-laravel.md');
+        $this->assertStringContainsString(
+            'Laravel best practices',
+            file_get_contents($this->tempDir . '/.agents/.skills/php-laravel.md'),
+        );
+
+        $this->assertFileExists($this->tempDir . '/.agents/.skills/vue-js-spa.md');
+        $this->assertStringContainsString(
+            'Composition API patterns',
+            file_get_contents($this->tempDir . '/.agents/.skills/vue-js-spa.md'),
+        );
+
+        // Agent segment must NOT have its own file (it's in the preamble only)
+        $this->assertFileDoesNotExist($this->tempDir . '/.agents/.skills/custom-agent.md');
+
+        // Legacy .agent.md must NOT exist
+        $this->assertFileDoesNotExist($this->tempDir . '/.agent.md');
+
+        // Display must show success for all files
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('.agents/agent.md', $display);
+        $this->assertStringContainsString('.agents/.skills/php-laravel.md', $display);
+        $this->assertStringContainsString('.agents/.skills/vue-js-spa.md', $display);
+    }
+
+    #[Test]
+    public function handles_duplicate_segment_names_with_warning(): void
+    {
+        $data = $this->makeBlueprintWithDuplicateSegments();
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'dupes']);
+
+        $this->assertSame(0, $exitCode);
+
+        // Only first occurrence should be written
+        $this->assertFileExists($this->tempDir . '/.agents/.skills/php.md');
+        $this->assertStringContainsString(
+            'Version one',
+            file_get_contents($this->tempDir . '/.agents/.skills/php.md'),
+        );
+
+        // It should contain version one, not version two
+        $content = file_get_contents($this->tempDir . '/.agents/.skills/php.md');
+        $this->assertStringContainsString('Version one', $content);
+        $this->assertStringNotContainsString('Version two — should be skipped', $content);
+
+        // Warning about duplicate must be shown
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('Duplicate segment name', $display);
+        $this->assertStringContainsString('PHP', $display);
+    }
+
+    #[Test]
+    public function legacy_fallback_when_no_segments(): void
+    {
+        // Standard blueprint without ai_context_segments uses legacy .agent.md
+        $data = $this->makeBlueprintWithoutSecrets();
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+
+        // Legacy .agent.md must exist
+        $this->assertFileExists($this->tempDir . '/.agent.md');
+
+        // New .agents/ must NOT exist
+        $this->assertFileDoesNotExist($this->tempDir . '/.agents');
+
+        $agentMd = file_get_contents($this->tempDir . '/.agent.md');
+        $this->assertStringContainsString('# Agent Context', $agentMd);
+        $this->assertStringContainsString('Be helpful', $agentMd);
+    }
+
+    #[Test]
+    public function empty_segments_with_no_agent_md_skips_both(): void
+    {
+        $data = [
+            'uuid' => 'aa0e8400-e29b-41d4-a716-446655440005',
+            'slug' => 'no-context',
+            'title' => 'No Context',
+            'description' => 'No AI config at all',
+            'variables' => [],
+            'agent_md' => null,
+            'vscode_extensions' => [],
+            'vscode_install_command' => '',
+            'mcp_servers' => [],
+            'scripts' => [],
+            'scripts_shell' => '',
+            'ai_context_segments' => [],
+        ];
+
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'no-context']);
+
+        $this->assertSame(0, $exitCode);
+
+        // Neither format should exist
+        $this->assertFileDoesNotExist($this->tempDir . '/.agent.md');
+        $this->assertFileDoesNotExist($this->tempDir . '/.agents');
+
+        // .env should still be created (empty)
+        $this->assertFileExists($this->tempDir . '/.env');
     }
 }
