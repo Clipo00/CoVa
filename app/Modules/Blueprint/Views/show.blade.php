@@ -49,73 +49,114 @@
                         </div>
                     @endif
                 </div>
-                <div class="mt-4 sm:mt-0 flex items-center space-x-3">
+                @php
+                    $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
+                @endphp
+                <div class="mt-4 sm:mt-0 flex items-center gap-1">
                     <livewire:shared.copy-to-clipboard
                         :text="$blueprint->uuid"
                         :label="__('blueprint.copy_uuid')"
                         :success-message="__('blueprint.uuid_copied')"
                     />
-                    @php
-                        $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
-                    @endphp
+
+                    {{-- Transfer (modal) --}}
                     @if($userOrgsWhereOwner->count() > 0)
-                        <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" x-data class="inline flex items-center space-x-2" @submit.prevent="const f=$el; const s=$refs.targetOrg; if (s.value) { f.submit(); } else { $store.confirm.ask({message:'{{ __('blueprint.transfer_select_org') }}', confirmText:'{{ __('shared.understood') }}', onConfirm(){ s.focus(); }}); }"
->
-                            @csrf
-                            <select x-ref="targetOrg" name="target_organization_id" class="block w-full px-3 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2">
-                                <option value="">{{ __('blueprint.transfer_to') }}</option>
-                                @foreach($userOrgsWhereOwner as $org)
-                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
-                                @endforeach
-                            </select>
-                            <button type="submit" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                {{ __('blueprint.transfer_button') }}
+                        <div x-data="{ open: false }">
+                            <button type="button" @click="open = true"
+                                class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                                title="{{ __('blueprint.transfer_button') }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                </svg>
                             </button>
-                        </form>
+
+                            <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center" @click.self="open = false" @keydown.escape.window="open = false">
+                                <div class="fixed inset-0 bg-black/50"></div>
+                                <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10" @click.stop>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ __('blueprint.transfer_button') }}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('blueprint.transfer_select_org') }}</p>
+                                    <form method="POST" action="{{ route('blueprints.transfer', $blueprint->uuid) }}" @submit="open = false">
+                                        @csrf
+                                        <select name="target_organization_id" required
+                                            class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm mb-4">
+                                            <option value="">{{ __('blueprint.transfer_to') }}</option>
+                                            @foreach($userOrgsWhereOwner as $org)
+                                                <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="flex justify-end gap-2">
+                                            <button type="button" @click="open = false"
+                                                class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                {{ __('shared.cancel') }}
+                                            </button>
+                                            <button type="submit"
+                                                class="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                                                {{ __('blueprint.transfer_button') }}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     @endif
-                    <a href="{{ route('blueprints.edit', $blueprint->slug) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        {{ __('blueprint.edit_button') }}
+
+                    <a href="{{ route('blueprints.edit', $blueprint->slug) }}"
+                        class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                        title="{{ __('blueprint.edit_button') }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
                     </a>
-                    <a href="{{ route('blueprints.download', $blueprint->slug) }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+                    <a href="{{ route('blueprints.download', $blueprint->slug) }}"
+                        class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                        title="{{ __('blueprint.download_zip') }}"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        {{ __('blueprint.download_zip') }}
                     </a>
+
                     @can('publish', $blueprint)
                         @if($blueprint->is_public)
-                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_sync_confirm') }}', confirmText:'{{ __('blueprint.publish_sync_button') }}', onConfirm(){ f.submit(); }})"
->
+                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_sync_confirm') }}', confirmText:'{{ __('blueprint.publish_sync_button') }}', onConfirm(){ f.submit(); }})">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                            <button type="submit"
+                                class="inline-flex items-center justify-center w-9 h-9 border border-transparent shadow-sm rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                                title="{{ __('blueprint.publish_sync_button') }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
                                 </svg>
-                                {{ __('blueprint.publish_sync_button') }}
                             </button>
                         </form>
                         @else
-                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_confirm_warning') }}', confirmText:'{{ __('blueprint.publish_button') }}', onConfirm(){ f.submit(); }})"
->
+                        <form method="POST" action="{{ route('blueprints.publish', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.publish_confirm_warning') }}', confirmText:'{{ __('blueprint.publish_button') }}', onConfirm(){ f.submit(); }})">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                            <button type="submit"
+                                class="inline-flex items-center justify-center w-9 h-9 border border-transparent shadow-sm rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
+                                title="{{ __('blueprint.publish_button') }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
                                 </svg>
-                                {{ __('blueprint.publish_button') }}
                             </button>
                         </form>
                         @endif
                     @endcan
+
                     @can('delete', $blueprint)
-                        <form method="POST" action="{{ route('blueprints.destroy', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.delete_confirm') }}', onConfirm(){ f.submit(); }})"
->
+                        <form method="POST" action="{{ route('blueprints.destroy', $blueprint->uuid) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('blueprint.delete_confirm') }}', onConfirm(){ f.submit(); }})">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                            <button type="submit"
+                                class="inline-flex items-center justify-center w-9 h-9 border border-transparent shadow-sm rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
+                                title="{{ __('blueprint.delete_button') }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                                 </svg>
-                                {{ __('blueprint.delete_button') }}
                             </button>
                         </form>
                     @endcan
