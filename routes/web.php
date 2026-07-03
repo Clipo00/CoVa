@@ -27,6 +27,20 @@ Route::get('/', function () {
     return view('landing.index', compact('publicBlueprints', 'marketplaceEnabled'));
 })->name('landing');
 
+Route::get('/welcome', function () {
+    $marketplaceEnabled = config('marketplace.enabled', false);
+    $publicBlueprints = $marketplaceEnabled
+        ? Blueprint::query()
+            ->where('is_public', true)
+            ->with(['organization', 'tags'])
+            ->latest()
+            ->take(6)
+            ->get()
+        : collect();
+
+    return view('landing.index', compact('publicBlueprints', 'marketplaceEnabled'));
+})->name('welcome');
+
 /*
 |--------------------------------------------------------------------------
 | Locale Switcher (sin auth — disponible para guests en login/register)

@@ -8,7 +8,7 @@ use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use ZipArchive;
+
 
 /**
  * Generate a ZIP archive containing the blueprint's AI context
