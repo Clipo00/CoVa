@@ -31,45 +31,101 @@ class DownloadBlueprintZip
     {
         $segments = $this->resolveBlueprintSegments($blueprint);
 
-        return new StreamedResponse(function () use ($blueprint, $segments): void {
-            $zipPath = tempnam(sys_get_temp_dir(), 'bp-zip-');
+        // Generate and validate ZIP first — before any headers are sent
+        $zipPath = $this->generateZip($blueprint, $segments);
 
-            try {
-                $zip = new ZipArchive;
+        if (!file_exists($zipPath) || filesize($zipPath) === 0) {
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            throw new \RuntimeException('Failed to generate ZIP archive.');
+        }
 
-                if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
-                    throw new \RuntimeException('Cannot create ZIP archive.');
+        $safeFilename = preg_replace('/[^a-z0-9-]/', '', $blueprint->slug).'.zip';
+        $fileSize = filesize($zipPath);
+
+        $response = new StreamedResponse(function () use ($zipPath): void {
+            $zipHandle = fopen($zipPath, 'rb');
+            if ($zipHandle) {
+                while (!feof($zipHandle)) {
+                    echo fread($zipHandle, 8192);
+                    flush();
                 }
-
-                // Add agent.md with the router table
-                $agentMd = $this->buildAgentMd($segments);
-                $zip->addFromString('.agents/agent.md', $agentMd);
-
-                // Add individual segment files (skill + custom only, not agent)
-                foreach ($segments as $segment) {
-                    if ($segment['type'] === 'agent') {
-                        continue;
-                    }
-
-                    $zip->addFromString(
-                        ".agents/.skills/{$segment['filename']}",
-                        $segment['content'],
-                    );
-                }
-
-                $zip->close();
-
-                // Output ZIP content
-                readfile($zipPath);
-            } finally {
-                if (isset($zipPath) && file_exists($zipPath)) {
-                    unlink($zipPath);
-                }
+                fclose($zipHandle);
+            }
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
             }
         }, 200, [
             'Content-Type' => 'application/zip',
-            'Content-Disposition' => 'attachment; filename="'.$blueprint->slug.'.zip"',
+            'Content-Disposition' => 'attachment; filename="'.$safeFilename.'"',
+            'Content-Length' => $fileSize,
         ]);
+
+        return $response;
+    }
+
+    /**
+     * Generate the ZIP file and return its path.
+     */
+    private function generateZip(Blueprint $blueprint, array $segments): string
+    {
+        $zipPath = tempnam(sys_get_temp_dir(), 'bp-zip-');
+        $zipOpen = false;
+
+        try {
+            $zip = new ZipArchive;
+
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+                throw new \RuntimeException('Cannot create ZIP archive.');
+            }
+            $zipOpen = true;
+
+            // Add agent.md with the router table
+            $agentMd = $this->buildAgentMd($segments);
+            if ($zip->addFromString('.agents/agent.md', $agentMd) === false) {
+                throw new \RuntimeException('Failed to add agent.md to ZIP.');
+            }
+
+            // Add individual segment files (skill + custom only, not agent)
+            $usedFilenames = [];
+            foreach ($segments as $segment) {
+                if ($segment['type'] === 'agent') {
+                    continue;
+                }
+
+                $filename = $segment['filename'];
+
+                if (isset($usedFilenames[$filename])) {
+                    \Illuminate\Support\Facades\Log::warning(
+                        "Duplicate filename skipped in ZIP: {$filename}",
+                        ['blueprint_id' => $blueprint->id]
+                    );
+                    continue;
+                }
+
+                $usedFilenames[$filename] = true;
+
+                if ($zip->addFromString(".agents/.skills/{$filename}", $segment['content']) === false) {
+                    throw new \RuntimeException("Failed to add file to ZIP: {$filename}");
+                }
+            }
+
+            if ($zip->close() === false) {
+                throw new \RuntimeException('Failed to finalize ZIP archive.');
+            }
+            $zipOpen = false;
+
+            return $zipPath;
+        } catch (\Throwable $e) {
+            if ($zipOpen) {
+                $zip->close();
+            }
+            if (isset($zipPath) && file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            throw $e;
+        }
     }
 
     /**
@@ -97,11 +153,11 @@ class DownloadBlueprintZip
             try {
                 $aiConfig = AiContextConfig::fromArray($tabData['config'] ?? []);
             } catch (\InvalidArgumentException) {
-                return [];
+                continue;
             }
 
             if ($aiConfig->isEmpty()) {
-                return [];
+                continue;
             }
 
             return $this->resolveSegmentsWithTypes($aiConfig);
@@ -166,14 +222,23 @@ class DownloadBlueprintZip
             '|------|------|',
         ];
 
-        // Add skill + custom segments as table rows
+        // Add skill + custom segments as table rows (deduplicated to match ZIP contents)
+        $usedFilenames = [];
         foreach ($segments as $segment) {
             if ($segment['type'] === 'agent') {
                 continue;
             }
 
+            $filename = $segment['filename'];
+
+            if (isset($usedFilenames[$filename])) {
+                continue;
+            }
+
+            $usedFilenames[$filename] = true;
+
             $description = $this->extractDescription($segment['content'], $segment['name']);
-            $lines[] = "| {$description} | `URL_SKILL/{$segment['filename']}` |";
+            $lines[] = "| {$description} | `URL_SKILL/{$filename}` |";
         }
 
         // Add agent preamble content after the table

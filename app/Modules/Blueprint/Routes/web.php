@@ -13,13 +13,14 @@ Route::middleware('auth')->group(function () {
     // Slug-based GET routes (canonical)
     Route::get('/b/{blueprint:slug}', [BlueprintController::class, 'show'])
         ->name('blueprints.show')
-        ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+        ->where('blueprint', '[a-z0-9]+(?:-[a-z0-9]+)*');
     Route::get('/b/{blueprint:slug}/edit', [BlueprintController::class, 'edit'])
         ->name('blueprints.edit')
-        ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+        ->where('blueprint', '[a-z0-9]+(?:-[a-z0-9]+)*');
     Route::get('/b/{blueprint:slug}/download', [BlueprintController::class, 'download'])
         ->name('blueprints.download')
-        ->where('slug', '[a-z0-9]+(?:-[a-z0-9]+)*');
+        ->middleware('throttle:30,1')
+        ->where('blueprint', '[a-z0-9]+(?:-[a-z0-9]+)*');
 
     // Legacy UUID redirects (301)
     Route::get('/blueprints/{uuid}', function (string $uuid) {
