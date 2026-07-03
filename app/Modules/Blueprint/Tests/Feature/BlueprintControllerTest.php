@@ -158,7 +158,7 @@ class BlueprintControllerTest extends TestCase
                     'type' => 'ai_context',
                     'config' => [
                         'segments' => [
-                            ['type' => 'preset', 'name' => 'psr12'],
+                            ['type' => 'skill', 'name' => 'psr12'],
                             ['type' => 'skill', 'name' => 'stripe'],
                         ],
                     ],

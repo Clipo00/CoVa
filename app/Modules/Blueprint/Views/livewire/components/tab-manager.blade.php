@@ -160,9 +160,7 @@
             @if($tab['type'] === 'ai_context')
                 @php
                     $segments = $tab['config']['segments'] ?? [];
-                    $usedPresetNames = array_map(fn($s) => $s['name'], array_filter($segments, fn($s) => $s['type'] === 'preset'));
                     $usedSkillNames = array_map(fn($s) => $s['name'], array_filter($segments, fn($s) => $s['type'] === 'skill'));
-                    $unusedPresets = array_values(array_diff($availablePresetNames, $usedPresetNames));
                     $unusedSkills = array_values(array_diff($availableSkillNames, $usedSkillNames));
                 @endphp
                 <div class="space-y-4">
@@ -190,26 +188,6 @@
                                 </select>
                             </div>
                         @endif
-                    @endif
-
-                    {{-- Add Preset Dropdown --}}
-                    @if(!empty($unusedPresets))
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                {{ __('blueprint.add_preset') }}
-                            </label>
-                            <select
-                                wire:change="addSegment({{ $index }}, 'preset', $event.target.value)"
-                                class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            >
-                                <option value="">{{ __('blueprint.add_preset_placeholder') }}</option>
-                                @foreach($unusedPresets as $preset)
-                                    <option value="{{ $preset }}">
-                                        {{ __('blueprint.preset_' . str_replace('-', '_', $preset)) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
                     @endif
 
                     {{-- Add Skill Dropdown --}}
@@ -277,7 +255,6 @@
                                             @endif
                                             <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium
                                                 {{ match($segment['type']) {
-                                                    'preset' => 'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300',
                                                     'skill' => 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300',
                                                     'agent' => 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
                                                     default => 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',

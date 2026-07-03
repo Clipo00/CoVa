@@ -7,7 +7,7 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Immutable value object representing a single segment in the AI Context configuration.
  *
- * Each segment has a type (preset, skill, or custom), a unique name within the
+ * Each segment has a type (skill, custom, or agent), a unique name within the
  * segment list, and optional content. When content is null, the system resolves
  * the default content from the SegmentRegistry at generation time.
  */
@@ -18,7 +18,7 @@ readonly class AiContextSegment
         public string $name,
         public ?string $content = null,
     ) {
-        if (!in_array($type, ['preset', 'skill', 'custom', 'agent'], true)) {
+        if (!in_array($type, ['skill', 'custom', 'agent'], true)) {
             throw new \InvalidArgumentException("Invalid segment type: {$type}");
         }
 
@@ -55,14 +55,6 @@ readonly class AiContextSegment
             'name' => $this->name,
             'content' => $this->content,
         ], fn ($value) => $value !== null);
-    }
-
-    /**
-     * Whether this is a preset segment sourced from the presets registry.
-     */
-    public function isPreset(): bool
-    {
-        return $this->type === 'preset';
     }
 
     /**

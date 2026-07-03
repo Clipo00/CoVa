@@ -81,12 +81,14 @@ return [
     // Demo slides - Create Blueprint
     'demo_bp_org_label' => 'Organization',
     'demo_bp_title' => 'Create Blueprint',
+    'demo_tags_label' => 'Tags',
+    'demo_skill_psr12' => 'PSR-12',
+    'demo_skill_clean_arch' => 'Clean Arch',
+    'demo_bp_slug_label' => 'Slug',
     'demo_bp_title_label' => 'Title',
     'demo_bp_title_placeholder' => 'Laravel + Inertia + Tailwind',
     'demo_bp_desc_label' => 'Description',
     'demo_bp_desc_placeholder' => 'Complete stack for modern projects...',
-    'demo_bp_cat_label' => 'Category',
-    'demo_bp_cat_placeholder' => 'Fullstack',
     'demo_bp_submit' => 'Create Blueprint',
     'demo_bp_vars_title' => 'Environment Variables',
     'demo_bp_file_env' => '.env',
@@ -106,7 +108,6 @@ return [
     // Demo slides - Tabs
     'demo_tabs_title' => 'Tab Configuration',
     'demo_tabs_subtitle' => 'Each aspect of your blueprint is configured in its own tab: extensions, MCP, scripts, and AI context.',
-    'demo_tabs_presets_label' => 'Presets',
     'demo_tabs_skills_label' => 'Skills',
     'demo_tabs_add' => 'Add Tab',
     'demo_tabs_vscode' => 'Extensions',
@@ -116,20 +117,13 @@ return [
 
     // Demo slides - AI Context
     'demo_ai_title' => 'AI Context Configuration',
-    'demo_ai_desc' => 'Select coding presets and skills to generate a custom agent.md file for your AI tools.',
-    'demo_ai_presets' => 'Code Presets',
+    'demo_ai_desc' => 'Select skills to generate a custom agent.md file for your AI tools.',
     'demo_ai_skills' => 'Skills',
-    'demo_ai_preset_psr12' => 'PSR-12',
-    'demo_ai_preset_solid' => 'SOLID',
-    'demo_ai_preset_clean' => 'Clean Architecture',
-    'demo_ai_preset_laravel' => 'Laravel Conv.',
-    'demo_ai_preset_ts' => 'TypeScript Strict',
     'demo_ai_skill_stripe' => 'Stripe',
     'demo_ai_skill_tailwind' => 'Tailwind',
     'demo_ai_skill_react' => 'React Expert',
     'demo_ai_skill_vue' => 'Vue Expert',
-    'demo_ai_output' => '→ Generates agent.md with 2 presets + 2 skills',
-    'demo_ai_count' => '5 presets · 4 skills available',
+    'demo_ai_output' => '→ Generates agent.md with 2 skills',
 
     // Marketplace
     'marketplace_title' => 'Start with a ready-to-use template',
@@ -152,7 +146,7 @@ return [
     'terminal_downloading' => '> Downloading blueprint...',
     'terminal_variables' => '> Variables loaded: 12',
     'terminal_files' => '> Files generated: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json',
-    'terminal_presets' => '> AI context: PSR-12, Clean Architecture, React',
+    'terminal_skills' => '> AI context: PSR-12, Clean Architecture, React',
     'terminal_scripts' => '> Post-install scripts: composer install, npm run build',
     'terminal_ready' => '✅ Environment ready in 2.4s',
 

@@ -11,7 +11,6 @@ use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
 class AgentGenerator
 {
     public function __construct(
-        private readonly SegmentRegistry $presets,
         private readonly SegmentRegistry $skills,
         private readonly AgentRegistry $agents,
     ) {}
@@ -105,11 +104,9 @@ class AgentGenerator
             return "{$heading}\n\n{$segment->content}";
         }
 
-        // Registry content (preset/skill/agent with null content)
+        // Registry content (skill/agent with null content)
         $registry = null;
-        if ($segment->isPreset()) {
-            $registry = $this->presets;
-        } elseif ($segment->isSkill()) {
+        if ($segment->isSkill()) {
             $registry = $this->skills;
         } elseif ($segment->isAgent()) {
             $registry = $this->agents;
@@ -121,16 +118,6 @@ class AgentGenerator
 
         // Segment not found in registry and no override — skip
         return null;
-    }
-
-    /**
-     * Get all available preset names.
-     *
-     * @return string[]
-     */
-    public function presetNames(): array
-    {
-        return $this->presets->names();
     }
 
     /**

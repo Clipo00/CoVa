@@ -23,8 +23,6 @@ return [
     'slug_label' => 'Slug *',
     'slug_hint' => 'Identificador único para URLs. Se genera automáticamente desde el título.',
     'slug_exists' => 'Ya existe un blueprint con el slug \':slug\' en esta organización. Usa otro título o edita el slug manualmente.',
-    'category_label' => 'Categoría',
-    'category_none' => 'Sin categoría',
     'description_label' => 'Descripción',
     'description_placeholder' => 'Describe el propósito de este blueprint...',
     'tabs_section' => 'Pestañas',
@@ -48,7 +46,6 @@ return [
     'delete_tooltip' => 'Eliminar blueprint',
     'filter_button' => 'Filtros',
     'filter_organizations' => 'Organización',
-    'filter_categories' => 'Categoría',
     'filter_marketplace' => 'Marketplace (próximamente)',
     'badge_public' => 'Público',
     'filter_clear_all' => 'Limpiar todo',
@@ -56,7 +53,6 @@ return [
     'filter_preserve' => 'Guardar filtros',
     'filter_preserve_hint' => 'Recordar filtros para la próxima vez',
     'filter_tag_org' => 'Org: :name',
-    'filter_tag_cat' => 'Cat: :name',
 
     // Show
     'back_to_dashboard' => 'Volver al Dashboard',
@@ -153,20 +149,22 @@ return [
     'server_args_label' => 'Argumentos (separados por espacio)',
     'server_args_placeholder' => '-y @modelcontextprotocol/server-filesystem',
     'server_add_button' => 'Agregar servidor',
-    'code_presets' => 'Presets de código',
-    'preset_psr12' => 'PSR-12',
-    'preset_solid' => 'SOLID',
-    'preset_clean_architecture' => 'Clean Architecture',
-    'preset_laravel_conventions' => 'Laravel Conventions',
-    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
+    'skill_psr12' => 'PSR-12',
+    'skill_solid' => 'SOLID',
+    'skill_clean_architecture' => 'Clean Architecture',
+    'skill_laravel_conventions' => 'Laravel Conventions',
+    'skill_typescript_strict' => 'TypeScript Strict',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
     'skill_react_expert' => 'React Expert',
     'skill_vue_expert' => 'Vue Expert',
+    'skill_docker' => 'Docker',
+    'skill_cicd' => 'CI/CD',
+    'skill_api_design' => 'API Design',
     'custom_rules' => 'Reglas custom (Markdown)',
     'custom_rules_placeholder' => 'Ej: Siempre usa declare(strict_types=1). Prefiere DTOs sobre arrays.',
-    'custom_rules_hint' => 'Al activar presets o skills, su contenido se carga aquí para que puedas editarlo. Al desactivarlos, el bloque se elimina automáticamente.',
+    'custom_rules_hint' => 'Al activar skills, su contenido se carga aquí para que puedas editarlo. Al desactivarlos, el bloque se elimina automáticamente.',
 
     // Agents
     'load_agent' => 'Cargar agente',
@@ -204,8 +202,6 @@ return [
     'restore_permission_info' => 'Solo el owner puede restaurar',
 
     // AI Context Segments
-    'add_preset' => 'Añadir preset',
-    'add_preset_placeholder' => 'Selecciona un preset...',
     'add_skill' => 'Añadir skill',
     'add_skill_placeholder' => 'Selecciona una skill...',
     'add_custom_skill' => 'Añadir skill personalizada',
@@ -215,7 +211,7 @@ return [
     'segment_remove' => 'Eliminar segmento',
     'segment_remove_confirm' => '¿Estás seguro de que quieres eliminar este segmento?',
     'segment_override_hint' => 'Has modificado el contenido original. Vuelve a seleccionarlo desde el desplegable para restaurarlo.',
-    'segments_empty' => 'No hay segmentos configurados. Añade presets, skills o una skill personalizada desde arriba.',
+    'segments_empty' => 'No hay segmentos configurados. Añade skills o una skill personalizada desde arriba.',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

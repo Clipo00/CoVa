@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Blueprint\Tabs\AiContext\Presets;
+namespace App\Modules\Blueprint\Tabs\AiContext\Skills;
 
-class TypeScriptStrictPreset extends AbstractPreset
+class TypeScriptStrictSkill extends AbstractSkill
 {
-    protected function presetName(): string
+    protected function skillName(): string
     {
         return 'typescript-strict';
     }
 
-    protected function presetContent(): string
+    protected function skillContent(): string
     {
         return <<<'MARKDOWN'
 ## TypeScript Strict Mode

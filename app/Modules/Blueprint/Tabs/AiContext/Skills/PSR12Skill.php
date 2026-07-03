@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Blueprint\Tabs\AiContext\Presets;
+namespace App\Modules\Blueprint\Tabs\AiContext\Skills;
 
-class PSR12Preset extends AbstractPreset
+class PSR12Skill extends AbstractSkill
 {
-    protected function presetName(): string
+    protected function skillName(): string
     {
         return 'psr12';
     }
 
-    protected function presetContent(): string
+    protected function skillContent(): string
     {
         return <<<'MARKDOWN'
 ## PSR-12 Coding Standard

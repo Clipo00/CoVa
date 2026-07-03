@@ -23,8 +23,6 @@ return [
     'slug_label' => 'Slug *',
     'slug_hint' => 'Unique identifier for URLs. Auto-generated from the title.',
     'slug_exists' => 'A blueprint with slug \':slug\' already exists in this organization. Use a different title or edit the slug manually.',
-    'category_label' => 'Category',
-    'category_none' => 'No category',
     'description_label' => 'Description',
     'description_placeholder' => 'Describe the purpose of this blueprint...',
     'tabs_section' => 'Tabs',
@@ -48,7 +46,6 @@ return [
     'delete_tooltip' => 'Delete blueprint',
     'filter_button' => 'Filters',
     'filter_organizations' => 'Organization',
-    'filter_categories' => 'Category',
     'filter_marketplace' => 'Marketplace (coming soon)',
     'badge_public' => 'Public',
     'filter_clear_all' => 'Clear all',
@@ -56,7 +53,6 @@ return [
     'filter_preserve' => 'Save filters',
     'filter_preserve_hint' => 'Remember filters for next time',
     'filter_tag_org' => 'Org: :name',
-    'filter_tag_cat' => 'Cat: :name',
 
     // Show
     'back_to_dashboard' => 'Back to Dashboard',
@@ -152,20 +148,22 @@ return [
     'server_args_label' => 'Arguments (space separated)',
     'server_args_placeholder' => '-y @modelcontextprotocol/server-filesystem',
     'server_add_button' => 'Add server',
-    'code_presets' => 'Code Presets',
-    'preset_psr12' => 'PSR-12',
-    'preset_solid' => 'SOLID',
-    'preset_clean_architecture' => 'Clean Architecture',
-    'preset_laravel_conventions' => 'Laravel Conventions',
-    'preset_typescript_strict' => 'TypeScript Strict',
     'skills_label' => 'Skills',
+    'skill_psr12' => 'PSR-12',
+    'skill_solid' => 'SOLID',
+    'skill_clean_architecture' => 'Clean Architecture',
+    'skill_laravel_conventions' => 'Laravel Conventions',
+    'skill_typescript_strict' => 'TypeScript Strict',
     'skill_stripe' => 'Stripe',
     'skill_tailwind' => 'Tailwind CSS',
     'skill_react_expert' => 'React Expert',
     'skill_vue_expert' => 'Vue Expert',
+    'skill_docker' => 'Docker',
+    'skill_cicd' => 'CI/CD',
+    'skill_api_design' => 'API Design',
     'custom_rules' => 'Custom Rules (Markdown)',
     'custom_rules_placeholder' => 'E.g.: Always use declare(strict_types=1). Prefer DTOs over arrays.',
-    'custom_rules_hint' => 'When you toggle presets or skills, their content loads here for editing. Toggling off removes the block automatically.',
+    'custom_rules_hint' => 'When you toggle skills, their content loads here for editing. Toggling off removes the block automatically.',
 
     // Agents
     'load_agent' => 'Load agent',
@@ -203,8 +201,6 @@ return [
     'restore_permission_info' => 'Only the owner can restore',
 
     // AI Context Segments
-    'add_preset' => 'Add Preset',
-    'add_preset_placeholder' => 'Select a preset...',
     'add_skill' => 'Add Skill',
     'add_skill_placeholder' => 'Select a skill...',
     'add_custom_skill' => 'Add Custom Skill',
@@ -214,7 +210,7 @@ return [
     'segment_remove' => 'Remove segment',
     'segment_remove_confirm' => 'Are you sure you want to remove this segment?',
     'segment_override_hint' => 'You have modified the original content. Re-select it from the dropdown to restore.',
-    'segments_empty' => 'No segments configured. Add presets, skills, or a custom skill from above.',
+    'segments_empty' => 'No segments configured. Add skills or a custom skill from above.',
 
     // Tab types
     'tab_type_vscode' => 'VSCode Extensions',

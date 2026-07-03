@@ -46,9 +46,10 @@ class MarketplaceControllerTest extends TestCase
         $blueprint = $this->createPublicBlueprint([
             'tabs_config' => [
                 ['type' => 'ai_context', 'config' => [
-                    'presets' => ['laravel-conventions'],
-                    'skills' => [],
-                    'custom_rules' => 'Rule from marketplace.',
+                    'segments' => [
+                        ['type' => 'skill', 'name' => 'laravel-conventions', 'content' => null],
+                        ['type' => 'custom', 'name' => 'custom-rules', 'content' => 'Rule from marketplace.'],
+                    ],
                 ]],
             ],
         ]);

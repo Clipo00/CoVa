@@ -59,7 +59,7 @@
                         ['text' => __('landing.terminal_downloading'), 'cls' => 'terminal-info'],
                         ['text' => __('landing.terminal_variables'), 'cls' => 'terminal-info'],
                         ['text' => __('landing.terminal_files'), 'cls' => 'terminal-info'],
-                        ['text' => __('landing.terminal_presets'), 'cls' => 'terminal-info'],
+                        ['text' => __('landing.terminal_skills'), 'cls' => 'terminal-info'],
                         ['text' => __('landing.terminal_scripts'), 'cls' => 'terminal-info'],
                         ['text' => '', 'cls' => ''],
                         ['text' => __('landing.terminal_ready'), 'cls' => 'terminal-success'],
