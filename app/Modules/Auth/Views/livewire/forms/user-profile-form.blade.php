@@ -81,14 +81,12 @@
                         @endif
                     </div>
                     @if(!$user->hasVerifiedEmail())
-                        <form method="POST" action="{{ route('verification.resend') }}">
-                            @csrf
-                            <button type="submit"
-                                class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
-                            >
-                                {{ __('auth.resend_verification') }}
-                            </button>
-                        </form>
+                        <button type="submit"
+                            form="resend-verification-form"
+                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                        >
+                            {{ __('auth.resend_verification') }}
+                        </button>
                     @endif
                 </div>
             </div>
@@ -201,6 +199,11 @@
                     <span wire:loading>{{ __('auth.saving_button') }}</span>
                 </button>
             </div>
+        </form>
+
+        {{-- Hidden form for email verification resend (kept outside Livewire form to avoid nested forms) --}}
+        <form id="resend-verification-form" method="POST" action="{{ route('verification.resend') }}" class="hidden">
+            @csrf
         </form>
     </div>
 </div>
