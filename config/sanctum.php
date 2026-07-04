@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', 'cova_'),
+    'token_prefix' => env('SANCTUM_TOKEN_PREFIX', 'covar_'),
 
     /*
     |--------------------------------------------------------------------------
