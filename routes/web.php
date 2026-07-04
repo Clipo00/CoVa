@@ -125,6 +125,17 @@ Route::middleware('auth')->post('/pricing/start-trial', function () {
 
 Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
     $user = auth()->user();
+
+    // Show trial expired notification once per session
+    if ($user->trial_used_at !== null
+        && $user->trial_ends_at !== null
+        && $user->trial_ends_at->isPast()
+        && !session()->has('trial_expired_shown')
+    ) {
+        session()->flash('trial_expired_shown', true);
+        session()->flash('success', __('landing.trial_expired_notice'));
+    }
+
     $organizations = $user->organizations()->with('owner')->withCount(['blueprints', 'members'])->get();
     $plan = $user->plan;
 

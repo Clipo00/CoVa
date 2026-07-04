@@ -196,6 +196,7 @@ return [
 
     'plan_cta_free' => 'Empezar gratis',
     'plan_cta_pro' => 'Prueba Pro 14 días',
+    'plan_cta_pro_no_trial' => 'Contratar Pro',
     'plan_cta_enterprise' => 'Contactar ventas',
     'plan_popular' => 'Más popular',
     'plan_current' => 'Tu plan actual',
@@ -217,6 +218,7 @@ return [
     'trial_started_feature_api' => '🔑 API tokens para acceso CLI',
     'trial_started_feature_support' => '⭐ Soporte prioritario',
     'trial_started_expiry' => 'Tu prueba finaliza el :date. Puedes ver todos los detalles en la página de precios.',
+    'trial_expired_notice' => 'Tu periodo de prueba de 14 días ha finalizado. Has vuelto al plan Free. Puedes contratar Pro en el futuro.',
     'publish_trial_denied' => 'Los usuarios en periodo de prueba no pueden publicar en el marketplace. Contrata un plan Pro o Enterprise para desbloquear esta función.',
 
     // Footer

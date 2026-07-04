@@ -196,6 +196,7 @@ return [
 
     'plan_cta_free' => 'Start for free',
     'plan_cta_pro' => 'Try Pro 14 days',
+    'plan_cta_pro_no_trial' => 'Get Pro',
     'plan_cta_enterprise' => 'Contact sales',
     'plan_popular' => 'Most popular',
     'plan_current' => 'Your current plan',
@@ -217,6 +218,7 @@ return [
     'trial_started_feature_api' => '🔑 API tokens for CLI access',
     'trial_started_feature_support' => '⭐ Priority support',
     'trial_started_expiry' => 'Your trial ends on :date. You can view all details on the pricing page.',
+    'trial_expired_notice' => 'Your 14-day trial has ended. You\'ve been moved back to the Free plan. You can upgrade to Pro in the future.',
     'publish_trial_denied' => 'Trial users cannot publish to the marketplace. Upgrade to a Pro or Enterprise plan to unlock this feature.',
 
     // Footer
