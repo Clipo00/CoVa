@@ -126,17 +126,9 @@
                             </svg>
                         </button>
                     @elseif($hasSecrets)
-                        <button type="button"
-                            @click="$store.confirm.ask({
-                                message: '{{ __('blueprint.zip_download_encrypted') }}',
-                                confirmText: '{{ __('blueprint.zip_download_button') }}',
-                                onConfirm() {
-                                    document.getElementById('download-zip-form').submit();
-                                    document.getElementById('zip-spinner').classList.remove('hidden');
-                                    setTimeout(() => document.getElementById('zip-spinner').classList.add('hidden'), 5000);
-                                }
-                            })"
-                            class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                        <button type="button" x-data
+                            onclick="console.log('vanilla click'); document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(() => document.getElementById('zip-spinner').classList.add('hidden'), 5000);"
+                            class="inline-flex items-center justify-center w-9 h-9 border-2 border-red-500 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

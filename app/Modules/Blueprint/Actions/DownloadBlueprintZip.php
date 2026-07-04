@@ -47,15 +47,12 @@ class DownloadBlueprintZip
             throw new \RuntimeException(__('blueprint.zip_generation_failed'));
         }
 
-        // Send password notification if encrypted
+        // Send password notification if encrypted — wrap in output buffer
+        // to prevent SMTP debug output from corrupting the ZIP stream
         if ($isEncrypted && $password !== '') {
+            ob_start();
             $this->sendPasswordNotification($blueprint, $password);
-        }
-
-        // Capture and discard any output that may have been produced
-        // during notification sending (e.g., SMTP debug in dev mode)
-        if (ob_get_level() > 0 && ob_get_length() > 0) {
-            ob_clean();
+            ob_end_clean();
         }
 
         $safeFilename = preg_replace('/[^a-z0-9-]/', '', $blueprint->slug).'.zip';
