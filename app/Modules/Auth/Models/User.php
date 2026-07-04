@@ -41,6 +41,7 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
         'onboarding_completed_at',
         'trial_ends_at',
         'trial_used_at',
+        'trial_expiry_notified_at',
     ];
 
     protected $hidden = [
@@ -58,6 +59,7 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
             'onboarding_completed_at' => 'datetime',
             'trial_ends_at' => 'datetime',
             'trial_used_at' => 'datetime',
+            'trial_expiry_notified_at' => 'datetime',
         ];
     }
 

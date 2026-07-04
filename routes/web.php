@@ -126,13 +126,13 @@ Route::middleware('auth')->post('/pricing/start-trial', function () {
 Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
     $user = auth()->user();
 
-    // Show trial expired notification once per session
+    // Show trial expired notification once (tracked in DB)
     if ($user->trial_used_at !== null
         && $user->trial_ends_at !== null
         && $user->trial_ends_at->isPast()
-        && !session()->has('trial_expired_shown')
+        && $user->trial_expiry_notified_at === null
     ) {
-        session()->flash('trial_expired_shown', true);
+        $user->update(['trial_expiry_notified_at' => now()]);
         session()->flash('success', __('landing.trial_expired_notice'));
     }
 
