@@ -96,6 +96,7 @@ return [
     'mfa_challenge_title' => 'Two-step verification',
     'mfa_challenge_subtitle' => 'We have sent a verification code to your email address.',
     'mfa_setup_desc' => 'Add an extra layer of security to your CoVa account. You\'ll receive a code by email when logging in.',
+    'mfa_requires_verified_email' => 'You must verify your email before enabling two-step verification.',
     'mfa_setup_title' => 'Protect your CoVa account',
     'mfa_setup_description' => 'We recommend enabling two-step verification to keep your CoVa account safe. It only takes a moment: you\'ll receive a unique code by email each time you log in from a new device.',
     'mfa_setup_enable_button' => 'Enable verification',

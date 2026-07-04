@@ -53,6 +53,7 @@ class ProfileMfaTest extends TestCase
             'email' => 'john@example.com',
             'password' => bcrypt('password123'),
         ]);
+        $user->markEmailAsVerified();
 
         Livewire::actingAs($user)
             ->test('auth.forms.user-profile-form')

@@ -96,6 +96,7 @@ return [
     'mfa_challenge_title' => 'Verificación en dos pasos',
     'mfa_challenge_subtitle' => 'Hemos enviado un código de verificación a tu correo electrónico.',
     'mfa_setup_desc' => 'Añade una capa extra de seguridad a tu cuenta de CoVa. Recibirás un código por correo al iniciar sesión.',
+    'mfa_requires_verified_email' => 'Debes verificar tu correo electrónico antes de activar la verificación en dos pasos.',
     'mfa_setup_title' => 'Protege tu cuenta de CoVa',
     'mfa_setup_description' => 'Te recomendamos activar la verificación en dos pasos para mantener tu cuenta de CoVa segura. Solo te llevará un momento: recibirás un código único en tu correo cada vez que inicies sesión desde un dispositivo nuevo.',
     'mfa_setup_enable_button' => 'Activar verificación',

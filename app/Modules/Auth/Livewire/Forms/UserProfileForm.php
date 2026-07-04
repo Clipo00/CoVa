@@ -74,6 +74,13 @@ class UserProfileForm extends Component
         // Handle MFA toggle
         $mfaChanged = (bool) $user->mfa_enabled !== $this->mfaEnabled;
         if ($mfaChanged) {
+            if ($this->mfaEnabled && !$user->hasVerifiedEmail()) {
+                $this->addError('mfaEnabled', __('auth.mfa_requires_verified_email'));
+                $this->mfaEnabled = false;
+
+                return;
+            }
+
             $user->update(['mfa_enabled' => $this->mfaEnabled]);
             if ($this->mfaEnabled) {
                 $sendMfaCode->execute($user);
