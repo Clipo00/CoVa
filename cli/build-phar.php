@@ -50,13 +50,13 @@ if (file_exists($envPath)) {
 }
 echo "Default base URL: $baseUrl\n";
 
-// Write the base URL into the CLI config
+// Write the base URL into the CLI config (temporarily for build)
 $configPath = BASE_PATH . '/config/config.php';
-$configContent = file_get_contents($configPath);
+$originalContent = file_get_contents($configPath);
 $configContent = preg_replace(
     "/'url' => '.*?'/",
     "'url' => '{$baseUrl}'",
-    $configContent
+    $originalContent
 );
 file_put_contents($configPath, $configContent);
 
@@ -78,5 +78,8 @@ $phar->setStub($phar->createDefaultStub('bootstrap/init.php'));
 
 // Rename .phar to remove extension (Laravel Zero convention)
 rename($pharFile, $buildPath . '/' . $name);
+
+// Restore original config (don't commit local URL)
+file_put_contents($configPath, $originalContent);
 
 echo "Standalone application compiled into: builds/$name\n";

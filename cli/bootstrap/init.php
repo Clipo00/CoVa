@@ -23,6 +23,16 @@ require __DIR__.'/autoload.php';
 |
 */
 
+$debug = (bool) (getenv('COVAR_DEBUG') ?: getenv('APP_DEBUG'));
+
+// Suppress PHP warnings/errors in production — prevent phar:// path exposure
+set_error_handler(function (int $severity, string $message, string $file, int $line) use ($debug): bool {
+    if ($debug) {
+        fwrite(STDERR, "Warning: $message in $file:$line\n");
+    }
+    return true;
+});
+
 $app = new App\Console\Application;
 
 $app->add(
@@ -40,8 +50,6 @@ $app->add(
 try {
     $app->run();
 } catch (\Throwable $e) {
-    $debug = getenv('COVAR_DEBUG') || getenv('APP_DEBUG');
-
     if ($debug) {
         fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
     } else {
