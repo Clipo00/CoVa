@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,7 +18,7 @@ class EnsurePasswordNotTemporary
      * Users created via invitation have a random temporary password
      * and must set their own before accessing any other page.
      */
-    public function handle(Request $request, Closure $next): Response|RedirectResponse
+    public function handle(Request $request, Closure $next): Response|RedirectResponse|JsonResponse
     {
         $user = $request->user();
 
