@@ -27,12 +27,19 @@ class BlueprintZipPassword extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('blueprint.zip_password_subject', ['title' => $this->blueprintTitle]))
-            ->greeting(__('blueprint.zip_password_greeting'))
-            ->line(__('blueprint.zip_password_intro', ['title' => $this->blueprintTitle]))
-            ->line($this->password)
-            ->line(__('blueprint.zip_password_warning'))
-            ->salutation(__('auth.mfa_email_salutation'));
+        $originalLocale = app()->getLocale();
+        app()->setLocale($notifiable->locale ?? config('app.locale', 'en'));
+
+        try {
+            return (new MailMessage)
+                ->subject(__('blueprint.zip_password_subject', ['title' => $this->blueprintTitle]))
+                ->greeting(__('blueprint.zip_password_greeting'))
+                ->line(__('blueprint.zip_password_intro', ['title' => $this->blueprintTitle]))
+                ->line($this->password)
+                ->line(__('blueprint.zip_password_warning'))
+                ->salutation(__('auth.mfa_email_salutation'));
+        } finally {
+            app()->setLocale($originalLocale);
+        }
     }
 }

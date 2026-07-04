@@ -32,13 +32,20 @@ class ResetPasswordNotification extends Notification
             'email' => $notifiable->getEmailForPasswordReset(),
         ]);
 
-        return (new MailMessage)
-            ->subject(__('auth.password_reset_subject'))
-            ->greeting(__('auth.password_reset_greeting', ['name' => $notifiable->name]))
-            ->line(__('auth.password_reset_intro'))
-            ->action(__('auth.password_reset_button'), $url)
-            ->line(__('auth.password_reset_expiry', ['count' => config('auth.passwords.users.expire', 60)]))
-            ->line(__('auth.password_reset_no_action'))
-            ->salutation(__('auth.mfa_email_salutation'));
+        $originalLocale = app()->getLocale();
+        app()->setLocale($notifiable->locale ?? config('app.locale', 'en'));
+
+        try {
+            return (new MailMessage)
+                ->subject(__('auth.password_reset_subject'))
+                ->greeting(__('auth.password_reset_greeting', ['name' => $notifiable->name]))
+                ->line(__('auth.password_reset_intro'))
+                ->action(__('auth.password_reset_button'), $url)
+                ->line(__('auth.password_reset_expiry', ['count' => config('auth.passwords.users.expire', 60)]))
+                ->line(__('auth.password_reset_no_action'))
+                ->salutation(__('auth.mfa_email_salutation'));
+        } finally {
+            app()->setLocale($originalLocale);
+        }
     }
 }
