@@ -19,7 +19,7 @@ return [
         'version' => '1.0.0',
         'env' => 'production',
         'debug' => false,
-        'url' => env('APP_URL', ''),
+        'url' => '__APP_URL__',
         'timezone' => 'UTC',
     ],
 ];

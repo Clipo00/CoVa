@@ -53,9 +53,9 @@ echo "Default base URL: $baseUrl\n";
 // Write the base URL into the CLI config (temporarily for build)
 $configPath = BASE_PATH . '/config/config.php';
 $originalContent = file_get_contents($configPath);
-$configContent = preg_replace(
-    "/'url' => '.*?'/",
-    "'url' => '{$baseUrl}'",
+$configContent = str_replace(
+    '__APP_URL__',
+    $baseUrl,
     $originalContent
 );
 file_put_contents($configPath, $configContent);
