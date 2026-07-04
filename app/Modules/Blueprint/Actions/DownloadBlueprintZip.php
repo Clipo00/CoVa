@@ -47,12 +47,10 @@ class DownloadBlueprintZip
             throw new \RuntimeException(__('blueprint.zip_generation_failed'));
         }
 
-        // Send password notification if encrypted — wrap in output buffer
-        // to prevent SMTP debug output from corrupting the ZIP stream
+        // Send password notification AFTER response is sent to client,
+        // so SMTP communication cannot corrupt the ZIP stream
         if ($isEncrypted && $password !== '') {
-            ob_start();
-            $this->sendPasswordNotification($blueprint, $password);
-            ob_end_clean();
+            $this->sendPasswordNotificationDeferred($blueprint, $password);
         }
 
         $safeFilename = preg_replace('/[^a-z0-9-]/', '', $blueprint->slug).'.zip';
@@ -372,7 +370,32 @@ class DownloadBlueprintZip
     }
 
     /**
-     * Send the ZIP password notification to the authenticated user.
+     * Send password notification deferred to after response (web context)
+     * to prevent SMTP output from corrupting the ZIP stream.
+     * Falls back to inline sending when dispatcher is unavailable (tests, CLI).
+     */
+    private function sendPasswordNotificationDeferred(Blueprint $blueprint, string $password): void
+    {
+        $title = $blueprint->title;
+
+        try {
+            dispatch(function () use ($title, $password): void {
+                $user = auth()->user();
+                if ($user !== null) {
+                    $user->notify(new BlueprintZipPassword(
+                        blueprintTitle: $title,
+                        password: $password,
+                    ));
+                }
+            })->afterResponse();
+        } catch (\Throwable) {
+            // Dispatcher not available — fall back to inline
+            $this->sendPasswordNotification($blueprint, $password);
+        }
+    }
+
+    /**
+     * Send password notification inline.
      * Gracefully handles missing auth context (e.g., unit tests).
      */
     private function sendPasswordNotification(Blueprint $blueprint, string $password): void

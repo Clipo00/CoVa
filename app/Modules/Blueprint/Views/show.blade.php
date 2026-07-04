@@ -127,15 +127,7 @@
                         </button>
                     @elseif($hasSecrets)
                         <button type="button"
-                            @click="$store.confirm.ask({
-                                message: '{{ __('blueprint.zip_download_encrypted') }}',
-                                confirmText: '{{ __('blueprint.zip_download_button') }}',
-                                onConfirm() {
-                                    document.getElementById('download-zip-form').submit();
-                                    document.getElementById('zip-spinner').classList.remove('hidden');
-                                    setTimeout(() => document.getElementById('zip-spinner').classList.add('hidden'), 5000);
-                                }
-                            })"
+                            onclick="Alpine.store('confirm').ask({ message: '{{ __('blueprint.zip_download_encrypted') }}', confirmText: '{{ __('blueprint.zip_download_button') }}', onConfirm: function() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(function() { document.getElementById('zip-spinner').classList.add('hidden'); }, 5000); } })"
                             class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
