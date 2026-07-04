@@ -19,15 +19,15 @@ readonly class AiContextSegment
         public ?string $content = null,
     ) {
         if (!in_array($type, ['skill', 'custom', 'agent'], true)) {
-            throw new \InvalidArgumentException("Invalid segment type: {$type}");
+            throw new \InvalidArgumentException(__('blueprint.segment_type_invalid', ['type' => $type]));
         }
 
         if ($name === '') {
-            throw new \InvalidArgumentException('Segment name cannot be empty.');
+            throw new \InvalidArgumentException(__('blueprint.segment_name_empty'));
         }
 
         if ($type === 'custom' && $content === null) {
-            throw new \InvalidArgumentException('Custom segments must have content. Use empty string for content-less custom segments.');
+            throw new \InvalidArgumentException(__('blueprint.segment_custom_needs_content'));
         }
     }
 
@@ -37,8 +37,8 @@ readonly class AiContextSegment
     public static function fromArray(array $data): self
     {
         return new self(
-            type: $data['type'] ?? throw new \InvalidArgumentException('Missing segment type.'),
-            name: $data['name'] ?? throw new \InvalidArgumentException('Missing segment name.'),
+            type: $data['type'] ?? throw new \InvalidArgumentException(__('blueprint.segment_type_missing')),
+            name: $data['name'] ?? throw new \InvalidArgumentException(__('blueprint.segment_name_missing')),
             content: $data['content'] ?? null,
         );
     }

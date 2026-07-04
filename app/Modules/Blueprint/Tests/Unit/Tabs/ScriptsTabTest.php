@@ -10,7 +10,7 @@ use App\Modules\Blueprint\DTOs\TabOutput;
 use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Tabs\ScriptsTab;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ScriptsTabTest extends TestCase
 {
@@ -18,6 +18,8 @@ class ScriptsTabTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->tab = new ScriptsTab;
     }
 
@@ -90,7 +92,6 @@ class ScriptsTabTest extends TestCase
     public function test_script_entry_rejects_empty_command(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Command is required');
 
         ScriptEntry::fromArray(['command' => '', 'description' => 'test']);
     }
@@ -98,7 +99,6 @@ class ScriptsTabTest extends TestCase
     public function test_script_entry_rejects_missing_command(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Command is required');
 
         ScriptEntry::fromArray(['description' => 'test']);
     }

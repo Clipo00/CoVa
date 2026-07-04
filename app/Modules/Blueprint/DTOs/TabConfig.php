@@ -22,11 +22,11 @@ final class TabConfig
         $typeValue = $data['type'] ?? null;
 
         if ($typeValue === null) {
-            throw new InvalidArgumentException('Tab config must have a "type" field.');
+            throw new InvalidArgumentException(__('blueprint.tab_type_missing'));
         }
 
         if (!TabType::isValid($typeValue)) {
-            throw new InvalidArgumentException("Invalid tab type: '{$typeValue}'.");
+            throw new InvalidArgumentException(__('blueprint.tab_type_invalid', ['type' => $typeValue]));
         }
 
         return new self(

@@ -38,7 +38,7 @@ class DownloadBlueprintZip
             if (file_exists($zipPath)) {
                 unlink($zipPath);
             }
-            throw new \RuntimeException('Failed to generate ZIP archive.');
+            throw new \RuntimeException(__('blueprint.zip_generation_failed'));
         }
 
         $safeFilename = preg_replace('/[^a-z0-9-]/', '', $blueprint->slug).'.zip';
@@ -77,14 +77,14 @@ class DownloadBlueprintZip
             $zip = new \ZipArchive;
 
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-                throw new \RuntimeException('Cannot create ZIP archive.');
+                throw new \RuntimeException(__('blueprint.zip_creation_failed'));
             }
             $zipOpen = true;
 
             // Add agent.md with the router table
             $agentMd = $this->buildAgentMd($segments);
             if ($zip->addFromString('.agents/agent.md', $agentMd) === false) {
-                throw new \RuntimeException('Failed to add agent.md to ZIP.');
+                throw new \RuntimeException(__('blueprint.zip_agent_md_failed'));
             }
 
             // Add individual segment files (skill + custom only, not agent)
@@ -107,12 +107,12 @@ class DownloadBlueprintZip
                 $usedFilenames[$filename] = true;
 
                 if ($zip->addFromString(".agents/.skills/{$filename}", $segment['content']) === false) {
-                    throw new \RuntimeException("Failed to add file to ZIP: {$filename}");
+                    throw new \RuntimeException(__('blueprint.zip_add_file_failed', ['filename' => $filename]));
                 }
             }
 
             if ($zip->close() === false) {
-                throw new \RuntimeException('Failed to finalize ZIP archive.');
+                throw new \RuntimeException(__('blueprint.zip_finalize_failed'));
             }
             $zipOpen = false;
 
