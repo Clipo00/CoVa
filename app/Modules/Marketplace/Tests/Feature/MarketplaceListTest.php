@@ -31,7 +31,7 @@ class MarketplaceListTest extends TestCase
 
     private function getMarketplaceId(): int
     {
-        return Organization::where('slug', 'cova-marketplace')->value('id');
+        return Organization::where('slug', 'covar-marketplace')->value('id');
     }
 
     public function test_renders_public_blueprints(): void

@@ -40,7 +40,7 @@ class MarketplaceSeeder extends Seeder
 
         // Crear la organización marketplace
         Organization::create([
-            'slug' => 'cova-marketplace',
+            'slug' => 'covar-marketplace',
             'name' => 'CoVa Marketplace',
             'owner_id' => $systemUser->id,
         ]);

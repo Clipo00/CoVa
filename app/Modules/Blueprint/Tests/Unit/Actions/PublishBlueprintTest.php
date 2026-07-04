@@ -79,7 +79,7 @@ class PublishBlueprintTest extends TestCase
         $this->assertEquals($originalOrgId, $result->fresh()->organization_id);
 
         // A marketplace copy was created
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $marketplaceOrg = Organization::where('slug', 'covar-marketplace')->first();
         $this->assertDatabaseHas('blueprints', [
             'slug' => 'test-bp',
             'organization_id' => $marketplaceOrg->id,
