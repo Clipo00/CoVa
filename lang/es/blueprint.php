@@ -311,4 +311,5 @@ return [
     'zip_email_sent' => 'Contraseña enviada por correo electrónico.',
     'zip_email_unverified' => 'Este blueprint contiene variables secretas. Verifica tu correo electrónico para poder descargarlo — la contraseña del ZIP se enviará a tu email por seguridad.',
     'zip_loading' => 'Preparando descarga...',
+    'zip_dismiss_hint' => 'Haz clic fuera para cerrar',
 ];

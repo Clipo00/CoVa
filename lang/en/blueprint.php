@@ -310,4 +310,5 @@ return [
     'zip_email_sent' => 'Password sent via email.',
     'zip_email_unverified' => 'This blueprint contains secret variables. Verify your email to download — the ZIP password will be sent to your email for security.',
     'zip_loading' => 'Preparing download...',
+    'zip_dismiss_hint' => 'Click outside to dismiss',
 ];
