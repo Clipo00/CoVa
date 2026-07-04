@@ -41,7 +41,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Locale — corre DENTRO del grupo web, después de EncryptCookies y StartSession
         $middleware->appendToGroup('web', SetLocaleFromCookie::class);
-        $middleware->appendToGroup('web', EnsurePasswordNotTemporary::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Loggear excepciones no capturadas con contexto completo
