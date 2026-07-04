@@ -53,12 +53,6 @@
                     $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
                 @endphp
                 <div class="mt-4 sm:mt-0 flex items-center gap-1">
-                    <livewire:shared.copy-to-clipboard
-                        :text="$blueprint->uuid"
-                        :label="__('blueprint.copy_uuid')"
-                        :success-message="__('blueprint.uuid_copied')"
-                    />
-
                     {{-- Transfer (modal) --}}
                     @if($userOrgsWhereOwner->count() > 0)
                         <div x-data="{ open: false }">
@@ -210,11 +204,6 @@
             @if($blueprint->description)
                 <p class="text-gray-600 dark:text-gray-300 mt-2">{{ $blueprint->description }}</p>
             @endif
-
-            <div class="mt-4 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                <span>{{ __('blueprint.uuid_label') }}:</span>
-                <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">{{ $blueprint->uuid }}</code>
-            </div>
 
             {{-- Vault Fetch Card --}}
             <div class="mt-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
