@@ -24,8 +24,11 @@
                         {{ __('landing.docs_step1_desc') }}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }}</span>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }} (Linux/macOS)</span>
 curl -L -o covar {{ config('app.cli_download_url') }}
+
+<span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }} (Windows PowerShell)</span>
+Invoke-WebRequest -Uri {{ config('app.cli_download_url') }} -OutFile covar
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd2') }}</span>
 chmod +x covar
@@ -53,7 +56,7 @@ sudo mv covar /usr/local/bin/</code></pre>
                         {!! __('landing.docs_step2_desc') !!}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key cova_xxxxxxxxxxxx</code></pre>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx</code></pre>
                     </div>
                 </div>
             </div>
