@@ -54,6 +54,11 @@ class BlueprintPolicy
             return false;
         }
 
+        // Trial users without a contract cannot publish
+        if ($user->isOnProTrial()) {
+            return false;
+        }
+
         return true;
     }
 

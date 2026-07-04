@@ -204,6 +204,16 @@ return [
     'trial_days_remaining' => ':count days left in your Pro trial.',
     'trial_start_button' => 'Try Pro free for 14 days',
     'plan_cta_trial' => 'Try free for 14 days',
+    'trial_email_required' => 'You must verify your email address before starting the free trial.',
+    'trial_free_only' => 'Only Free plan users can start a trial.',
+    'trial_already_used' => 'You have already used your trial period.',
+    'trial_still_active' => 'Your trial period is still active.',
+    'trial_started_subject' => 'Welcome to your CoVa Pro trial!',
+    'trial_started_greeting' => 'Hi :name!',
+    'trial_started_intro' => 'You\'ve activated your 14-day free trial of CoVa Pro. During this period you\'ll enjoy all advanced features.',
+    'trial_started_features' => '✨ Here\'s what you\'ve unlocked:\n• Up to 5 organizations\n• Up to 25 blueprints per organization\n• Marketplace: publish and share your blueprints\n• API tokens for CLI access\n• Priority support',
+    'trial_started_expiry' => 'Your trial ends on :date. You can view all details on the pricing page.',
+    'publish_trial_denied' => 'Trial users cannot publish to the marketplace. Upgrade to a Pro or Enterprise plan to unlock this feature.',
 
     // Footer
     'footer_tagline' => 'Configurations that travel with you.',

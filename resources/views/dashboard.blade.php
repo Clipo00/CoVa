@@ -106,9 +106,9 @@
                     <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('dashboard.stats_plan') }}</h3>
                     <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ $plan?->name ?? '—' }}</p>
                     @if($plan && $plan->slug !== 'enterprise')
-                        <a href="{{ route('pricing') }}" class="mt-2 inline-block text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-medium">
+                        <span onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="mt-2 inline-block text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-medium cursor-pointer">
                             {{ __('dashboard.upgrade_plan') }} →
-                        </a>
+                        </span>
                     @endif
                 </div>
             </div>
@@ -196,9 +196,9 @@
                         <div class="ml-3">
                             <p class="text-sm text-yellow-700">
                                 {!! __('dashboard.plan_limit_warning', ['plan' => e($plan->name)]) !!}
-                                <a href="{{ route('pricing') }}" class="font-medium underline text-yellow-700 hover:text-yellow-600">
+                                <span onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="font-medium underline text-yellow-700 hover:text-yellow-600 cursor-pointer">
                                     {{ __('dashboard.upgrade_plan') }}
-                                </a>
+                                </span>
                                 {{ __('dashboard.to_create_more') }}
                             </p>
                         </div>

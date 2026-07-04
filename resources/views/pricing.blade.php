@@ -129,14 +129,14 @@
                                 </button>
                             </form>
                         @else
-                            <span class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                            <button type="button" onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors cursor-pointer">
                                 {{ __('landing.plan_cta_pro') }}
-                            </span>
+                            </button>
                         @endif
                     @elseif ($isEnterprise)
-                        <span class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900">
+                        <button type="button" onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
                             {{ __('landing.plan_cta_enterprise') }}
-                        </span>
+                        </button>
                     @endif
                 </div>
             </div>

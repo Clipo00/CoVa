@@ -240,6 +240,7 @@ return [
     'publish_denied' => 'You do not have permission to publish this blueprint.',
     'publish_marketplace_disabled' => 'The marketplace is not available at this time.',
     'publish_plan_required' => 'You need a plan with marketplace support to publish blueprints.',
+    'publish_trial_denied' => 'Trial users cannot publish to the marketplace. Upgrade to a Pro or Enterprise plan to unlock this feature.',
     'publish_already_public' => 'This blueprint is already public.',
 
     // Vote

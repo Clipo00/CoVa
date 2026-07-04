@@ -134,12 +134,21 @@
                         </ul>
 
                         {{-- CTA --}}
-                        <a href="{{ $plan['cta_url'] }}" 
-                           class="block w-full py-3 px-4 text-center text-sm font-semibold rounded-xl transition-all {{ $plan['highlight'] 
-                                ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]' 
-                                : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
-                            {{ $plan['cta'] }}
-                        </a>
+                        @if($plan['slug'] === 'free')
+                            <a href="{{ $plan['cta_url'] }}" 
+                               class="block w-full py-3 px-4 text-center text-sm font-semibold rounded-xl transition-all {{ $plan['highlight'] 
+                                   ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]' 
+                                   : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
+                                {{ $plan['cta'] }}
+                            </a>
+                        @else
+                            <button type="button" onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))"
+                               class="block w-full py-3 px-4 text-center text-sm font-semibold rounded-xl transition-all cursor-pointer {{ $plan['highlight'] 
+                                   ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]' 
+                                   : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600' }}">
+                                {{ $plan['cta'] }}
+                            </button>
+                        @endif
                     </div>
                 </div>
             @endforeach
