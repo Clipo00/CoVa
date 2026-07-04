@@ -97,13 +97,16 @@ class UserProfileForm extends Component
 
         $updateUserProfile->execute($user, $data);
 
+        // Refresh navbar avatar and other profile-dependent components
+        $this->dispatch('profile-updated');
+
+        $this->dispatch('notify', message: __('auth.profile_updated'));
+
         // Reset password fields
         $this->currentPassword = null;
         $this->newPassword = null;
         $this->newPasswordConfirmation = null;
         $this->avatar = null;
-
-        $this->dispatch('notify', message: __('auth.profile_updated'));
     }
 
     public function render()
