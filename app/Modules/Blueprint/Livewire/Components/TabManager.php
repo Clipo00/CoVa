@@ -51,6 +51,17 @@ class TabManager extends Component
     }
 
     /**
+     * Livewire hook: fired when $tabs is updated from the parent
+     * (e.g. template selection or edit form load).
+     * Resolves registry content for any segments with null content.
+     */
+    public function updatedTabs(): void
+    {
+        $this->resolveSegmentContent();
+        $this->syncToParent();
+    }
+
+    /**
      * Add a new empty tab of the given type.
      */
     public function addTab(string $type): void

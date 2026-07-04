@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Auth\Livewire\Forms;
 
-use App\Modules\Auth\Actions\SendMfaCode;
 use App\Modules\Auth\Actions\UpdateUserProfile;
 use App\Modules\Auth\DTOs\UpdateUserProfileData;
 use Illuminate\Validation\Rule;
@@ -58,7 +57,7 @@ class UserProfileForm extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function submit(UpdateUserProfile $updateUserProfile, SendMfaCode $sendMfaCode): void
+    public function submit(UpdateUserProfile $updateUserProfile): void
     {
         $validated = $this->validate();
 
@@ -82,9 +81,6 @@ class UserProfileForm extends Component
             }
 
             $user->update(['mfa_enabled' => $this->mfaEnabled]);
-            if ($this->mfaEnabled) {
-                $sendMfaCode->execute($user);
-            }
         }
 
         $data = new UpdateUserProfileData(

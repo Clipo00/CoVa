@@ -107,14 +107,34 @@ trait ManagesVariables
      * Hook de Livewire: asigna color automáticamente cuando cambia la sección
      * de una variable. Esto evita que el color picker aparezca con un paso de
      * retraso (el bug donde había que añadir otra variable para ver el color).
+     *
+     * También propaga cambios de color a todas las variables del mismo grupo.
      */
-    public function updatedVariables(mixed $value, string $key): void
+    public function updatedVariables(mixed $value, ?string $key): void
     {
-        if (!str_ends_with($key, '.section')) {
+        if ($key === null) {
             return;
         }
 
-        $index = (int) explode('.', $key)[0];
+        $parts = explode('.', $key);
+        $field = end($parts);
+
+        // Extraer índice: Livewire puede enviar "variables.X.field" o "X.field"
+        $index = is_numeric($parts[0]) ? (int) $parts[0] : (int) ($parts[1] ?? 0);
+
+        if ($field === 'section') {
+            $this->assignColorForSection($index);
+        } elseif ($field === 'section_color') {
+            $this->propagateColorToGroup($index);
+        }
+    }
+
+    /**
+     * Assign a color to a variable whose section just changed.
+     * Reuses the group's existing color or picks a new random one.
+     */
+    private function assignColorForSection(int $index): void
+    {
         $section = $this->variables[$index]['section'] ?? null;
 
         if (!$section) {
@@ -150,6 +170,29 @@ trait ManagesVariables
         $palette = self::SECTION_COLORS;
         $color = collect($palette)->first(fn ($c) => !in_array($c, $usedColors)) ?? $palette[0];
         $this->variables[$index]['section_color'] = $color;
+    }
+
+    /**
+     * Propagate a color change to all variables in the same section.
+     * El color va por grupo, no por variable individual.
+     */
+    private function propagateColorToGroup(int $index): void
+    {
+        $section = $this->variables[$index]['section'] ?? null;
+        if (!$section) {
+            return;
+        }
+
+        $newColor = $this->variables[$index]['section_color'] ?? null;
+        if (!$newColor || !$this->isValidHexColor($newColor)) {
+            return;
+        }
+
+        foreach ($this->variables as $i => $var) {
+            if (($var['section'] ?? null) === $section) {
+                $this->variables[$i]['section_color'] = $newColor;
+            }
+        }
     }
 
     private function isValidHexColor(string $color): bool
