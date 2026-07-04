@@ -90,7 +90,7 @@ class ConfigSetKeyCommand extends Command
     private function createApiClient(string $key): ApiClient
     {
         return new ApiClient(null, [
-            'base_url' => $this->option('base-url') ?? 'https://api.CoVaR.app',
+            'base_url' => $this->option('base-url') ?: config('app.url', 'https://api.CoVaR.app'),
             'api_key' => $key,
         ]);
     }
