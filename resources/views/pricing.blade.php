@@ -135,7 +135,7 @@
                         @endif
                     @elseif ($isEnterprise)
                         @if(config('marketplace.billing_enabled'))
-                            <a href="mailto:enterprise@CoVaR.app" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
+                            <a href="mailto:covarapp@gmail.com" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
                                 {{ __('landing.plan_cta_enterprise') }}
                             </a>
                         @else

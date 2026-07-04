@@ -75,7 +75,7 @@
                         ],
                         'excluded' => [],
                         'cta' => config('marketplace.billing_enabled') ? __('landing.plan_cta_enterprise') : __('landing.coming_soon'),
-                        'cta_url' => 'mailto:enterprise@CoVaR.app',
+                        'cta_url' => 'mailto:covarapp@gmail.com',
                         'popular' => false,
                         'highlight' => false,
                     ],
