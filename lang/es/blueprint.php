@@ -298,4 +298,15 @@ return [
     'zip_creation_failed' => 'No se puede crear el archivo ZIP.',
     'zip_finalize_failed' => 'Error al finalizar el archivo ZIP.',
     'zip_generation_failed' => 'Error al generar el archivo ZIP.',
+
+    // ZIP Download
+    'zip_password_subject' => 'Contraseña de tu blueprint :title',
+    'zip_password_greeting' => 'Hola,',
+    'zip_password_intro' => 'Has solicitado la descarga cifrada del blueprint «:title». Aquí tienes tu contraseña de un solo uso:',
+    'zip_password_warning' => 'Esta contraseña es de un solo uso. No la compartas con nadie.',
+    'zip_download_button' => 'Descargar ZIP',
+    'zip_download_encrypted' => 'Descargar ZIP cifrado',
+    'zip_email_sent' => 'Contraseña enviada por correo electrónico.',
+    'zip_email_unverified' => 'Debes verificar tu correo electrónico antes de descargar un blueprint cifrado.',
+    'zip_loading' => 'Preparando descarga...',
 ];

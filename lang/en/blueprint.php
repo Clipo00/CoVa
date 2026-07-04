@@ -297,4 +297,15 @@ return [
     'zip_creation_failed' => 'Cannot create ZIP archive.',
     'zip_finalize_failed' => 'Failed to finalize ZIP archive.',
     'zip_generation_failed' => 'Failed to generate ZIP archive.',
+
+    // ZIP Download
+    'zip_password_subject' => 'Password for your blueprint :title',
+    'zip_password_greeting' => 'Hello,',
+    'zip_password_intro' => 'You requested an encrypted download of blueprint «:title». Here is your one-time password:',
+    'zip_password_warning' => 'This password is one-time only. Do not share it.',
+    'zip_download_button' => 'Download ZIP',
+    'zip_download_encrypted' => 'Download Encrypted ZIP',
+    'zip_email_sent' => 'Password sent via email.',
+    'zip_email_unverified' => 'You must verify your email before downloading an encrypted blueprint.',
+    'zip_loading' => 'Preparing download...',
 ];

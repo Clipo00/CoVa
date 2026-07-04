@@ -12,6 +12,7 @@ use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\PSR12Skill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\SOLIDSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
@@ -364,6 +365,385 @@ class DownloadBlueprintZipTest extends TestCase
 
         $this->assertStringContainsString('## My Rule', $skillContent);
         $this->assertStringContainsString('Always write tests.', $skillContent);
+    }
+
+    // --- New tests for full blueprint ZIP ---
+
+    public function test_has_secrets_returns_true_when_secrets_exist(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'APP_NAME', 'default_value' => 'MyApp', 'is_secret' => false, 'section' => 'General', 'sort_order' => 0],
+                (object) ['key' => 'API_KEY', 'default_value' => 'abc123', 'is_secret' => true, 'section' => 'Secrets', 'sort_order' => 1],
+            ]),
+        ]);
+
+        $this->assertTrue($this->action->hasSecrets($blueprint));
+    }
+
+    public function test_has_secrets_returns_false_when_no_secrets(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'APP_NAME', 'default_value' => 'MyApp', 'is_secret' => false, 'section' => 'General', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $this->assertFalse($this->action->hasSecrets($blueprint));
+    }
+
+    public function test_has_secrets_returns_false_when_no_variables(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([]),
+        ]);
+
+        $this->assertFalse($this->action->hasSecrets($blueprint));
+    }
+
+    public function test_generate_password_length_and_format(): void
+    {
+        $password = $this->action->generatePassword();
+
+        $this->assertEquals(32, strlen($password));
+        $this->assertMatchesRegularExpression('/^[a-f0-9]{32}$/', $password);
+    }
+
+    public function test_generate_password_is_random(): void
+    {
+        $password1 = $this->action->generatePassword();
+        $password2 = $this->action->generatePassword();
+
+        $this->assertNotEquals($password1, $password2);
+    }
+
+    public function test_plain_zip_contains_env_file(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'APP_NAME', 'default_value' => 'MyApp', 'is_secret' => false, 'section' => 'General', 'sort_order' => 0],
+                (object) ['key' => 'DB_HOST', 'default_value' => 'localhost', 'is_secret' => false, 'section' => 'Database', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipContainsFile($zipContent, '.env');
+    }
+
+    public function test_plain_zip_env_content_format(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'APP_NAME', 'default_value' => 'MyApp', 'is_secret' => false, 'section' => 'General', 'sort_order' => 0],
+                (object) ['key' => 'DB_HOST', 'default_value' => 'localhost', 'is_secret' => false, 'section' => 'Database', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+        $envContent = $this->getZipFileContent($zipContent, '.env');
+
+        $this->assertStringContainsString('# --- General ---', $envContent);
+        $this->assertStringContainsString('APP_NAME=MyApp', $envContent);
+        $this->assertStringContainsString('# --- Database ---', $envContent);
+        $this->assertStringContainsString('DB_HOST=localhost', $envContent);
+    }
+
+    public function test_build_env_content_secrets_are_blank_when_not_included(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'API_KEY', 'default_value' => 'real-secret-value', 'is_secret' => true, 'section' => 'Secrets', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $content = $this->action->buildEnvContent($blueprint, false);
+
+        $this->assertStringContainsString('API_KEY=', $content);
+        $this->assertStringNotContainsString('real-secret-value', $content);
+    }
+
+    public function test_build_env_content_includes_secrets_when_flag_is_true(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'API_KEY', 'default_value' => 'real-secret-value', 'is_secret' => true, 'section' => 'Secrets', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $content = $this->action->buildEnvContent($blueprint, true);
+
+        $this->assertStringContainsString('API_KEY=real-secret-value', $content);
+    }
+
+    public function test_plain_zip_contains_mcp_servers_json(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'mcp_servers',
+                    'config' => [
+                        'servers' => [
+                            ['name' => 'filesystem', 'command' => 'npx', 'args' => ['-y', '@modelcontextprotocol/server-filesystem']],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipContainsFile($zipContent, '.mcp/servers.json');
+    }
+
+    public function test_plain_zip_mcp_servers_json_content(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'mcp_servers',
+                    'config' => [
+                        'servers' => [
+                            ['name' => 'filesystem', 'command' => 'npx', 'args' => ['-y', '@modelcontextprotocol/server-filesystem']],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+        $jsonContent = $this->getZipFileContent($zipContent, '.mcp/servers.json');
+        $decoded = json_decode($jsonContent, true);
+
+        $this->assertIsArray($decoded);
+        $this->assertCount(1, $decoded);
+        $this->assertEquals('filesystem', $decoded[0]['name']);
+        $this->assertEquals('npx', $decoded[0]['command']);
+        $this->assertEquals(['-y', '@modelcontextprotocol/server-filesystem'], $decoded[0]['args']);
+    }
+
+    public function test_plain_zip_contains_vscode_extensions_json(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'vscode_extensions',
+                    'config' => [
+                        'extensions' => ['esbenp.prettier-vscode', 'dbaeumer.vscode-eslint'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipContainsFile($zipContent, '.vscode/extensions.json');
+    }
+
+    public function test_plain_zip_vscode_extensions_json_content(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'vscode_extensions',
+                    'config' => [
+                        'extensions' => ['esbenp.prettier-vscode', 'dbaeumer.vscode-eslint'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+        $jsonContent = $this->getZipFileContent($zipContent, '.vscode/extensions.json');
+        $decoded = json_decode($jsonContent, true);
+
+        $this->assertIsArray($decoded);
+        $this->assertCount(2, $decoded);
+        $this->assertContains('esbenp.prettier-vscode', $decoded);
+        $this->assertContains('dbaeumer.vscode-eslint', $decoded);
+    }
+
+    public function test_plain_zip_contains_scripts_install_sh(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'scripts',
+                    'config' => [
+                        'scripts' => [
+                            ['command' => 'composer install', 'description' => 'Install PHP dependencies', 'order' => 0],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipContainsFile($zipContent, 'scripts/install.sh');
+    }
+
+    public function test_plain_zip_scripts_install_sh_content(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                [
+                    'type' => 'scripts',
+                    'config' => [
+                        'scripts' => [
+                            ['command' => 'composer install', 'description' => 'Install PHP dependencies', 'order' => 0],
+                            ['command' => 'npm install', 'description' => 'Install Node dependencies', 'order' => 1],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+        $scriptContent = $this->getZipFileContent($zipContent, 'scripts/install.sh');
+
+        $this->assertStringContainsString('#!/bin/bash', $scriptContent);
+        $this->assertStringContainsString('# Install PHP dependencies', $scriptContent);
+        $this->assertStringContainsString('composer install', $scriptContent);
+        $this->assertStringContainsString('# Install Node dependencies', $scriptContent);
+        $this->assertStringContainsString('npm install', $scriptContent);
+    }
+
+    public function test_empty_mcp_tab_skipped(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                ['type' => 'mcp_servers', 'config' => ['servers' => []]],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipDoesNotContainFile($zipContent, '.mcp/servers.json');
+    }
+
+    public function test_empty_vscode_tab_skipped(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                ['type' => 'vscode_extensions', 'config' => ['extensions' => []]],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipDoesNotContainFile($zipContent, '.vscode/extensions.json');
+    }
+
+    public function test_empty_scripts_tab_skipped(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                ['type' => 'ai_context', 'config' => ['segments' => []]],
+                ['type' => 'scripts', 'config' => ['scripts' => []]],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        $this->assertZipDoesNotContainFile($zipContent, 'scripts/install.sh');
+    }
+
+    public function test_existing_agent_behavior_still_works_with_new_assets(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'skill', 'name' => 'psr12'],
+                        ],
+                    ],
+                ],
+                [
+                    'type' => 'mcp_servers',
+                    'config' => [
+                        'servers' => [
+                            ['name' => 'filesystem', 'command' => 'npx', 'args' => []],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+
+        // Existing behavior
+        $this->assertZipContainsFile($zipContent, '.agents/agent.md');
+        $this->assertZipContainsFile($zipContent, '.agents/.skills/psr12.md');
+
+        // New assets
+        $this->assertZipContainsFile($zipContent, '.mcp/servers.json');
+    }
+
+    public function test_encrypted_zip_is_encrypted(): void
+    {
+        $blueprint = $this->mockBlueprint([
+            'slug' => 'test-bp',
+            'tabs_config' => [],
+            'variables' => Collection::make([
+                (object) ['key' => 'API_KEY', 'default_value' => 'real-secret-value', 'is_secret' => true, 'section' => 'Secrets', 'sort_order' => 0],
+            ]),
+        ]);
+
+        $zipContent = $this->captureZipContent($this->action->execute($blueprint));
+        $tempFile = tempnam(sys_get_temp_dir(), 'zip-enc-');
+        file_put_contents($tempFile, $zipContent);
+
+        try {
+            $zip = new ZipArchive;
+            if (!$zip->open($tempFile)) {
+                $this->fail('Could not open encrypted ZIP');
+            }
+
+            // Without password, reading an encrypted entry should fail
+            $content = @$zip->getFromName('.env');
+            $this->assertFalse($content, 'Expected .env to be encrypted (reading without password should fail)');
+
+            $zip->close();
+        } finally {
+            if (file_exists($tempFile)) {
+                unlink($tempFile);
+            }
+        }
     }
 
     // --- Helper methods ---
