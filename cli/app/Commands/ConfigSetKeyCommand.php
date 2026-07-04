@@ -11,12 +11,12 @@ use Illuminate\Console\Command;
  * Store the API key in ~/.config/covar/config.json with restricted permissions (0600).
  *
  * Validates connectivity by calling GET /api/me before saving. Does NOT save
- * invalid or expired keys. The base_url defaults to https://api.CoVaR.app
+ * invalid or expired keys. The base URL is read from config (set at build time)
  * and can be overridden via the --base-url option.
  *
  * Usage:
  *   covar config:set-key covar_abc123
- *   covar config:set-key covar_abc123 --base-url=https://staging.CoVaR.app
+ *   covar config:set-key covar_abc123 --base-url=http://127.0.0.1:8000
  */
 class ConfigSetKeyCommand extends Command
 {
@@ -32,15 +32,12 @@ class ConfigSetKeyCommand extends Command
      */
     protected $description = 'Set and validate the CoVaR API key';
 
-    private ?ApiClient $apiClient;
+    private ?ApiClient $apiClient = null;
 
-    /**
-     * @param ApiClient|null $apiClient Optional injected client for testing
-     */
-    public function __construct(?ApiClient $apiClient = null)
+    // Prevent auto-injection: use setApiClient() for testing instead of constructor DI
+    public function setApiClient(?ApiClient $client): void
     {
-        parent::__construct();
-        $this->apiClient = $apiClient;
+        $this->apiClient = $client;
     }
 
     /**
@@ -89,8 +86,13 @@ class ConfigSetKeyCommand extends Command
      */
     private function createApiClient(string $key): ApiClient
     {
+        $baseUrl = $this->option('base-url') ?: $this->laravel['config']['app.url'] ?? null;
+        if (!$baseUrl) {
+            $this->error('No base URL configured. Use --base-url or set app.url in config.');
+            exit(1);
+        }
         return new ApiClient(null, [
-            'base_url' => $this->option('base-url') ?: config('app.url', 'https://api.CoVaR.app'),
+            'base_url' => $baseUrl,
             'api_key' => $key,
         ]);
     }
