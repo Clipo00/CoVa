@@ -28,7 +28,7 @@ return [
     'tabs_section' => 'Tabs',
     'tab_count' => ':count tab|:count tabs',
     'tags_section' => 'Tags',
-    'tags_hint' => 'Max 6',
+    'tags_hint' => 'Max 10',
     'create_blueprint_button' => 'Create Blueprint',
     'edit_blueprint_button' => 'Save Changes',
     'cancel_link' => '← Cancel and go back',

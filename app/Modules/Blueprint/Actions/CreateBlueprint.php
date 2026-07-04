@@ -68,7 +68,7 @@ class CreateBlueprint
             ]);
         }
 
-        // Sync tags (limit enforced at form validation level — max 6)
+        // Sync tags (limit enforced at form validation level — max 10)
         if (!empty($tagIds)) {
             $blueprint->tags()->sync($tagIds);
         }

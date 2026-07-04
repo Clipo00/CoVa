@@ -28,7 +28,7 @@ return [
     'tabs_section' => 'Pestañas',
     'tab_count' => ':count pestaña|:count pestañas',
     'tags_section' => 'Etiquetas',
-    'tags_hint' => 'Máx. 6',
+    'tags_hint' => 'Máx. 10',
     'create_blueprint_button' => 'Crear Blueprint',
     'edit_blueprint_button' => 'Guardar Cambios',
     'cancel_link' => '← Cancelar y volver',
