@@ -261,4 +261,6 @@ return [
     'docs_trouble_permissions_desc' => 'En Linux/macOS, el binario necesita permisos de ejecución. Usa chmod +x covar. Si no tienes permisos de administrador, ejecuta directamente con php covar.',
     'docs_trouble_config_title' => 'Archivo de configuración no encontrado',
     'docs_trouble_config_desc' => 'El CLI guarda la configuración en ~/.config/covar/config.json. Si no existe, ejecuta primero covar config:set-key <tu-key> para crearlo.',
+    'docs_trouble_connection_title' => 'Error de conexión con la API',
+    'docs_trouble_connection_desc' => 'Si el CLI no detecta automáticamente la URL del servidor, puedes indicarla manualmente con --base-url.',
 ];
