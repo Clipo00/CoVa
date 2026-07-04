@@ -34,6 +34,8 @@ set_error_handler(function (int $severity, string $message, string $file, int $l
 });
 
 $app = new App\Console\Application;
+$app->setName('covar');
+$app->setVersion('1.0.0');
 
 $app->add(
     $app['app']->make(App\Commands\ConfigSetKeyCommand::class)
