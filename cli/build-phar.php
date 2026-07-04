@@ -51,7 +51,7 @@ $phar = new Phar(
 $phar->buildFromDirectory(BASE_PATH, $pattern);
 
 // Add the entry point (it's at root, not inside any structure dir)
-$phar->addFile(BASE_PATH . '/cova', 'covar');
+$phar->addFile(BASE_PATH . '/covar', 'covar');
 
 $phar->setStub($phar->createDefaultStub('bootstrap/init.php'));
 
