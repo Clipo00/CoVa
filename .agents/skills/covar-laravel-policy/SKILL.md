@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-policy
 description: >
-  Patrones y convenciones para Policies y autorización en CoVa. Trigger: Cuando se trabaja con archivos en Policies/.
+  Patrones y convenciones para Policies y autorización en CoVaR. Trigger: Cuando se trabaja con archivos en Policies/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

@@ -1,7 +1,7 @@
 ---
 name: covar-i18n
 description: >
-  Reglas de internacionalización (i18n) para CoVa. Asegura que todo texto de interfaz
+  Reglas de internacionalización (i18n) para CoVaR. Asegura que todo texto de interfaz
   se añada en español de España (castellano) y su traducción al inglés.
   Trigger: Cuando se crea o edita cualquier texto visible por el usuario, archivos
   en lang/, vistas Blade, mensajes de validación, excepciones, o notificaciones.

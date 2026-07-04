@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright configuration for CoVa E2E tests.
+ * Playwright configuration for CoVaR E2E tests.
  *
  * Requires: php artisan serve (started automatically via webServer)
  * Database: Uses SQLite in-memory or file-based (configured via .env.testing)

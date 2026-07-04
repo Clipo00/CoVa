@@ -1,7 +1,7 @@
 ---
 name: covar-security
 description: >
-  Patrones de seguridad OWASP Top 10:2025 para CoVa (Laravel + Livewire + Alpine.js).
+  Patrones de seguridad OWASP Top 10:2025 para CoVaR (Laravel + Livewire + Alpine.js).
   Trigger: Siempre que se crea o modifica código en el proyecto.
 license: Apache-2.0
 metadata:
@@ -11,7 +11,7 @@ metadata:
 
 ## When to Use
 
-- **SIEMPRE** — toda modificación de código en CoVa debe considerar implicaciones de seguridad
+- **SIEMPRE** — toda modificación de código en CoVaR debe considerar implicaciones de seguridad
 - Creando o editando: Controllers, Models, Policies, Livewire, Blade, Routes, Middleware
 - Configurando: sesiones, CORS, CSP, headers HTTP, manejo de errores
 - Modificando: autenticación, registro, invitaciones, roles
@@ -19,7 +19,7 @@ metadata:
 
 ## OWASP Top 10:2025 — Quick Reference
 
-| # | Categoría | Riesgo en CoVa | Prioridad |
+| # | Categoría | Riesgo en CoVaR | Prioridad |
 |---|-----------|----------------|-----------|
 | A01 | Broken Access Control | Policies, rutas, parámetros GET | 🔴 Alta |
 | A02 | Security Misconfiguration | .env, headers, CORS, APP_DEBUG | 🔴 Alta |
@@ -70,7 +70,7 @@ if (!$membership || $membership->role !== OrganizationUser::ROLE_OWNER) {
 }
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **Slug/UUID en URLs, NUNCA IDs auto-incrementales**
 2. **Siempre Policy** — `$this->authorize()` en Controller, `@can()` en Blade
 3. **Verificar membresía primero** — si `membershipIn()` es null, deny
@@ -96,7 +96,7 @@ if (!$membership || $membership->role !== OrganizationUser::ROLE_OWNER) {
 // .env.production
 APP_DEBUG=false
 APP_ENV=production
-SESSION_ENCRYPT=true          // ← CoVa tiene SESSION_ENCRYPT=false por defecto
+SESSION_ENCRYPT=true          // ← CoVaR tiene SESSION_ENCRYPT=false por defecto
 SESSION_SECURE_COOKIE=true
 SESSION_HTTP_ONLY=true
 SESSION_SAME_SITE=lax
@@ -107,7 +107,7 @@ SESSION_SAME_SITE=lax
 ],
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **NUNCA** commit `.env` con `APP_DEBUG=true` o `APP_KEY=` vacío
 2. **Headers de seguridad**: Laravel ya incluye X-Frame-Options y X-Content-Type-Options. NO REMOVER.
 3. **CORS**: usar `allowed_origins` específicos, NUNCA `['*']`
@@ -140,7 +140,7 @@ npm audit
 "laravel/framework": "^13.0"
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **Siempre** ejecutar `composer audit` antes de commits que agreguen/quiten dependencias
 2. **NUNCA** ignorar lockfiles (`.gitignore` no debe tener `composer.lock` ni `package-lock.json`)
 3. **Dependencias dev** separadas en `require-dev`
@@ -164,7 +164,7 @@ hash('md5', $password);
 ### Patrón correcto ✅
 
 ```php
-// ✅ Password hasher wrapper (ya existe en CoVa)
+// ✅ Password hasher wrapper (ya existe en CoVaR)
 $hasher = new PasswordHasher();
 $hash = $hasher->hash($password);
 $verified = $hasher->verify($password, $hash);
@@ -184,7 +184,7 @@ public function storeSensitiveData(string $value): string
 ]
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **NUNCA** almacenar passwords sin hash — Laravel ya lo hace, NO hacerlo manual
 2. **bcrypt con rounds >= 12** para password hashing
 3. **Forzar HTTPS** en producción — configurar `TrustProxies` o `APP_URL=https://`
@@ -240,7 +240,7 @@ $validated = $request->validate([
 ]);
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **NUNCA** usar `{!! !!}` con datos de usuario sin sanitizar — LARAVEL NO ESCAPA
 2. **Siempre** usar `{{ }}` (doble llave) en Blade para datos de usuario
 3. **Alpine**: preferir `x-text` sobre `x-html`; si necesitas `x-html`, sanitizar antes
@@ -297,7 +297,7 @@ class BlueprintCreateForm extends Form
 }
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **Rate limiting** en: login, register, blueprint create/update, invitaciones
 2. **Validación SIEMPRE server-side** — frontend es decorativo
 3. **Límites de plan** validados en Actions, no en Controllers
@@ -354,7 +354,7 @@ auth()->user()->update(['password' => bcrypt($newPassword)]);
 auth()->logoutOtherDevices($newPassword);
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **Laravel ya maneja** login seguro, session regeneration, CSRF — NO DESHABILITAR
 2. **Rate limiting**: rutas de auth deben tener `throttle`
 3. **Password rules**: min 8 chars, mix de caracteres
@@ -396,7 +396,7 @@ public function accept(Request $request): RedirectResponse
     // ...
 }
 
-// ✅ CSP vía middleware (pendiente en CoVa — implementar)
+// ✅ CSP vía middleware (pendiente en CoVaR — implementar)
 // Middleware sugerido:
 namespace App\Http\Middleware;
 
@@ -416,8 +416,8 @@ class ContentSecurityPolicy
 }
 ```
 
-### Reglas CoVa
-1. **CSP**: CoVa NO tiene CSP implementado — es prioritario para producción
+### Reglas CoVaR
+1. **CSP**: CoVaR NO tiene CSP implementado — es prioritario para producción
 2. **Signed URLs**: usar para invitaciones, password reset, confirmaciones por email
 3. **Webhooks**: si se implementan, verificar firma HMAC
 4. **Asset integrity**: Vite ya maneja hashing de assets, no deshabilitar
@@ -470,7 +470,7 @@ Log::channel('audit')->info('Blueprint eliminado', [
 ]);
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **Loggear intentos fallidos** de login (email, IP, user agent)
 2. **Loggear acciones destructivas** (eliminar/restore blueprints, eliminar orgs, remover miembros)
 3. **Canales separados**: considerar `Log::channel('audit')` para eventos de seguridad
@@ -535,7 +535,7 @@ class MaxBlueprintsReachedException extends \RuntimeException
 }
 ```
 
-### Reglas CoVa
+### Reglas CoVaR
 1. **NUNCA mostrar stack traces** al usuario final — ni siquiera condicionalmente
 2. **Custom error pages** para 403, 404, 419, 429, 500, 503
 3. **Excepciones de dominio** con mensajes amigables, no técnicos

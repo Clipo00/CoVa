@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * E2E Workflow Tests — CoVa end-to-end user journeys.
+ * E2E Workflow Tests — CoVaR end-to-end user journeys.
  *
  * 1. Owner: register → onboarding (org) → blueprint (multi-tab+variables)
  *    → Pro trial → publish to marketplace

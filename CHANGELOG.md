@@ -18,66 +18,66 @@
 
 ### Added
 - **📋 CLI List + Help + README (PR 4 of 6)** — Blueprint listing, help improvements, and documentation:
-  - `ListCommand` — `cova vault:list [-g|--with-descriptions]` displays accessible blueprints as a formatted table with slug and title (and descriptions with `-g` flag)
+  - `ListCommand` — `covar vault:list [-g|--with-descriptions]` displays accessible blueprints as a formatted table with slug and title (and descriptions with `-g` flag)
   - Error handling: 401 "Authentication failed", 403 "Plan required", network errors with friendly messages
-  - Clear command descriptions for all commands (visible via `cova help`)
+  - Clear command descriptions for all commands (visible via `covar help`)
   - `cli/README.md` — full installation guide, API key setup, usage examples, troubleshooting, and build instructions
   - **Tests**: 6 new tests for ListCommand (table display, `-g` descriptions, 401/403/network errors, empty state)
-  - See `openspec/changes/covar-cli/` for full specification
-- **⏬ CLI Fetch (PR 5 of 6)** — `cova vault:fetch <slug>` scaffolds a full project from a blueprint:
+  - See `openspec/changes/covarr-cli/` for full specification
+- **⏬ CLI Fetch (PR 5 of 6)** — `covar vault:fetch <slug>` scaffolds a full project from a blueprint:
 
-  - `FetchCommand` — `cova vault:fetch <slug>` resolves blueprint via `GET /api/blueprints/{slug}` and scaffolds `.agent.md`, `.vscode/extensions.json`, `.vscode/mcp.json`, and `.env` with blueprint variables
+  - `FetchCommand` — `covar vault:fetch <slug>` resolves blueprint via `GET /api/blueprints/{slug}` and scaffolds `.agent.md`, `.vscode/extensions.json`, `.vscode/mcp.json`, and `.env` with blueprint variables
   - Secret double-auth flow: detects `is_secret=true` variables, prompts for password via hidden input (`$this->secret()`), calls `POST /api/fetch/{slug}/verify`, writes decrypted values on success, warns with empty values on failure
   - MCP server mapping: transforms `mcp_servers` array into `{ "mcpServers": { name: { command, args } } }` format for VSCode
   - Graceful 404 handling: "Blueprint not found: {slug}" instead of generic "Not found"
   - Registered in `cli/bootstrap/init.php`
   - **Tests**: 9 new tests (56 assertions) covering all-4-files scaffold, minimal blueprint, secrets with correct/wrong password, 404/401/403/network errors, and empty variables
-  - See `openspec/changes/covar-cli/` for full specification
+  - See `openspec/changes/covarr-cli/` for full specification
 
 - **📦 PHAR Build & E2E Verification (PR 6 of 6)** — Final PR wrapping up the CLI tool with PHAR build, smoke test, and build documentation:
   - `build-phar.php` — standalone build script that replicates Laravel Zero's `app:build` command without needing the Application bootstrap (bypasses PHP 8.4 `method_exists` incompatibility in Laravel Zero v2.0)
   - `cli/BUILD.md` — complete build documentation covering prerequisites, quick build, smoke test, known issues (PHP 8.4 compat, eager command instantiation), CI integration, and release checklist
-  - PHAR binary (~11.5 MB): `php -d phar.readonly=0 build-phar.php` → `cli/builds/cova`
-  - Smoke test passes: `php builds/cova help` shows command list with valid config
+  - PHAR binary (~11.5 MB): `php -d phar.readonly=0 build-phar.php` → `cli/builds/covar`
+  - Smoke test passes: `php builds/covar help` shows command list with valid config
   - Vendor patch documented: PHP 8.4 `method_exists(null, ...)` fix in `vendor/laravel-zero/laravel-zero/app/Console/Application.php`
-  - See `openspec/changes/covar-cli/` for full specification
+  - See `openspec/changes/covarr-cli/` for full specification
 
 - **🖥️ CLI Foundation (PR 3 of 6)** — Standalone CLI tool in `cli/` for fetching blueprints via API:
-  - Laravel Zero v2.0.14 scaffold: `cli/composer.json`, `cli/config/config.php`, `cli/box.json`, `cli/cova` entry point, `cli/bootstrap/init.php`
-  - `ApiClient` — Guzzle HTTP wrapper with config from `~/.config/cova/config.json`, Bearer token auth, error mapping (401→auth, 403→plan required, 404→not found, 429→rate limit, 500→server error, network→friendly message), methods `get()`, `post()`, `validateConnectivity()`
-  - `ConfigSetKeyCommand` — `cova config:set-key <key>` with `--base-url` option, validates via `GET /api/me` before saving, 0600 permissions on Unix, preserves existing `base_url`
+  - Laravel Zero v2.0.14 scaffold: `cli/composer.json`, `cli/config/config.php`, `cli/box.json`, `cli/covar` entry point, `cli/bootstrap/init.php`
+  - `ApiClient` — Guzzle HTTP wrapper with config from `~/.config/covar/config.json`, Bearer token auth, error mapping (401→auth, 403→plan required, 404→not found, 429→rate limit, 500→server error, network→friendly message), methods `get()`, `post()`, `validateConnectivity()`
+  - `ConfigSetKeyCommand` — `covar config:set-key <key>` with `--base-url` option, validates via `GET /api/me` before saving, 0600 permissions on Unix, preserves existing `base_url`
   - **Tests**: 14 tests (ApiClient: auth headers, error mapping, connectivity validation, base_url config; ConfigSetKeyCommand: valid/invalid key, existing config preservation, base-url override, permissions, network errors)
-  - See `openspec/changes/covar-cli/` for full specification
+  - See `openspec/changes/covarr-cli/` for full specification
 
-- **🔌 API Foundation (PR 1 of 6)** — Sanctum-authenticated JSON API for CoVa CLI tool:
+- **🔌 API Foundation (PR 1 of 6)** — Sanctum-authenticated JSON API for CoVaR CLI tool:
   - `routes/api.php` with `auth:sanctum` + `throttle:60,1` middleware
   - `EnsureApiAccess` middleware: Free plan returns 403 RFC 7807, Pro/Enterprise passes through
   - `BlueprintApiController`: `index()` (paginated, org-scoped, plan-gated listing) and `show()` (full resolution via `ResolveBlueprint` with secret masking)
   - `BlueprintOutput::toApiArray()`: JSON serialization with secret variable masking (`is_secret` → `value: ""`)
   - `bootstrap/app.php`: API route registration, `api.access` middleware alias, RFC 7807 JSON error rendering for `api/*` routes
   - **Tests**: 15 new tests (116 assertions) across middleware unit, DTO unit, and controller feature tests
-  - See `openspec/changes/covar-cli/` for full specification
+  - See `openspec/changes/covarr-cli/` for full specification
 
 - **🔐 Auth API (PR 2 of 6)** — Sanctum-authenticated user profile and password-gated secret decryption:
   - `AuthApiController`: `me()` returns authenticated user + accessible organizations; `verifyPassword()` checks `Hash::check()` and returns decrypted secret variables
   - `routes/api.php`: Added `GET /api/me` (no plan gate) and `POST /api/fetch/{slug}/verify` (throttled to 5/min)
   - `bootstrap/app.php`: Fixed exception handler — `ValidationException` no longer incorrectly returns 500 for `api/*` routes
   - **Tests**: 10 new tests (41 assertions) covering user profile, multiple orgs, 401 without auth, password verification success/failure, empty secrets, 404 not found, missing password validation, and rate limiting
-  - See `openspec/changes/covar-cli/specs/auth/spec.md` for full specification
+  - See `openspec/changes/covarr-cli/specs/auth/spec.md` for full specification
 
 ### Changed
 - **Presets & Skills → Segments** — The toggle-based preset/skill system with HTML markers (`<!-- BEGIN:preset:... -->`) replaced by the new segment CRUD system in TabManager.
 - **Template data format** — Templates in `BlueprintServiceProvider` updated from flat presets/skills arrays to the new `segments[]` format with registry content.
-- **i18n: Castilian Spanish standard** — All new and modified translation strings use neutral Castilian Spanish (Spain) instead of Rioplatense voseo. New `covar-i18n` skill enforces this.
+- **i18n: Castilian Spanish standard** — All new and modified translation strings use neutral Castilian Spanish (Spain) instead of Rioplatense voseo. New `covarr-i18n` skill enforces this.
 - **Re-publishing (sync)** — Published blueprints can now be synced to update marketplace copies with latest changes.
 - **Publish creates copy instead of transfer** — Publishing now creates a marketplace copy with emptied secrets; original stays in creator's org marked public.
-- **Marketplace listing filter** — Listing now filters by `cova-marketplace` organization, removing duplicates.
+- **Marketplace listing filter** — Listing now filters by `covar-marketplace` organization, removing duplicates.
 - **Selectores con más espacio para el chevron** — Aumentado el padding derecho del ícono dropdown de `px-3` (12px) a `pr-4` (16px) en todos los select nativos del formulario de creación y edición.
 - **Presets y skills cargan contenido editable** — Al activar un preset (SOLID, PSR-12, etc.) o skill en la pestaña AI Context, su contenido markdown se carga automáticamente en el textarea de reglas custom envuelto en marcadores `<!-- BEGIN:preset:... -->`. El usuario edita libremente; al desactivar el toggle, el bloque se elimina del textarea automáticamente.
 - **Textarea de reglas custom más alto** — Aumentado de 3 a 6 filas para facilitar la edición del contenido cargado por presets.
-- **Publicar crea copia, no transfiere** — Al publicar un blueprint se crea una copia en `cova-marketplace` con secretos vaciados. El original se queda en la organización del creador marcado como público. El creador mantiene acceso completo.
+- **Publicar crea copia, no transfiere** — Al publicar un blueprint se crea una copia en `covar-marketplace` con secretos vaciados. El original se queda en la organización del creador marcado como público. El creador mantiene acceso completo.
 - **Sincronización (re-publicar)** — Si un blueprint ya está publicado, el botón cambia a "Sincronizar cambios". Al pulsarlo se actualiza la copia del marketplace con los últimos cambios del original y se notifica a los suscriptores.
-- **Marketplace solo muestra blueprints del sistema** — El listado ahora filtra exclusivamente por la organización `cova-marketplace` (no por `is_public=true` global), eliminando duplicados.
+- **Marketplace solo muestra blueprints del sistema** — El listado ahora filtra exclusivamente por la organización `covar-marketplace` (no por `is_public=true` global), eliminando duplicados.
 - **Votación abierta a todos los usuarios autenticados** — Cualquier usuario con sesión puede votar en blueprints del marketplace. Ya no se requiere ser miembro de la organización.
 - **Sin auto-voto** — No se puede votar en blueprints propios (`created_by` check en policy).
 - **Las suscripciones consumen slots del plan** — Suscribirse a un blueprint del marketplace ahora cuenta contra `max_blueprints_per_org` igual que crear uno nuevo.
@@ -107,7 +107,7 @@
 
 ### Added
 - **🔗 Friendly slug-based URLs `/b/{slug}`** — Blueprint show pages now use readable slugs instead of UUIDs. Route model binding with `{blueprint:slug}` and regex constraint `[a-z0-9]+(?:-[a-z0-9]+)*`. Legacy UUID requests receive 301 redirects to slug URLs. Mutation routes (create, edit, delete) retain UUIDs for security.
-- **📥 Downloads section on blueprint show page** — Vault fetch CLI card with copyable `cova fetch` command. Download agent.md, per-segment .md files, and .env template as files using Alpine.js Blob downloads (no new routes). New `GenerateEnvTemplate` Action.
+- **📥 Downloads section on blueprint show page** — Vault fetch CLI card with copyable `covar fetch` command. Download agent.md, per-segment .md files, and .env template as files using Alpine.js Blob downloads (no new routes). New `GenerateEnvTemplate` Action.
 - **🔄 Auth loading spinners** — Login and register form submit buttons now show animated spinners during authentication with inputs disabled to prevent double submission.
 - **🧩 AI Context Segment CRUD** — The AI Context tab refactored from flat preset/skill toggles to collapsible segment cards. New `AiContextSegment` DTO with types (preset, skill, custom). Segments are ordered, independently editable, and collapsible. Dropdown menus "Add preset" and "Add skill" load content from registry. Custom segments include free-text textarea.
 - **📄 Agent.md router** — Generated `agent.md` now acts as a router including all segments in order with per-segment Markdown headings. `AgentGenerator::resolveSegments()` generates per-segment blocks.
@@ -144,7 +144,7 @@
   - `tab-manager.blade.php` refactorizado a loops dinámicos (`AgentGenerator::presetNames()`)
 - **👁️ Password visibility toggle** — ojito en login, register, y perfil (6 campos)
   - Alpine.js `x-data` con SVG eye/eye-off, i18n `show_password`/`hide_password`
-- **🔑 API Token Management** — Gestión de tokens de API personales desde el perfil de usuario. Sanctum integrado (`HasApiTokens` trait, migración `personal_access_tokens`, prefijo `covar_`). Perfil reorganizado en 3 tabs Alpine.js (Datos, Cuenta, Seguridad). CRUD de tokens en tab Seguridad: crear (nombre + expiración máx 1 año + confirmación de contraseña), listar (nombre, último uso, expiración), revocar (confirmación de contraseña). Token en texto plano mostrado UNA sola vez con botón copiar. Plan-gating: solo Pro/Enterprise. RateLimiter 10/min. 24 tests nuevos.
+- **🔑 API Token Management** — Gestión de tokens de API personales desde el perfil de usuario. Sanctum integrado (`HasApiTokens` trait, migración `personal_access_tokens`, prefijo `covarr_`). Perfil reorganizado en 3 tabs Alpine.js (Datos, Cuenta, Seguridad). CRUD de tokens en tab Seguridad: crear (nombre + expiración máx 1 año + confirmación de contraseña), listar (nombre, último uso, expiración), revocar (confirmación de contraseña). Token en texto plano mostrado UNA sola vez con botón copiar. Plan-gating: solo Pro/Enterprise. RateLimiter 10/min. 24 tests nuevos.
 
 ### Changed
 - **🏗️ Arquitectura de planes**: `plan_id` eliminado de `organizations`. El plan se lee del owner via accessor. `$organization->plan` → `$organization->owner->plan`.
@@ -153,7 +153,7 @@
 
 ### Security
 - **Clear secrets on publish/subscribe** — Secret variable values are now properly emptied when publishing to marketplace and when subscribing/forking.
-- **OWASP A07 — API token security**: Confirmación de contraseña requerida para crear Y revocar tokens. RateLimiter 10/min en componente. Token nunca almacenado en texto plano (Sanctum SHA-256). Prefijo `covar_` para detección de secrets en GitHub. One-time display con advertencia.
+- **OWASP A07 — API token security**: Confirmación de contraseña requerida para crear Y revocar tokens. RateLimiter 10/min en componente. Token nunca almacenado en texto plano (Sanctum SHA-256). Prefijo `covarr_` para detección de secrets en GitHub. One-time display con advertencia.
 - **🔒 Security Validation Audit** — cierre de 6 gaps de seguridad y autorización (OWASP A01, A07):
   - **Track A (Fixes inmediatos)**:
     - Restricción de cambio de roles: solo el owner de la organización puede cambiar roles de miembros
@@ -203,7 +203,7 @@
   - Formulario de crear organización con selector de plan
   - Formulario de crear blueprint con preview de variables
   - Navegación con dots y flechas, rotación automática cada 4 segundos
-  - Mockups estilizados tipo browser con diseño consistente de CoVa
+  - Mockups estilizados tipo browser con diseño consistente de CoVaR
   - **Fix i18n**: Todos los textos de las 3 slides extraídos a traducciones (`demo_dash_*`, `demo_org_*`, `demo_bp_*`)
 - **🎨 Logo SVG rediseñado** — icono simplificado de rueda de combinación:
   - Sin recuadro de caja fuerte, solo dial centrado sobre fondo azul (indigo-600)
@@ -248,7 +248,7 @@
 - **💾 Persistencia de idioma en BD** — preferencia de usuario guardada en `users.locale`:
   - Migración `add_locale_to_users_table` — columna `locale` nullable
 - **🏠 Landing Page** — nueva home de alto impacto que comunica ahorro de tiempo y seguridad:
-  - Hero con terminal animada ejecutando `cova vault:fetch` (Alpine.js typing animation)
+  - Hero con terminal animada ejecutando `covar vault:fetch` (Alpine.js typing animation)
   - Sección "Pain Point": 3 cards sobre el caos de compartir .env por Slack
   - Sección "How it Works": 3 pasos (Define → Publish → Fetch) con conectores visuales
   - Marketplace Preview: grid con 6 plantillas populares (mock data)
@@ -264,7 +264,7 @@
   - Al registrarse → hereda locale de la cookie
   - Al loguearse → si no tiene locale en BD, lo hereda de la cookie
 - **OWASP Top 10:2025 — Security Sprint**:
-  - 🛡️ `covar-security` skill con las 10 categorías OWASP (SIEMPRE cargada)
+  - 🛡️ `covarr-security` skill con las 10 categorías OWASP (SIEMPRE cargada)
   - 🛡️ CSP Middleware (`EnsureSecurityHeaders`) con headers de seguridad globales
   - 🛡️ Páginas de error custom (403, 404, 419, 429, 500, 503) sin stack traces
   - 🛡️ Manejo de excepciones con logging completo + JSON API response
@@ -293,7 +293,7 @@
 - `README.md` reemplazado por documentación real del proyecto
 - **📦 Marketplace Features** — small-features-batch con 4 funcionalidades completas:
   - **Feature Flags** — `config/marketplace.php` con `MARKETPLACE_ENABLED` y `BILLING_ENABLED` (default false)
-  - **Publicar Blueprint** — Action `PublishBlueprint` con verificación de plan (via `has_marketplace_publish`), owner gate, transferencia a org `cova-marketplace` y cambio a `is_public=true`
+  - **Publicar Blueprint** — Action `PublishBlueprint` con verificación de plan (via `has_marketplace_publish`), owner gate, transferencia a org `covar-marketplace` y cambio a `is_public=true`
   - **Votación** — `BlueprintVote` model con composite unique `(user_id, blueprint_id)`, Action `VoteBlueprint` con upsert y recálculo de `aggregate_score`, rate limit 10/min
   - **Eliminar Miembro** — Action `RemoveOrganizationUser` con transacción, reasignación de blueprints al owner, rate limit 5/min
   - **Tests**: 207 tests, 374 assertions (36 nuevos tests para publish, vote, removeMember)
@@ -332,7 +332,7 @@
 - **Contraste WCAG AA** en Org show, Org list, Blueprint-list: badges de rol usaban colores incorrectos según el rol
 - **Modo oscuro no persistía en login**: `layouts/auth.blade.php` no incluía el script anti-flash ni el componente `ThemeToggle`, por lo que al navegar desde la landing (con dark mode activo) al login se perdía la preferencia y no había forma de cambiarla desde esa pantalla. Se agregó el script de detección de tema y `<livewire:shared.theme-toggle />` junto al locale switcher.
 - **Mensaje diferenciado en botón de crear blueprint**: antes mostraba "Todas tus organizaciones han alcanzado el límite..." aunque el usuario no tuviera ninguna organización. Ahora diferencia entre: (1) no tiene organizaciones → mensaje "No tienes ninguna organización" con link para crear una; (2) tiene organizaciones pero sin cupo → mensaje original de límite alcanzado.
-- **Migración de rioplatense a castellano en traducciones**: todos los archivos en `lang/es/` fueron actualizados para usar español de España (castellano) en lugar de rioplatense (voseo). Cambios: eliminá→elimina, tenés→tienes, podés→puedes, querés→quieres, probá→prueba, seleccioná→selecciona, agregá→agrega, actualizá→actualiza, ejecutá→ejecuta, iniciá→inicia, esperá→espera, volvé→vuelve, etc. Nueva skill `covar-i18n` creada para asegurar consistencia futura.
+- **Migración de rioplatense a castellano en traducciones**: todos los archivos en `lang/es/` fueron actualizados para usar español de España (castellano) en lugar de rioplatense (voseo). Cambios: eliminá→elimina, tenés→tienes, podés→puedes, querés→quieres, probá→prueba, seleccioná→selecciona, agregá→agrega, actualizá→actualiza, ejecutá→ejecuta, iniciá→inicia, esperá→espera, volvé→vuelve, etc. Nueva skill `covarr-i18n` creada para asegurar consistencia futura.
   - **Copilot Review fixes** (PR #9):
     - **i18n**: traducciones faltantes `blueprint.section_color` y `landing.go_to_dashboard` añadidas en ES/EN; fallbacks `??` con `__()` eliminados (nunca funcionan porque `__()` nunca devuelve `null`)
     - **Typo castellano**: "vuélve" corregido a "vuelve" en `lang/es/errors.php` (la RAE no tilda el imperativo de "volver")
@@ -341,7 +341,7 @@
     - **Seguridad**: `assignSectionColors()` ya no sobrescribe el color elegido por el usuario con el color picker; validación de formato HEX (`#RRGGBB`) en `section_color` para prevenir inyección de estilos inline (XSS) si el payload es manipulado
     - **Meta tags**: descripciones Open Graph y Twitter en `landing.blade.php` ahora usan `strip_tags()` para evitar que HTML (`<strong>`) filtre a previews de links; eliminado `og:image` apuntando a archivo inexistente
     - **Scroll reveal**: directive `x-reveal` de Alpine.js ahora aplica `revealed` también a descendientes `.reveal` (CSS `.revealed .reveal`), no solo al mismo elemento — los títulos y cards animan correctamente al entrar en viewport
-    - **Plan names i18n**: nombres de planes (`Free`, `Pro`, `Enterprise`) en `pricing.blade.php` movidos a traducciones (`landing.plan_name_*`) para cumplir con skill `covar-i18n`
+    - **Plan names i18n**: nombres de planes (`Free`, `Pro`, `Enterprise`) en `pricing.blade.php` movidos a traducciones (`landing.plan_name_*`) para cumplir con skill `covarr-i18n`
     - **Default value**: `CreateBlueprint` y `UpdateBlueprint` ahora usan comparación `!== ''` en lugar de `!empty()` para preservar el string `'0'` como valor válido de `default_value` (antes se guardaba como `null`)
     - **Docs**: `docs/FEATURE_HISTORY.md` actualizado con árbol completo de partials de landing (demo, pricing, footer) y eliminado conteo obsoleto de "25 keys"
   - **Fix en tiempo real de colores por sección**: hook `updatedVariables()` en `ManagesVariables` asigna `section_color` automáticamente cuando el usuario escribe una sección, evitando el bug donde el color picker solo aparecía al añadir la siguiente variable (desfase de un paso entre el mapa de la vista y la propiedad `section_color` de Livewire)
@@ -361,7 +361,7 @@
   - Skills configurables
   - Custom rules en textarea
   - Preview de `agent.md` en blueprint show con copy-to-clipboard
-- **Configuración de Agentes AI y Skills** (`feat(agents): add AI agent configuration and CoVa-specific skills`)
+- **Configuración de Agentes AI y Skills** (`feat(agents): add AI agent configuration and CoVaR-specific skills`)
   - Estructura de presets y skills en `app/Modules/Blueprint/Tabs/AiContext/`
   - Tests unitarios para `AgentGenerator`
 - **Secciones colapsables** en blueprint show (`feat(blueprint): collapsible sections and copy install command`)

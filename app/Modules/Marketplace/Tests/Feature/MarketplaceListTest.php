@@ -315,7 +315,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Livewire::test(MarketplaceList::class)
-            ->assertSee('CoVa Marketplace');
+            ->assertSee('CoVaR Marketplace');
     }
 
     public function test_shows_votes_and_subscribers_count(): void
