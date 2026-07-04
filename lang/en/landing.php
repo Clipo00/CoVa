@@ -10,8 +10,8 @@ return [
 
     // Hero
     'hero_title' => 'Your environment, one command.',
-    'site_title' => 'CoVa, your own space',
-    'hero_subtitle' => 'CoVa is your configuration vault. Define, publish, and run <strong>cova vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
+    'site_title' => 'CoVaR, your own space',
+    'hero_subtitle' => 'CoVaR is your configuration vault. Define, publish, and run <strong>covar vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',
 
@@ -28,7 +28,7 @@ return [
     'pain_env_title' => 'Scattered configs',
     'pain_env_desc' => 'Sharing configs through Slack, losing track of history, never knowing which version is the right one…',
     'pain_config_title' => 'Configuring from scratch',
-    'pain_config_desc' => 'Every new project means hours setting up the same agent.md, the same Cursor rules, the same base files.',
+    'pain_config_desc' => 'Every new project means hours setting up the same agent and the same skills for the whole team.',
     'pain_standards_title' => 'No standardization',
     'pain_standards_desc' => 'Every developer on your team has their own way of configuring things. Nothing is reproducible.',
 
@@ -38,7 +38,7 @@ return [
     'step1_desc' => 'Define variables, config files, and environment rules visually in the dashboard. No terminal needed.',
     'step2_title' => 'Publish or keep it private',
     'step2_desc' => 'Keep it private for your organization or share it on the Marketplace. Your secrets never leave the vault — they stay encrypted in your organization. Zero data travel.',
-    'step3_title' => 'Run cova vault:fetch',
+    'step3_title' => 'Run covar vault:fetch',
     'step3_desc' => 'A single command and your environment is ready. Variables loaded, files generated, everything in place.',
     'step3_note' => 'Includes AI context rules, post-install scripts, VS Code extensions, and MCP servers.',
 
@@ -139,10 +139,10 @@ return [
     'cta_final_note' => 'No credit card required. Free plan available.',
 
     // Terminal
-    'terminal_aria_label' => 'Terminal demo running cova vault:fetch',
+    'terminal_aria_label' => 'Terminal demo running covar vault:fetch',
     'terminal_title' => 'Terminal',
     'terminal_caption' => 'one command, everything ready',
-    'terminal_cmd_fetch' => '$ cova vault:fetch laravel-inertia',
+    'terminal_cmd_fetch' => '$ covar vault:fetch laravel-inertia',
     'terminal_downloading' => '> Downloading blueprint...',
     'terminal_variables' => '> Variables loaded: 12',
     'terminal_files' => '> Files generated: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json',
@@ -166,7 +166,7 @@ return [
     'pricing_note' => 'All prices in euros (EUR). Enterprise plan requires prior contact.',
     'pricing_coming_soon_note' => '* Marketplace features coming soon',
 
-    'plan_free_desc' => 'To get started with CoVa',
+    'plan_free_desc' => 'To get started with CoVaR',
     'plan_pro_desc' => 'For growing teams',
     'plan_enterprise_desc' => 'For large organizations',
     'plan_price_free' => 'free',
@@ -209,9 +209,9 @@ return [
     'trial_free_only' => 'Only Free plan users can start a trial.',
     'trial_already_used' => 'You have already used your trial period.',
     'trial_still_active' => 'Your trial period is still active.',
-    'trial_started_subject' => 'Welcome to your CoVa Pro trial!',
+    'trial_started_subject' => 'Welcome to your CoVaR Pro trial!',
     'trial_started_greeting' => 'Hi :name!',
-    'trial_started_intro' => 'You\'ve activated your 14-day free trial of CoVa Pro. During this period you\'ll enjoy all advanced features.',
+    'trial_started_intro' => 'You\'ve activated your 14-day free trial of CoVaR Pro. During this period you\'ll enjoy all advanced features.',
     'trial_started_feature_orgs' => '🏢 Up to 5 organizations',
     'trial_started_feature_blueprints' => '📄 Up to 25 blueprints per organization',
     'trial_started_feature_marketplace' => '🌐 Marketplace: explore and subscribe to community blueprints',
@@ -228,18 +228,18 @@ return [
     'footer_links_login' => 'Log in',
     'footer_links_register' => 'Register',
     'footer_links_marketplace' => 'Marketplace',
-    'footer_copyright' => '© 2026 CoVa. All rights reserved.',
+    'footer_copyright' => '© 2026 CoVaR. All rights reserved.',
 
     // Docs (Quickstart guide)
     'docs_title' => 'Get started with the CLI in 3 steps',
-    'docs_subtitle' => 'Install the CoVa command-line tool and bring your blueprints to life instantly.',
+    'docs_subtitle' => 'Install the CoVaR command-line tool and bring your blueprints to life instantly.',
     'docs_step1_title' => 'Install the CLI',
     'docs_step1_desc' => 'Download the PHAR binary, make it executable, and move it to your PATH. Requires PHP 8.3+.',
     'docs_step1_cmd1' => 'Download the binary',
     'docs_step1_cmd2' => 'Make it executable',
     'docs_step1_cmd3' => 'Move it to your PATH',
     'docs_step2_title' => 'Authenticate with your API key',
-    'docs_step2_desc' => 'Generate a token from your CoVa profile (Security tab) and configure it with <code>config:set-key</code>. The CLI validates the connection instantly.',
+    'docs_step2_desc' => 'Generate a token from your CoVaR profile (Security tab) and configure it with <code>config:set-key</code>. The CLI validates the connection instantly.',
     'docs_step3_title' => 'List and fetch your blueprints',
     'docs_step3_desc' => 'Browse available blueprints with vault:list and scaffold any with vault:fetch. Files generated, variables loaded, everything in place.',
     'docs_step3_cmd1' => 'List your blueprints',
@@ -247,9 +247,21 @@ return [
     'docs_commands_title' => 'Available commands',
     'docs_col_command' => 'Command',
     'docs_col_desc' => 'Description',
-    'docs_cmd_set_key' => 'Set and validate your CoVa API key',
+    'docs_cmd_set_key' => 'Set and validate your CoVaR API key',
     'docs_cmd_list' => 'List blueprints you have access to',
     'docs_cmd_fetch' => 'Download and scaffold a blueprint with its files',
     'docs_cmd_help' => 'Show help and available commands',
     'docs_security_note' => 'Your API key is stored locally with restricted permissions. All API communication uses HTTPS. Secret variables require password verification and are never shown in plain text.',
+
+    // Troubleshooting
+    'docs_troubleshooting_title' => 'Common issues',
+    'docs_trouble_php_version_title' => 'Incompatible PHP version',
+    'docs_trouble_php_version_desc' => 'The CLI requires PHP 8.3 or higher. Check your version with php -v. If you\'re using an older version, update PHP or use the PHAR with the correct version.',
+    'docs_trouble_permissions_title' => 'Permission denied when running covar',
+    'docs_trouble_permissions_desc' => 'On Linux/macOS, the binary needs execution permissions. Use chmod +x covar. If you don\'t have admin permissions, run directly with php covar.',
+    'docs_trouble_config_title' => 'Config file not found',
+    'docs_trouble_config_desc' => 'The CLI stores configuration at ~/.config/covar/config.json. If it doesn\'t exist, run covar config:set-key <your-key> first to create it.',
+    'docs_trouble_connection_title' => 'API connection error',
+    'docs_trouble_connection_desc' => 'If the CLI doesn\'t automatically detect the server URL, you can set it manually with --base-url.',
 ];
+

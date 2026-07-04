@@ -1,6 +1,6 @@
 {
-    "name": "cova/cli",
-    "description": "CoVa CLI — fetch blueprints from the command line",
+    "name": "covar/cli",
+    "description": "CoVaR CLI — fetch blueprints from the command line",
     "type": "project",
     "require": {
         "php": "^8.3",

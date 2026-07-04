@@ -194,7 +194,7 @@ class BlueprintControllerTest extends TestCase
         $response->assertStatus(200);
 
         // Vault fetch card
-        $response->assertSee('cova vault:fetch download-test');
+        $response->assertSee('covar vault:fetch download-test');
 
         // Download agent.md button
         $response->assertSee(__('blueprint.download_agent_md'));
@@ -444,7 +444,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $owner->id,
         ]);
 
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $marketplaceOrg = Organization::where('slug', 'covar-marketplace')->first();
 
         $response = $this->actingAs($owner)
             ->post('/blueprints/'.$blueprint->uuid.'/publish');
@@ -458,7 +458,7 @@ class BlueprintControllerTest extends TestCase
         $this->assertEquals($org->id, $blueprint->organization_id);
 
         // Verify marketplace copy exists
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->first();
+        $marketplaceOrg = Organization::where('slug', 'covar-marketplace')->first();
         $this->assertDatabaseHas('blueprints', [
             'organization_id' => $marketplaceOrg->id,
             'is_public' => true,

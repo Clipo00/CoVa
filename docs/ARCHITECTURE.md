@@ -1,4 +1,4 @@
-# CoVa — Arquitectura del Proyecto
+# CoVaR — Arquitectura del Proyecto
 
 > Documento de arquitectura técnica, patrones, y guía de módulos.
 > Audiencia: Desarrolladores nuevos en el proyecto y arquitectos.
@@ -7,7 +7,7 @@
 
 ## 1. Visión de Arquitectura
 
-CoVa es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está autocontenido en un módulo bajo `app/Modules/`. La meta es que cualquier módulo se pueda extraer a un package independiente sin refactorizar 40 archivos.
+CoVaR es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está autocontenido en un módulo bajo `app/Modules/`. La meta es que cualquier módulo se pueda extraer a un package independiente sin refactorizar 40 archivos.
 
 **Principios guía**:
 1. **Un módulo, un dominio**: Auth maneja identidad. Blueprint maneja plantillas. No mezclar.

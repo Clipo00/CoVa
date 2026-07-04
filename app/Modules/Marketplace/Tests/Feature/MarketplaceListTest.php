@@ -31,7 +31,7 @@ class MarketplaceListTest extends TestCase
 
     private function getMarketplaceId(): int
     {
-        return Organization::where('slug', 'cova-marketplace')->value('id');
+        return Organization::where('slug', 'covar-marketplace')->value('id');
     }
 
     public function test_renders_public_blueprints(): void
@@ -315,7 +315,7 @@ class MarketplaceListTest extends TestCase
         ]);
 
         Livewire::test(MarketplaceList::class)
-            ->assertSee('CoVa Marketplace');
+            ->assertSee('CoVaR Marketplace');
     }
 
     public function test_shows_votes_and_subscribers_count(): void

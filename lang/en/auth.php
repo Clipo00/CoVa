@@ -46,6 +46,10 @@ return [
     'current_password' => 'Current password',
     'new_password' => 'New password',
     'new_password_confirm' => 'Confirm new password',
+    'confirm_password' => 'Confirm password',
+    'change_password_title' => 'Set your password',
+    'change_password_button' => 'Set password',
+    'password_change_required' => 'You have been invited to an organization. For security, you must set a password before continuing.',
     'save_button' => 'Save changes',
     'saving_button' => 'Saving...',
 
@@ -93,13 +97,13 @@ return [
     'mfa_email_greeting' => 'Hello :name,',
     'mfa_email_intro' => 'Your verification code is:',
     'mfa_email_expiry' => 'This code expires in 10 minutes.',
-    'mfa_email_salutation' => 'Thank you for using CoVa.',
+    'mfa_email_salutation' => 'Thank you for using CoVaR.',
     'mfa_challenge_title' => 'Two-step verification',
     'mfa_challenge_subtitle' => 'We have sent a verification code to your email address.',
-    'mfa_setup_desc' => 'Add an extra layer of security to your CoVa account. You\'ll receive a code by email when logging in.',
+    'mfa_setup_desc' => 'Add an extra layer of security to your CoVaR account. You\'ll receive a code by email when logging in.',
     'mfa_requires_verified_email' => 'You must verify your email before enabling two-step verification.',
-    'mfa_setup_title' => 'Protect your CoVa account',
-    'mfa_setup_description' => 'We recommend enabling two-step verification to keep your CoVa account safe. It only takes a moment: you\'ll receive a unique code by email each time you log in from a new device.',
+    'mfa_setup_title' => 'Protect your CoVaR account',
+    'mfa_setup_description' => 'We recommend enabling two-step verification to keep your CoVaR account safe. It only takes a moment: you\'ll receive a unique code by email each time you log in from a new device.',
     'mfa_setup_enable_button' => 'Enable verification',
     'mfa_setup_later_button' => 'Not now',
     'mfa_setup_activated' => 'Verification enabled. Check your email to confirm the code.',
@@ -142,3 +146,4 @@ return [
     'token_organization' => 'Organization',
     'token_select_org' => 'Select an organization',
 ];
+

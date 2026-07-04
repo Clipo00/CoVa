@@ -16,7 +16,7 @@ return [
 
     // Empty state
     'empty_heading' => 'No tienes organizaciones',
-    'empty_desc1' => 'Para empezar a usar CoVa necesitás crear una organización.',
+    'empty_desc1' => 'Para empezar a usar CoVaR necesitás crear una organización.',
     'empty_desc2' => 'Una organización agrupa tus blueprints y te permite colaborar con tu equipo.',
     'empty_cta' => 'Crear mi primera organización',
 
@@ -41,3 +41,4 @@ return [
     'card_blueprints' => ':count blueprints',
     'card_members' => ':count miembros',
 ];
+

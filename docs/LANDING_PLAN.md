@@ -1,6 +1,6 @@
-# Plan: Landing Page — Nueva Home de CoVa
+# Plan: Landing Page — Nueva Home de CoVaR
 
-> **Objetivo**: Reemplazar la landing default de Laravel por una página de alto impacto que comunique los valores clave de CoVa: **ahorro de tiempo** y **seguridad**.
+> **Objetivo**: Reemplazar la landing default de Laravel por una página de alto impacto que comunique los valores clave de CoVaR: **ahorro de tiempo** y **seguridad**.
 > **Estado**: ✅ Implementado — en uso productivo  
 > **Creado**: 2026-05-23  
 > **Última actualización**: 2026-07-01
@@ -12,7 +12,7 @@
 **Mensaje principal**: *"Configura entornos de desarrollo en segundos, no en horas. Seguro, privado y reproducible."*
 
 **Pilares comunicativos**:
-1. **Tiempo**: El caos de configurar proyectos desde cero es real. CoVa lo elimina.
+1. **Tiempo**: El caos de configurar proyectos desde cero es real. CoVaR lo elimina.
 2. **Seguridad**: No más `.env` en Slack. Las variables viven en un vault cifrado. Tus secretos nunca abandonan el vault.
 3. **Reusabilidad**: Crea una vez, usa siempre. Comparte en tu equipo o con la comunidad.
 
@@ -24,7 +24,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│ 🔒 CoVa │ Inicio Demo Precios Marketplace Guía rápida │ 🌙 🌐 👤 │
+│ 🔒 CoVaR │ Inicio Demo Precios Marketplace Guía rápida │ 🌙 🌐 👤 │
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -56,7 +56,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 |   TÍTULO PRINCIPAL                        +------------------+
 |   Subtítulo explicativo                   |  Terminal        |
 |                                           |  Animada         |
-|   [CTA Primario] [CTA Secundario]         |  (cova vault:fetch) |
+|   [CTA Primario] [CTA Secundario]         |  (covar vault:fetch) |
 |                                           +------------------+
 |                                                  |
 +--------------------------------------------------+
@@ -64,7 +64,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 
 **Contenido sugerido**:
 - **Título**: "Tu entorno, en un comando."
-- **Subtítulo**: "CoVa es tu vault de configuraciones. Definí, publicá y ejecutá `cova vault:fetch`. Tu entorno listo en 3 segundos."
+- **Subtítulo**: "CoVaR es tu vault de configuraciones. Definí, publicá y ejecutá `covar vault:fetch`. Tu entorno listo en 3 segundos."
 - **CTA Primario**: "Comenzá Gratis →" (lleva a `/register`)
 - **CTA Secundario**: "Ver cómo funciona" (scroll suave a #how-it-works)
 
@@ -72,7 +72,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 - Componente visual que simula una terminal oscura (estilo iTerm2 / VS Code terminal).
 - Debe ejecutar una animación de typing que muestre:
   ```
-  $ cova vault:fetch laravel-inertia
+  $ covar vault:fetch laravel-inertia
   > Descargando blueprint...
   > Variables cargadas: 12
   > Archivos generados: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json
@@ -129,7 +129,7 @@ La landing usa una **barra de navegación única** con tabs integrados:
 - **Descripción**: *"Mantenlo privado para tu organización o compártelo en el Marketplace. Tus secretos nunca abandonan el vault: se quedan cifrados en tu organización. Viaje CERO."*
 
 #### Paso 3: Fetch
-- **Título**: "Ejecuta cova vault:fetch"
+- **Título**: "Ejecuta covar vault:fetch"
 - **Descripción**: *"Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar."*
 
 **Conectores**: Líneas o flechas entre los pasos (en desktop) que indiquen progresión.
@@ -148,16 +148,16 @@ El tab Marketplace muestra blueprints públicos directamente desde la base de da
 
 Tab con la guía de instalación del CLI en 3 pasos:
 1. Instalar la CLI (descargar PHAR, hacer ejecutable, mover a PATH)
-2. Autenticarse con API key (`cova config:set-key`)
-3. Listar y ejecutar blueprints (`cova vault:list`, `cova vault:fetch`)
+2. Autenticarse con API key (`covar config:set-key`)
 
+3. Listar y ejecutar blueprints (`covar vault:list`, `covar vault:fetch`)
 Incluye una tabla de referencia de comandos y una nota de seguridad sobre el almacenamiento local de la API key y el cifrado de secretos.
 
 ### 2.6 CTA Final
 
 **Posición**: Última sección antes del footer.
 
-**Layout**: Centrado, fondo con gradiente sutil o color de acento (usar el color primario del tema de CoVa).
+**Layout**: Centrado, fondo con gradiente sutil o color de acento (usar el color primario del tema de CoVaR).
 
 **Contenido**:
 - **Título**: "Empezá a ahorrar tiempo hoy"
@@ -170,9 +170,9 @@ Incluye una tabla de referencia de comandos y una nota de seguridad sobre el alm
 ### 2.6 Footer
 
 **Contenido mínimo**:
-- Logo + tagline: "CoVa — Configuraciones que viajan contigo."
+- Logo + tagline: "CoVaR — Configuraciones que viajan contigo."
 - Links rápidos: Login, Register, Marketplace (si existe), Docs (futuro).
-- Crédito: "© 2026 CoVa. Todos los derechos reservados."
+- Crédito: "© 2026 CoVaR. Todos los derechos reservados."
 
 ---
 
@@ -300,13 +300,13 @@ La landing no requiere librerías externas. Todo se resuelve con:
 Agregar en el `<head>` de la landing:
 
 ```html
-<meta name="description" content="CoVa: Configurá entornos de desarrollo en segundos. Vault seguro para variables de entorno, blueprints reutilizables y marketplace de plantillas.">
+<meta name="description" content="CoVaR: Configurá entornos de desarrollo en segundos. Vault seguro para variables de entorno, blueprints reutilizables y marketplace de plantillas.">
 <meta name="keywords" content="vault, environment variables, developer tools, devops, blueprints, laravel, env">
-<meta property="og:title" content="CoVa — Configuraciones que viajan contigo">
-<meta property="og:description" content="Tu entorno, en un comando. Definí, publicá y ejecutá cova vault:fetch.">
+<meta property="og:title" content="CoVaR — Configuraciones que viajan contigo">
+<meta property="og:description" content="Tu entorno, en un comando. Definí, publicá y ejecutá covar vault:fetch.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://cova.dev"> <!-- ajustar URL real -->
-<meta property="og:image" content="https://cova.dev/og-image.png"> <!-- crear imagen OG -->
+<meta property="og:url" content="https://CoVaR.dev"> <!-- ajustar URL real -->
+<meta property="og:image" content="https://CoVaR.dev/og-image.png"> <!-- crear imagen OG -->
 <meta name="twitter:card" content="summary_large_image">
 ```
 
@@ -324,7 +324,7 @@ Ejemplo de estructura:
 return [
     // Hero
     'hero_title' => 'Tu entorno, en un comando.',
-    'hero_subtitle' => 'CoVa es tu vault de configuraciones...',
+    'hero_subtitle' => 'CoVaR es tu vault de configuraciones...',
     'cta_primary' => 'Comenzá Gratis',
     'cta_secondary' => 'Ver cómo funciona',
 
@@ -343,7 +343,7 @@ return [
     'step1_desc' => 'Definí variables, archivos...',
     'step2_title' => 'Publicá o Guardalo',
     'step2_desc' => 'Mantenlo privado...',
-    'step3_title' => 'Ejecutá cova vault:fetch',
+    'step3_title' => 'Ejecutá covar vault:fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo...',
 
     // Marketplace
@@ -358,7 +358,7 @@ return [
 
     // Footer
     'footer_tagline' => 'Configuraciones que viajan contigo.',
-    'footer_copyright' => '© 2026 CoVa. Todos los derechos reservados.',
+    'footer_copyright' => '© 2026 CoVaR. Todos los derechos reservados.',
 ];
 ```
 
@@ -414,7 +414,7 @@ Opción B: **JS typing animation** (recomendada para este caso)
 
 ### Paleta de Colores Sugerida
 
-Usar los colores existentes del tema de CoVa (indigo/slate), pero para la landing se puede enfatizar:
+Usar los colores existentes del tema de CoVaR (indigo/slate), pero para la landing se puede enfatizar:
 
 - **Primario**: Indigo 600 (`#4f46e5`) — botones principales
 - **Acento**: Emerald 500 (`#10b981`) — éxito, terminal

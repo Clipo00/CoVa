@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-dto
 description: >
-  Patrones y convenciones para DTOs y Value Objects en CoVa. Trigger: Cuando se trabaja con archivos en DTOs/ o ValueObjects/.
+  Patrones y convenciones para DTOs y Value Objects en CoVaR. Trigger: Cuando se trabaja con archivos en DTOs/ o ValueObjects/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

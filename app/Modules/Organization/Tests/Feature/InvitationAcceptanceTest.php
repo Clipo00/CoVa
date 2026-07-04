@@ -77,9 +77,16 @@ class InvitationAcceptanceTest extends TestCase
 
     public function test_guest_is_redirected_to_login_with_token_in_session(): void
     {
+        // Existing user — should be redirected to login
+        $user = User::create([
+            'name' => 'Existing Guest',
+            'email' => 'existing-guest@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
         $invitation = OrganizationInvitation::create([
             'organization_id' => $this->organization->id,
-            'email' => 'guest@example.com',
+            'email' => $user->email,
             'token' => 'guest-token-abc-456',
             'role' => 'developer',
             'expires_at' => now()->addDays(7),
@@ -89,6 +96,27 @@ class InvitationAcceptanceTest extends TestCase
 
         $response->assertRedirect(route('login'));
         $this->assertEquals($invitation->token, session('invitation_token'));
+    }
+
+    public function test_guest_without_account_is_created_and_redirected_to_password_change(): void
+    {
+        $invitation = OrganizationInvitation::create([
+            'organization_id' => $this->organization->id,
+            'email' => 'new-invited@example.com',
+            'token' => 'new-user-token-789',
+            'role' => 'developer',
+            'expires_at' => now()->addDays(7),
+        ]);
+
+        $response = $this->get(route('invitations.show', $invitation->token));
+
+        $response->assertRedirect(route('password.change'));
+        $this->assertEquals($invitation->token, session('invitation_token'));
+        $this->assertAuthenticated();
+
+        $user = User::where('email', 'new-invited@example.com')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue((bool) $user->password_change_required);
     }
 
     public function test_expired_token_returns_error(): void

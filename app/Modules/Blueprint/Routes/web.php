@@ -4,7 +4,7 @@ use App\Modules\Blueprint\Controllers\BlueprintController;
 use App\Modules\Blueprint\Models\Blueprint;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'password.temp'])->group(function () {
     Route::get('/blueprints', [BlueprintController::class, 'index'])->name('blueprints.index');
     Route::get('/blueprints/create', [BlueprintController::class, 'create'])->name('blueprints.create');
     Route::get('/blueprints/favorites', [BlueprintController::class, 'favorites'])->name('blueprints.favorites');

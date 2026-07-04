@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-test
 description: >
-  Patrones y convenciones para Tests en CoVa. Trigger: Cuando se crea o edita archivos en Tests/.
+  Patrones y convenciones para Tests en CoVaR. Trigger: Cuando se crea o edita archivos en Tests/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

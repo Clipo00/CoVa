@@ -46,6 +46,10 @@ return [
     'current_password' => 'Contraseña actual',
     'new_password' => 'Nueva contraseña',
     'new_password_confirm' => 'Confirmar nueva contraseña',
+    'confirm_password' => 'Confirmar contraseña',
+    'change_password_title' => 'Establece tu contraseña',
+    'change_password_button' => 'Establecer contraseña',
+    'password_change_required' => 'Has sido invitado a una organización. Por seguridad, debes establecer una contraseña antes de continuar.',
     'save_button' => 'Guardar cambios',
     'saving_button' => 'Guardando...',
 
@@ -93,13 +97,13 @@ return [
     'mfa_email_greeting' => 'Hola :name,',
     'mfa_email_intro' => 'Tu código de verificación es:',
     'mfa_email_expiry' => 'Este código caduca en 10 minutos.',
-    'mfa_email_salutation' => 'Gracias por usar CoVa.',
+    'mfa_email_salutation' => 'Gracias por usar CoVaR.',
     'mfa_challenge_title' => 'Verificación en dos pasos',
     'mfa_challenge_subtitle' => 'Hemos enviado un código de verificación a tu correo electrónico.',
-    'mfa_setup_desc' => 'Añade una capa extra de seguridad a tu cuenta de CoVa. Recibirás un código por correo al iniciar sesión.',
+    'mfa_setup_desc' => 'Añade una capa extra de seguridad a tu cuenta de CoVaR. Recibirás un código por correo al iniciar sesión.',
     'mfa_requires_verified_email' => 'Debes verificar tu correo electrónico antes de activar la verificación en dos pasos.',
-    'mfa_setup_title' => 'Protege tu cuenta de CoVa',
-    'mfa_setup_description' => 'Te recomendamos activar la verificación en dos pasos para mantener tu cuenta de CoVa segura. Solo te llevará un momento: recibirás un código único en tu correo cada vez que inicies sesión desde un dispositivo nuevo.',
+    'mfa_setup_title' => 'Protege tu cuenta de CoVaR',
+    'mfa_setup_description' => 'Te recomendamos activar la verificación en dos pasos para mantener tu cuenta de CoVaR segura. Solo te llevará un momento: recibirás un código único en tu correo cada vez que inicies sesión desde un dispositivo nuevo.',
     'mfa_setup_enable_button' => 'Activar verificación',
     'mfa_setup_later_button' => 'Ahora no',
     'mfa_setup_activated' => 'Verificación activada. Revisa tu correo para confirmar el código.',
@@ -142,3 +146,4 @@ return [
     'token_organization' => 'Organización',
     'token_select_org' => 'Selecciona una organización',
 ];
+

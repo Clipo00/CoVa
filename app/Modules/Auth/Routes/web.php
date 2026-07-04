@@ -21,6 +21,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile');
 
+    // Password change for invited users (must be accessible even with temp password)
+    Route::get('/password/change', [AuthController::class, 'showChangePassword'])->name('password.change');
+
     // Email verification
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
         ->name('verification.verify');

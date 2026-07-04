@@ -64,7 +64,7 @@ return [
     | by default but can be overridden via CLI_DOWNLOAD_URL env variable.
     |
     */
-    'cli_download_url' => env('CLI_DOWNLOAD_URL', rtrim((string) env('APP_URL', 'http://localhost'), '/') . '/downloads/cova.phar'),
+    'cli_download_url' => env('CLI_DOWNLOAD_URL', rtrim((string) env('APP_URL', 'http://localhost'), '/') . '/downloads/covar.phar'),
 
     /*
     |--------------------------------------------------------------------------

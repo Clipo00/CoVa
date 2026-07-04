@@ -1,10 +1,10 @@
-# CoVa - AI Agent Configuration
+# CoVaRR - AI Agent Configuration
 
 > Configuration Vault: Zero-latency environment setup for modern developers.
 
 ## Project Context
 
-**CoVa** es una plataforma SaaS desarrollada en Laravel 13 con arquitectura modular. Gestiona la creación y compartición de **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos.
+**CoVaRR** es una plataforma SaaS desarrollada en Laravel 13 con arquitectura modular. Gestiona la creación y compartición de **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos.
 
 ### Tech Stack
 
@@ -152,16 +152,16 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 | Skill | Description | Location |
 |-------|-------------|----------|
-| `covar-laravel-action` | Patrones para Actions en CoVa | [.agents/skills/covar-laravel-action/SKILL.md](.agents/skills/covar-laravel-action/SKILL.md) |
-| `covar-laravel-livewire` | Patrones para Livewire en CoVa | [.agents/skills/covar-laravel-livewire/SKILL.md](.agents/skills/covar-laravel-livewire/SKILL.md) |
-| `covar-laravel-policy` | Patrones para Policies en CoVa | [.agents/skills/covar-laravel-policy/SKILL.md](.agents/skills/covar-laravel-policy/SKILL.md) |
-| `covar-laravel-model` | Patrones para Models en CoVa | [.agents/skills/covar-laravel-model/SKILL.md](.agents/skills/covar-laravel-model/SKILL.md) |
-| `covar-laravel-controller` | Patrones para Controllers en CoVa | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
-| `covar-laravel-test` | Patrones para Tests en CoVa | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
+| `covar-laravel-action` | Patrones para Actions en CoVaR | [.agents/skills/covar-laravel-action/SKILL.md](.agents/skills/covar-laravel-action/SKILL.md) |
+| `covar-laravel-livewire` | Patrones para Livewire en CoVaR | [.agents/skills/covar-laravel-livewire/SKILL.md](.agents/skills/covar-laravel-livewire/SKILL.md) |
+| `covar-laravel-policy` | Patrones para Policies en CoVaR | [.agents/skills/covar-laravel-policy/SKILL.md](.agents/skills/covar-laravel-policy/SKILL.md) |
+| `covar-laravel-model` | Patrones para Models en CoVaR | [.agents/skills/covar-laravel-model/SKILL.md](.agents/skills/covar-laravel-model/SKILL.md) |
+| `covar-laravel-controller` | Patrones para Controllers en CoVaR | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
+| `covar-laravel-test` | Patrones para Tests en CoVaR | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
 | `covar-laravel-dto` | Patrones para DTOs y Value Objects | [.agents/skills/covar-laravel-dto/SKILL.md](.agents/skills/covar-laravel-dto/SKILL.md) |
 | `covar-i18n` | Internacionalización: todo texto en castellano + inglés, sincronizado | [.agents/skills/covar-i18n/SKILL.md](.agents/skills/covar-i18n/SKILL.md) |
-| `covar-security` | OWASP Top 10:2025 — Seguridad integral en CoVa (SIEMPRE activa) | [.agents/skills/covar-security/SKILL.md](.agents/skills/covar-security/SKILL.md) |
-| `skill-creator` | Crear nuevas skills para CoVa | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
+| `covar-security` | OWASP Top 10:2025 — Seguridad integral en CoVaR (SIEMPRE activa) | [.agents/skills/covar-security/SKILL.md](.agents/skills/covar-security/SKILL.md) |
+| `skill-creator` | Crear nuevas skills para CoVaR | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
 | `sdd-init` | Inicializar SDD en el proyecto | [~/.config/opencode/skills/sdd-init/SKILL.md](../../.config/opencode/skills/sdd-init/SKILL.md) |
 | `sdd-propose` | Crear propuesta de cambio | [~/.config/opencode/skills/sdd-propose/SKILL.md](../../.config/opencode/skills/sdd-propose/SKILL.md) |
 | `sdd-spec` | Escribir especificaciones | [~/.config/opencode/skills/sdd-spec/SKILL.md](../../.config/opencode/skills/sdd-spec/SKILL.md) |
@@ -187,7 +187,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 - Usar `declare(strict_types=1);` en todos los archivos PHP.
 - Aplicar el patrón del módulo correspondiente (Actions, Livewire, etc.).
-- Seguir las convenciones de CoVa documentadas arriba.
+- Seguir las convenciones de CoVaR documentadas arriba.
 - Para decisiones técnicas: (1) explicar el problema, (2) proponer solución con ejemplos, (3) mencionar tools/resources.
 
 ### Cuando el usuario pregunta algo técnico
@@ -198,7 +198,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 ---
 
-## CoVa Domain Knowledge
+## CoVaR Domain Knowledge
 
 ### Plans & Limits
 

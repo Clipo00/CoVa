@@ -10,14 +10,14 @@ use Illuminate\Console\Command;
 /**
  * List accessible blueprints as a formatted table.
  *
- * Fetches blueprints from the CoVa API via GET /api/blueprints and displays
+ * Fetches blueprints from the CoVaR API via GET /api/blueprints and displays
  * them in a table. With the --with-descriptions (-g) flag, includes the
  * description column for each blueprint.
  *
  * Usage:
- *   cova vault:list
- *   cova vault:list -g
- *   cova vault:list --with-descriptions
+ *   covar vault:list
+ *   covar vault:list -g
+ *   covar vault:list --with-descriptions
  */
 class ListCommand extends Command
 {
@@ -30,17 +30,13 @@ class ListCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'List accessible blueprints';
+    protected $description = 'Lista los blueprints que tienes disponibles';
 
-    private ?ApiClient $apiClient;
+    private ?ApiClient $apiClient = null;
 
-    /**
-     * @param ApiClient|null $apiClient Optional injected client for testing
-     */
-    public function __construct(?ApiClient $apiClient = null)
+    public function setApiClient(?ApiClient $client): void
     {
-        parent::__construct();
-        $this->apiClient = $apiClient;
+        $this->apiClient = $client;
     }
 
     /**

@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-action
 description: >
-  Patrones y convenciones para Actions en CoVa. Trigger: Cuando se trabaja con archivos en Actions/.
+  Patrones y convenciones para Actions en CoVaR. Trigger: Cuando se trabaja con archivos en Actions/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

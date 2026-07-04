@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| CoVa API v1 — Sanctum-authenticated endpoints
+| CoVaR API v1 — Sanctum-authenticated endpoints
 |--------------------------------------------------------------------------
 |
 | All endpoints require a valid Sanctum API token (Bearer auth).

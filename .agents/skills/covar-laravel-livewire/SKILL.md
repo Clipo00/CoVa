@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-livewire
 description: >
-  Patrones y convenciones para Livewire Components y Forms en CoVa. Trigger: Cuando se trabaja con archivos en Livewire/.
+  Patrones y convenciones para Livewire Components y Forms en CoVaR. Trigger: Cuando se trabaja con archivos en Livewire/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

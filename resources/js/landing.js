@@ -1,7 +1,7 @@
 /**
  * Landing Page JavaScript
  *
- * Terminal animation and scroll reveal effects for the CoVa landing page.
+ * Terminal animation and scroll reveal effects for the CoVaR landing page.
  * Uses Alpine.js (already loaded via app.js/Livewire).
  *
  * @see docs/LANDING_PLAN.md

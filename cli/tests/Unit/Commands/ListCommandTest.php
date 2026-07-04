@@ -45,7 +45,7 @@ class ListCommandTest extends TestCase
      */
     private function createCommandTester(?ApiClient $client = null): CommandTester
     {
-        $command = new ListCommand($client);
+        $command = new ListCommand(); $command->setApiClient($client);
         $command->setLaravel($this->container);
 
         return new CommandTester($command);
@@ -133,7 +133,7 @@ class ListCommandTest extends TestCase
     {
         $mock = $this->mockApiClient(
             null,
-            new \RuntimeException('Authentication failed. Run cova config:set-key <key>')
+            new \RuntimeException('Authentication failed. Run covar config:set-key <key>')
         );
         $tester = $this->createCommandTester($mock);
 
@@ -169,7 +169,7 @@ class ListCommandTest extends TestCase
     {
         $mock = $this->mockApiClient(
             null,
-            new \RuntimeException('Network error: unable to reach the CoVa API')
+            new \RuntimeException('Network error: unable to reach the CoVaR API')
         );
         $tester = $this->createCommandTester($mock);
 
@@ -177,7 +177,7 @@ class ListCommandTest extends TestCase
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
-            'Network error: unable to reach the CoVa API',
+            'Network error: unable to reach the CoVaR API',
             $tester->getDisplay()
         );
     }

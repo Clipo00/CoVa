@@ -30,3 +30,8 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# PHAR binary
+public/downloads/*.phar
+cli/builds/*
+

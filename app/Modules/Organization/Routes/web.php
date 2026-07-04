@@ -9,7 +9,7 @@ Route::middleware('throttle:10,1')->group(function () {
         ->name('invitations.show');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'password.temp'])->group(function () {
     Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::get('/organizations/create', [OrganizationController::class, 'create'])->name('organizations.create');
     Route::get('/organizations/{slug}', [OrganizationController::class, 'show'])->name('organizations.show');

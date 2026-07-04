@@ -13,7 +13,7 @@ return [
     'step_done' => 'Listo',
 
     // Step 1: Welcome
-    'welcome_heading' => 'Bienvenido a CoVa, :name',
+    'welcome_heading' => 'Bienvenido a CoVaR, :name',
     'welcome_description' => 'Vamos a configurar tu cuenta en unos minutos. Sigue estos pasos para empezar a crear y compartir blueprints con tu equipo.',
 
     // Step 2: Organization (required)
@@ -55,3 +55,4 @@ return [
     // Verify email
     'verify_email_notice' => 'Verifica tu correo electrónico para acceder a todas las funcionalidades.',
 ];
+

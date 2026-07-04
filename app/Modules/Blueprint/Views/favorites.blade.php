@@ -50,11 +50,6 @@
                                     </a>
                                 </div>
                                 <div class="ml-4 flex-shrink-0 flex items-center space-x-3">
-                                    <livewire:shared.copy-to-clipboard 
-                                        :text="$blueprint->uuid" 
-                                        :label="__('blueprint.uuid_label')"
-                                        :success-message="__('blueprint.uuid_copied_short')"
-                                    />
                                     <span class="text-xs text-gray-400">
                                         {{ $blueprint->created_at->diffForHumans() }}
                                     </span>

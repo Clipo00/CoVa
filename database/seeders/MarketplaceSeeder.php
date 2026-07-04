@@ -14,7 +14,7 @@ class MarketplaceSeeder extends Seeder
     public function run(): void
     {
         // Verificar que no exista ya el system user
-        if (User::where('email', 'system@cova.internal')->exists()) {
+        if (User::where('email', 'system@covar.internal')->exists()) {
             $this->command->info('System user already exists, skipping.');
 
             return;
@@ -31,8 +31,8 @@ class MarketplaceSeeder extends Seeder
 
         // Crear el usuario sistema
         $systemUser = User::create([
-            'name' => 'CoVa System',
-            'email' => 'system@cova.internal',
+            'name' => 'CoVaR System',
+            'email' => 'system@covar.internal',
             'password' => Hash::make(Str::random(64)),
             'plan_id' => $enterprisePlan->id,
             'is_system' => true,
@@ -40,8 +40,8 @@ class MarketplaceSeeder extends Seeder
 
         // Crear la organización marketplace
         Organization::create([
-            'slug' => 'cova-marketplace',
-            'name' => 'CoVa Marketplace',
+            'slug' => 'covar-marketplace',
+            'name' => 'CoVaR Marketplace',
             'owner_id' => $systemUser->id,
         ]);
 

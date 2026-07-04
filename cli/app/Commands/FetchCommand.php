@@ -8,17 +8,17 @@ use App\ApiClient;
 use Illuminate\Console\Command;
 
 /**
- * Scaffold a project from a CoVa blueprint.
+ * Scaffold a project from a CoVaR blueprint.
  *
- * Fetches a resolved blueprint from the CoVa API via GET /api/blueprints/{slug},
+ * Fetches a resolved blueprint from the CoVaR API via GET /api/blueprints/{slug},
  * then writes .agent.md, .vscode/extensions.json, .vscode/mcp.json, and .env
  * to the current working directory. If the blueprint contains secret variables,
  * prompts for a password and verifies via POST /api/fetch/{slug}/verify before
  * writing decrypted values.
  *
  * Usage:
- *   cova vault:fetch laravel-api
- *   cova vault:fetch my-blueprint
+ *   covar vault:fetch laravel-api
+ *   covar vault:fetch my-blueprint
  */
 class FetchCommand extends Command
 {
@@ -31,17 +31,13 @@ class FetchCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Scaffold a project from a CoVa blueprint';
+    protected $description = 'Descarga y despliega un blueprint con sus archivos';
 
-    private ?ApiClient $apiClient;
+    private ?ApiClient $apiClient = null;
 
-    /**
-     * @param ApiClient|null $apiClient Optional injected client for testing
-     */
-    public function __construct(?ApiClient $apiClient = null)
+    public function setApiClient(?ApiClient $client): void
     {
-        parent::__construct();
-        $this->apiClient = $apiClient;
+        $this->apiClient = $client;
     }
 
     /**
@@ -76,12 +72,12 @@ class FetchCommand extends Command
         $this->scaffoldAgentMd($result, $outputDir);
         $this->scaffoldVscodeExtensions($result, $outputDir);
         $this->scaffoldMcpServers($result, $outputDir);
-        $this->scaffoldEnv($result, $outputDir);
+        $envPath = $this->scaffoldEnv($result, $outputDir);
 
         $secrets = $this->getSecretVariables($result);
 
         if (!empty($secrets)) {
-            $this->handleSecrets($slug, $client, $secrets, $outputDir);
+            $this->handleSecrets($slug, $client, $secrets, $envPath);
         }
 
         $this->showSummary($result);
@@ -363,7 +359,7 @@ class FetchCommand extends Command
      * Secret variables are written with empty values initially.
      * They are updated later after password verification.
      */
-    private function scaffoldEnv(array $result, string $outputDir): void
+    private function scaffoldEnv(array $result, string $outputDir): string
     {
         $variables = $result['variables'] ?? [];
 
@@ -383,11 +379,20 @@ class FetchCommand extends Command
             $lines[] = $key . '=' . $value;
         }
 
+        // Never overwrite an existing .env — use .env.covar instead
+        $envPath = $outputDir . '/.env';
+        if (file_exists($envPath)) {
+            $envPath = $outputDir . '/.env.covar';
+            $this->line('  <comment>⚠</comment> .env already exists — written to .env.covar instead');
+        }
+
         file_put_contents(
-            $outputDir . '/.env',
+            $envPath,
             implode("\n", $lines) . "\n",
         );
-        $this->line('  <info>✓</info> .env');
+        $this->line('  <info>✓</info> ' . basename($envPath));
+
+        return $envPath;
     }
 
     /**
@@ -405,7 +410,7 @@ class FetchCommand extends Command
     }
 
     /**
-     * Prompt for the CoVa password.
+     * Prompt for the CoVaR password.
      *
      * Extracted as a protected method so tests can mock it without
      * dealing with Windows hiddeninput.exe limitation.
@@ -415,11 +420,11 @@ class FetchCommand extends Command
         return $this->secret($message);
     }
 
-    private function handleSecrets(string $slug, ApiClient $client, array $secrets, string $outputDir): void
+    private function handleSecrets(string $slug, ApiClient $client, array $secrets, string $envPath): void
     {
         $count = count($secrets);
         $password = $this->promptPassword(
-            "This blueprint contains {$count} secret variables. Enter your CoVa password",
+            "This blueprint contains {$count} secret variables. Enter your CoVaR password",
         );
 
         try {
@@ -427,7 +432,7 @@ class FetchCommand extends Command
                 'password' => $password,
             ]);
         } catch (\RuntimeException $e) {
-            $this->warn('Password verification failed. Secret variables written with empty values — fill them manually in .env');
+            $this->warn('Password verification failed. Secret variables written with empty values — fill them manually in ' . basename($envPath));
 
             return;
         }
@@ -435,12 +440,11 @@ class FetchCommand extends Command
         $decryptedSecrets = $response['secrets'] ?? [];
 
         if (!is_array($decryptedSecrets)) {
-            $this->warn('Unexpected response from password verification. Secret variables written with empty values — fill them manually in .env');
+            $this->warn('Unexpected response from password verification. Secret variables written with empty values — fill them manually in ' . basename($envPath));
 
             return;
         }
 
-        $envPath = $outputDir . '/.env';
         $envContent = file_get_contents($envPath);
 
         foreach ($decryptedSecrets as $secret) {
@@ -464,7 +468,7 @@ class FetchCommand extends Command
         }
 
         file_put_contents($envPath, $envContent);
-        $this->info('✓ Secrets decrypted and written to .env');
+        $this->info('✓ Secrets decrypted and written to ' . basename($envPath));
     }
 
     /**

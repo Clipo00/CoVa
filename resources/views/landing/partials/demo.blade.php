@@ -76,7 +76,7 @@
                         </div>
                         <div class="flex-1 mx-4">
                             <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                cova.app/dashboard
+                                CoVaR.app/dashboard
                             </div>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                         </div>
                         <div class="flex-1 mx-4">
                             <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                cova.app/organizations/create
+                                CoVaR.app/organizations/create
                             </div>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                         </div>
                         <div class="flex-1 mx-4">
                             <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                cova.app/blueprints/create
+                                CoVaR.app/blueprints/create
                             </div>
                         </div>
                     </div>
@@ -368,7 +368,7 @@
                         </div>
                         <div class="flex-1 mx-4">
                             <div class="bg-gray-200 dark:bg-gray-600 rounded px-3 py-1 text-xs text-gray-500 dark:text-gray-400 text-center">
-                                cova.app/blueprints/create
+                                CoVaR.app/blueprints/create
                             </div>
                         </div>
                     </div>

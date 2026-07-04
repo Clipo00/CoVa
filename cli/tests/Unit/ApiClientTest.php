@@ -16,8 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 class ApiClientTest extends TestCase
 {
-    private const TEST_BASE_URL = 'https://api.cova.app';
-    private const TEST_API_KEY = 'cova_test123';
+    private const TEST_BASE_URL = 'https://api.CoVaR.app';
+    private const TEST_API_KEY = 'covar_test123';
 
     /**
      * Create an ApiClient with a mock Guzzle handler for testing.
@@ -193,7 +193,7 @@ class ApiClientTest extends TestCase
     public function maps_network_errors_to_user_friendly_message(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Network error: unable to reach the CoVa API');
+        $this->expectExceptionMessage('Network error: unable to reach the CoVaR API');
 
         $mock = new MockHandler([
             new ConnectException(
@@ -256,7 +256,7 @@ class ApiClientTest extends TestCase
     {
         $mock = new MockHandler([
             function (Request $request) {
-                $this->assertStringStartsWith('https://custom.cova.app', (string) $request->getUri());
+                $this->assertStringStartsWith('https://custom.CoVaR.app', (string) $request->getUri());
 
                 return new Response(200, [], '{}');
             },
@@ -265,11 +265,11 @@ class ApiClientTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $http = new Client([
             'handler' => $handlerStack,
-            'base_uri' => 'https://custom.cova.app',
+            'base_uri' => 'https://custom.CoVaR.app',
         ]);
 
         $client = new ApiClient($http, [
-            'base_url' => 'https://custom.cova.app',
+            'base_url' => 'https://custom.CoVaR.app',
             'api_key' => self::TEST_API_KEY,
         ]);
 

@@ -46,9 +46,9 @@ class MarketplaceFlagsTest extends TestCase
 
         // Ensure marketplace org exists (required by PublishBlueprint)
         Organization::firstOrCreate(
-            ['slug' => 'cova-marketplace'],
+            ['slug' => 'covar-marketplace'],
             [
-                'name' => 'CoVa Marketplace',
+                'name' => 'CoVaR Marketplace',
                 'owner_id' => $this->owner->id,
                 'plan_id' => $proPlan->id,
             ]

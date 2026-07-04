@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * E2E Workflow Tests — CoVa end-to-end user journeys.
+ * E2E Workflow Tests — CoVaR end-to-end user journeys.
  *
  * 1. Owner: register → onboarding (org) → blueprint (multi-tab+variables)
  *    → Pro trial → publish to marketplace
@@ -86,7 +86,7 @@ async function completeOnboarding(page: import('@playwright/test').Page, orgName
 // Flow 1: Owner — full journey
 // ---------------------------------------------------------------------------
 test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () => {
-    const email = `owner-${timestamp}@cova.test`;
+    const email = `owner-${timestamp}@covar.test`;
 
     test('full owner journey', async ({ page }) => {
         // 1a. Register
@@ -230,7 +230,7 @@ test.describe('Flow 1: Owner creates org, blueprint, Pro trial, publishes', () =
 // Flow 2: Developer generates API token
 // ---------------------------------------------------------------------------
 test.describe('Flow 2: Developer generates API token', () => {
-    const email = `dev-${timestamp}@cova.test`;
+    const email = `dev-${timestamp}@covar.test`;
 
     test('register, skip onboarding, get Pro trial, generate API token', async ({ page }) => {
         // 2a. Register
@@ -312,7 +312,7 @@ test.describe('Flow 2: Developer generates API token', () => {
 // Flow 3: Pro user subscribes and votes
 // ---------------------------------------------------------------------------
 test.describe('Flow 3: Pro user subscribes and votes', () => {
-    const email = `pro-${timestamp}@cova.test`;
+    const email = `pro-${timestamp}@covar.test`;
 
     test('register, org, marketplace → subscribe → vote up', async ({ page }) => {
         // 3a. Register

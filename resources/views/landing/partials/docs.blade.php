@@ -24,14 +24,20 @@
                         {{ __('landing.docs_step1_desc') }}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }}</span>
-curl -L -o cova {{ config('app.cli_download_url') }}
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }} (Linux/macOS)</span>
+curl -L -o covar {{ config('app.cli_download_url') }}
+
+<span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }} (Windows PowerShell)</span>
+Invoke-WebRequest -Uri {{ config('app.cli_download_url') }} -OutFile covar
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd2') }}</span>
-chmod +x cova
+chmod +x covar
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd3') }}</span>
-sudo mv cova /usr/local/bin/</code></pre>
+sudo mv covar /usr/local/bin/
+
+<span class="text-gray-500"># O ejecútalo directamente con PHP sin moverlo:</span>
+<span class="text-cyan-400">$</span> php covar config:set-key &lt;tu-api-key&gt;</code></pre>
                     </div>
                 </div>
             </div>
@@ -53,7 +59,7 @@ sudo mv cova /usr/local/bin/</code></pre>
                         {!! __('landing.docs_step2_desc') !!}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> cova config:set-key cova_xxxxxxxxxxxx</code></pre>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx</code></pre>
                     </div>
                 </div>
             </div>
@@ -74,10 +80,10 @@ sudo mv cova /usr/local/bin/</code></pre>
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
                         <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step3_cmd1') }}</span>
-<span class="text-cyan-400">$</span> cova vault:list
+<span class="text-cyan-400">$</span> covar vault:list
 
 <span class="text-green-400"># {{ __('landing.docs_step3_cmd2') }}</span>
-<span class="text-cyan-400">$</span> cova vault:fetch mi-blueprint</code></pre>
+<span class="text-cyan-400">$</span> covar vault:fetch mi-blueprint</code></pre>
                     </div>
 
                     {{-- Command reference table --}}
@@ -95,19 +101,19 @@ sudo mv cova /usr/local/bin/</code></pre>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova config:set-key &lt;key&gt;</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar config:set-key &lt;key&gt;</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_set_key') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:list</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar vault:list</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_list') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:fetch &lt;slug&gt;</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar vault:fetch &lt;slug&gt;</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_fetch') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova help</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">                                covar help</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_help') }}</td>
                                     </tr>
                                 </tbody>
@@ -115,6 +121,59 @@ sudo mv cova /usr/local/bin/</code></pre>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        {{-- Troubleshooting --}}
+        <div class="mt-8" x-data x-reveal>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                {{ __('landing.docs_troubleshooting_title') }}
+            </h3>
+            <div class="space-y-3">
+                {{-- PHP version --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🐘 {{ __('landing.docs_trouble_php_version_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_php_version_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code>php -v          <span class="text-gray-500"># Requiere PHP 8.3 o superior</span>
+php -r "echo PHP_VERSION;"</code></pre>
+                </details>
+
+                {{-- Permissions --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🔒 {{ __('landing.docs_trouble_permissions_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_permissions_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code><span class="text-green-400"># Linux/macOS</span>
+chmod +x covar
+
+<span class="text-green-400"># O ejecutar directamente con PHP</span>
+php covar config:set-key &lt;key&gt;</code></pre>
+                </details>
+
+                {{-- Config file not found --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">📁 {{ __('landing.docs_trouble_config_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_config_desc') }}</p>
+                </details>
+
+                {{-- Connection error --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🌐 {{ __('landing.docs_trouble_connection_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_connection_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code>covar config:set-key &lt;key&gt; --base-url={{ config('app.url') }}</code></pre>
+                </details>
+
             </div>
         </div>
 

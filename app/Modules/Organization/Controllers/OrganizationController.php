@@ -18,6 +18,7 @@ use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Models\OrganizationInvitation;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -160,8 +161,10 @@ class OrganizationController
 
     /**
      * Show invitation — OWASP A01/A07: validates token, handles guest redirect flow.
-     * Guests store token in session and redirect to login.
-     * Authenticated users accept directly.
+     *
+     * - If user exists and is authenticated with matching email → accept directly.
+     * - If user exists but is not authenticated → redirect to login (intended).
+     * - If user does NOT exist → create account with temp password → force password change.
      */
     public function showInvitation(string $token): RedirectResponse
     {
@@ -178,9 +181,27 @@ class OrganizationController
         }
 
         if (!auth()->check()) {
+            $user = User::where('email', $invitation->email)->first();
+
+            if ($user) {
+                // Existing user — redirect to login, they'll come back via intended
+                session(['invitation_token' => $token]);
+
+                return redirect()->guest(route('login'));
+            }
+
+            // New user — create account with temporary password
+            $user = User::create([
+                'name' => explode('@', $invitation->email)[0],
+                'email' => $invitation->email,
+                'password' => Str::random(40),
+                'password_change_required' => true,
+            ]);
+
+            auth()->login($user);
             session(['invitation_token' => $token]);
 
-            return redirect()->guest(route('login'));
+            return redirect()->guest(route('password.change'));
         }
 
         // Authenticated user: verify email match

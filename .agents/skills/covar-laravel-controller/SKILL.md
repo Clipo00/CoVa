@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-controller
 description: >
-  Patrones y convenciones para Controllers y Routes en CoVa. Trigger: Cuando se trabaja con archivos en Controllers/ o Routes/.
+  Patrones y convenciones para Controllers y Routes en CoVaR. Trigger: Cuando se trabaja con archivos en Controllers/ o Routes/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming

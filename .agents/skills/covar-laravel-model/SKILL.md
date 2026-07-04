@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-model
 description: >
-  Patrones y convenciones para Models, Migrations y Traits en CoVa. Trigger: Cuando se trabaja con archivos en Models/.
+  Patrones y convenciones para Models, Migrations y Traits en CoVaR. Trigger: Cuando se trabaja con archivos en Models/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming
@@ -120,7 +120,7 @@ public function users(): BelongsToMany
 
 ## Soft Deletes
 
-CoVa usa soft deletes en:
+CoVaR usa soft deletes en:
 - **Blueprint** - Para recuperación y mantener favoritos
 - **Organization** - Para auditoría
 

@@ -22,7 +22,7 @@ class FetchCommandTest extends TestCase
         parent::setUp();
 
         $this->container = new Container();
-        $this->tempDir = sys_get_temp_dir() . '/cova-fetch-' . bin2hex(random_bytes(4));
+        $this->tempDir = sys_get_temp_dir() . '/covar-fetch-' . bin2hex(random_bytes(4));
         mkdir($this->tempDir, 0755, true);
         $this->originalCwd = getcwd();
         chdir($this->tempDir);
@@ -272,7 +272,7 @@ class FetchCommandTest extends TestCase
      */
     private function createCommandTester(?ApiClient $client = null): CommandTester
     {
-        $command = new FetchCommand($client);
+        $command = new FetchCommand(); $command->setApiClient($client);
         $command->setLaravel($this->container);
 
         return new CommandTester($command);
@@ -393,7 +393,7 @@ class FetchCommandTest extends TestCase
                 ],
             ],
         );
-        $tester = $this->createCommandTesterWithSecretMock($mock, 'my-cova-password');
+        $tester = $this->createCommandTesterWithSecretMock($mock, 'my-covar-password');
         $exitCode = $tester->execute(['slug' => 'laravel-api']);
 
         $this->assertSame(0, $exitCode);
@@ -467,7 +467,7 @@ class FetchCommandTest extends TestCase
     public function handles_401_authentication_error(): void
     {
         $mock = $this->mockApiClient(
-            getException: new \RuntimeException('Authentication failed. Run cova config:set-key <key>'),
+            getException: new \RuntimeException('Authentication failed. Run covar config:set-key <key>'),
         );
         $tester = $this->createCommandTester($mock);
 
@@ -535,7 +535,7 @@ class FetchCommandTest extends TestCase
     public function handles_network_error(): void
     {
         $mock = $this->mockApiClient(
-            getException: new \RuntimeException('Network error: unable to reach the CoVa API'),
+            getException: new \RuntimeException('Network error: unable to reach the CoVaR API'),
         );
         $tester = $this->createCommandTester($mock);
 
@@ -543,7 +543,7 @@ class FetchCommandTest extends TestCase
 
         $this->assertSame(1, $exitCode);
         $this->assertStringContainsString(
-            'Network error: unable to reach the CoVa API',
+            'Network error: unable to reach the CoVaR API',
             $tester->getDisplay()
         );
     }

@@ -89,7 +89,7 @@ class BlueprintCreateForm extends Component
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'selectedTags' => ['array', 'max:6'],
+            'selectedTags' => ['array', 'max:10'],
             'selectedTags.*' => ['integer', 'exists:tags,id'],
             'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());

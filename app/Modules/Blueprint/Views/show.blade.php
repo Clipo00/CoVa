@@ -53,12 +53,6 @@
                     $userOrgsWhereOwner = auth()->user()->organizations()->wherePivot('role', 'owner')->where('organizations.id', '!=', $blueprint->organization_id)->get();
                 @endphp
                 <div class="mt-4 sm:mt-0 flex items-center gap-1">
-                    <livewire:shared.copy-to-clipboard
-                        :text="$blueprint->uuid"
-                        :label="__('blueprint.copy_uuid')"
-                        :success-message="__('blueprint.uuid_copied')"
-                    />
-
                     {{-- Transfer (modal) --}}
                     @if($userOrgsWhereOwner->count() > 0)
                         <div x-data="{ open: false }">
@@ -118,8 +112,8 @@
                     @if($hasSecrets && !$emailVerified)
                         <button type="button"
                             @click="$dispatch('notify', { message: '{{ __('blueprint.zip_email_unverified') }}' })"
-                            class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-400 dark:text-gray-500 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                            title="{{ __('blueprint.download_zip') }}"
+                            class="inline-flex items-center justify-center w-9 h-9 border border-gray-200 dark:border-gray-700 shadow-sm rounded-md text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-gray-800 cursor-not-allowed transition-colors"
+                            title="{{ __('blueprint.zip_disabled_email_title') }}"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -127,7 +121,7 @@
                         </button>
                     @elseif($hasSecrets)
                         <button type="button"
-                            onclick="Alpine.store('confirm').ask({ message: '{{ __('blueprint.zip_download_encrypted') }}', confirmText: '{{ __('blueprint.zip_download_button') }}', onConfirm: function() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(function() { document.getElementById('zip-spinner').classList.add('hidden'); }, 5000); } })"
+                            onclick="Alpine.store('confirm').ask({ message: '{{ __('blueprint.zip_download_encrypted') }}', confirmText: '{{ __('blueprint.zip_download_button') }}', onConfirm: function() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); } })"
                             class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
@@ -137,7 +131,7 @@
                         </button>
                     @else
                         <button type="button"
-                            onclick="document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(() => document.getElementById('zip-spinner').classList.add('hidden'), 5000);"
+                            onclick="document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden');"
                             class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
@@ -151,14 +145,15 @@
                         @csrf
                     </form>
 
-                    <div id="zip-spinner" class="hidden fixed inset-0 z-50 flex items-center justify-center">
-                        <div class="fixed inset-0 bg-black/50"></div>
-                        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 text-center">
+                    <div id="zip-spinner" class="hidden fixed inset-0 z-50 flex items-center justify-center" onclick="this.classList.add('hidden')">
+                        <div class="fixed inset-0 bg-black/50 cursor-pointer"></div>
+                        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 text-center" onclick="event.stopPropagation()">
                             <svg class="animate-spin h-10 w-10 text-indigo-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             <p class="text-gray-600 dark:text-gray-300">{{ __('blueprint.zip_loading') }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ __('blueprint.zip_dismiss_hint') }}</p>
                         </div>
                     </div>
 
@@ -210,11 +205,6 @@
                 <p class="text-gray-600 dark:text-gray-300 mt-2">{{ $blueprint->description }}</p>
             @endif
 
-            <div class="mt-4 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                <span>{{ __('blueprint.uuid_label') }}:</span>
-                <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded font-mono text-xs">{{ $blueprint->uuid }}</code>
-            </div>
-
             {{-- Vault Fetch Card --}}
             <div class="mt-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                 <div class="flex items-center justify-between">
@@ -225,10 +215,10 @@
                 </div>
                 <div class="mt-3 flex items-center space-x-2">
                     <code class="flex-1 bg-white dark:bg-gray-800 px-3 py-2 rounded text-sm font-mono text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-600 select-all">
-                        cova vault:fetch {{ $blueprint->slug }}
+                        covar vault:fetch {{ $blueprint->slug }}
                     </code>
                     <livewire:shared.copy-to-clipboard
-                        :text="'cova vault:fetch ' . $blueprint->slug"
+                        :text="'covar vault:fetch ' . $blueprint->slug"
                         :label="__('blueprint.copy_button')"
                         :success-message="__('blueprint.vault_fetch_copied')"
                     />
@@ -307,6 +297,9 @@
         @if($hasAiContext)
             <script>window.__blueprintAgentMd = @json($agentMd);</script>
         @endif
+        @if($envTemplate)
+            <script>window.__blueprintEnvTemplate = @json($envTemplate);</script>
+        @endif
 
         {{-- Tabbed Content Interface --}}
         <div x-data="{ tab: '{{ $defaultTab }}' }" class="mb-6">
@@ -367,7 +360,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h3>
                             @if($envTemplate)
-                                <button type="button" onclick="downloadTextFile(@json($envTemplate), '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <button type="button" onclick="downloadTextFile(window.__blueprintEnvTemplate, '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>

@@ -41,7 +41,7 @@ class PublishBlueprint
             throw new HttpException(403, __('blueprint.publish_trial_denied'));
         }
 
-        $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->firstOrFail();
+        $marketplaceOrg = Organization::where('slug', 'covar-marketplace')->firstOrFail();
 
         // 3. Check if already published — find the marketplace copy via subscription
         $subscription = DB::table('blueprint_subscriptions')
