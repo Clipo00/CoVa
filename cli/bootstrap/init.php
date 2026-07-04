@@ -37,6 +37,25 @@ $app = new App\Console\Application;
 $app->setName('covar');
 $app->setVersion('1.0.0');
 
+// Hide default Laravel Zero commands — only expose covar commands
+foreach (['build', 'install', 'main'] as $name) {
+    if ($cmd = $app->find($name)) {
+        $cmd->setHidden(true);
+    }
+}
+
+// Override default help command to show command list
+$helpCommand = $app->find('help');
+$helpCommand->setHelp(<<<'HELP'
+The <info>covar</info> CLI helps you manage CoVaR blueprints:
+
+  <info>covar config:set-key <key></info>   Configura y valida tu API key de CoVaR
+  <info>covar vault:list</info>             Lista los blueprints que tienes disponibles
+  <info>covar vault:fetch <slug></info>     Descarga y despliega un blueprint con sus archivos
+  <info>covar help</info>                   Muestra la ayuda y comandos disponibles
+HELP
+);
+
 $app->add(
     $app['app']->make(App\Commands\ConfigSetKeyCommand::class)
 );

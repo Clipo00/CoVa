@@ -30,7 +30,7 @@ class ConfigSetKeyCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Set and validate the CoVaR API key';
+    protected $description = 'Configura y valida tu API key de CoVaR';
 
     private ?ApiClient $apiClient = null;
 

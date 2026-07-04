@@ -30,7 +30,7 @@ class ListCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'List accessible blueprints';
+    protected $description = 'Lista los blueprints que tienes disponibles';
 
     private ?ApiClient $apiClient;
 

@@ -31,7 +31,7 @@ class FetchCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Scaffold a project from a CoVaR blueprint';
+    protected $description = 'Descarga y despliega un blueprint con sus archivos';
 
     private ?ApiClient $apiClient;
 
