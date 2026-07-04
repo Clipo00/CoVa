@@ -1,4 +1,4 @@
-﻿# CoVaR — Especificación de Interfaz de Usuario
+# CoVaR — Especificación de Interfaz de Usuario
 
 > Detalle de pantallas, componentes, estados y decisiones de UX.
 > Audiencia: Desarrolladores frontend, diseñadores, y devs implementando nuevas pantallas.

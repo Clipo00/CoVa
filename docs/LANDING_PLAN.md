@@ -1,4 +1,4 @@
-﻿# Plan: Landing Page — Nueva Home de CoVaR
+# Plan: Landing Page — Nueva Home de CoVaR
 
 > **Objetivo**: Reemplazar la landing default de Laravel por una página de alto impacto que comunique los valores clave de CoVaR: **ahorro de tiempo** y **seguridad**.
 > **Estado**: ✅ Implementado — en uso productivo  

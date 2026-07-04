@@ -1,4 +1,4 @@
-﻿# CoVaR — Estrategia de Testing
+# CoVaR — Estrategia de Testing
 
 > Pirámide de tests, patrones, fixtures, y guía para escribir tests en CoVaR.
 > Audiencia: Desarrolladores escribiendo o manteniendo tests.

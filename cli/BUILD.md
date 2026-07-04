@@ -1,4 +1,4 @@
-﻿# Building the covar CLI PHAR
+# Building the covar CLI PHAR
 
 This document explains how to build the standalone PHAR binary for the covar CLI tool.
 

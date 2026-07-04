@@ -1,4 +1,4 @@
-﻿# CoVaR — Guía de Contribución
+# CoVaR — Guía de Contribución
 
 > Setup del entorno, convenciones de código, y cómo agregar features al proyecto.
 > Audiencia: Desarrolladores que se suman al equipo o contribuyen al proyecto.

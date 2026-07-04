@@ -1,4 +1,4 @@
-﻿# CoVaR — Arquitectura del Proyecto
+# CoVaR — Arquitectura del Proyecto
 
 > Documento de arquitectura técnica, patrones, y guía de módulos.
 > Audiencia: Desarrolladores nuevos en el proyecto y arquitectos.

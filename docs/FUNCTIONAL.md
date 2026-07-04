@@ -1,4 +1,4 @@
-﻿# CoVaR — Especificación Funcional
+# CoVaR — Especificación Funcional
 
 > Documento de requisitos funcionales y comportamiento del producto.
 > Audiencia: Desarrolladores, product owners, y stakeholders técnicos.

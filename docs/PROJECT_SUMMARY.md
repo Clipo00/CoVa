@@ -1,4 +1,4 @@
-﻿# CoVaR - The Config Vault
+# CoVaR - The Config Vault
 
 > Zero-latency environment setup for modern developers.
 

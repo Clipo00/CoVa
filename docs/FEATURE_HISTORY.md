@@ -1,4 +1,4 @@
-﻿# CoVaR — Historial de Features
+# CoVaR — Historial de Features
 
 > Narrativa de evolución del producto: por qué se construyó cada feature, qué problemas resolvió, y qué se aprendió en el camino.
 > Audiencia: Stakeholders técnicos, nuevos devs buscando contexto histórico, y revisiones de producto.

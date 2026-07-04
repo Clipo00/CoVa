@@ -1,4 +1,4 @@
-﻿<section class="relative min-h-[calc(100vh-4rem)] flex items-center pt-16">
+<section class="relative min-h-[calc(100vh-4rem)] flex items-center pt-16">
     {{-- Background gradient --}}
     <div class="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-white dark:from-gray-900 dark:to-gray-950 pointer-events-none" aria-hidden="true"></div>
 

@@ -1,4 +1,4 @@
-﻿<section id="demo" class="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900/50 overflow-hidden">
+<section id="demo" class="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900/50 overflow-hidden">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Section title --}}
         <div class="text-center mb-12" x-data x-reveal>

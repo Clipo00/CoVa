@@ -1,4 +1,4 @@
-﻿# Documentación de CoVaR
+# Documentación de CoVaR
 
 > Centro de navegación de toda la documentación del proyecto.
 > Si llegaste acá sin saber qué leer, empezá por la sección **"¿Quién sos?"**.

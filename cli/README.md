@@ -1,4 +1,4 @@
-﻿# covar CLI
+# covar CLI
 
 A command-line tool to list and fetch CoVaR blueprints from your terminal.
 
