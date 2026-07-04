@@ -286,5 +286,31 @@
         });
     </script>
     @endif
+
+    {{-- Session expiry auto-redirect --}}
+    @auth
+    <script>
+        (function () {
+            const lifetimeMinutes = {{ config('session.lifetime', 120) }};
+            // Redirect 1 minute before actual expiry to avoid race conditions
+            const redirectAfter = (lifetimeMinutes - 1) * 60 * 1000;
+
+            let timer = setTimeout(redirectToLogin, redirectAfter);
+
+            function redirectToLogin() {
+                window.location.href = '{{ route('login') }}?expired=1';
+            }
+
+            // Reset timer on user activity
+            const events = ['click', 'keypress', 'scroll', 'touchstart', 'mousemove'];
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    clearTimeout(timer);
+                    timer = setTimeout(redirectToLogin, redirectAfter);
+                }, { passive: true });
+            });
+        })();
+    </script>
+    @endauth
 </body>
 </html>

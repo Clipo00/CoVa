@@ -56,6 +56,7 @@ return [
 
     // Messages
     'login_failed' => 'Las credenciales proporcionadas no son correctas.',
+    'session_expired' => 'Tu sesión ha expirado por inactividad. Inicia sesión de nuevo.',
     'wrong_password' => 'La contraseña actual es incorrecta',
     'profile_updated' => 'Perfil actualizado correctamente',
     'free_plan_missing' => 'El plan gratuito no existe. Ejecuta los seeders de la base de datos.',
