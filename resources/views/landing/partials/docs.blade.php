@@ -34,7 +34,10 @@ Invoke-WebRequest -Uri {{ config('app.cli_download_url') }} -OutFile covar
 chmod +x covar
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd3') }}</span>
-sudo mv covar /usr/local/bin/</code></pre>
+sudo mv covar /usr/local/bin/
+
+<span class="text-gray-500"># O ejecútalo directamente con PHP sin moverlo:</span>
+<span class="text-cyan-400">$</span> php covar config:set-key &lt;tu-api-key&gt;</code></pre>
                     </div>
                 </div>
             </div>
