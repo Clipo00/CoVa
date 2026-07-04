@@ -72,12 +72,12 @@ class FetchCommand extends Command
         $this->scaffoldAgentMd($result, $outputDir);
         $this->scaffoldVscodeExtensions($result, $outputDir);
         $this->scaffoldMcpServers($result, $outputDir);
-        $this->scaffoldEnv($result, $outputDir);
+        $envPath = $this->scaffoldEnv($result, $outputDir);
 
         $secrets = $this->getSecretVariables($result);
 
         if (!empty($secrets)) {
-            $this->handleSecrets($slug, $client, $secrets, $outputDir);
+            $this->handleSecrets($slug, $client, $secrets, $envPath);
         }
 
         $this->showSummary($result);
@@ -359,7 +359,7 @@ class FetchCommand extends Command
      * Secret variables are written with empty values initially.
      * They are updated later after password verification.
      */
-    private function scaffoldEnv(array $result, string $outputDir): void
+    private function scaffoldEnv(array $result, string $outputDir): string
     {
         $variables = $result['variables'] ?? [];
 
@@ -391,6 +391,8 @@ class FetchCommand extends Command
             implode("\n", $lines) . "\n",
         );
         $this->line('  <info>✓</info> ' . basename($envPath));
+
+        return $envPath;
     }
 
     /**
@@ -418,7 +420,7 @@ class FetchCommand extends Command
         return $this->secret($message);
     }
 
-    private function handleSecrets(string $slug, ApiClient $client, array $secrets, string $outputDir): void
+    private function handleSecrets(string $slug, ApiClient $client, array $secrets, string $envPath): void
     {
         $count = count($secrets);
         $password = $this->promptPassword(
@@ -430,7 +432,7 @@ class FetchCommand extends Command
                 'password' => $password,
             ]);
         } catch (\RuntimeException $e) {
-            $this->warn('Password verification failed. Secret variables written with empty values — fill them manually in .env');
+            $this->warn('Password verification failed. Secret variables written with empty values — fill them manually in ' . basename($envPath));
 
             return;
         }
@@ -438,12 +440,11 @@ class FetchCommand extends Command
         $decryptedSecrets = $response['secrets'] ?? [];
 
         if (!is_array($decryptedSecrets)) {
-            $this->warn('Unexpected response from password verification. Secret variables written with empty values — fill them manually in .env');
+            $this->warn('Unexpected response from password verification. Secret variables written with empty values — fill them manually in ' . basename($envPath));
 
             return;
         }
 
-        $envPath = $outputDir . '/.env';
         $envContent = file_get_contents($envPath);
 
         foreach ($decryptedSecrets as $secret) {
@@ -467,7 +468,7 @@ class FetchCommand extends Command
         }
 
         file_put_contents($envPath, $envContent);
-        $this->info('✓ Secrets decrypted and written to .env');
+        $this->info('✓ Secrets decrypted and written to ' . basename($envPath));
     }
 
     /**
