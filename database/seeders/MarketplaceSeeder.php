@@ -31,7 +31,7 @@ class MarketplaceSeeder extends Seeder
 
         // Crear el usuario sistema
         $systemUser = User::create([
-            'name' => 'CoVa System',
+            'name' => 'CoVaR System',
             'email' => 'system@covar.internal',
             'password' => Hash::make(Str::random(64)),
             'plan_id' => $enterprisePlan->id,
@@ -41,7 +41,7 @@ class MarketplaceSeeder extends Seeder
         // Crear la organización marketplace
         Organization::create([
             'slug' => 'covar-marketplace',
-            'name' => 'CoVa Marketplace',
+            'name' => 'CoVaR Marketplace',
             'owner_id' => $systemUser->id,
         ]);
 
