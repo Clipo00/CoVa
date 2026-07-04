@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'app_name' => 'CoVa',
+    'app_name' => 'CoVaR',
     'app_subtitle' => 'The Config Vault',
     'site_title' => 'Dashboard',
 

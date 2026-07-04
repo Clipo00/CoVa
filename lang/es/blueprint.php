@@ -313,3 +313,4 @@ return [
     'zip_loading' => 'Preparando descarga...',
     'zip_dismiss_hint' => 'Haz clic fuera para cerrar',
 ];
+

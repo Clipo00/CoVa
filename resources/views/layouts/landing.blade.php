@@ -148,7 +148,7 @@
                         <rect x="13" y="25" width="6" height="2" rx="1" fill="white"/>
                         <circle cx="16" cy="26" r="0.8" fill="#4f46e5"/>
                     </svg>
-                    <span class="hidden sm:inline">{{ config('app.name', 'CoVa') }}</span>
+                    <span class="hidden sm:inline">{{ config('app.name', 'CoVaR') }}</span>
                 </a>
 
                 {{-- Center: Tabs --}}

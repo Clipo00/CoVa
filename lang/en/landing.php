@@ -10,8 +10,8 @@ return [
 
     // Hero
     'hero_title' => 'Your environment, one command.',
-    'site_title' => 'CoVa, your own space',
-    'hero_subtitle' => 'CoVa is your configuration vault. Define, publish, and run <strong>cova vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
+    'site_title' => 'CoVaR, your own space',
+    'hero_subtitle' => 'CoVaR is your configuration vault. Define, publish, and run <strong>cova vault:fetch</strong>. Your environment is ready in seconds, no matter the stack.',
     'cta_primary' => 'Get Started Free',
     'cta_secondary' => 'See how it works',
 
@@ -253,3 +253,4 @@ return [
     'docs_cmd_help' => 'Show help and available commands',
     'docs_security_note' => 'Your API key is stored locally with restricted permissions. All API communication uses HTTPS. Secret variables require password verification and are never shown in plain text.',
 ];
+

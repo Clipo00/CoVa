@@ -55,3 +55,4 @@ return [
     // Verify email
     'verify_email_notice' => 'Verifica tu correo electrónico para acceder a todas las funcionalidades.',
 ];
+

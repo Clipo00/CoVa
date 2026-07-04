@@ -312,3 +312,4 @@ return [
     'zip_loading' => 'Preparing download...',
     'zip_dismiss_hint' => 'Click outside to dismiss',
 ];
+

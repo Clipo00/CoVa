@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'CoVa') }} - {{ __('errors.419_title') }}</title>
+    <title>{{ config('app.name', 'CoVaR') }} - {{ __('errors.419_title') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css'])
@@ -20,7 +20,7 @@
                 {{ __('errors.419_login') }}
             </a>
         </div>
-        <p class="mt-12 text-sm text-gray-400">{{ config('app.name', 'CoVa') }} &mdash; {{ __('errors.footer') }}</p>
+        <p class="mt-12 text-sm text-gray-400">{{ config('app.name', 'CoVaR') }} &mdash; {{ __('errors.footer') }}</p>
     </div>
 </body>
 </html>

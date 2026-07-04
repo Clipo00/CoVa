@@ -41,3 +41,4 @@ return [
     'card_blueprints' => ':count blueprints',
     'card_members' => ':count miembros',
 ];
+

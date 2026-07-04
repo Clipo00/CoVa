@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CoVa') }} - @yield('title', __('layouts.site_title'))</title>
+    <title>{{ config('app.name', 'CoVaR') }} - @yield('title', __('layouts.site_title'))</title>
 
     <!-- Theme Anti-Flash -->
     <script>
@@ -41,7 +41,7 @@
             <div class="text-center">
                 <a href="/" class="inline-block">
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                        {{ config('app.name', 'CoVa') }}
+                        {{ config('app.name', 'CoVaR') }}
                     </h1>
                 </a>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
