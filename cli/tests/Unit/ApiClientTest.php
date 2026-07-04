@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 class ApiClientTest extends TestCase
 {
     private const TEST_BASE_URL = 'https://api.CoVaR.app';
-    private const TEST_API_KEY = 'cova_test123';
+    private const TEST_API_KEY = 'covar_test123';
 
     /**
      * Create an ApiClient with a mock Guzzle handler for testing.
