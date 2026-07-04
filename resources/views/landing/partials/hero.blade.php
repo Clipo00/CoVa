@@ -1,4 +1,4 @@
-<section class="relative min-h-[calc(100vh-4rem)] flex items-center pt-16">
+﻿<section class="relative min-h-[calc(100vh-4rem)] flex items-center pt-16">
     {{-- Background gradient --}}
     <div class="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-white dark:from-gray-900 dark:to-gray-950 pointer-events-none" aria-hidden="true"></div>
 
@@ -69,7 +69,7 @@
                 {{-- Terminal caption --}}
                 <p class="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
                     @if(config('marketplace.enabled'))
-                        <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-500 dark:text-gray-400 font-mono text-xs">cova vault:fetch laravel-inertia</code>
+                        <code class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-500 dark:text-gray-400 font-mono text-xs">covar vault:fetch laravel-inertia</code>
                         —
                     @endif
                     {{ __('landing.terminal_caption') }}

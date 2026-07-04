@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -8,17 +8,17 @@ use App\ApiClient;
 use Illuminate\Console\Command;
 
 /**
- * Scaffold a project from a CoVa blueprint.
+ * Scaffold a project from a CoVaR blueprint.
  *
- * Fetches a resolved blueprint from the CoVa API via GET /api/blueprints/{slug},
+ * Fetches a resolved blueprint from the CoVaR API via GET /api/blueprints/{slug},
  * then writes .agent.md, .vscode/extensions.json, .vscode/mcp.json, and .env
  * to the current working directory. If the blueprint contains secret variables,
  * prompts for a password and verifies via POST /api/fetch/{slug}/verify before
  * writing decrypted values.
  *
  * Usage:
- *   cova vault:fetch laravel-api
- *   cova vault:fetch my-blueprint
+ *   covar vault:fetch laravel-api
+ *   covar vault:fetch my-blueprint
  */
 class FetchCommand extends Command
 {
@@ -31,7 +31,7 @@ class FetchCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Scaffold a project from a CoVa blueprint';
+    protected $description = 'Scaffold a project from a CoVaR blueprint';
 
     private ?ApiClient $apiClient;
 
@@ -405,7 +405,7 @@ class FetchCommand extends Command
     }
 
     /**
-     * Prompt for the CoVa password.
+     * Prompt for the CoVaR password.
      *
      * Extracted as a protected method so tests can mock it without
      * dealing with Windows hiddeninput.exe limitation.
@@ -419,7 +419,7 @@ class FetchCommand extends Command
     {
         $count = count($secrets);
         $password = $this->promptPassword(
-            "This blueprint contains {$count} secret variables. Enter your CoVa password",
+            "This blueprint contains {$count} secret variables. Enter your CoVaR password",
         );
 
         try {

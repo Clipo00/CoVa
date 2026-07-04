@@ -1,9 +1,9 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
 /**
- * Standalone PHAR build script for CoVa CLI.
+ * Standalone PHAR build script for covar CLI.
  *
  * This script bypasses the Laravel Zero Application bootstrap because:
  *   1. PHP 8.4+ made method_exists() stricter — Laravel Zero v2.0's
@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 define('BASE_PATH', __DIR__);
 
-$name = 'cova';
+$name = 'covar';
 $buildPath = BASE_PATH . '/builds';
 $pharFile = $buildPath . '/' . $name . '.phar';
 
@@ -51,7 +51,7 @@ $phar = new Phar(
 $phar->buildFromDirectory(BASE_PATH, $pattern);
 
 // Add the entry point (it's at root, not inside any structure dir)
-$phar->addFile(BASE_PATH . '/cova', 'cova');
+$phar->addFile(BASE_PATH . '/cova', 'covar');
 
 $phar->setStub($phar->createDefaultStub('bootstrap/init.php'));
 

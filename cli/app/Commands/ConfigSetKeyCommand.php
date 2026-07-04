@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -8,15 +8,15 @@ use App\ApiClient;
 use Illuminate\Console\Command;
 
 /**
- * Store the API key in ~/.config/cova/config.json with restricted permissions (0600).
+ * Store the API key in ~/.config/covar/config.json with restricted permissions (0600).
  *
  * Validates connectivity by calling GET /api/me before saving. Does NOT save
- * invalid or expired keys. The base_url defaults to https://api.cova.app
+ * invalid or expired keys. The base_url defaults to https://api.CoVaR.app
  * and can be overridden via the --base-url option.
  *
  * Usage:
- *   cova config:set-key cova_abc123
- *   cova config:set-key cova_abc123 --base-url=https://staging.cova.app
+ *   covar config:set-key cova_abc123
+ *   covar config:set-key cova_abc123 --base-url=https://staging.CoVaR.app
  */
 class ConfigSetKeyCommand extends Command
 {
@@ -30,7 +30,7 @@ class ConfigSetKeyCommand extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Set and validate the CoVa API key';
+    protected $description = 'Set and validate the CoVaR API key';
 
     private ?ApiClient $apiClient;
 
@@ -90,7 +90,7 @@ class ConfigSetKeyCommand extends Command
     private function createApiClient(string $key): ApiClient
     {
         return new ApiClient(null, [
-            'base_url' => $this->option('base-url') ?? 'https://api.cova.app',
+            'base_url' => $this->option('base-url') ?? 'https://api.CoVaR.app',
             'api_key' => $key,
         ]);
     }
@@ -127,7 +127,7 @@ class ConfigSetKeyCommand extends Command
         $config['api_key'] = $key;
 
         if (!isset($config['base_url'])) {
-            $config['base_url'] = $this->option('base-url') ?? 'https://api.cova.app';
+            $config['base_url'] = $this->option('base-url') ?? 'https://api.CoVaR.app';
         }
 
         file_put_contents(
@@ -154,6 +154,6 @@ class ConfigSetKeyCommand extends Command
     {
         $home = getenv('HOME') ?: getenv('USERPROFILE');
 
-        return $home . '/.config/cova/config.json';
+        return $home . '/.config/covar/config.json';
     }
 }

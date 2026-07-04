@@ -1,4 +1,4 @@
-# CoVa — Guía de Contribución
+﻿# CoVaR — Guía de Contribución
 
 > Setup del entorno, convenciones de código, y cómo agregar features al proyecto.
 > Audiencia: Desarrolladores que se suman al equipo o contribuyen al proyecto.
@@ -21,7 +21,7 @@
 
 ```bash
 # 1. Clonar repo
-git clone <repo-url> cova && cd cova
+git clone <repo-url> covar && cd covar
 
 # 2. Dependencias PHP
 composer install
@@ -50,7 +50,7 @@ php artisan serve
 ### 1.3 Estructura del Proyecto
 
 ```
-cova/
+covar/
 ├── app/
 │   ├── Models/              # Modelo User (alias, apunta a Auth\Models\User)
 │   └── Modules/             # Módulos de negocio (ver ARCHITECTURE.md)

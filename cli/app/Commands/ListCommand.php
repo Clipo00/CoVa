@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -10,14 +10,14 @@ use Illuminate\Console\Command;
 /**
  * List accessible blueprints as a formatted table.
  *
- * Fetches blueprints from the CoVa API via GET /api/blueprints and displays
+ * Fetches blueprints from the CoVaR API via GET /api/blueprints and displays
  * them in a table. With the --with-descriptions (-g) flag, includes the
  * description column for each blueprint.
  *
  * Usage:
- *   cova vault:list
- *   cova vault:list -g
- *   cova vault:list --with-descriptions
+ *   covar vault:list
+ *   covar vault:list -g
+ *   covar vault:list --with-descriptions
  */
 class ListCommand extends Command
 {

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 return [
     // Index
@@ -65,7 +65,7 @@ return [
     'delete_confirm' => '¿Estás seguro de que quieres eliminar este blueprint?',
     'delete_button' => 'Eliminar',
     'vault_fetch_label' => 'Acceso CLI',
-    'vault_fetch_hint' => 'Usa este comando en tu terminal para instalar el blueprint con CoVa CLI.',
+    'vault_fetch_hint' => 'Usa este comando en tu terminal para instalar el blueprint con covar CLI.',
     'vault_fetch_copied' => 'Comando copiado al portapapeles',
     'download_zip' => 'Descargar ZIP',
     'zip_disabled_email_title' => 'Verifica tu email para poder descargar el ZIP',

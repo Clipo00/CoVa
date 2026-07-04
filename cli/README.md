@@ -1,11 +1,11 @@
-# CoVa CLI
+﻿# covar CLI
 
-A command-line tool to list and fetch CoVa blueprints from your terminal.
+A command-line tool to list and fetch CoVaR blueprints from your terminal.
 
 ## Requirements
 
 - **PHP 8.3** or higher
-- A **CoVa API token** (generated from your CoVa profile settings)
+- A **CoVaR API token** (generated from your CoVaR profile settings)
 
 ## Installation
 
@@ -13,13 +13,13 @@ A command-line tool to list and fetch CoVa blueprints from your terminal.
 
 ```bash
 # Download the CLI tool
-curl -L -o cova https://cova.dev/downloads/cova.phar
+curl -L -o covar https://CoVaR.dev/downloads/covar.phar
 
 # Make it executable
-chmod +x cova
+chmod +x covar
 
 # Move it to a directory in your PATH
-sudo mv cova /usr/local/bin/
+sudo mv covar /usr/local/bin/
 ```
 
 ### Option 2: Run from source
@@ -32,7 +32,7 @@ cd cli
 composer install
 
 # Run the CLI
-php cova help
+php covar help
 ```
 
 ## Quick Start
@@ -40,15 +40,15 @@ php cova help
 ### 1. Set your API key
 
 ```bash
-cova config:set-key cova_your_api_token_here
+covar config:set-key cova_your_api_token_here
 ```
 
-The CLI validates the key immediately by connecting to the CoVa API. If the key is valid, it's saved to `~/.config/cova/config.json` with restricted permissions.
+The CLI validates the key immediately by connecting to the CoVaR API. If the key is valid, it's saved to `~/.config/covar/config.json` with restricted permissions.
 
 ### 2. List your blueprints
 
 ```bash
-cova vault:list
+covar vault:list
 ```
 
 Shows a table of all blueprints you have access to:
@@ -65,7 +65,7 @@ Shows a table of all blueprints you have access to:
 Include descriptions:
 
 ```bash
-cova vault:list -g
+covar vault:list -g
 ```
 
 ```
@@ -79,7 +79,7 @@ cova vault:list -g
 ### 3. Fetch a blueprint
 
 ```bash
-cova vault:fetch <slug>
+covar vault:fetch <slug>
 ```
 
 Scaffolds the blueprint files in your current directory: `.agent.md`, VSCode extensions, MCP configuration, and `.env`.
@@ -90,7 +90,7 @@ If the blueprint contains secret variables, you will be prompted for a password 
 
 | Command | Description |
 |---------|-------------|
-| `config:set-key <key>` | Set and validate your CoVa API key |
+| `config:set-key <key>` | Set and validate your CoVaR API key |
 | `vault:list` | List accessible blueprints |
 | `vault:fetch <slug>` | Fetch and scaffold a blueprint |
 | `help` | Show help and available commands |
@@ -99,39 +99,39 @@ If the blueprint contains secret variables, you will be prompted for a password 
 
 ### "Authentication failed"
 
-Your API key is invalid or expired. Generate a new one from your CoVa profile settings and run:
+Your API key is invalid or expired. Generate a new one from your CoVaR profile settings and run:
 
 ```bash
-cova config:set-key cova_your_new_token
+covar config:set-key cova_your_new_token
 ```
 
 ### "API access requires Pro or Enterprise plan"
 
-Your account plan does not include API access. Upgrade your plan from your CoVa account settings.
+Your account plan does not include API access. Upgrade your plan from your CoVaR account settings.
 
-### "Network error: unable to reach the CoVa API"
+### "Network error: unable to reach the CoVaR API"
 
-Check your internet connection and ensure the CoVa API is accessible. If you're behind a corporate proxy, you may need to configure your environment.
+Check your internet connection and ensure the CoVaR API is accessible. If you're behind a corporate proxy, you may need to configure your environment.
 
 ### "Config file not found"
 
 You haven't set an API key yet. Run:
 
 ```bash
-cova config:set-key cova_your_token_here
+covar config:set-key cova_your_token_here
 ```
 
 ### Using a custom API base URL
 
-If you're using a staging or self-hosted version of CoVa:
+If you're using a staging or self-hosted version of CoVaR:
 
 ```bash
-cova config:set-key cova_your_token --base-url=https://your-instance.cova.app
+covar config:set-key cova_your_token --base-url=https://your-instance.CoVaR.app
 ```
 
 ## Security
 
-- Your API key is stored in `~/.config/cova/config.json` with `0600` permissions (Unix only)
+- Your API key is stored in `~/.config/covar/config.json` with `0600` permissions (Unix only)
 - The key is sent as a Bearer token in the `Authorization` header for all API requests
 - All communication uses HTTPS
 - Secret variables are never displayed in plain text — password verification is required to decrypt them
@@ -141,7 +141,7 @@ cova config:set-key cova_your_token --base-url=https://your-instance.cova.app
 ```bash
 cd cli
 composer install
-php cova app:build
+php covar app:build
 ```
 
 The PHAR will be created in `builds/`.

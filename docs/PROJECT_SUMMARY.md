@@ -1,10 +1,10 @@
-# CoVa - The Config Vault
+﻿# CoVaR - The Config Vault
 
 > Zero-latency environment setup for modern developers.
 
 ## Visión General
 
-CoVa es una plataforma SaaS desarrollada en Laravel 13 que centraliza la lógica de configuración de entornos de desarrollo. Permite a equipos crear, compartir y ejecutar **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos desde `git clone` hasta productivo en segundos.
+CoVaR es una plataforma SaaS desarrollada en Laravel 13 que centraliza la lógica de configuración de entornos de desarrollo. Permite a equipos crear, compartir y ejecutar **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos desde `git clone` hasta productivo en segundos.
 
 ## Arquitectura
 

@@ -1,4 +1,4 @@
-# Documentación de CoVa
+﻿# Documentación de CoVaR
 
 > Centro de navegación de toda la documentación del proyecto.
 > Si llegaste acá sin saber qué leer, empezá por la sección **"¿Quién sos?"**.
@@ -9,7 +9,7 @@
 
 ### Soy stakeholder / product owner / nuevo en el proyecto
 → Empezá por acá:
-1. [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) — Qué es CoVa, arquitectura general, estado actual
+1. [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) — Qué es CoVaR, arquitectura general, estado actual
 2. [`FUNCTIONAL.md`](FUNCTIONAL.md) — Qué hace el producto, flujos de usuario, reglas de negocio
 3. [`CHANGELOG.md`](../CHANGELOG.md) — Qué se entregó y cuándo
 
@@ -69,7 +69,7 @@
 | Documento | Qué contiene |
 |-----------|-------------|
 | [`README.md`](../README.md) | Overview del proyecto, quickstart, stack, links a docs |
-| [`.agents/skills/`](../.agents/skills/) | Skills de AI para el proyecto (CoVa-specific) |
+| [`.agents/skills/`](../.agents/skills/) | Skills de AI para el proyecto (CoVaR-specific) |
 
 ---
 

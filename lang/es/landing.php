@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -11,7 +11,7 @@ return [
     // Hero
     'hero_title' => 'Tu entorno, en un comando.',
     'site_title' => 'CoVaR, tu propio espacio',
-    'hero_subtitle' => 'CoVaR es tu vault de configuraciones. Define, publica y ejecuta <strong>cova vault:fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
+    'hero_subtitle' => 'CoVaR es tu vault de configuraciones. Define, publica y ejecuta <strong>covar vault:fetch</strong>. Tu entorno listo en segundos, sin importar el stack.',
     'cta_primary' => 'Empieza gratis',
     'cta_secondary' => 'Ver cómo funciona',
 
@@ -38,7 +38,7 @@ return [
     'step1_desc' => 'Define variables, archivos de configuración y reglas de tu entorno visualmente en el dashboard. Sin tocar la terminal.',
     'step2_title' => 'Publícalo o guárdalo',
     'step2_desc' => 'Mantenlo privado para tu organización o compártelo en el Marketplace. Tus secretos nunca abandonan el vault: se quedan cifrados en tu organización. Viaje CERO.',
-    'step3_title' => 'Ejecuta cova vault:fetch',
+    'step3_title' => 'Ejecuta covar vault:fetch',
     'step3_desc' => 'Un solo comando y tu entorno está listo. Variables cargadas, archivos generados, todo en su lugar.',
     'step3_note' => 'Incluye reglas de contexto IA, scripts post-instalación, extensiones VS Code y servidores MCP.',
 
@@ -139,10 +139,10 @@ return [
     'cta_final_note' => 'No requiere tarjeta de crédito. Plan gratuito disponible.',
 
     // Terminal
-    'terminal_aria_label' => 'Demostración de terminal ejecutando cova vault:fetch',
+    'terminal_aria_label' => 'Demostración de terminal ejecutando covar vault:fetch',
     'terminal_title' => 'Terminal',
     'terminal_caption' => 'un solo comando, todo listo',
-    'terminal_cmd_fetch' => '$ cova vault:fetch laravel-inertia',
+    'terminal_cmd_fetch' => '$ covar vault:fetch laravel-inertia',
     'terminal_downloading' => '> Descargando blueprint...',
     'terminal_variables' => '> Variables cargadas: 12',
     'terminal_files' => '> Archivos generados: .env, .agent.md, .vscode/extensions.json, .vscode/mcp.json',

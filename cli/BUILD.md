@@ -1,6 +1,6 @@
-# Building the CoVa CLI PHAR
+﻿# Building the covar CLI PHAR
 
-This document explains how to build the standalone PHAR binary for the CoVa CLI tool.
+This document explains how to build the standalone PHAR binary for the covar CLI tool.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ composer install --no-dev --optimize-autoloader
 php -d phar.readonly=0 build-phar.php
 ```
 
-The compiled binary will be at `cli/builds/cova`.
+The compiled binary will be at `cli/builds/covar`.
 
 ## Smoke Test
 
@@ -28,13 +28,13 @@ After building, verify the PHAR works:
 
 ```bash
 # Set up a test API key (required for all commands)
-php builds/cova config:set-key YOUR_API_KEY --base-url=https://api.cova.app
+php builds/covar config:set-key YOUR_API_KEY --base-url=https://api.CoVaR.app
 
 # Verify the binary shows help
-php builds/cova help
+php builds/covar help
 
 # List available commands
-php builds/cova vault:list
+php builds/covar vault:list
 ```
 
 ## PHAR Size Target
@@ -60,7 +60,7 @@ This patch is safe and forwards-compatible. The build script `build-phar.php` in
 
 ### Eager Command Instantiation
 
-All custom commands (`ConfigSetKeyCommand`, `ListCommand`, `FetchCommand`) are eagerly instantiated in `bootstrap/init.php`. This means they require a valid config file (`~/.config/cova/config.json`) before any command can run, including `help`. If you get a "Config file not found" error, run `config:set-key` first.
+All custom commands (`ConfigSetKeyCommand`, `ListCommand`, `FetchCommand`) are eagerly instantiated in `bootstrap/init.php`. This means they require a valid config file (`~/.config/covar/config.json`) before any command can run, including `help`. If you get a "Config file not found" error, run `config:set-key` first.
 
 ### `phar.readonly`
 
@@ -72,7 +72,7 @@ The `build-phar.php` script at the project root of `cli/` replicates the Laravel
 
 1. Creates a `Phar` instance
 2. Adds files from `app/`, `bootstrap/`, `vendor/`, and `config/` directories
-3. Adds the `cova` entry point
+3. Adds the `covar` entry point
 4. Sets the stub to `bootstrap/init.php`
 5. Renames `.phar` to remove the extension
 
@@ -86,12 +86,12 @@ For CI builds, add this step:
   run: |
     composer install --no-dev --optimize-autoloader
     php -d phar.readonly=0 build-phar.php
-    php builds/cova help
+php builds/covar help
 ```
 
 ## Release Checklist
 
 - [ ] `composer install --no-dev --optimize-autoloader` runs without errors
 - [ ] PHAR builds successfully (under 15 MB)
-- [ ] Smoke test: `php builds/cova help` shows command list
+- [ ] Smoke test: `php builds/covar help` shows command list
 - [ ] Tests pass: `php cli/vendor/bin/phpunit -c cli/phpunit.xml`

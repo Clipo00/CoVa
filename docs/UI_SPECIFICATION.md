@@ -1,4 +1,4 @@
-# CoVa — Especificación de Interfaz de Usuario
+﻿# CoVaR — Especificación de Interfaz de Usuario
 
 > Detalle de pantallas, componentes, estados y decisiones de UX.
 > Audiencia: Desarrolladores frontend, diseñadores, y devs implementando nuevas pantallas.
@@ -44,14 +44,14 @@
 
 ### 2.1 Guest Layout
 - Sin navegación lateral
-- Header mínimo con logo CoVa
+- Header mínimo con logo CoVaR
 - Footer opcional
 - Fondo claro, centrado verticalmente
 - Responsive: mismo diseño en mobile
 
 ### 2.2 Auth Layout
 - **Sidebar** (desktop): Navegación fija izquierda
-  - Logo CoVa (arriba)
+  - Logo CoVaR (arriba)
   - Links: Dashboard, Organizations, Blueprints, Favorites
   - Separador
   - User dropdown (abajo): Perfil, Settings, Logout
@@ -259,7 +259,7 @@
 #### Estado: Sin Organizaciones
 - **Layout**: Centrado, ilustración + texto
 - **Contenido**:
-  - Título: "Bienvenido a CoVa"
+  - Título: "Bienvenido a CoVaR"
   - Subtítulo: "Crea tu primera organización para empezar a gestionar blueprints"
   - CTA grande: "Crear organización" → `/organizations/create`
   - Link secundario: "¿Qué es un blueprint?" (tooltip o modal)
@@ -328,11 +328,11 @@
       - Bloque de código con syntax highlighting
       - Botón "Copiar agent.md" (CopyToClipboard)
 - **Install Command** (si aplica):
-  - Bloque de código: `cova fetch {uuid}`
+  - Bloque de código: `covar fetch {uuid}`
   - Botón copiar
 
 - **Downloads Section** (new):
-  - Vault Fetch CLI card: shows `cova fetch {slug}` with copy button
+  - Vault Fetch CLI card: shows `covar fetch {slug}` with copy button
   - Download agent.md: button downloads full agent.md (Alpine.js Blob)
   - Download per-segment .md: one button per AI Context segment
   - Download .env template: button downloads generated .env file

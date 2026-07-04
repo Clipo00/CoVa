@@ -1,4 +1,4 @@
-<section id="docs" class="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900/50">
+﻿<section id="docs" class="py-20 sm:py-28 bg-gray-50 dark:bg-gray-900/50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Section title --}}
         <div class="text-center mb-16" x-data x-reveal>
@@ -25,13 +25,13 @@
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
                         <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step1_cmd1') }}</span>
-curl -L -o cova {{ config('app.cli_download_url') }}
+curl -L -o covar {{ config('app.cli_download_url') }}
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd2') }}</span>
-chmod +x cova
+chmod +x covar
 
 <span class="text-green-400"># {{ __('landing.docs_step1_cmd3') }}</span>
-sudo mv cova /usr/local/bin/</code></pre>
+sudo mv covar /usr/local/bin/</code></pre>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@ sudo mv cova /usr/local/bin/</code></pre>
                         {!! __('landing.docs_step2_desc') !!}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> cova config:set-key cova_xxxxxxxxxxxx</code></pre>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key cova_xxxxxxxxxxxx</code></pre>
                     </div>
                 </div>
             </div>
@@ -74,10 +74,10 @@ sudo mv cova /usr/local/bin/</code></pre>
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
                         <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-green-400"># {{ __('landing.docs_step3_cmd1') }}</span>
-<span class="text-cyan-400">$</span> cova vault:list
+<span class="text-cyan-400">$</span> covar vault:list
 
 <span class="text-green-400"># {{ __('landing.docs_step3_cmd2') }}</span>
-<span class="text-cyan-400">$</span> cova vault:fetch mi-blueprint</code></pre>
+<span class="text-cyan-400">$</span> covar vault:fetch mi-blueprint</code></pre>
                     </div>
 
                     {{-- Command reference table --}}
@@ -95,19 +95,19 @@ sudo mv cova /usr/local/bin/</code></pre>
                                 </thead>
                                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova config:set-key &lt;key&gt;</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar config:set-key &lt;key&gt;</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_set_key') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:list</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar vault:list</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_list') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova vault:fetch &lt;slug&gt;</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">covar vault:fetch &lt;slug&gt;</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_fetch') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">cova help</td>
+                                        <td class="py-3 pr-4 font-mono text-indigo-600 dark:text-indigo-400">                                covar help</td>
                                         <td class="py-3 text-gray-600 dark:text-gray-400">{{ __('landing.docs_cmd_help') }}</td>
                                     </tr>
                                 </tbody>

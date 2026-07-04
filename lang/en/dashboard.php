@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 return [
     'page_title' => 'Dashboard',
@@ -16,7 +16,7 @@ return [
 
     // Empty state
     'empty_heading' => "You don't have any organizations",
-    'empty_desc1' => 'To start using CoVa you need to create an organization.',
+    'empty_desc1' => 'To start using CoVaR you need to create an organization.',
     'empty_desc2' => 'An organization groups your blueprints and lets you collaborate with your team.',
     'empty_cta' => 'Create my first organization',
 

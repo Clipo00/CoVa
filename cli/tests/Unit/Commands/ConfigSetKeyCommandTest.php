@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -27,8 +27,8 @@ class ConfigSetKeyCommandTest extends TestCase
         $this->originalHome = getenv('HOME') ?: null;
 
         // Create a temporary home directory for config isolation
-        $this->tempHome = sys_get_temp_dir() . '/cova-test-' . bin2hex(random_bytes(4));
-        $this->configDir = $this->tempHome . '/.config/cova';
+        $this->tempHome = sys_get_temp_dir() . '/covar-test-' . bin2hex(random_bytes(4));
+        $this->configDir = $this->tempHome . '/.config/covar';
         $this->configPath = $this->configDir . '/config.json';
 
         mkdir($this->configDir, 0755, true);
@@ -125,7 +125,7 @@ class ConfigSetKeyCommandTest extends TestCase
 
         $this->assertIsArray($config);
         $this->assertSame('cova_valid1234567', $config['api_key']);
-        $this->assertSame('https://api.cova.app', $config['base_url']);
+        $this->assertSame('https://api.CoVaR.app', $config['base_url']);
     }
 
     #[Test]
@@ -151,7 +151,7 @@ class ConfigSetKeyCommandTest extends TestCase
     {
         // Create an existing config file with a valid key
         file_put_contents($this->configPath, json_encode([
-            'base_url' => 'https://api.cova.app',
+            'base_url' => 'https://api.CoVaR.app',
             'api_key' => 'cova_existing_valid_key',
         ]));
 
@@ -177,7 +177,7 @@ class ConfigSetKeyCommandTest extends TestCase
     {
         // Create existing config with custom base_url
         file_put_contents($this->configPath, json_encode([
-            'base_url' => 'https://custom.cova.app',
+            'base_url' => 'https://custom.CoVaR.app',
             'api_key' => 'cova_old_key_short',
         ]));
 
@@ -196,7 +196,7 @@ class ConfigSetKeyCommandTest extends TestCase
         $config = json_decode(file_get_contents($this->configPath), true);
 
         $this->assertSame('cova_new_key_short', $config['api_key']);
-        $this->assertSame('https://custom.cova.app', $config['base_url']);
+        $this->assertSame('https://custom.CoVaR.app', $config['base_url']);
     }
 
     #[Test]
@@ -207,7 +207,7 @@ class ConfigSetKeyCommandTest extends TestCase
 
         $exitCode = $tester->execute([
             'key' => 'cova_valid_short_key',
-            '--base-url' => 'https://staging.cova.app',
+            '--base-url' => 'https://staging.CoVaR.app',
         ]);
 
         $this->assertSame(0, $exitCode);
@@ -218,7 +218,7 @@ class ConfigSetKeyCommandTest extends TestCase
 
         $config = json_decode(file_get_contents($this->configPath), true);
 
-        $this->assertSame('https://staging.cova.app', $config['base_url']);
+        $this->assertSame('https://staging.CoVaR.app', $config['base_url']);
     }
 
     #[Test]

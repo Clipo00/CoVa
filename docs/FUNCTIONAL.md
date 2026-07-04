@@ -1,4 +1,4 @@
-# CoVa — Especificación Funcional
+﻿# CoVaR — Especificación Funcional
 
 > Documento de requisitos funcionales y comportamiento del producto.
 > Audiencia: Desarrolladores, product owners, y stakeholders técnicos.
@@ -411,7 +411,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 
 ### 5.1 Sin Organizaciones
 - CTA grande: "Crear primera organización"
-- Mensaje explicativo del valor de CoVa
+- Mensaje explicativo del valor de CoVaR
 - Link a `/organizations/create`
 
 ### 5.2 Con Organizaciones
@@ -591,7 +591,7 @@ Developer en /blueprints/{uuid}
 - **Estado**: ✅ Completo
 - **Descripción**: Gestión de tokens de API personales para autenticación del futuro CLI. Integración con Laravel Sanctum, UI en perfil de usuario (tab Seguridad), plan-gating, expiración obligatoria, y rate limiting.
 - **Implementado**: `HasApiTokens` en User, migración `personal_access_tokens`, `ApiTokenManager` Livewire, `CreateApiToken`/`RevokeApiToken` Actions con `VerifiesPassword` trait, perfil con 3 tabs (Alpine.js + URL hash sync), 24 tests.
-- **Pendiente**: CLI (`cova fetch`), notificaciones de expiración.
+- **Pendiente**: CLI (`covar fetch`), notificaciones de expiración.
 
 ---
 

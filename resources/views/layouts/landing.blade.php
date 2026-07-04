@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -251,7 +251,7 @@
                 finished: false,
                 running: false,
                 content: customLines || [
-                    { text: '$ cova vault:fetch laravel-inertia', cls: 'terminal-prompt' },
+                    { text: '$ covar vault:fetch laravel-inertia', cls: 'terminal-prompt' },
                     { text: '', cls: '' },
                     { text: '> Descargando blueprint...', cls: 'terminal-info' },
                     { text: '> Variables cargadas: 12', cls: 'terminal-info' },

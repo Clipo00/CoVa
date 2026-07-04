@@ -1,4 +1,4 @@
-<section id="pricing" class="py-20 sm:py-28 bg-white dark:bg-gray-950">
+﻿<section id="pricing" class="py-20 sm:py-28 bg-white dark:bg-gray-950">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {{-- Section title --}}
         <div class="text-center mb-16" x-data x-reveal>
@@ -75,7 +75,7 @@
                         ],
                         'excluded' => [],
                         'cta' => __('landing.plan_cta_enterprise'),
-                        'cta_url' => 'mailto:enterprise@cova.app',
+                        'cta_url' => 'mailto:enterprise@CoVaR.app',
                         'popular' => false,
                         'highlight' => false,
                     ],

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 declare(strict_types=1);
 
@@ -19,7 +19,7 @@ require __DIR__.'/autoload.php';
 | executed in this console and the response sent back to a terminal
 | or another output device for the developers.
 |
-| We register the custom CoVa commands on the application instance.
+| We register the custom covar commands on the application instance.
 |
 */
 

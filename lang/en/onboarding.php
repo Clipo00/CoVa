@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 return [
     // Page
@@ -13,7 +13,7 @@ return [
     'step_done' => 'Done',
 
     // Step 1: Welcome
-    'welcome_heading' => 'Welcome to CoVa, :name',
+    'welcome_heading' => 'Welcome to CoVaR, :name',
     'welcome_description' => "Let's set up your account in just a few minutes. Follow these steps to start creating and sharing blueprints with your team.",
 
     // Step 2: Organization (required)

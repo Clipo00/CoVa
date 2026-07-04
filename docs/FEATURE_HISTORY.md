@@ -1,4 +1,4 @@
-# CoVa — Historial de Features
+﻿# CoVaR — Historial de Features
 
 > Narrativa de evolución del producto: por qué se construyó cada feature, qué problemas resolvió, y qué se aprendió en el camino.
 > Audiencia: Stakeholders técnicos, nuevos devs buscando contexto histórico, y revisiones de producto.
@@ -51,7 +51,7 @@ Si centralizamos la configuración de entornos en "plantillas ejecutables" (Blue
 
 **Qué se construyó**: Crear, listar, ver blueprints. UUID v4 como identificador público. Favoritos.
 
-**Por qué**: El core del producto. Sin blueprints no hay CoVa.
+**Por qué**: El core del producto. Sin blueprints no hay CoVaR.
 
 **Decisión técnica**: UUID en lugar de ID autoincremental. URLs como `/blueprints/abc-123` son más seguras (no revelan cantidad de registros) y shareables.
 
@@ -173,7 +173,7 @@ Cada uno de estos tiene una estructura diferente. ¿Cómo los modelamos sin crea
 
 **Qué se construyó**: Tab AI Context con presets, skills, y custom rules. Generación de `agent.md` via `ResolveBlueprint`.
 
-**Por qué**: Los agentes AI (Claude Code, Cursor, GitHub Copilot) usan archivos de contexto (`agent.md`, `.cursorrules`). CoVa puede generar estos archivos automáticamente desde la config del blueprint.
+**Por qué**: Los agentes AI (Claude Code, Cursor, GitHub Copilot) usan archivos de contexto (`agent.md`, `.cursorrules`). CoVaR puede generar estos archivos automáticamente desde la config del blueprint.
 
 **Ejemplo de salida**:
 ```markdown
@@ -184,7 +184,7 @@ Cada uno de estos tiene una estructura diferente. ¿Cómo los modelamos sin crea
 - Pest Testing
 
 ## Skills
-- CoVa Blueprints
+- CoVaR Blueprints
 - Laravel Actions
 
 ## Custom Rules
@@ -213,7 +213,7 @@ Cada uno de estos tiene una estructura diferente. ¿Cómo los modelamos sin crea
 
 ### Por qué
 
-El valor de CoVa se multiplica si los blueprints pueden compartirse públicamente. Un marketplace permite:
+El valor de CoVaR se multiplica si los blueprints pueden compartirse públicamente. Un marketplace permite:
 - Templates oficiales de la comunidad
 - Discovery de blueprints para stacks populares
 - Network effects (más usuarios → más blueprints → más usuarios)
@@ -320,7 +320,7 @@ Se identificaron gaps de seguridad durante la creación de la skill `covar-secur
 
 ### El Problema
 
-La ruta raíz (`/`) mostraba la landing default de Laravel 13: un SVG del logo de Laravel, links a Laracasts y documentación, y botón "Deploy now". Esto era confuso para visitantes que llegaban a CoVa sin saber qué hace el producto. No comunicaba el valor diferencial ni tenía CTAs hacia registro.
+La ruta raíz (`/`) mostraba la landing default de Laravel 13: un SVG del logo de Laravel, links a Laracasts y documentación, y botón "Deploy now". Esto era confuso para visitantes que llegaban a CoVaR sin saber qué hace el producto. No comunicaba el valor diferencial ni tenía CTAs hacia registro.
 
 Además, visitantes autenticados veían la misma landing genérica en lugar de ser redirigidos al dashboard.
 
@@ -328,7 +328,7 @@ Además, visitantes autenticados veían la misma landing genérica en lugar de s
 
 Una landing page de alto impacto estructurada en 6 secciones:
 
-1. **Hero**: Terminal animada ejecutando `cova vault:fetch` para demostrar el core loop del producto en segundos
+1. **Hero**: Terminal animada ejecutando `covar vault:fetch` para demostrar el core loop del producto en segundos
 2. **The Pain**: Tres cards que crean empatía con problemas reales (caos del .env, configuración manual, falta de estandarización)
 3. **How it Works**: Define → Publish → Fetch, el flujo completo explicado en 30 segundos
 4. **Marketplace Preview**: Grid con 6 plantillas populares (mock data) que muestran el valor inmediato
@@ -380,7 +380,7 @@ lang/
 
 3. **`prefers-reduced-motion` no es opcional**: Muchos devs usan `prefers-reduced-motion: reduce`. Ignorarlo es una mala experiencia de usuario. La landing lo respeta en terminal typing, scroll reveal, y hover effects.
 
-4. **Las landing pages son el punto ciego de seguridad más común**: Como no tienen auth, suelen no auditarlas. La landing de CoVa no expone datos sensibles, no tiene formularios, y todos los CTAs apuntan a rutas internas protegidas.
+4. **Las landing pages son el punto ciego de seguridad más común**: Como no tienen auth, suelen no auditarlas. La landing de CoVaR no expone datos sensibles, no tiene formularios, y todos los CTAs apuntan a rutas internas protegidas.
 
 5. **Mock data > DB queries para landing**: Las landing pages son públicas y deben cargar rápido. Consultar la BD para mostrar plantillas del marketplace introduce latencia innecesaria y complejidad. Mock data es la decisión correcta hasta que el marketplace sea una feature real.
 
@@ -411,7 +411,7 @@ lang/
 
 ### El Problema
 
-Una auditoría de seguridad reveló 6 gaps de autorización y validación que comprometían el modelo de seguridad de CoVa. Los roles no se respetaban correctamente (maintainers podían cambiar roles), las invitaciones no verificaban identidad, no había protección contra emails desechables, y no existía MFA.
+Una auditoría de seguridad reveló 6 gaps de autorización y validación que comprometían el modelo de seguridad de CoVaR. Los roles no se respetaban correctamente (maintainers podían cambiar roles), las invitaciones no verificaban identidad, no había protección contra emails desechables, y no existía MFA.
 
 ### Decisiones Clave
 
@@ -453,7 +453,7 @@ Una auditoría de seguridad reveló 6 gaps de autorización y validación que co
 
 ### El Problema
 
-CoVa tenía la infraestructura básica para publicar blueprints (`is_public`, toggle de publish), pero no era un marketplace real. No había listado público, ni búsqueda, ni forma de que los usuarios descubrieran plantillas de la comunidad. El "marketplace preview" en la landing page usaba mock data hardcodeado.
+CoVaR tenía la infraestructura básica para publicar blueprints (`is_public`, toggle de publish), pero no era un marketplace real. No había listado público, ni búsqueda, ni forma de que los usuarios descubrieran plantillas de la comunidad. El "marketplace preview" en la landing page usaba mock data hardcodeado.
 
 ### La Hipótesis
 
@@ -570,7 +570,7 @@ Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (
 
 ## Fase 12: API Token Management (Junio 2026)
 
-**El Problema**: CoVa necesitaba tokens de API para que el futuro CLI (`cova fetch`) pudiera autenticarse. Sanctum estaba instalado pero completamente sin usar: no había `HasApiTokens` en User, no existía la migración `personal_access_tokens`, y no había ninguna UI para gestionar tokens.
+**El Problema**: CoVaR necesitaba tokens de API para que el futuro CLI (`covar fetch`) pudiera autenticarse. Sanctum estaba instalado pero completamente sin usar: no había `HasApiTokens` en User, no existía la migración `personal_access_tokens`, y no había ninguna UI para gestionar tokens.
 
 **La Solución**: Integrar Sanctum en el módulo Auth existente y rediseñar el perfil de usuario en tabs para acomodar los tokens junto a las settings de seguridad existentes (password, MFA).
 
