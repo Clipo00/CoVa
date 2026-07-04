@@ -198,7 +198,7 @@ class DownloadBlueprintZip
                 for ($i = 0; $i < $zip->numFiles; $i++) {
                     $name = $zip->getNameIndex($i);
                     if ($name !== false) {
-                        $zip->setEncryptionName($name, ZipArchive::EM_AES_256, $password);
+                        $zip->setEncryptionName($name, ZipArchive::EM_TRAD_PKWARE, $password);
                     }
                 }
             }
