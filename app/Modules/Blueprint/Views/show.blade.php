@@ -127,7 +127,7 @@
                         </button>
                     @elseif($hasSecrets)
                         <button type="button"
-                            onclick="Alpine.store('confirm').ask({ message: '{{ __('blueprint.zip_download_encrypted') }}', confirmText: '{{ __('blueprint.zip_download_button') }}', onConfirm: function() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(function() { document.getElementById('zip-spinner').classList.add('hidden'); }, 5000); } })"
+                            onclick="Alpine.store('confirm').ask({ message: '{{ __('blueprint.zip_download_encrypted') }}', confirmText: '{{ __('blueprint.zip_download_button') }}', onConfirm: function() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); } })"
                             class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
@@ -137,7 +137,7 @@
                         </button>
                     @else
                         <button type="button"
-                            onclick="document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); setTimeout(() => document.getElementById('zip-spinner').classList.add('hidden'), 5000);"
+                            onclick="document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden');"
                             class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                             title="{{ __('blueprint.download_zip') }}"
                         >
@@ -151,14 +151,15 @@
                         @csrf
                     </form>
 
-                    <div id="zip-spinner" class="hidden fixed inset-0 z-50 flex items-center justify-center">
-                        <div class="fixed inset-0 bg-black/50"></div>
-                        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 text-center">
+                    <div id="zip-spinner" class="hidden fixed inset-0 z-50 flex items-center justify-center" onclick="this.classList.add('hidden')">
+                        <div class="fixed inset-0 bg-black/50 cursor-pointer"></div>
+                        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 text-center" onclick="event.stopPropagation()">
                             <svg class="animate-spin h-10 w-10 text-indigo-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                             <p class="text-gray-600 dark:text-gray-300">{{ __('blueprint.zip_loading') }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">{{ __('blueprint.zip_dismiss_hint') }}</p>
                         </div>
                     </div>
 

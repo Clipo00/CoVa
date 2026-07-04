@@ -86,7 +86,7 @@ return [
     'var_secret' => 'Secret',
     'var_actions' => 'Actions',
     'var_key_placeholder' => 'DB_HOST',
-    'var_group_placeholder' => '.env',
+    'var_group_placeholder' => 'database',
     'section_color' => 'Section color',
     'var_type_fixed' => 'Fixed',
     'var_type_empty' => 'Empty',
