@@ -59,7 +59,7 @@ sudo mv covar /usr/local/bin/
                         {!! __('landing.docs_step2_desc') !!}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx</code></pre>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx --base-url={{ config('app.url') }}</code></pre>
                     </div>
                 </div>
             </div>
