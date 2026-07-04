@@ -263,6 +263,4 @@ return [
     'docs_trouble_config_desc' => 'El CLI guarda la configuración en ~/.config/covar/config.json. Si no existe, ejecuta primero covar config:set-key <tu-key> para crearlo.',
     'docs_trouble_connection_title' => 'Error de conexión con la API',
     'docs_trouble_connection_desc' => 'Verifica que la URL base sea correcta. Si despliegas CoVaR en tu propio servidor, usa --base-url para apuntar a tu dominio.',
-    'docs_trouble_debug_title' => 'Activar modo debug',
-    'docs_trouble_debug_desc' => 'Si algo falla y necesitas ver los detalles del error, activa el modo debug. En producción los errores se muestran de forma genérica por seguridad.',
 ];

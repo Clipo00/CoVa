@@ -174,19 +174,6 @@ php covar config:set-key &lt;key&gt;</code></pre>
                     <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code>covar config:set-key &lt;key&gt; --base-url=https://tu-dominio.com</code></pre>
                 </details>
 
-                {{-- Debug mode --}}
-                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
-                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🐛 {{ __('landing.docs_trouble_debug_title') }}</span>
-                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </summary>
-                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_debug_desc') }}</p>
-                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code><span class="text-green-400"># Linux/macOS</span>
-COVAR_DEBUG=1 covar vault:list
-
-<span class="text-green-400"># Windows PowerShell</span>
-$env:COVAR_DEBUG=1; covar vault:list</code></pre>
-                </details>
             </div>
         </div>
 
