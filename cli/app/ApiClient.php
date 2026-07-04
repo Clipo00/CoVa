@@ -205,7 +205,7 @@ class ApiClient
         }
 
         if (!isset($config['base_url'])) {
-            $config['base_url'] = 'https://api.CoVaR.app';
+            $config['base_url'] = config('app.url', 'https://api.CoVaR.app');
         }
 
         return $config;

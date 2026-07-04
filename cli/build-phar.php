@@ -39,6 +39,27 @@ $structure = [
 
 echo "Building: $name\n";
 
+// Read APP_URL from parent project's .env for default base URL
+$envPath = dirname(__DIR__) . '/.env';
+$baseUrl = 'http://127.0.0.1:8000';
+if (file_exists($envPath)) {
+    $envContent = file_get_contents($envPath);
+    if (preg_match('/^APP_URL=(.+)$/m', $envContent, $matches)) {
+        $baseUrl = trim($matches[1]);
+    }
+}
+echo "Default base URL: $baseUrl\n";
+
+// Write the base URL into the CLI config
+$configPath = BASE_PATH . '/config/config.php';
+$configContent = file_get_contents($configPath);
+$configContent = preg_replace(
+    "/'url' => '.*?'/",
+    "'url' => '{$baseUrl}'",
+    $configContent
+);
+file_put_contents($configPath, $configContent);
+
 // Build regex pattern matching Laravel Zero's Build.php approach
 $pattern = '#(' . implode('|', $structure) . ')#';
 
