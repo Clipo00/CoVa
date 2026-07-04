@@ -34,6 +34,7 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
         'locale',
         'avatar',
         'password',
+        'password_change_required',
         'plan_id',
         'is_system',
         'mfa_enabled',
@@ -54,6 +55,7 @@ class User extends Authenticatable implements CanResetPasswordContract, MustVeri
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_change_required' => 'boolean',
             'mfa_enabled' => 'boolean',
             'mfa_prompted_at' => 'datetime',
             'onboarding_completed_at' => 'datetime',

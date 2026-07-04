@@ -46,6 +46,10 @@ return [
     'current_password' => 'Current password',
     'new_password' => 'New password',
     'new_password_confirm' => 'Confirm new password',
+    'confirm_password' => 'Confirm password',
+    'change_password_title' => 'Set your password',
+    'change_password_button' => 'Set password',
+    'password_change_required' => 'You have been invited to an organization. For security, you must set a password before continuing.',
     'save_button' => 'Save changes',
     'saving_button' => 'Saving...',
 

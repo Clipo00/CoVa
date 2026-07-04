@@ -46,6 +46,10 @@ return [
     'current_password' => 'Contraseña actual',
     'new_password' => 'Nueva contraseña',
     'new_password_confirm' => 'Confirmar nueva contraseña',
+    'confirm_password' => 'Confirmar contraseña',
+    'change_password_title' => 'Establece tu contraseña',
+    'change_password_button' => 'Establecer contraseña',
+    'password_change_required' => 'Has sido invitado a una organización. Por seguridad, debes establecer una contraseña antes de continuar.',
     'save_button' => 'Guardar cambios',
     'saving_button' => 'Guardando...',
 

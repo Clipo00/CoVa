@@ -2,6 +2,7 @@
 
 use App\Modules\Auth\Middleware\EnsureApiAccess;
 use App\Modules\Auth\Middleware\EnsureOnboardingCompleted;
+use App\Modules\Auth\Middleware\EnsurePasswordNotTemporary;
 use App\Modules\Organization\Middleware\EnsureOrganizationAccess;
 use App\Modules\Organization\Middleware\EnsureRole;
 use App\Modules\Shared\Http\Middleware\EnsureSecurityHeaders;
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'org.access' => EnsureOrganizationAccess::class,
             'org.role' => EnsureRole::class,
             'onboarding' => EnsureOnboardingCompleted::class,
+            'password.temp' => EnsurePasswordNotTemporary::class,
         ]);
 
         $middleware->append(EnsureSecurityHeaders::class);
@@ -39,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Locale — corre DENTRO del grupo web, después de EncryptCookies y StartSession
         $middleware->appendToGroup('web', SetLocaleFromCookie::class);
+        $middleware->appendToGroup('web', EnsurePasswordNotTemporary::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Loggear excepciones no capturadas con contexto completo

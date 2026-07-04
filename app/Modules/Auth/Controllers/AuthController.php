@@ -43,6 +43,11 @@ class AuthController
         return view('auth::mfa-setup');
     }
 
+    public function showChangePassword(): View
+    {
+        return view('auth::change-password');
+    }
+
     public function showForgotPassword(): View
     {
         return view('auth::forgot-password');

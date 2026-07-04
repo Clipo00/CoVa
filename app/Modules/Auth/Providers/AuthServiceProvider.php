@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Auth\Providers;
 
 use App\Modules\Auth\Livewire\Components\UserDropdown;
+use App\Modules\Auth\Livewire\Forms\ChangePasswordForm;
 use App\Modules\Auth\Livewire\Forms\ForgotPasswordForm;
 use App\Modules\Auth\Livewire\Forms\LoginForm;
 use App\Modules\Auth\Livewire\Forms\MfaChallengeForm;
@@ -35,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         Livewire::component('auth.forms.user-profile-form', UserProfileForm::class);
         Livewire::component('auth.forms.mfa-challenge-form', MfaChallengeForm::class);
         Livewire::component('auth.forms.mfa-setup-form', MfaSetupForm::class);
+        Livewire::component('auth.forms.change-password-form', ChangePasswordForm::class);
         Livewire::component('auth.forms.onboarding-wizard', OnboardingWizard::class);
         Livewire::component('auth.components.user-dropdown', UserDropdown::class);
         Livewire::component('auth.api-token-manager', ApiTokenManager::class);
