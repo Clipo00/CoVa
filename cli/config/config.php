@@ -19,7 +19,7 @@ return [
         'version' => '1.0.0',
         'env' => 'production',
         'debug' => false,
-        'url' => 'https://api.CoVaR.app',
+        'url' => env('APP_URL', ''),
         'timezone' => 'UTC',
     ],
 ];
