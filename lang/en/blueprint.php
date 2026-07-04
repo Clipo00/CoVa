@@ -67,6 +67,7 @@ return [
     'vault_fetch_hint' => 'Use this command in your terminal to install the blueprint with CoVa CLI.',
     'vault_fetch_copied' => 'Command copied to clipboard',
     'download_zip' => 'Download ZIP',
+    'zip_disabled_email_title' => 'Verify your email to download the ZIP',
     'download_agent_md' => 'Download agent.md',
     'download_env' => 'Download .env',
     'download_segment' => 'Download',
