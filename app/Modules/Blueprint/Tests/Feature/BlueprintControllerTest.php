@@ -7,11 +7,13 @@ namespace App\Modules\Blueprint\Tests\Feature;
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Models\BlueprintVariable;
+use App\Modules\Blueprint\Notifications\BlueprintZipPassword;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
 use Database\Seeders\MarketplaceSeeder;
 use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class BlueprintControllerTest extends TestCase
@@ -681,7 +683,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/b/download-test-bp/download');
+        $response = $this->actingAs($user)->post('/b/download-test-bp/download');
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'application/zip');
@@ -708,7 +710,7 @@ class BlueprintControllerTest extends TestCase
             'plan_id' => $organization->plan_id,
         ]);
 
-        $response = $this->actingAs($outsideUser)->get('/b/no-access-bp/download');
+        $response = $this->actingAs($outsideUser)->post('/b/no-access-bp/download');
 
         $response->assertStatus(403);
     }
@@ -717,16 +719,96 @@ class BlueprintControllerTest extends TestCase
     {
         [$user, $organization] = $this->createUserWithOrg();
 
-        $response = $this->actingAs($user)->get('/b/non-existent-bp/download');
+        $response = $this->actingAs($user)->post('/b/non-existent-bp/download');
 
         $response->assertStatus(404);
     }
 
     public function test_download_requires_authentication(): void
     {
-        $response = $this->get('/b/some-blueprint/download');
+        $response = $this->post('/b/some-blueprint/download');
 
         $response->assertRedirect('/login');
+    }
+
+    public function test_download_encrypted_zip_sends_notification_with_verified_email(): void
+    {
+        Notification::fake();
+
+        [$user, $organization] = $this->createUserWithOrg();
+        $user->markEmailAsVerified();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440103',
+            'organization_id' => $organization->id,
+            'slug' => 'encrypted-zip-bp',
+            'title' => 'Encrypted ZIP BP',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'skill', 'name' => 'psr12'],
+                        ],
+                    ],
+                ],
+            ],
+            'created_by' => $user->id,
+        ]);
+
+        BlueprintVariable::create([
+            'blueprint_id' => $blueprint->id,
+            'key' => 'DB_PASSWORD',
+            'type' => 'fixed',
+            'default_value' => 'secret123',
+            'is_secret' => true,
+            'section' => 'database',
+            'sort_order' => 0,
+        ]);
+
+        $response = $this->actingAs($user)->post('/b/encrypted-zip-bp/download');
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/zip');
+
+        Notification::assertSentTo($user, BlueprintZipPassword::class);
+    }
+
+    public function test_download_encrypted_zip_fails_with_unverified_email(): void
+    {
+        [$user, $organization] = $this->createUserWithOrg();
+
+        $blueprint = Blueprint::create([
+            'uuid' => '550e8400-e29b-41d4-a716-446655440104',
+            'organization_id' => $organization->id,
+            'slug' => 'unverified-email-bp',
+            'title' => 'Unverified Email BP',
+            'tabs_config' => [
+                [
+                    'type' => 'ai_context',
+                    'config' => [
+                        'segments' => [
+                            ['type' => 'skill', 'name' => 'psr12'],
+                        ],
+                    ],
+                ],
+            ],
+            'created_by' => $user->id,
+        ]);
+
+        BlueprintVariable::create([
+            'blueprint_id' => $blueprint->id,
+            'key' => 'API_SECRET',
+            'type' => 'fixed',
+            'default_value' => 'super-secret',
+            'is_secret' => true,
+            'section' => 'api',
+            'sort_order' => 0,
+        ]);
+
+        $response = $this->actingAs($user)->post('/b/unverified-email-bp/download');
+
+        $response->assertStatus(403);
     }
 
     public function test_download_content_is_valid_zip(): void
@@ -752,7 +834,7 @@ class BlueprintControllerTest extends TestCase
             'created_by' => $user->id,
         ]);
 
-        $response = $this->actingAs($user)->get('/b/valid-zip-bp/download');
+        $response = $this->actingAs($user)->post('/b/valid-zip-bp/download');
 
         $response->assertStatus(200);
 

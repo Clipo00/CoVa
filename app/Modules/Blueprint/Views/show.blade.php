@@ -110,14 +110,50 @@
                         </svg>
                     </a>
 
-                    <a href="{{ route('blueprints.download', $blueprint->slug) }}"
-                        class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                        title="{{ __('blueprint.download_zip') }}"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </a>
+                    @php
+                        $hasSecrets = $blueprint->variables->where('is_secret', true)->isNotEmpty();
+                    @endphp
+
+                    @if($hasSecrets)
+                        <button type="button"
+                            @click="$store.confirm.ask({
+                                message: '{{ __('blueprint.zip_download_encrypted') }}',
+                                confirmText: '{{ __('blueprint.zip_download_button') }}',
+                                onConfirm() { document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden'); }
+                            })"
+                            class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                            title="{{ __('blueprint.download_zip') }}"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </button>
+                    @else
+                        <button type="button"
+                            onclick="document.getElementById('download-zip-form').submit(); document.getElementById('zip-spinner').classList.remove('hidden');"
+                            class="inline-flex items-center justify-center w-9 h-9 border border-gray-300 dark:border-gray-600 shadow-sm rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                            title="{{ __('blueprint.download_zip') }}"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </button>
+                    @endif
+
+                    <form id="download-zip-form" method="POST" action="{{ route('blueprints.download', $blueprint->slug) }}" class="hidden">
+                        @csrf
+                    </form>
+
+                    <div id="zip-spinner" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+                        <div class="fixed inset-0 bg-black/50"></div>
+                        <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 z-10 text-center">
+                            <svg class="animate-spin h-10 w-10 text-indigo-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p class="text-gray-600 dark:text-gray-300">{{ __('blueprint.zip_loading') }}</p>
+                        </div>
+                    </div>
 
                     @can('publish', $blueprint)
                         @if($blueprint->is_public)

@@ -17,9 +17,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/b/{blueprint:slug}/edit', [BlueprintController::class, 'edit'])
         ->name('blueprints.edit')
         ->where('blueprint', '[a-z0-9]+(?:-[a-z0-9]+)*');
-    Route::get('/b/{blueprint:slug}/download', [BlueprintController::class, 'download'])
+    Route::post('/b/{blueprint:slug}/download', [BlueprintController::class, 'download'])
         ->name('blueprints.download')
-        ->middleware('throttle:30,1')
+        ->middleware(['throttle:30,1', 'can:view,blueprint'])
         ->where('blueprint', '[a-z0-9]+(?:-[a-z0-9]+)*');
 
     // Legacy UUID redirects (301)

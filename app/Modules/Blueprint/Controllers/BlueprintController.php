@@ -165,13 +165,13 @@ class BlueprintController
         ]);
     }
 
-    public function download(Blueprint $blueprint, DownloadBlueprintZip $downloadAction): StreamedResponse
+    public function download(Blueprint $blueprint, DownloadBlueprintZip $action): StreamedResponse
     {
-        if (!auth()->user()->can('view', $blueprint)) {
-            abort(403);
+        if ($action->hasSecrets($blueprint) && !auth()->user()->hasVerifiedEmail()) {
+            abort(403, __('blueprint.zip_email_unverified'));
         }
 
-        return $downloadAction->execute($blueprint);
+        return $action->execute($blueprint);
     }
 
     public function edit(Blueprint $blueprint): View
