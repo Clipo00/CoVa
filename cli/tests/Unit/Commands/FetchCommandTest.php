@@ -272,7 +272,7 @@ class FetchCommandTest extends TestCase
      */
     private function createCommandTester(?ApiClient $client = null): CommandTester
     {
-        $command = new FetchCommand($client);
+        $command = new FetchCommand(); $command->setApiClient($client);
         $command->setLaravel($this->container);
 
         return new CommandTester($command);

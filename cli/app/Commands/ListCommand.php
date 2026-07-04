@@ -32,15 +32,11 @@ class ListCommand extends Command
      */
     protected $description = 'Lista los blueprints que tienes disponibles';
 
-    private ?ApiClient $apiClient;
+    private ?ApiClient $apiClient = null;
 
-    /**
-     * @param ApiClient|null $apiClient Optional injected client for testing
-     */
-    public function __construct(?ApiClient $apiClient = null)
+    public function setApiClient(?ApiClient $client): void
     {
-        parent::__construct();
-        $this->apiClient = $apiClient;
+        $this->apiClient = $client;
     }
 
     /**

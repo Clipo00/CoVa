@@ -33,15 +33,11 @@ class FetchCommand extends Command
      */
     protected $description = 'Descarga y despliega un blueprint con sus archivos';
 
-    private ?ApiClient $apiClient;
+    private ?ApiClient $apiClient = null;
 
-    /**
-     * @param ApiClient|null $apiClient Optional injected client for testing
-     */
-    public function __construct(?ApiClient $apiClient = null)
+    public function setApiClient(?ApiClient $client): void
     {
-        parent::__construct();
-        $this->apiClient = $apiClient;
+        $this->apiClient = $client;
     }
 
     /**

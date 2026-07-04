@@ -45,7 +45,7 @@ class ListCommandTest extends TestCase
      */
     private function createCommandTester(?ApiClient $client = null): CommandTester
     {
-        $command = new ListCommand($client);
+        $command = new ListCommand(); $command->setApiClient($client);
         $command->setLaravel($this->container);
 
         return new CommandTester($command);
