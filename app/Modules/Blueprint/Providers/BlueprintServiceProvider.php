@@ -12,10 +12,9 @@ use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Models\AgentTemplate;
 use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
-use App\Modules\Blueprint\Tabs\AiContext\Agents\FrontendDeveloperAgent;
-use App\Modules\Blueprint\Tabs\AiContext\Agents\FullstackDeveloperAgent;
-use App\Modules\Blueprint\Tabs\AiContext\Agents\LaravelDeveloperAgent;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\DatabaseAgent;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill;
@@ -86,12 +85,13 @@ class BlueprintServiceProvider extends ServiceProvider
             return $registry;
         });
 
-        // Register agents registry
+        // Register agents registry from database
         $this->app->singleton('blueprint.agents', function () {
             $registry = new AgentRegistry;
-            $registry->register(new LaravelDeveloperAgent);
-            $registry->register(new FrontendDeveloperAgent);
-            $registry->register(new FullstackDeveloperAgent);
+
+            foreach (AgentTemplate::all() as $template) {
+                $registry->register(new DatabaseAgent($template));
+            }
 
             return $registry;
         });
