@@ -61,6 +61,9 @@ return [
     'free_plan_missing' => 'El plan gratuito no existe. Ejecuta los seeders de la base de datos.',
 
     // Email verification
+    'email_verified' => 'Correo electrónico verificado',
+    'email_not_verified' => 'Tu correo no está verificado. Verifícalo para descargar blueprints cifrados con secretos y activar la verificación en dos pasos.',
+    'resend_verification' => 'Reenviar verificación',
     'disposable_email' => 'No se permiten direcciones de correo temporales o desechables.',
     'indisposable' => 'No se permiten direcciones de correo electrónico desechables.',
     'verification_sent' => 'Hemos enviado un enlace de verificación a tu correo electrónico.',

@@ -59,8 +59,40 @@
             </div>
             </div>
 
-            <!-- Cuenta Tab: Password Change + MFA -->
+            <!-- Cuenta Tab: Email Verification + Password Change + MFA -->
             <div x-show="activeTab === 'cuenta'" x-cloak class="space-y-6">
+            <!-- Email Verification -->
+            @php $user = auth()->user(); @endphp
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('auth.email_label') }}</h3>
+                        @if($user->hasVerifiedEmail())
+                            <p class="mt-1 flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ __('auth.email_verified') }}
+                            </p>
+                        @else
+                            <p class="mt-1 text-sm text-yellow-600 dark:text-yellow-400">
+                                {{ __('auth.email_not_verified') }}
+                            </p>
+                        @endif
+                    </div>
+                    @if(!$user->hasVerifiedEmail())
+                        <form method="POST" action="{{ route('verification.resend') }}">
+                            @csrf
+                            <button type="submit"
+                                class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                            >
+                                {{ __('auth.resend_verification') }}
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+
             <!-- Password Change -->
             <div class="pt-6">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('auth.change_password') }}</h3>

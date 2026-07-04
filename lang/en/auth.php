@@ -61,6 +61,9 @@ return [
     'free_plan_missing' => 'Free plan does not exist. Run database seeders.',
 
     // Email verification
+    'email_verified' => 'Email verified',
+    'email_not_verified' => 'Your email is not verified. Verify it to download encrypted blueprints with secrets and enable two-step verification.',
+    'resend_verification' => 'Resend verification',
     'disposable_email' => 'Temporary or disposable email addresses are not allowed.',
     'indisposable' => 'Disposable email addresses are not allowed.',
     'verification_sent' => 'We have sent a verification link to your email address.',
