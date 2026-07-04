@@ -27,6 +27,20 @@ Route::get('/', function () {
     return view('landing.index', compact('publicBlueprints', 'marketplaceEnabled'));
 })->name('landing');
 
+Route::get('/welcome', function () {
+    $marketplaceEnabled = config('marketplace.enabled', false);
+    $publicBlueprints = $marketplaceEnabled
+        ? Blueprint::query()
+            ->where('is_public', true)
+            ->with(['organization', 'tags'])
+            ->latest()
+            ->take(6)
+            ->get()
+        : collect();
+
+    return view('landing.index', compact('publicBlueprints', 'marketplaceEnabled'));
+})->name('welcome');
+
 /*
 |--------------------------------------------------------------------------
 | Locale Switcher (sin auth — disponible para guests en login/register)
@@ -111,6 +125,17 @@ Route::middleware('auth')->post('/pricing/start-trial', function () {
 
 Route::middleware(['auth', 'onboarding'])->get('/dashboard', function () {
     $user = auth()->user();
+
+    // Show trial expired notification once (tracked in DB)
+    if ($user->trial_used_at !== null
+        && $user->trial_ends_at !== null
+        && $user->trial_ends_at->isPast()
+        && $user->trial_expiry_notified_at === null
+    ) {
+        $user->update(['trial_expiry_notified_at' => now()]);
+        session()->flash('success', __('landing.trial_expired_notice'));
+    }
+
     $organizations = $user->organizations()->with('owner')->withCount(['blueprints', 'members'])->get();
     $plan = $user->plan;
 

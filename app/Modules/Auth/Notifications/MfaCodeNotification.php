@@ -27,12 +27,19 @@ class MfaCodeNotification extends Notification
 
     public function toMail(User $notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->subject(__('auth.mfa_email_subject'))
-            ->greeting(__('auth.mfa_email_greeting', ['name' => $notifiable->name]))
-            ->line(__('auth.mfa_email_intro'))
-            ->line($this->code)
-            ->line(__('auth.mfa_email_expiry'))
-            ->salutation(__('auth.mfa_email_salutation'));
+        $originalLocale = app()->getLocale();
+        app()->setLocale($notifiable->locale ?? config('app.locale', 'en'));
+
+        try {
+            return (new MailMessage)
+                ->subject(__('auth.mfa_email_subject'))
+                ->greeting(__('auth.mfa_email_greeting', ['name' => $notifiable->name]))
+                ->line(__('auth.mfa_email_intro'))
+                ->line($this->code)
+                ->line(__('auth.mfa_email_expiry'))
+                ->salutation(__('auth.mfa_email_salutation'));
+        } finally {
+            app()->setLocale($originalLocale);
+        }
     }
 }

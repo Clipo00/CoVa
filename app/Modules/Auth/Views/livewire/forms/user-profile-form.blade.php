@@ -59,8 +59,38 @@
             </div>
             </div>
 
-            <!-- Cuenta Tab: Password Change + MFA -->
+            <!-- Cuenta Tab: Email Verification + Password Change + MFA -->
             <div x-show="activeTab === 'cuenta'" x-cloak class="space-y-6">
+            <!-- Email Verification -->
+            @php $user = auth()->user(); @endphp
+            <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('auth.email_label') }}</h3>
+                        @if($user->hasVerifiedEmail())
+                            <p class="mt-1 flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ __('auth.email_verified') }}
+                            </p>
+                        @else
+                            <p class="mt-1 text-sm text-yellow-600 dark:text-yellow-400">
+                                {{ __('auth.email_not_verified') }}
+                            </p>
+                        @endif
+                    </div>
+                    @if(!$user->hasVerifiedEmail())
+                        <button type="submit"
+                            form="resend-verification-form"
+                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                        >
+                            {{ __('auth.resend_verification') }}
+                        </button>
+                    @endif
+                </div>
+            </div>
+
             <!-- Password Change -->
             <div class="pt-6">
                 <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('auth.change_password') }}</h3>
@@ -145,14 +175,24 @@
                         <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {{ __('auth.mfa_challenge_title') }}
                         </h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">
-                            {{ __('auth.mfa_setup_desc') }}
-                        </p>
+                        @if($user->hasVerifiedEmail())
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ __('auth.mfa_setup_desc') }}
+                            </p>
+                        @else
+                            <p class="text-sm text-yellow-600 dark:text-yellow-400">
+                                {{ __('auth.mfa_requires_verified_email') }}
+                            </p>
+                        @endif
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" wire:model="mfaEnabled" class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-                    </label>
+                    @if($user->hasVerifiedEmail())
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" wire:model="mfaEnabled" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                        </label>
+                    @else
+                        <div class="w-11 h-6 bg-gray-100 dark:bg-gray-600 rounded-full opacity-50 cursor-not-allowed"></div>
+                    @endif
                 </div>
             </div>
             </div>
@@ -169,6 +209,11 @@
                     <span wire:loading>{{ __('auth.saving_button') }}</span>
                 </button>
             </div>
+        </form>
+
+        {{-- Hidden form for email verification resend (kept outside Livewire form to avoid nested forms) --}}
+        <form id="resend-verification-form" method="POST" action="{{ route('verification.resend') }}" class="hidden">
+            @csrf
         </form>
     </div>
 </div>

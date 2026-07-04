@@ -10,6 +10,13 @@ class UserDropdown extends Component
 {
     public bool $open = false;
 
+    protected function getListeners(): array
+    {
+        return [
+            'profile-updated' => '$refresh',
+        ];
+    }
+
     public function toggle(): void
     {
         $this->open = !$this->open;

@@ -189,6 +189,6 @@ class BlueprintCreateFormTest extends TestCase
         $this->assertArrayHasKey('type', $firstSegment);
         $this->assertArrayHasKey('name', $firstSegment);
         $this->assertArrayHasKey('content', $firstSegment);
-        $this->assertContains($firstSegment['type'], ['preset', 'skill']);
+        $this->assertContains($firstSegment['type'], ['skill']);
     }
 }

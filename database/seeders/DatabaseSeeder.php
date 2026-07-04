@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\AgentTemplateSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,8 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PlanSeeder::class,
-            CategorySeeder::class,
+            TagSeeder::class,
             MarketplaceSeeder::class,
+            AgentTemplateSeeder::class,
         ]);
     }
 }

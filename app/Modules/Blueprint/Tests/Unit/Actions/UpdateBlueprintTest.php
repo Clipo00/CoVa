@@ -116,7 +116,7 @@ class UpdateBlueprintTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                     ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                     ['type' => 'custom', 'name' => 'My Rules', 'content' => 'Always use types.'],
                 ],
@@ -143,7 +143,7 @@ class UpdateBlueprintTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                     ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                     ['type' => 'custom', 'name' => 'My Rules', 'content' => 'Always use types.'],
                 ],

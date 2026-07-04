@@ -20,7 +20,7 @@ app/Modules/
 ├── Organization/      # Organizaciones, roles, invitaciones
 ├── Blueprint/         # Blueprints, variables, favoritos
 ├── Marketplace/       # Marketplace público, suscripciones, votación, notificaciones
-└── Shared/            # Código transversal (planes, categorías, VO)
+└── Shared/            # Código transversal (planes, tags, VO)
 ```
 
 Cada módulo contiene:
@@ -137,7 +137,7 @@ organization_invitations (id, organization_id, email, token, role, expires_at, u
 
 ### Módulo Shared
 
-**Responsabilidad**: Infraestructura transversal, planes, categorías, Value Objects.
+**Responsabilidad**: Infraestructura transversal, planes, tags, Value Objects.
 
 #### Planes Configurables
 
@@ -148,10 +148,6 @@ organization_invitations (id, organization_id, email, token, role, expires_at, u
 | **Enterprise** | ∞ | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del usuario se hereda a todas sus organizaciones en cascada.
-
-#### Categorías Globales
-
-8 categorías predefinidas: Laravel, Node.js, Python, DevOps, Frontend, Mobile, Database, Docker.
 
 #### Value Objects
 
@@ -178,7 +174,7 @@ Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del
 #### Modelo de Datos
 
 ```
-blueprints (id, uuid, organization_id, category_id, slug, title, description, is_public, tabs_config JSON, created_by, softDeletes)
+blueprints (id, uuid, organization_id, slug, title, description, is_public, tabs_config JSON, created_by, softDeletes)
 blueprint_variables (id, blueprint_id, key, type, default_value, is_interactive, is_secret, section, sort_order)
 blueprint_favorites (id, user_id, blueprint_id)
 ```
@@ -202,7 +198,7 @@ Cada blueprint puede tener N tabs configurables de 3 tipos, guardadas en `tabs_c
 |----------|-------------|---------------|
 | **VSCode Extensions** | Lista de extensiones recomendadas | Array de strings (`extensions`) |
 | **MCP Servers** | Servidores MCP para contexto AI | Array de servidores (`name`, `command`, `args[]`) |
-| **AI Context** | Contexto para agentes AI | `presets[]`, `skills[]`, `custom_rules` |
+| **AI Context** | Contexto para agentes AI | `segments[]` |
 
 Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicación padre-hijo por eventos `tabs-updated`.
 
@@ -370,7 +366,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Collapsible sections en UI | ✅ Completo |
 | Tests | ✅ 487 tests, 1096 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
-| **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos preset/skill/custom |
+| **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos skill/custom/agent |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
 | **Friendly URLs `/b/{slug}`** | ✅ Completo — Slugs con 301 redirects |
 | **Show page downloads** | ✅ Completo — Vault fetch, .md/.env downloads |

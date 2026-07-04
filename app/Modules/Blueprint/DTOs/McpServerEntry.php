@@ -23,11 +23,11 @@ final class McpServerEntry
         $command = $data['command'] ?? null;
 
         if (!is_string($name) || $name === '') {
-            throw new InvalidArgumentException('MCP server must have a string "name".');
+            throw new InvalidArgumentException(__('blueprint.mcp_name_required'));
         }
 
         if (!is_string($command) || $command === '') {
-            throw new InvalidArgumentException("MCP server '{$name}' must have a string 'command'.");
+            throw new InvalidArgumentException(__('blueprint.mcp_command_required', ['name' => $name]));
         }
 
         return new self(

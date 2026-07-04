@@ -256,7 +256,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 2. Completa:
    - Título (requerido, slug auto-generado)
    - Descripción (opcional)
-   - Categoría (select de categorías globales)
+   - Tags (select de tags)
    - Organización (select, valida acceso)
 3. Sección Variables:
    - Añade variables .env con: key, tipo (Fixed/Empty), default_value, flags (interactive, secret)
@@ -302,7 +302,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 
 **Reglas de negocio**:
 - RN-BP-05: Solo Owner ve valores de variables secretas. Otros roles ven `***`.
-- RN-BP-06: `ResolveBlueprint` genera `agent.md` combinando presets + skills + custom_rules del tab AI Context.
+- RN-BP-06: `ResolveBlueprint` genera `agent.md` combinando los segments del tab AI Context.
 
 ### 4.3 Editar Blueprint
 
@@ -312,7 +312,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 **Flujo**:
 1. User visita `/blueprints/{uuid}/edit`
 2. Formulario pre-cargado con datos actuales
-3. Edita título, descripción, categoría
+3. Edita título, descripción, tags
 4. Modifica variables (add/edit/delete/reorder)
 5. Modifica tabs (add/remove/reorder/config)
 6. Sistema sincroniza estado de `TabManager` hijo via eventos `tabs-updated`
@@ -386,7 +386,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 
 #### 4.8.1 Todos los Blueprints
 - `/blueprints` — Blueprints de todas las orgs del usuario
-- Filtros: por org, categoría, búsqueda por título
+- Filtros: por org, tags, búsqueda por título
 - Ordenación: recientes, alfabético
 
 #### 4.8.2 Favoritos
@@ -441,7 +441,7 @@ Guest visita /register
   → Redirect a /organizations/{slug}
   → Click "Nuevo Blueprint"
   → /blueprints/create?org={id}
-  → Completa título, categoría, variables, tabs
+   → Completa título, tags, variables, tabs
   → Blueprint creado con UUID
   → Redirect a /blueprints/{uuid}
   → Ve resolución completa con agent.md
@@ -566,7 +566,7 @@ Developer en /blueprints/{uuid}
 ### 10.1 AI Agents / Skills Configuration
 - **Estado**: 🚧 En progreso
 - **Descripción**: Configuración avanzada de contexto para agentes AI dentro del tab AI Context.
-- **Implementado**: Presets, skills, custom_rules en tab. Generación de `agent.md`.
+- **Implementado**: Segments (skills, custom, agent) en tab AI Context. Generación de `agent.md`.
 - **Pendiente**: Integración con LLM providers, export a formatos específicos de agentes (Claude, GPT, etc.).
 
 ### 10.2 Marketplace

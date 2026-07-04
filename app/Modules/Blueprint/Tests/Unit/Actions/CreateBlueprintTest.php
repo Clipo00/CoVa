@@ -134,7 +134,7 @@ class CreateBlueprintTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                     ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                     ['type' => 'custom', 'name' => 'My Rules', 'content' => 'Always use types.'],
                 ],
@@ -177,7 +177,7 @@ class CreateBlueprintTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                     ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                     ['type' => 'custom', 'name' => 'My Rules', 'content' => 'Always use types.'],
                 ],
@@ -216,7 +216,7 @@ class CreateBlueprintTest extends TestCase
             ['type' => 'mcp_servers', 'config' => ['servers' => [['name' => 'test', 'command' => 'npx', 'args' => []]]]],
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'laravel-conventions', 'content' => null],
+                    ['type' => 'skill', 'name' => 'laravel-conventions', 'content' => null],
                 ],
             ]],
         ];

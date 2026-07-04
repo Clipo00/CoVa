@@ -22,13 +22,13 @@ final class ScriptEntry
         $command = $data['command'] ?? null;
 
         if (!is_string($command) || $command === '') {
-            throw new InvalidArgumentException('Command is required.');
+            throw new InvalidArgumentException(__('blueprint.script_command_required'));
         }
 
         $order = (int) ($data['order'] ?? 0);
 
         if ($order < 0) {
-            throw new InvalidArgumentException('Order must be a non-negative integer.');
+            throw new InvalidArgumentException(__('blueprint.script_order_non_negative'));
         }
 
         return new self(

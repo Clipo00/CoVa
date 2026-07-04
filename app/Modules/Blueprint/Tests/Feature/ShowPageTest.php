@@ -45,8 +45,7 @@ class ShowPageTest extends TestCase
     {
         $blueprint = $this->createBlueprintWithTabs([
             ['type' => 'ai_context', 'config' => [
-                'presets' => ['laravel-conventions'],
-                'skills' => [],
+                'skills' => ['laravel-conventions'],
                 'custom_rules' => 'Custom rule for testing.',
             ]],
         ]);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Providers;
 
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
-use App\Modules\Blueprint\Livewire\Components\BlueprintPreviewPanel;
 use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
@@ -13,16 +12,22 @@ use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Models\AgentTemplate;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\DatabaseAgent;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\LaravelConventionsPreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\TypeScriptStrictPreset;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\CICDSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\CleanArchitectureSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\DockerSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\LaravelConventionsSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\PSR12Skill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\SOLIDSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\TypeScriptStrictSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill;
 use App\Modules\Blueprint\Tabs\McpServersTab;
 use App\Modules\Blueprint\Tabs\ScriptsTab;
@@ -50,7 +55,6 @@ class BlueprintServiceProvider extends ServiceProvider
         Livewire::component('blueprint.forms.blueprint-edit-form', BlueprintEditForm::class);
         Livewire::component('blueprint.tables.blueprint-list', BlueprintList::class);
         Livewire::component('blueprint.components.tab-manager', TabManager::class);
-        Livewire::component('blueprint.components.preview-panel', BlueprintPreviewPanel::class);
     }
 
     /**
@@ -58,25 +62,36 @@ class BlueprintServiceProvider extends ServiceProvider
      */
     private function registerTabRegistries(): void
     {
-        // Register presets registry
-        $this->app->singleton('blueprint.presets', function () {
-            $registry = new SegmentRegistry;
-            $registry->register(new PSR12Preset);
-            $registry->register(new SOLIDPreset);
-            $registry->register(new CleanArchitecturePreset);
-            $registry->register(new LaravelConventionsPreset);
-            $registry->register(new TypeScriptStrictPreset);
-
-            return $registry;
-        });
-
-        // Register skills registry
+        // Register skills registry (includes all skills: code conventions + technology skills)
         $this->app->singleton('blueprint.skills', function () {
             $registry = new SegmentRegistry;
+
+            // Code convention skills
+            $registry->register(new PSR12Skill);
+            $registry->register(new SOLIDSkill);
+            $registry->register(new CleanArchitectureSkill);
+            $registry->register(new LaravelConventionsSkill);
+            $registry->register(new TypeScriptStrictSkill);
+            $registry->register(new DockerSkill);
+            $registry->register(new CICDSkill);
+
+            // Technology skills
             $registry->register(new StripeSkill);
             $registry->register(new TailwindSkill);
             $registry->register(new ReactExpertSkill);
             $registry->register(new VueExpertSkill);
+            $registry->register(new ApiDesignSkill);
+
+            return $registry;
+        });
+
+        // Register agents registry from database
+        $this->app->singleton('blueprint.agents', function () {
+            $registry = new AgentRegistry;
+
+            foreach (AgentTemplate::all() as $template) {
+                $registry->register(new DatabaseAgent($template));
+            }
 
             return $registry;
         });
@@ -84,8 +99,8 @@ class BlueprintServiceProvider extends ServiceProvider
         // Register agent generator
         $this->app->singleton(AgentGenerator::class, function ($app) {
             return new AgentGenerator(
-                $app->make('blueprint.presets'),
                 $app->make('blueprint.skills'),
+                $app->make('blueprint.agents'),
             );
         });
 
@@ -125,10 +140,10 @@ class BlueprintServiceProvider extends ServiceProvider
                         ]]],
                         ['type' => 'ai_context', 'config' => [
                             'segments' => [
-                                ['type' => 'preset', 'name' => 'psr12', 'content' => null],
-                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
-                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
-                                ['type' => 'preset', 'name' => 'laravel-conventions', 'content' => null],
+                                ['type' => 'skill', 'name' => 'psr12', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'laravel-conventions', 'content' => null],
                                 ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                                 ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
                             ],
@@ -144,10 +159,10 @@ class BlueprintServiceProvider extends ServiceProvider
                         ]]],
                         ['type' => 'ai_context', 'config' => [
                             'segments' => [
-                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
-                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
-                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
-                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react-expert', 'content' => null],
                                 ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
                             ],
                         ]],
@@ -162,10 +177,10 @@ class BlueprintServiceProvider extends ServiceProvider
                         ]]],
                         ['type' => 'ai_context', 'config' => [
                             'segments' => [
-                                ['type' => 'preset', 'name' => 'typescript-strict', 'content' => null],
-                                ['type' => 'preset', 'name' => 'solid', 'content' => null],
-                                ['type' => 'preset', 'name' => 'clean-architecture', 'content' => null],
-                                ['type' => 'skill', 'name' => 'react', 'content' => null],
+                                ['type' => 'skill', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react-expert', 'content' => null],
                                 ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
                             ],
                         ]],

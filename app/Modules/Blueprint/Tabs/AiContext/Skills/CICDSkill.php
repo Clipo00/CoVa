@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Blueprint\Tabs\AiContext\Presets;
+namespace App\Modules\Blueprint\Tabs\AiContext\Skills;
 
-class CICDPreset extends AbstractPreset
+class CICDSkill extends AbstractSkill
 {
-    protected function presetName(): string
+    protected function skillName(): string
     {
         return 'cicd';
     }
 
-    protected function presetContent(): string
+    protected function skillContent(): string
     {
         return <<<'MARKDOWN'
 ## CI/CD Pipeline Design

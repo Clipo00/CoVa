@@ -113,7 +113,7 @@ class CreateEntityTest extends TestCase
 **Reglas**:
 - Testear el happy path y al menos 1 edge case (límites, permisos, excepciones)
 - No mockear Eloquent salvo estrictamente necesario (usar BD en memoria es rápido)
-- Seeders en `setUp()` para datos base (planes, categorías)
+- Seeders en `setUp()` para datos base (planes)
 - Usar `actingAs()` si la action verifica autenticación
 
 ### 3.2 Tests de Policies
@@ -250,7 +250,7 @@ class BlueprintControllerTest extends TestCase
     {
         parent::setUp();
         $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->seed(\Database\Seeders\CategorySeeder::class);
+        // Seed domain-specific data as needed
     }
 
     public function test_authenticated_user_can_view_blueprint(): void
@@ -366,7 +366,6 @@ private function createBlueprint(Organization $org, string $title = 'Test'): Blu
 | Seeder | Datos | Cuándo usar |
 |--------|-------|-------------|
 | `PlanSeeder` | Free, Pro, Enterprise | Siempre (en `setUp()`) |
-| `CategorySeeder` | 8 categorías predefinidas | Si el test usa categorías |
 | `MarketplaceSeeder` | Org de marketplace | Si el test usa marketplace |
 
 ---

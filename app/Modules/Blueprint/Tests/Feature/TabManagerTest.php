@@ -45,25 +45,6 @@ class TabManagerTest extends TestCase
     //  AI Context: Segment CRUD
     // ──────────────────────────────────────────────
 
-    public function test_add_preset_segment_appears_with_correct_name(): void
-    {
-        $tabsConfig = [
-            ['type' => 'ai_context', 'config' => ['segments' => []]],
-        ];
-
-        $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
-
-        $component->call('addSegment', 0, 'preset', 'psr12');
-
-        $tabs = $component->get('tabs');
-        $segments = $tabs[0]['config']['segments'];
-
-        $this->assertCount(1, $segments);
-        $this->assertEquals('preset', $segments[0]['type']);
-        $this->assertEquals('psr12', $segments[0]['name']);
-        $this->assertNotNull($segments[0]['content']);
-    }
-
     public function test_add_skill_segment_appears_with_correct_name(): void
     {
         $tabsConfig = [
@@ -72,14 +53,14 @@ class TabManagerTest extends TestCase
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        $component->call('addSegment', 0, 'skill', 'stripe');
+        $component->call('addSegment', 0, 'skill', 'psr12');
 
         $tabs = $component->get('tabs');
         $segments = $tabs[0]['config']['segments'];
 
         $this->assertCount(1, $segments);
         $this->assertEquals('skill', $segments[0]['type']);
-        $this->assertEquals('stripe', $segments[0]['name']);
+        $this->assertEquals('psr12', $segments[0]['name']);
         $this->assertNotNull($segments[0]['content']);
     }
 
@@ -99,7 +80,7 @@ class TabManagerTest extends TestCase
         $this->assertCount(1, $segments);
         $this->assertEquals('custom', $segments[0]['type']);
         $this->assertEquals('custom-skill', $segments[0]['name']);
-        $this->assertNull($segments[0]['content']);
+        $this->assertSame('', $segments[0]['content']);
     }
 
     public function test_add_custom_segment_with_name(): void
@@ -124,7 +105,7 @@ class TabManagerTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                     ['type' => 'skill', 'name' => 'stripe', 'content' => null],
                 ],
             ]],
@@ -146,8 +127,8 @@ class TabManagerTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
-                    ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'solid', 'content' => null],
                 ],
             ]],
         ];
@@ -170,8 +151,8 @@ class TabManagerTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
-                    ['type' => 'preset', 'name' => 'solid', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'solid', 'content' => null],
                 ],
             ]],
         ];
@@ -234,7 +215,7 @@ class TabManagerTest extends TestCase
         $tabsConfig = [
             ['type' => 'ai_context', 'config' => [
                 'segments' => [
-                    ['type' => 'preset', 'name' => 'psr12', 'content' => null],
+                    ['type' => 'skill', 'name' => 'psr12', 'content' => null],
                 ],
             ]],
         ];
@@ -242,7 +223,7 @@ class TabManagerTest extends TestCase
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
         // Try adding another segment with the same name
-        $component->call('addSegment', 0, 'preset', 'psr12');
+        $component->call('addSegment', 0, 'skill', 'psr12');
 
         $tabs = $component->get('tabs');
         $segments = $tabs[0]['config']['segments'];
@@ -259,7 +240,6 @@ class TabManagerTest extends TestCase
         $tabs = $component->get('tabs');
         $this->assertArrayHasKey('segments', $tabs[0]['config']);
         $this->assertEmpty($tabs[0]['config']['segments']);
-        $this->assertArrayNotHasKey('presets', $tabs[0]['config']);
         $this->assertArrayNotHasKey('skills', $tabs[0]['config']);
     }
 
@@ -271,7 +251,7 @@ class TabManagerTest extends TestCase
 
         $component = Livewire::test(TabManager::class, ['tabs' => $tabsConfig]);
 
-        $component->call('addSegment', 0, 'preset', 'solid');
+        $component->call('addSegment', 0, 'skill', 'solid');
         $component->call('addSegment', 0, 'skill', 'stripe');
         $component->call('addSegment', 0, 'custom', 'My Rules');
 

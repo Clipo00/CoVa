@@ -56,11 +56,15 @@ return [
 
     // Messages
     'login_failed' => 'The provided credentials are incorrect.',
+    'session_expired' => 'Your session has expired due to inactivity. Please log in again.',
     'wrong_password' => 'The current password is incorrect',
     'profile_updated' => 'Profile updated successfully',
     'free_plan_missing' => 'Free plan does not exist. Run database seeders.',
 
     // Email verification
+    'email_verified' => 'Email verified',
+    'email_not_verified' => 'Your email is not verified. Verify it to download encrypted blueprints with secrets and enable two-step verification.',
+    'resend_verification' => 'Resend verification',
     'disposable_email' => 'Temporary or disposable email addresses are not allowed.',
     'indisposable' => 'Disposable email addresses are not allowed.',
     'verification_sent' => 'We have sent a verification link to your email address.',
@@ -93,6 +97,7 @@ return [
     'mfa_challenge_title' => 'Two-step verification',
     'mfa_challenge_subtitle' => 'We have sent a verification code to your email address.',
     'mfa_setup_desc' => 'Add an extra layer of security to your CoVa account. You\'ll receive a code by email when logging in.',
+    'mfa_requires_verified_email' => 'You must verify your email before enabling two-step verification.',
     'mfa_setup_title' => 'Protect your CoVa account',
     'mfa_setup_description' => 'We recommend enabling two-step verification to keep your CoVa account safe. It only takes a moment: you\'ll receive a unique code by email each time you log in from a new device.',
     'mfa_setup_enable_button' => 'Enable verification',

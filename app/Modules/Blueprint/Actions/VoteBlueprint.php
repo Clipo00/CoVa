@@ -15,7 +15,7 @@ class VoteBlueprint
     {
         // 1. Defense-in-depth: validate vote value
         if (!in_array($vote, [1, -1], true)) {
-            throw new \InvalidArgumentException('Invalid vote. Must be 1 (up) or -1 (down).');
+            throw new \InvalidArgumentException(__('blueprint.vote_invalid'));
         }
 
         // 2. Check marketplace enabled (feature flag)

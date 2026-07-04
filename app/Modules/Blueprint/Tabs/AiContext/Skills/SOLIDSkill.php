@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Blueprint\Tabs\AiContext\Presets;
+namespace App\Modules\Blueprint\Tabs\AiContext\Skills;
 
-class SOLIDPreset extends AbstractPreset
+class SOLIDSkill extends AbstractSkill
 {
-    protected function presetName(): string
+    protected function skillName(): string
     {
         return 'solid';
     }
 
-    protected function presetContent(): string
+    protected function skillContent(): string
     {
         return <<<'MARKDOWN'
 ## SOLID Principles

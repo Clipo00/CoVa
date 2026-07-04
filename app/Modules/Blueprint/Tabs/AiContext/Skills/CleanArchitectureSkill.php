@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Blueprint\Tabs\AiContext\Presets;
+namespace App\Modules\Blueprint\Tabs\AiContext\Skills;
 
-class CleanArchitecturePreset extends AbstractPreset
+class CleanArchitectureSkill extends AbstractSkill
 {
-    protected function presetName(): string
+    protected function skillName(): string
     {
         return 'clean-architecture';
     }
 
-    protected function presetContent(): string
+    protected function skillContent(): string
     {
         return <<<'MARKDOWN'
 ## Clean Architecture
@@ -24,7 +24,7 @@ Follow Clean Architecture principles for maintainable, testable, and framework-i
   - Contains the core business logic that makes the application what it is
   - Value Objects are immutable and self-validating in their constructors
   - Domain Events capture meaningful business occurrences (e.g., `BlueprintCreated`, `MemberJoined`)
-  
+
 - **Application**: Use cases (Actions), DTOs, port interfaces
   - Orchestrates the flow of data between domain and infrastructure
   - Depends only on Domain layer and interfaces defined here

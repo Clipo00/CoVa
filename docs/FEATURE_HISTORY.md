@@ -591,6 +591,32 @@ Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (
 
 ---
 
+## 2026-07-03 — Refactor: Presets → Skills, Categories → Tags
+
+### El Problema
+
+El módulo Blueprint mantenía dos conceptos redundantes: **Presets** (como segmentos predefinidos de AI Context) y **Categories** (como taxonomía de blueprints). Los Presets duplicaban la funcionalidad de Skills con una interfaz diferente. Las Categories eran una tabla separada con 8 valores fijos que podían modelarse como Tags polimórficos.
+
+### Lo Que Se Hizo
+
+1. **Presets → Skills**: Se eliminaron 7 clases Preset y se reemplazaron por clases Skill. El segment type `preset` ya no existe — solo `skill`, `custom`, `agent`.
+2. **Categories → Tags**: Se eliminó la tabla `categories` y `category_id` de blueprints. Se creó el modelo `App\Models\Tag` con relación `belongsToMany` via `blueprint_tag` pivot.
+3. **BlueprintTag model eliminado**: Código muerto removido.
+
+### Métricas del Cambio
+
+- **35 archivos modificados**, +208/-471 líneas
+- **Judgment Day Round 2** aprobado sin issues
+- Commit: `37f1861`
+
+### Aprendizajes Clave
+
+24. **Eliminar código muerto es tan importante como escribir código nuevo**: El modelo `BlueprintTag` había quedado huérfano después del refactor inicial. Su eliminación redujo la superficie de posibles bugs.
+25. **Tags polimórficos > tablas de categorías fijas**: Con 8 categorías predefinidas, cada nuevo tipo de blueprint requería evaluar si agregar una categoría nueva. Tags resuelven esto con una taxonomía flexible y escalable.
+26. **La consistencia del modelo de datos simplifica la UI**: Al unificar Presets y Skills bajo un mismo modelo de segmentos, la UI del AI Context tab pasó de tener dos dropdowns ("Add preset", "Add skill") a uno solo ("Add skill"), reduciendo la carga cognitiva del usuario.
+
+---
+
 **Documento generado**: 2026-05-23  
-**Versión**: 1.5  
-**Última actualización**: Junio 2026 — API Token Management
+**Versión**: 1.6  
+**Última actualización**: 2026-07-03 — Presets→Skills, Categories→Tags

@@ -145,9 +145,9 @@
 ### 3.3 Blueprint
 
 #### `BlueprintCreateForm` (Wizard)
-- **Estado**: `title`, `description`, `category_id`, `organization_id`, `variables[]`, `tabsConfig[]`
+- **Estado**: `title`, `description`, `organization_id`, `variables[]`, `tabsConfig[]`
 - **Pasos** (wizard implícito en scroll):
-  1. **Info básica**: Título, descripción, categoría, org
+  1. **Info básica**: Título, descripción, tags, org
   2. **Variables**: `VariableManager` embebido
   3. **Tabs**: `TabManager` embebido
 - **Validación por paso**:
@@ -212,9 +212,9 @@
     - **VSCode Extensions**: Textarea (una extensión por línea) + preview de lista
     - **MCP Servers**: Tabla de servidores con inputs name/command/args + botón añadir/quitar
     - **AI Context** (Segment CRUD):
-      - Segments: Collapsible cards, each with type (preset/skill/custom badge), editable name, and content textarea
+      - Segments: Collapsible cards, each with type (skill/custom/agent badge), editable name, and content textarea
       - Operations: addSegment, removeSegment, moveSegment, updateSegmentContent, updateSegmentName
-      - Dropdowns "Add preset" and "Add skill" load content from the preset/skill registry
+      - Dropdown "Add skill" loads content from the skill registry
       - Custom segments: free-text textarea in collapsible card
       - Segments are ordered and independently collapsible
       - Content loaded from registry on toggle, editable by the user
@@ -226,11 +226,11 @@
 - **Props**: `favoritesOnly` (boolean, default false), `deletedOnly` (boolean, default false)
 - **UI**:
   - Barra de búsqueda con debounce
-  - Filtros: Org (dropdown), Categoría (dropdown)
+  - Filtros: Org (dropdown), Tags (dropdown)
   - Grid de tarjetas (desktop 3-col, tablet 2-col, mobile 1-col)
   - Cada tarjeta:
     - Título + UUID truncado
-    - Badge de categoría
+    - Badge de tags
     - Badge de org
     - Cantidad de variables
     - ⭐ favorito (toggle)
@@ -300,7 +300,7 @@
 
 - **Header**:
   - Título + UUID (copiable)
-  - Badge categoría
+  - Badge tags
   - Badge org
   - ⭐ Favorito (toggle)
   - Acciones:
@@ -320,7 +320,7 @@
     - Tabla: Name | Command | Args
     - Botón "Copiar configuración"
   - **AI Context** (si existe tab):
-    - Segments: lista de segmentos con badge de tipo (preset/skill/custom) y nombre
+    - Segments: lista de segmentos con badge de tipo (skill/custom/agent) y nombre
     - Contenido de cada segmento renderizado en bloque colapsable
     - Custom segments muestran contenido libre (blockquote)
     - **agent.md preview**:

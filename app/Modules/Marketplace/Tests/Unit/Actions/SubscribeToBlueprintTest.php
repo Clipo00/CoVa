@@ -169,9 +169,10 @@ class SubscribeToBlueprintTest extends TestCase
             slug: 'bp-tabs-'.uniqid(),
             tabsConfig: [
                 ['type' => 'ai_context', 'config' => [
-                    'presets' => ['laravel-conventions'],
-                    'skills' => [],
-                    'custom_rules' => 'Test rule.',
+                    'segments' => [
+                        ['type' => 'skill', 'name' => 'laravel-conventions', 'content' => null],
+                        ['type' => 'custom', 'name' => 'custom-rules', 'content' => 'Test rule.'],
+                    ],
                 ]],
             ],
         );

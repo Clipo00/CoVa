@@ -7,7 +7,7 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Configuration for AI Context tab.
  *
- * Stores a unified list of segments (presets, skills, custom) that define
+ * Stores a unified list of segments (skills, custom, agents) that define
  * the AI Context content. Segments are ordered and resolved at generation time.
  */
 final class AiContextConfig
@@ -43,7 +43,7 @@ final class AiContextConfig
         $segments = [];
 
         foreach (self::filterStringArray($data['presets'] ?? []) as $preset) {
-            $segments[] = new AiContextSegment(type: 'preset', name: $preset);
+            $segments[] = new AiContextSegment(type: 'skill', name: $preset);
         }
 
         foreach (self::filterStringArray($data['skills'] ?? []) as $skill) {

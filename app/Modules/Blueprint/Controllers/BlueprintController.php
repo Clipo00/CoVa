@@ -6,6 +6,7 @@ namespace App\Modules\Blueprint\Controllers;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\DeleteBlueprint;
+use App\Modules\Blueprint\Actions\DownloadBlueprintZip;
 use App\Modules\Blueprint\Actions\GenerateEnvTemplate;
 use App\Modules\Blueprint\Actions\PublishBlueprint;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
@@ -21,6 +22,7 @@ use App\Modules\Organization\Models\Organization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class BlueprintController
 {
@@ -161,6 +163,15 @@ class BlueprintController
             'segments' => $segments,
             'envTemplate' => $envTemplateString,
         ]);
+    }
+
+    public function download(Blueprint $blueprint, DownloadBlueprintZip $action): StreamedResponse
+    {
+        if ($action->hasSecrets($blueprint) && !auth()->user()->hasVerifiedEmail()) {
+            abort(403, __('blueprint.zip_email_unverified'));
+        }
+
+        return $action->execute($blueprint);
     }
 
     public function edit(Blueprint $blueprint): View

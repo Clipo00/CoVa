@@ -6,11 +6,12 @@ namespace App\Modules\Blueprint\Tests\Unit\Tabs;
 
 use App\Modules\Blueprint\Exceptions\UnknownTabTypeException;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\CleanArchitectureSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\PSR12Skill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\SOLIDSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
 use App\Modules\Blueprint\Tabs\McpServersTab;
@@ -23,16 +24,16 @@ class TabRegistryTest extends TestCase
 {
     private function createRegistry(): TabRegistry
     {
-        $presetsRegistry = new SegmentRegistry;
-        $presetsRegistry->register(new PSR12Preset);
-        $presetsRegistry->register(new SOLIDPreset);
-        $presetsRegistry->register(new CleanArchitecturePreset);
-
         $skillsRegistry = new SegmentRegistry;
+        $skillsRegistry->register(new PSR12Skill);
+        $skillsRegistry->register(new SOLIDSkill);
+        $skillsRegistry->register(new CleanArchitectureSkill);
         $skillsRegistry->register(new StripeSkill);
         $skillsRegistry->register(new TailwindSkill);
 
-        $agentGenerator = new AgentGenerator($presetsRegistry, $skillsRegistry);
+        $agentsRegistry = new AgentRegistry;
+
+        $agentGenerator = new AgentGenerator($skillsRegistry, $agentsRegistry);
 
         $registry = new TabRegistry;
         $registry->register(new VscodeExtensionsTab);

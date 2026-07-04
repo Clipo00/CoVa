@@ -6,7 +6,9 @@ namespace App\Modules\Blueprint\Controllers\Api;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
+use App\Modules\Blueprint\DTOs\AiContextConfig;
 use App\Modules\Blueprint\Models\Blueprint;
+use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -65,7 +67,7 @@ class BlueprintApiController
      * Returns 404 if the blueprint does not belong to any of the
      * authenticated user's organizations (prevents org-bypass).
      */
-    public function show(string $slug, ResolveBlueprint $resolveBlueprint, Request $request): JsonResponse
+    public function show(string $slug, ResolveBlueprint $resolveBlueprint, AgentGenerator $agentGenerator, Request $request): JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
@@ -95,6 +97,77 @@ class BlueprintApiController
 
         $output = $resolveBlueprint->execute($blueprint);
 
-        return response()->json($output->toApiArray());
+        $result = $output->toApiArray();
+
+        // Resolve AI context segments for CLI FetchCommand
+        $result['ai_context_segments'] = $this->resolveAiContextSegments($blueprint, $agentGenerator);
+
+        return response()->json($result);
+    }
+
+    /**
+     * Resolve AI context segments from the blueprint's tabs_config.
+     *
+     * @return array<int, array{type: string, name: string, filename: string, content: string}>
+     */
+    private function resolveAiContextSegments(Blueprint $blueprint, AgentGenerator $agentGenerator): array
+    {
+        $tabsConfig = $blueprint->tabs_config ?? [];
+
+        if (!is_array($tabsConfig)) {
+            return [];
+        }
+
+        foreach ($tabsConfig as $tabData) {
+            if (!is_array($tabData)) {
+                continue;
+            }
+
+            if (($tabData['type'] ?? '') !== 'ai_context') {
+                continue;
+            }
+
+            try {
+                $aiConfig = AiContextConfig::fromArray($tabData['config'] ?? []);
+            } catch (\InvalidArgumentException) {
+                return [];
+            }
+
+            if ($aiConfig->isEmpty()) {
+                return [];
+            }
+
+            return $this->resolveSegmentsWithTypes($aiConfig, $agentGenerator);
+        }
+
+        return [];
+    }
+
+    /**
+     * Resolve each segment individually to preserve type info.
+     *
+     * @return array<int, array{type: string, name: string, filename: string, content: string}>
+     */
+    private function resolveSegmentsWithTypes(AiContextConfig $config, AgentGenerator $agentGenerator): array
+    {
+        $result = [];
+
+        foreach ($config->segments as $segment) {
+            $singleConfig = new AiContextConfig(segments: [$segment]);
+            $resolved = $agentGenerator->resolveSegments($singleConfig);
+
+            if (empty($resolved)) {
+                continue;
+            }
+
+            $result[] = [
+                'type' => $segment->type,
+                'name' => $segment->name,
+                'filename' => $resolved[0]['filename'],
+                'content' => $resolved[0]['content'],
+            ];
+        }
+
+        return $result;
     }
 }

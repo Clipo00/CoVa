@@ -7,7 +7,7 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Immutable value object representing a single segment in the AI Context configuration.
  *
- * Each segment has a type (preset, skill, or custom), a unique name within the
+ * Each segment has a type (skill, custom, or agent), a unique name within the
  * segment list, and optional content. When content is null, the system resolves
  * the default content from the SegmentRegistry at generation time.
  */
@@ -18,16 +18,16 @@ readonly class AiContextSegment
         public string $name,
         public ?string $content = null,
     ) {
-        if (!in_array($type, ['preset', 'skill', 'custom'], true)) {
-            throw new \InvalidArgumentException("Invalid segment type: {$type}");
+        if (!in_array($type, ['skill', 'custom', 'agent'], true)) {
+            throw new \InvalidArgumentException(__('blueprint.segment_type_invalid', ['type' => $type]));
         }
 
         if ($name === '') {
-            throw new \InvalidArgumentException('Segment name cannot be empty.');
+            throw new \InvalidArgumentException(__('blueprint.segment_name_empty'));
         }
 
         if ($type === 'custom' && $content === null) {
-            throw new \InvalidArgumentException('Custom segments must have content. Use empty string for content-less custom segments.');
+            throw new \InvalidArgumentException(__('blueprint.segment_custom_needs_content'));
         }
     }
 
@@ -37,8 +37,8 @@ readonly class AiContextSegment
     public static function fromArray(array $data): self
     {
         return new self(
-            type: $data['type'] ?? throw new \InvalidArgumentException('Missing segment type.'),
-            name: $data['name'] ?? throw new \InvalidArgumentException('Missing segment name.'),
+            type: $data['type'] ?? throw new \InvalidArgumentException(__('blueprint.segment_type_missing')),
+            name: $data['name'] ?? throw new \InvalidArgumentException(__('blueprint.segment_name_missing')),
             content: $data['content'] ?? null,
         );
     }
@@ -58,14 +58,6 @@ readonly class AiContextSegment
     }
 
     /**
-     * Whether this is a preset segment sourced from the presets registry.
-     */
-    public function isPreset(): bool
-    {
-        return $this->type === 'preset';
-    }
-
-    /**
      * Whether this is a skill segment sourced from the skills registry.
      */
     public function isSkill(): bool
@@ -79,5 +71,13 @@ readonly class AiContextSegment
     public function isCustom(): bool
     {
         return $this->type === 'custom';
+    }
+
+    /**
+     * Whether this is an agent segment that composes skills.
+     */
+    public function isAgent(): bool
+    {
+        return $this->type === 'agent';
     }
 }

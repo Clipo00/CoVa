@@ -74,6 +74,13 @@ class UserProfileForm extends Component
         // Handle MFA toggle
         $mfaChanged = (bool) $user->mfa_enabled !== $this->mfaEnabled;
         if ($mfaChanged) {
+            if ($this->mfaEnabled && !$user->hasVerifiedEmail()) {
+                $this->addError('mfaEnabled', __('auth.mfa_requires_verified_email'));
+                $this->mfaEnabled = false;
+
+                return;
+            }
+
             $user->update(['mfa_enabled' => $this->mfaEnabled]);
             if ($this->mfaEnabled) {
                 $sendMfaCode->execute($user);
@@ -90,13 +97,16 @@ class UserProfileForm extends Component
 
         $updateUserProfile->execute($user, $data);
 
+        // Refresh navbar avatar and other profile-dependent components
+        $this->dispatch('profile-updated');
+
+        $this->dispatch('notify', message: __('auth.profile_updated'));
+
         // Reset password fields
         $this->currentPassword = null;
         $this->newPassword = null;
         $this->newPasswordConfirmation = null;
         $this->avatar = null;
-
-        $this->dispatch('notify', message: __('auth.profile_updated'));
     }
 
     public function render()

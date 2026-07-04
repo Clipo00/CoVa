@@ -25,10 +25,10 @@ class TabManager extends Component
     public array $availableTabTypes = [];
 
     /** @var string[] */
-    public array $availablePresetNames = [];
+    public array $availableSkillNames = [];
 
     /** @var string[] */
-    public array $availableSkillNames = [];
+    public array $availableAgentNames = [];
 
     public string $tabError = '';
 
@@ -44,8 +44,8 @@ class TabManager extends Component
 
         /** @var AgentGenerator $generator */
         $generator = app()->make(AgentGenerator::class);
-        $this->availablePresetNames = $generator->presetNames();
         $this->availableSkillNames = $generator->skillNames();
+        $this->availableAgentNames = $generator->agentNames();
 
         $this->resolveSegmentContent();
     }
@@ -251,9 +251,59 @@ class TabManager extends Component
     // ──────────────────────────────────────────────
 
     /**
+     * Load an agent and its referenced skills into an AI Context tab.
+     *
+     * Inserts an agent segment with the agent's content and router,
+     * followed by skill segments for each skill the agent references.
+     */
+    public function loadAgent(int $tabIndex, string $agentName): void
+    {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
+            return;
+        }
+
+        $registry = app()->make('blueprint.agents');
+        if (!$registry->has($agentName)) {
+            return;
+        }
+
+        $agent = $registry->get($agentName);
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+
+        // Check if this agent is already loaded
+        foreach ($segments as $segment) {
+            if ($segment['type'] === 'agent' && $segment['name'] === $agentName) {
+                return; // Silently ignore duplicate agent load
+            }
+        }
+
+        // Add agent segment with content and skills metadata
+        $segments[] = [
+            'type' => 'agent',
+            'name' => $agentName,
+            'content' => $agent->content(),
+            'skills' => $agent->skills(),
+        ];
+
+        // Add skill segments for each referenced skill
+        foreach ($agent->skills() as $skillName) {
+            $segments[] = [
+                'type' => 'skill',
+                'name' => $skillName,
+                'content' => null,
+            ];
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->resolveSegmentContent();
+        $this->syncToParent();
+    }
+
+    /**
      * Add a segment to an AI Context tab.
      *
-     * For preset and skill types, the default content is loaded from the
+     * For skill types, the default content is loaded from the
      * corresponding registry. For custom type, an empty content segment
      * with an editable name is created.
      */
@@ -275,18 +325,15 @@ class TabManager extends Component
             }
         }
 
-        // Load default content from registry for preset/skill
+        // Load default content from registry for skill
         $content = null;
-        if ($type === 'preset') {
-            $registry = app()->make('blueprint.presets');
-            if ($registry->has($name)) {
-                $content = $registry->get($name)->content();
-            }
-        } elseif ($type === 'skill') {
+        if ($type === 'skill') {
             $registry = app()->make('blueprint.skills');
             if ($registry->has($name)) {
                 $content = $registry->get($name)->content();
             }
+        } elseif ($type === 'custom') {
+            $content = '';
         }
 
         $segments[] = [
@@ -339,7 +386,7 @@ class TabManager extends Component
     }
 
     /**
-     * Update the content of a segment (override for preset/skill, content for custom).
+     * Update the content of a segment (override for skill, content for custom).
      */
     public function updateSegmentContent(int $tabIndex, int $segmentIndex, string $content): void
     {
@@ -379,16 +426,6 @@ class TabManager extends Component
     }
 
     /**
-     * Determine the segments that are NOT yet added, for dropdown display.
-     *
-     * @return string[] Preset names not yet in the current segments
-     */
-    public function getUnusedPresetsProperty(int $tabIndex): array
-    {
-        return $this->unusedNames($tabIndex, 'preset', $this->availablePresetNames);
-    }
-
-    /**
      * Determine the skills that are NOT yet added, for dropdown display.
      *
      * @return string[] Skill names not yet in the current segments
@@ -404,7 +441,6 @@ class TabManager extends Component
     private function suggestSegmentName(string $type): string
     {
         return match ($type) {
-            'preset' => 'preset',
             'skill' => 'skill',
             'custom' => 'custom-skill',
             default => 'segment',
@@ -434,16 +470,16 @@ class TabManager extends Component
     }
 
     /**
-     * Resolve registry content for preset/skill segments that have null content.
+     * Resolve registry content for skill segments that have null content.
      *
      * When tabs are loaded from a template (e.g. on create form), segments only
      * carry their names — not the registry content. This method pre-fills the
-     * content from the presets/skills registries so the UI shows actual text.
+     * content from the skills registries so the UI shows actual text.
      */
     private function resolveSegmentContent(): void
     {
-        $presets = app()->make('blueprint.presets');
         $skills = app()->make('blueprint.skills');
+        $agents = app()->make('blueprint.agents');
 
         foreach ($this->tabs as $tabIndex => &$tab) {
             if (($tab['type'] ?? '') !== 'ai_context') {
@@ -456,10 +492,10 @@ class TabManager extends Component
                     continue; // Already has content (user override)
                 }
 
-                if ($segment['type'] === 'preset' && $presets->has($segment['name'])) {
-                    $segment['content'] = $presets->get($segment['name'])->content();
-                } elseif ($segment['type'] === 'skill' && $skills->has($segment['name'])) {
+                if ($segment['type'] === 'skill' && $skills->has($segment['name'])) {
                     $segment['content'] = $skills->get($segment['name'])->content();
+                } elseif ($segment['type'] === 'agent' && $agents->has($segment['name'])) {
+                    $segment['content'] = $agents->get($segment['name'])->content();
                 }
             }
             $tab['config']['segments'] = $segments;

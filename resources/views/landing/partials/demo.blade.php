@@ -250,19 +250,20 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Slug</label>
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_slug_label') }}</label>
                                         <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400 font-mono">
                                             laravel-inertia
                                         </div>
                                     </div>
                                 </div>
-                                {{-- Category + Description --}}
+                                {{-- Tags + Description --}}
                                 <div class="grid grid-cols-3 gap-3">
                                     <div>
-                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_bp_cat_label') }}</label>
-                                        <div class="flex items-center px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-sm text-gray-500 dark:text-gray-400">
-                                            {{ __('landing.demo_bp_cat_placeholder') }}
-                                            <svg class="w-3.5 h-3.5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                        <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_tags_label') }}</label>
+                                        <div class="flex flex-wrap gap-1 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg min-h-[38px]">
+                                            <span class="px-1.5 py-0.5 bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 rounded text-[10px]">laravel</span>
+                                            <span class="px-1.5 py-0.5 bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 rounded text-[10px]">react</span>
+                                            <span class="px-1.5 py-0.5 bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 rounded text-[10px]">tailwind</span>
                                         </div>
                                     </div>
                                     <div class="col-span-2">
@@ -326,20 +327,13 @@
                                         <span class="text-xs text-gray-600 dark:text-gray-400">agent.md</span>
                                         <svg class="w-3.5 h-3.5 ml-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                     </div>
-                                    <div class="p-3 grid grid-cols-2 gap-2">
-                                        <div>
-                                            <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">{{ __('landing.demo_tabs_presets_label') }}</span>
-                                            <div class="mt-1 flex flex-wrap gap-1">
-                                                <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_ai_preset_psr12') }}</span>
-                                                <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_ai_preset_clean') }}</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">{{ __('landing.demo_tabs_skills_label') }}</span>
-                                            <div class="mt-1 flex flex-wrap gap-1">
-                                                <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_stripe') }}</span>
-                                                <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_react') }}</span>
-                                            </div>
+                                    <div class="p-3">
+                                        <span class="text-[10px] font-medium text-gray-500 dark:text-gray-400">{{ __('landing.demo_tabs_skills_label') }}</span>
+                                        <div class="mt-1 flex flex-wrap gap-1">
+                                            <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_skill_psr12') }}</span>
+                                            <span class="px-1.5 py-0.5 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[10px]">{{ __('landing.demo_skill_clean_arch') }}</span>
+                                            <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_stripe') }}</span>
+                                            <span class="px-1.5 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[10px]">{{ __('landing.demo_ai_skill_react') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -407,28 +401,21 @@
                                 <div class="flex items-center gap-2 px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/30">
                                     <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">IA</span>
                                     <span class="text-xs font-medium text-gray-700 dark:text-gray-300">agent.md</span>
-                                    <span class="ml-auto text-[10px] text-indigo-500">2 presets · 2 skills</span>
+                                    <span class="ml-auto text-[10px] text-indigo-500">4 skills</span>
                                 </div>
                                 <div class="p-3 bg-white dark:bg-gray-800 space-y-2.5">
-                                    {{-- Presets dropdown --}}
-                                    <div>
-                                        <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_tabs_presets_label') }}</label>
-                                        <div class="flex items-center gap-1.5 flex-wrap">
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
-                                                {{ __('landing.demo_ai_preset_psr12') }}
-                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                            </span>
-                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
-                                                {{ __('landing.demo_ai_preset_clean') }}
-                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                            </span>
-                                            <span class="px-2 py-1 border border-dashed border-gray-300 dark:border-gray-600 rounded text-[11px] text-gray-400">+</span>
-                                        </div>
-                                    </div>
                                     {{-- Skills dropdown --}}
                                     <div>
                                         <label class="block text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('landing.demo_tabs_skills_label') }}</label>
                                         <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_skill_psr12') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
+                                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 rounded text-[11px] font-medium">
+                                                {{ __('landing.demo_skill_clean_arch') }}
+                                                <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                            </span>
                                             <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 rounded text-[11px] font-medium">
                                                 {{ __('landing.demo_ai_skill_stripe') }}
                                                 <svg class="w-3 h-3 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>

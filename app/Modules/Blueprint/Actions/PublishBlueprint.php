@@ -36,6 +36,11 @@ class PublishBlueprint
             throw new HttpException(403, __('blueprint.publish_plan_required'));
         }
 
+        // 2b. Trial users without a contract cannot publish
+        if ($user->isOnProTrial()) {
+            throw new HttpException(403, __('blueprint.publish_trial_denied'));
+        }
+
         $marketplaceOrg = Organization::where('slug', 'cova-marketplace')->firstOrFail();
 
         // 3. Check if already published — find the marketplace copy via subscription
