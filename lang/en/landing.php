@@ -211,7 +211,11 @@ return [
     'trial_started_subject' => 'Welcome to your CoVa Pro trial!',
     'trial_started_greeting' => 'Hi :name!',
     'trial_started_intro' => 'You\'ve activated your 14-day free trial of CoVa Pro. During this period you\'ll enjoy all advanced features.',
-    'trial_started_features' => '✨ Here\'s what you\'ve unlocked:\n• Up to 5 organizations\n• Up to 25 blueprints per organization\n• Marketplace: publish and share your blueprints\n• API tokens for CLI access\n• Priority support',
+    'trial_started_feature_orgs' => '🏢 Up to 5 organizations',
+    'trial_started_feature_blueprints' => '📄 Up to 25 blueprints per organization',
+    'trial_started_feature_marketplace' => '🌐 Marketplace: publish and share your blueprints',
+    'trial_started_feature_api' => '🔑 API tokens for CLI access',
+    'trial_started_feature_support' => '⭐ Priority support',
     'trial_started_expiry' => 'Your trial ends on :date. You can view all details on the pricing page.',
     'publish_trial_denied' => 'Trial users cannot publish to the marketplace. Upgrade to a Pro or Enterprise plan to unlock this feature.',
 

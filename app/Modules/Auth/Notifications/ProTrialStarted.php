@@ -35,7 +35,11 @@ class ProTrialStarted extends Notification
                 ->subject(__('landing.trial_started_subject'))
                 ->greeting(__('landing.trial_started_greeting', ['name' => $notifiable->name]))
                 ->line(__('landing.trial_started_intro'))
-                ->line(__('landing.trial_started_features'))
+                ->line(__('landing.trial_started_feature_orgs'))
+                ->line(__('landing.trial_started_feature_blueprints'))
+                ->line(__('landing.trial_started_feature_marketplace'))
+                ->line(__('landing.trial_started_feature_api'))
+                ->line(__('landing.trial_started_feature_support'))
                 ->line(__('landing.trial_started_expiry', ['date' => $this->trialEndsAt->format('d/m/Y')]))
                 ->salutation(__('auth.mfa_email_salutation'));
         } finally {
