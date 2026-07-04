@@ -197,7 +197,7 @@ return [
     'plan_cta_free' => 'Empezar gratis',
     'plan_cta_pro' => 'Prueba Pro 14 días',
     'plan_cta_pro_no_trial' => 'Contratar Pro',
-    'plan_cta_enterprise' => 'Próximamente',
+    'plan_cta_enterprise' => 'Contactar ventas',
     'plan_popular' => 'Más popular',
     'plan_current' => 'Tu plan actual',
     'per_month' => '/mes',

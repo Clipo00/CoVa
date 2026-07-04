@@ -134,9 +134,15 @@
                             </button>
                         @endif
                     @elseif ($isEnterprise)
-                        <button type="button" onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
-                            {{ __('landing.plan_cta_enterprise') }}
-                        </button>
+                        @if(config('marketplace.billing_enabled'))
+                            <a href="mailto:enterprise@CoVaR.app" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
+                                {{ __('landing.plan_cta_enterprise') }}
+                            </a>
+                        @else
+                            <button type="button" onclick="window.dispatchEvent(new CustomEvent('notify', { detail: { message: '{{ __('landing.coming_soon') }}' } }))" class="block w-full text-center py-2.5 px-4 rounded-lg text-sm font-medium bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 transition-colors cursor-pointer">
+                                {{ __('landing.coming_soon') }}
+                            </button>
+                        @endif
                     @endif
                 </div>
             </div>

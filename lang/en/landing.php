@@ -197,7 +197,7 @@ return [
     'plan_cta_free' => 'Start for free',
     'plan_cta_pro' => 'Try Pro 14 days',
     'plan_cta_pro_no_trial' => 'Get Pro',
-    'plan_cta_enterprise' => 'Coming soon',
+    'plan_cta_enterprise' => 'Contact sales',
     'plan_popular' => 'Most popular',
     'plan_current' => 'Your current plan',
     'per_month' => '/month',

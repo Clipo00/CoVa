@@ -74,7 +74,7 @@
                             ['icon' => 'check', 'text' => __('landing.plan_sso')],
                         ],
                         'excluded' => [],
-                        'cta' => __('landing.plan_cta_enterprise'),
+                        'cta' => config('marketplace.billing_enabled') ? __('landing.plan_cta_enterprise') : __('landing.coming_soon'),
                         'cta_url' => 'mailto:enterprise@CoVaR.app',
                         'popular' => false,
                         'highlight' => false,
