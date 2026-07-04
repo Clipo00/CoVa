@@ -213,7 +213,7 @@ return [
     'trial_started_intro' => 'Has activado tu prueba gratuita de 14 días de CoVa Pro. Durante este periodo disfrutarás de todas las funcionalidades avanzadas.',
     'trial_started_feature_orgs' => '🏢 Hasta 5 organizaciones',
     'trial_started_feature_blueprints' => '📄 Hasta 25 blueprints por organización',
-    'trial_started_feature_marketplace' => '🌐 Marketplace: publica y comparte tus blueprints',
+    'trial_started_feature_marketplace' => '🌐 Marketplace: explora y suscríbete a blueprints de la comunidad',
     'trial_started_feature_api' => '🔑 API tokens para acceso CLI',
     'trial_started_feature_support' => '⭐ Soporte prioritario',
     'trial_started_expiry' => 'Tu prueba finaliza el :date. Puedes ver todos los detalles en la página de precios.',
