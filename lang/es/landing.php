@@ -28,7 +28,7 @@ return [
     'pain_env_title' => 'Configuraciones dispersas',
     'pain_env_desc' => 'Compartir configs por Slack, perder el historial, no saber cuál es la versión correcta…',
     'pain_config_title' => 'Configurar desde cero',
-    'pain_config_desc' => 'Cada nuevo proyecto son horas configurando el mismo agent.md, las mismas reglas de Cursor, los mismos archivos base.',
+    'pain_config_desc' => 'Cada nuevo proyecto son horas configurando el mismo agent y las mismas skills para todo el equipo.',
     'pain_standards_title' => 'Sin estandarizar',
     'pain_standards_desc' => 'Cada developer en tu equipo tiene su propia forma de configurar las cosas. Nada es reproducible.',
 

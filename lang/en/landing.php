@@ -28,7 +28,7 @@ return [
     'pain_env_title' => 'Scattered configs',
     'pain_env_desc' => 'Sharing configs through Slack, losing track of history, never knowing which version is the right one…',
     'pain_config_title' => 'Configuring from scratch',
-    'pain_config_desc' => 'Every new project means hours setting up the same agent.md, the same Cursor rules, the same base files.',
+    'pain_config_desc' => 'Every new project means hours setting up the same agent and the same skills for the whole team.',
     'pain_standards_title' => 'No standardization',
     'pain_standards_desc' => 'Every developer on your team has their own way of configuring things. Nothing is reproducible.',
 
