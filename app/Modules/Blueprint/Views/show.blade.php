@@ -307,6 +307,9 @@
         @if($hasAiContext)
             <script>window.__blueprintAgentMd = @json($agentMd);</script>
         @endif
+        @if($envTemplate)
+            <script>window.__blueprintEnvTemplate = @json($envTemplate);</script>
+        @endif
 
         {{-- Tabbed Content Interface --}}
         <div x-data="{ tab: '{{ $defaultTab }}' }" class="mb-6">
@@ -367,7 +370,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ __('blueprint.env_variables') }}</h3>
                             @if($envTemplate)
-                                <button type="button" onclick="downloadTextFile(@json($envTemplate), '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <button type="button" onclick="downloadTextFile(window.__blueprintEnvTemplate, '.env')" class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
