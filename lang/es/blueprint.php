@@ -307,6 +307,6 @@ return [
     'zip_download_button' => 'Descargar ZIP',
     'zip_download_encrypted' => 'Descargar ZIP cifrado',
     'zip_email_sent' => 'Contraseña enviada por correo electrónico.',
-    'zip_email_unverified' => 'Debes verificar tu correo electrónico antes de descargar un blueprint cifrado.',
+    'zip_email_unverified' => 'Este blueprint contiene variables secretas. Verifica tu correo electrónico para poder descargarlo — la contraseña del ZIP se enviará a tu email por seguridad.',
     'zip_loading' => 'Preparando descarga...',
 ];

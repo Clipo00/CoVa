@@ -306,6 +306,6 @@ return [
     'zip_download_button' => 'Download ZIP',
     'zip_download_encrypted' => 'Download Encrypted ZIP',
     'zip_email_sent' => 'Password sent via email.',
-    'zip_email_unverified' => 'You must verify your email before downloading an encrypted blueprint.',
+    'zip_email_unverified' => 'This blueprint contains secret variables. Verify your email to download — the ZIP password will be sent to your email for security.',
     'zip_loading' => 'Preparing download...',
 ];
