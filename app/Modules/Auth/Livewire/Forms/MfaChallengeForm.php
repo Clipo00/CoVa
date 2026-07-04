@@ -75,7 +75,8 @@ class MfaChallengeForm extends Component
         $token = $trustDevice->execute($user);
         Cookie::queue('mfa_trusted_device', $token, 1296000, '/', null, true, true, false, 'Lax');
 
-        $this->redirect(route('dashboard'));
+        $targetUrl = session()->pull('url.intended', route('dashboard'));
+        $this->redirect($targetUrl);
     }
 
     public function resend(SendMfaCode $sendMfaCode): void

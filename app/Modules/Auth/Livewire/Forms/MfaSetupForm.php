@@ -29,7 +29,7 @@ class MfaSetupForm extends Component
 
     public function skip(): void
     {
-        $this->redirect(route('dashboard'));
+        $this->redirect(session()->pull('url.intended', route('dashboard')));
     }
 
     public function render()

@@ -45,7 +45,7 @@ class RegisterForm extends Component
 
             auth()->login($user);
 
-            $this->redirect(route('onboarding'));
+            $this->redirect(session()->pull('url.intended', route('onboarding')));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {

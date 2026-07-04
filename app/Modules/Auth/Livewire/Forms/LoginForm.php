@@ -51,7 +51,7 @@ class LoginForm extends Component
                 return;
             }
 
-            $this->redirect(route('dashboard'));
+            $this->redirect(session()->pull('url.intended', route('dashboard')));
         } catch (MfaRequiredException $e) {
             session()->put('mfa_user_id', $e->user->id);
             $this->redirect(route('mfa.challenge'));
