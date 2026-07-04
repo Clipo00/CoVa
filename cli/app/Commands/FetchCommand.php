@@ -379,11 +379,18 @@ class FetchCommand extends Command
             $lines[] = $key . '=' . $value;
         }
 
+        // Never overwrite an existing .env — use .env.covar instead
+        $envPath = $outputDir . '/.env';
+        if (file_exists($envPath)) {
+            $envPath = $outputDir . '/.env.covar';
+            $this->line('  <comment>⚠</comment> .env already exists — written to .env.covar instead');
+        }
+
         file_put_contents(
-            $outputDir . '/.env',
+            $envPath,
             implode("\n", $lines) . "\n",
         );
-        $this->line('  <info>✓</info> .env');
+        $this->line('  <info>✓</info> ' . basename($envPath));
     }
 
     /**
