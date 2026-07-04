@@ -252,4 +252,17 @@ return [
     'docs_cmd_fetch' => 'Descarga y despliega un blueprint con sus archivos',
     'docs_cmd_help' => 'Muestra la ayuda y comandos disponibles',
     'docs_security_note' => 'Tu API key se guarda en local con permisos restringidos. La comunicación con la API usa HTTPS. Las variables secretas requieren verificación de contraseña y nunca se muestran en texto plano.',
+
+    // Troubleshooting
+    'docs_troubleshooting_title' => 'Problemas comunes',
+    'docs_trouble_php_version_title' => 'Versión de PHP no compatible',
+    'docs_trouble_php_version_desc' => 'El CLI requiere PHP 8.3 o superior. Verifica tu versión con php -v. Si usas una versión inferior, actualiza PHP o usa el PHAR con la versión correcta.',
+    'docs_trouble_permissions_title' => 'Permiso denegado al ejecutar covar',
+    'docs_trouble_permissions_desc' => 'En Linux/macOS, el binario necesita permisos de ejecución. Usa chmod +x covar. Si no tienes permisos de administrador, ejecuta directamente con php covar.',
+    'docs_trouble_config_title' => 'Archivo de configuración no encontrado',
+    'docs_trouble_config_desc' => 'El CLI guarda la configuración en ~/.config/covar/config.json. Si no existe, ejecuta primero covar config:set-key <tu-key> para crearlo.',
+    'docs_trouble_connection_title' => 'Error de conexión con la API',
+    'docs_trouble_connection_desc' => 'Verifica que la URL base sea correcta. Si despliegas CoVaR en tu propio servidor, usa --base-url para apuntar a tu dominio.',
+    'docs_trouble_debug_title' => 'Activar modo debug',
+    'docs_trouble_debug_desc' => 'Si algo falla y necesitas ver los detalles del error, activa el modo debug. En producción los errores se muestran de forma genérica por seguridad.',
 ];

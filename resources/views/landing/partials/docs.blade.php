@@ -59,7 +59,7 @@ sudo mv covar /usr/local/bin/
                         {!! __('landing.docs_step2_desc') !!}
                     </p>
                     <div class="bg-gray-900 dark:bg-gray-800 rounded-xl p-4 overflow-x-auto">
-                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx --base-url={{ config('app.url') }}</code></pre>
+                        <pre class="text-sm font-mono text-gray-300 leading-relaxed"><code><span class="text-cyan-400">$</span> covar config:set-key covar_xxxxxxxxxxxx</code></pre>
                     </div>
                 </div>
             </div>
@@ -121,6 +121,72 @@ sudo mv covar /usr/local/bin/
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        {{-- Troubleshooting --}}
+        <div class="mt-8" x-data x-reveal>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                {{ __('landing.docs_troubleshooting_title') }}
+            </h3>
+            <div class="space-y-3">
+                {{-- PHP version --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🐘 {{ __('landing.docs_trouble_php_version_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_php_version_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code>php -v          <span class="text-gray-500"># Requiere PHP 8.3 o superior</span>
+php -r "echo PHP_VERSION;"</code></pre>
+                </details>
+
+                {{-- Permissions --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🔒 {{ __('landing.docs_trouble_permissions_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_permissions_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code><span class="text-green-400"># Linux/macOS</span>
+chmod +x covar
+
+<span class="text-green-400"># O ejecutar directamente con PHP</span>
+php covar config:set-key &lt;key&gt;</code></pre>
+                </details>
+
+                {{-- Config file not found --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">📁 {{ __('landing.docs_trouble_config_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_config_desc') }}</p>
+                </details>
+
+                {{-- Connection error --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🌐 {{ __('landing.docs_trouble_connection_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_connection_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code>covar config:set-key &lt;key&gt; --base-url=https://tu-dominio.com</code></pre>
+                </details>
+
+                {{-- Debug mode --}}
+                <details class="group bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200/60 dark:border-gray-700/60">
+                    <summary class="flex items-center justify-between cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">🐛 {{ __('landing.docs_trouble_debug_title') }}</span>
+                        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ __('landing.docs_trouble_debug_desc') }}</p>
+                    <pre class="mt-2 bg-gray-900 dark:bg-gray-900 rounded-lg p-3 text-xs font-mono text-gray-300"><code><span class="text-green-400"># Linux/macOS</span>
+COVAR_DEBUG=1 covar vault:list
+
+<span class="text-green-400"># Windows PowerShell</span>
+$env:COVAR_DEBUG=1; covar vault:list</code></pre>
+                </details>
             </div>
         </div>
 
