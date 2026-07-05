@@ -28,7 +28,18 @@ class BlueprintPolicy
 
     public function delete(User $user, Blueprint $blueprint): bool
     {
-        return $user->isOwnerOf($blueprint->organization);
+        // Org owner can delete any blueprint
+        if ($user->isOwnerOf($blueprint->organization)) {
+            return true;
+        }
+
+        // Maintainer can delete their own blueprints
+        if ($blueprint->created_by === $user->id
+            && $user->hasRoleInOrganization($blueprint->organization, ['maintainer'])) {
+            return true;
+        }
+
+        return false;
     }
 
     public function favorite(User $user, Blueprint $blueprint): bool

@@ -187,6 +187,34 @@ class BlueprintPolicyTest extends TestCase
         $this->assertFalse($this->policy->delete($maintainer, $blueprint));
     }
 
+    public function test_maintainer_can_delete_own_blueprint(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-del2@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $maintainer = User::create([
+            'name' => 'Maintainer',
+            'email' => 'maintainer-del@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization;
+        $organization = $createOrg->execute($owner, 'Test Org', 'test-org-mt');
+        $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
+
+        $this->actingAs($maintainer);
+        $createBp = new CreateBlueprint;
+        $blueprint = $createBp->execute($organization, 'Maintainer BP', 'maintainer-bp');
+
+        $this->assertTrue($this->policy->delete($maintainer, $blueprint));
+    }
+
     // --- publish gate tests ---
 
     public function test_owner_with_paid_plan_can_publish(): void
