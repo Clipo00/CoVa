@@ -1,4 +1,52 @@
-<div>
+<div x-data="{
+    validationToast: false,
+
+    scrollToFirstError() {
+        const first = this.$el.querySelector('input.border-red-500, select.border-red-500, textarea.border-red-500');
+        if (first) {
+            first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            first.focus();
+        }
+    },
+
+    checkErrors() {
+        this.validationToast = true;
+        this.$nextTick(() => this.scrollToFirstError());
+        setTimeout(() => this.validationToast = false, 5000);
+    },
+
+    init() {
+        Livewire.on('scroll-to-first-error', () => this.checkErrors());
+    }
+}">
+    {{-- Validation error toast --}}
+    <div x-show="validationToast"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-4"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 rounded-lg shadow-lg p-4"
+         style="display: none;">
+        <div class="flex items-start gap-3">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-red-800 dark:text-red-200">{{ __('blueprint.validation_toast') }}</p>
+                <p class="text-xs text-red-600 dark:text-red-300 mt-1">{{ __('blueprint.validation_toast_hint') }}</p>
+            </div>
+            <button type="button" @click="validationToast = false" class="flex-shrink-0 text-red-400 hover:text-red-600 dark:hover:text-red-300">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <form wire:submit="submit" class="space-y-6">
         {{-- Información básica --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200/60 dark:border-gray-700/60 overflow-hidden">

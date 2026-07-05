@@ -30,6 +30,8 @@ return [
     'tags_section' => 'Tags',
     'tags_hint' => 'Max 10',
     'create_blueprint_button' => 'Create Blueprint',
+    'validation_toast' => 'Some fields have errors',
+    'validation_toast_hint' => 'Fix the fields marked in red to continue.',
     'edit_blueprint_button' => 'Save Changes',
     'cancel_link' => '← Cancel and go back',
 
