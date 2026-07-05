@@ -100,7 +100,7 @@ class InvitationManagementTest extends TestCase
         $this->assertNotNull($invitation->fresh()->used_at);
     }
 
-    public function test_maintainer_can_revoke_pending_invitation(): void
+    public function test_maintainer_cannot_revoke_pending_invitation(): void
     {
         $invitation = $this->createPendingInvitation();
 
@@ -110,9 +110,8 @@ class InvitationManagementTest extends TestCase
                 $invitation->id,
             ]));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
-        $this->assertFalse($invitation->fresh()->isValid());
+        $response->assertForbidden();
+        $this->assertTrue($invitation->fresh()->isValid());
     }
 
     public function test_developer_cannot_revoke_invitation(): void
@@ -209,7 +208,7 @@ class InvitationManagementTest extends TestCase
         Notification::assertCount(1);
     }
 
-    public function test_maintainer_can_resend_pending_invitation(): void
+    public function test_maintainer_cannot_resend_pending_invitation(): void
     {
         Notification::fake();
         $invitation = $this->createPendingInvitation();
@@ -220,8 +219,7 @@ class InvitationManagementTest extends TestCase
                 $invitation->id,
             ]));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
+        $response->assertForbidden();
     }
 
     public function test_developer_cannot_resend_invitation(): void

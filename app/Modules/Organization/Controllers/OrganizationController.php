@@ -22,7 +22,6 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Mail;
 
 class OrganizationController
 {
@@ -118,6 +117,7 @@ class OrganizationController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'role' => ['required', 'in:developer,maintainer'],
+            'password' => ['nullable', 'string', 'min:8', 'max:255'],
         ]);
 
         $user = $createOrganizationUser->execute(
@@ -125,10 +125,8 @@ class OrganizationController
             name: $validated['name'],
             email: $validated['email'],
             role: $validated['role'],
+            password: $validated['password'] ?? null,
         );
-
-        // Enviar email de bienvenida con credenciales
-        // Mail::to($user->email)->send(new \App\Modules\Organization\Mail\WelcomeToOrganization($user, $temporaryPassword ?? 'Cambia tu password al iniciar', $organization));
 
         return redirect()
             ->route('organizations.members', $organization->slug)
@@ -139,7 +137,9 @@ class OrganizationController
     {
         $organization = Organization::where('slug', $slug)->firstOrFail();
 
-        $this->authorize('updateMemberRole', $organization);
+        if (!auth()->user()->can('updateMemberRole', $organization)) {
+            abort(403, __('organization.no_manage_permission'));
+        }
 
         $validated = $request->validate([
             'role' => ['required', 'in:developer,maintainer'],

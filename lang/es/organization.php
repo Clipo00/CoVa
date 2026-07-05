@@ -64,6 +64,9 @@ return [
     'member_name_placeholder' => 'Juan Pérez',
     'member_email_label' => 'Email',
     'member_email_placeholder' => 'juan@ejemplo.com',
+    'member_password_label' => 'Contraseña',
+    'member_password_placeholder' => 'Opcional',
+    'member_password_hint' => 'Si no especificas una contraseña, el sistema generará una aleatoria y se la enviará al usuario por email.',
     'member_role_label' => 'Rol',
     'role_developer' => 'Developer',
     'role_maintainer' => 'Maintainer',
@@ -138,4 +141,17 @@ return [
     'invitation_intro' => 'Has sido invitado a unirte a :organization como :role.',
     'invitation_accept_button' => 'Aceptar invitación',
     'invitation_expiry' => 'Esta invitación expirará en :hours horas.',
+
+    // Direct member notification
+    'new_member_welcome_subject' => 'Bienvenido a :organization — Credenciales de acceso',
+    'new_member_welcome_greeting' => '¡Hola :name!',
+    'new_member_welcome_intro' => 'Has sido añadido a la organización :organization como :role.',
+    'new_member_credentials_email' => 'Email: :email',
+    'new_member_credentials_password' => 'Contraseña: :password',
+    'new_member_password_change' => 'Por seguridad, deberás cambiar tu contraseña al iniciar sesión por primera vez.',
+    'new_member_login_button' => 'Iniciar sesión',
+    'existing_member_added_subject' => 'Has sido añadido a :organization',
+    'existing_member_added_greeting' => '¡Hola :name!',
+    'existing_member_added_intro' => 'Has sido añadido a la organización :organization como :role. Accede con tu cuenta habitual.',
+    'existing_member_login_button' => 'Ir al dashboard',
 ];

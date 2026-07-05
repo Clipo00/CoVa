@@ -183,10 +183,20 @@ class OnboardingWizard extends Component
     }
 
     /**
-     * Skip the current step (only for steps 3 and 4).
+     * Skip the current step (only for steps 2, 3 and 4).
+     *
+     * When skipping the organization step (2), jumps directly to Done (5)
+     * since blueprint and invite steps require an organization.
      */
     public function skipStep(): void
     {
+        // Step 2 (org) → jump to Done (5), skip blueprint/invite
+        if ($this->step === 2) {
+            $this->goToStep(5);
+
+            return;
+        }
+
         $this->goToStep($this->step + 1);
     }
 

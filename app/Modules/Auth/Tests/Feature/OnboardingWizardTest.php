@@ -69,9 +69,9 @@ class OnboardingWizardTest extends TestCase
             ->assertSet('step', 2);
     }
 
-    // ─── Step 2: Org creation (required, no skip) ─────────────────────
+    // ─── Step 2: Org creation (skippable, jumps to Done) ──────────────
 
-    public function test_step_2_has_no_skip_button(): void
+    public function test_step_2_has_skip_button(): void
     {
         $user = User::create([
             'name' => 'Test User',
@@ -82,7 +82,22 @@ class OnboardingWizardTest extends TestCase
         Livewire::actingAs($user)
             ->test(OnboardingWizard::class)
             ->call('goToStep', 2)
-            ->assertDontSee(__('onboarding.skip_button'));
+            ->assertSee(__('onboarding.skip_button'));
+    }
+
+    public function test_skip_org_jumps_to_done(): void
+    {
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'skiporg@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(OnboardingWizard::class)
+            ->call('goToStep', 2)
+            ->call('skipStep')
+            ->assertSet('step', 5);
     }
 
     public function test_org_validation_stays_on_step_2(): void

@@ -20,7 +20,7 @@
             </span>
         </div>
 
-        @can('invite', $organization)
+        @can('manageMembers', $organization)
             {{-- Create Member Direct Form --}}
             <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('organization.direct_member_heading') }}</h2>
@@ -37,6 +37,18 @@
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="w-full sm:w-40">
+                        <label for="password" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            {{ __('organization.member_password_label') }}
+                            <span class="inline-flex items-center text-gray-400 dark:text-gray-500 cursor-help" title="{{ __('organization.member_password_hint') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-0.5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </label>
+                        <input type="password" name="password" id="password" placeholder="{{ __('organization.member_password_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="w-full sm:w-40">
                         <label for="role" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_role_label') }}</label>
                         <select name="role" id="role" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                             <option value="developer">{{ __('organization.role_developer') }}</option>
@@ -48,7 +60,9 @@
                     </button>
                 </form>
             </div>
+        @endcan
 
+        @can('invite', $organization)
             {{-- Invite Form --}}
             <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('organization.invite_heading') }}</h2>
