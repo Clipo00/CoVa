@@ -1,0 +1,10 @@
+# Railway configuration for CoVa
+# Railpack auto-detects Laravel and sets up PHP + extensions.
+# We override buildCommand to add the CLI PHAR build,
+# and startCommand to run migrations before serving.
+
+[build]
+buildCommand = "bash scripts/railway-build.sh"
+
+[deploy]
+startCommand = "bash scripts/railway-start.sh"
