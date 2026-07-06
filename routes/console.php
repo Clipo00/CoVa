@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('disposable:update')->weekly();
+
+// Database backup — daily at 3 AM UTC
+Schedule::command('backup:database')->dailyAt('03:00');
