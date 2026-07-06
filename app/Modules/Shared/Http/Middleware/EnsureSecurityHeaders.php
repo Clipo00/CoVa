@@ -55,8 +55,10 @@ class EnsureSecurityHeaders
             "base-uri 'self'{$ownOrigin}",
         ]));
 
-        // Strict-Transport-Security (HSTS)
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        // Strict-Transport-Security (HSTS) — production only (HTTPS enforced)
+        if (!app()->isLocal()) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
 
         // Referrer-Policy
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
