@@ -11,6 +11,8 @@ echo "[1/4] Removing dev dependencies..."
 composer install --optimize-autoloader --no-dev --no-interaction
 
 echo "[2/4] Building frontend..."
+# Railpack's prune step leaves stale .cache — nuke it
+rm -rf /app/node_modules/.cache
 npm run build
 
 echo "[3/4] Laravel optimization..."
