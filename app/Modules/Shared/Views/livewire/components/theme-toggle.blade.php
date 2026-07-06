@@ -22,7 +22,7 @@
     <button
         type="button"
         @click="toggle()"
-        class="relative w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-500"
+        class="relative w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-500"
         aria-label="{{ __('shared.theme_toggle') }}"
         title="{{ __('shared.theme_toggle') }}"
     >

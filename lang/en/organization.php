@@ -64,6 +64,9 @@ return [
     'member_name_placeholder' => 'John Doe',
     'member_email_label' => 'Email',
     'member_email_placeholder' => 'john@example.com',
+    'member_password_label' => 'Password',
+    'member_password_placeholder' => 'Optional',
+    'member_password_hint' => 'If no password is provided, a random one will be generated and emailed to the user.',
     'member_role_label' => 'Role',
     'role_developer' => 'Developer',
     'role_maintainer' => 'Maintainer',
@@ -138,4 +141,17 @@ return [
     'invitation_intro' => 'You have been invited to join :organization as :role.',
     'invitation_accept_button' => 'Accept Invitation',
     'invitation_expiry' => 'This invitation will expire in :hours hours.',
+
+    // Direct member notification
+    'new_member_welcome_subject' => 'Welcome to :organization — Access credentials',
+    'new_member_welcome_greeting' => 'Hello :name!',
+    'new_member_welcome_intro' => 'You have been added to the :organization organization as :role.',
+    'new_member_credentials_email' => 'Email: :email',
+    'new_member_credentials_password' => 'Password: :password',
+    'new_member_password_change' => 'For security, you will be required to change your password upon first login.',
+    'new_member_login_button' => 'Log in',
+    'existing_member_added_subject' => 'You have been added to :organization',
+    'existing_member_added_greeting' => 'Hello :name!',
+    'existing_member_added_intro' => 'You have been added to the :organization organization as :role. Log in with your existing account.',
+    'existing_member_login_button' => 'Go to dashboard',
 ];

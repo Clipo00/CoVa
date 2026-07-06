@@ -127,6 +127,24 @@ class OrganizationPolicyTest extends TestCase
         $this->assertTrue($this->policy->manageMembers($owner, $organization));
     }
 
+    public function test_maintainer_cannot_manage_members(): void
+    {
+        $plan = Plan::where('slug', 'free')->first();
+        $owner = User::create([
+            'name' => 'Owner',
+            'email' => 'owner-mm@example.com',
+            'password' => bcrypt('password'),
+            'plan_id' => $plan->id,
+        ]);
+
+        $createOrg = new CreateOrganization;
+        $organization = $createOrg->execute($owner, 'Test Org MM', 'test-org-mm');
+
+        $maintainer = $this->createUserWithRole('maintainer', $organization);
+
+        $this->assertFalse($this->policy->manageMembers($maintainer, $organization));
+    }
+
     public function test_developer_cannot_manage_members(): void
     {
         $plan = Plan::where('slug', 'free')->first();

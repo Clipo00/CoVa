@@ -30,6 +30,8 @@ return [
     'tags_section' => 'Etiquetas',
     'tags_hint' => 'Máx. 10',
     'create_blueprint_button' => 'Crear Blueprint',
+    'validation_toast' => 'Hay campos con errores',
+    'validation_toast_hint' => 'Corrige los campos marcados en rojo para continuar.',
     'edit_blueprint_button' => 'Guardar Cambios',
     'cancel_link' => '← Cancelar y volver',
 

@@ -124,7 +124,13 @@ class BlueprintCreateForm extends Component
         $this->cleanEmptyVariables();
         $this->assignSectionColors();
 
-        $validated = $this->validate();
+        try {
+            $validated = $this->validate();
+        } catch (ValidationException $e) {
+            $this->dispatch('scroll-to-first-error');
+
+            throw $e;
+        }
 
         // SEGURIDAD: Validar que la organizacion seleccionada esta en la lista permitida
         $allowedIds = array_column($this->userOrganizations, 'id');

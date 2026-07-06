@@ -16,9 +16,9 @@ return [
     'welcome_heading' => 'Welcome to CoVaR, :name',
     'welcome_description' => "Let's set up your account in just a few minutes. Follow these steps to start creating and sharing blueprints with your team.",
 
-    // Step 2: Organization (required)
+    // Step 2: Organization (skippable)
     'org_heading' => 'Create your first organization',
-    'org_description' => 'Organizations group your blueprints and let you collaborate with your team. This step is required to continue.',
+    'org_description' => 'Organizations group your blueprints and let you collaborate with your team. You can skip this step and create one later.',
     'org_name_label' => 'Organization name',
     'org_name_placeholder' => 'My Company',
     'org_submit_button' => 'Create Organization',

@@ -101,7 +101,13 @@ class BlueprintEditForm extends Component
         $this->cleanEmptyVariables();
         $this->assignSectionColors();
 
-        $validated = $this->validate();
+        try {
+            $validated = $this->validate();
+        } catch (ValidationException $e) {
+            $this->dispatch('scroll-to-first-error');
+
+            throw $e;
+        }
 
         if (!auth()->user()->can('update', $this->blueprint)) {
             $this->addError('title', __('blueprint.no_edit_permission'));
