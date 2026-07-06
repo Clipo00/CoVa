@@ -38,17 +38,21 @@ class EnsureSecurityHeaders
             $connectSrc .= ' '.implode(' ', array_merge($viteHttp, $viteWs));
         }
 
+        // Allow the app's own domain explicitly (belt-and-suspenders for reverse proxies)
+        $appUrl = rtrim((string) config('app.url'), '/');
+        $ownOrigin = $appUrl ? " $appUrl" : '';
+
         // Content-Security-Policy
         $response->headers->set('Content-Security-Policy', implode('; ', [
-            "default-src 'self'",
-            "script-src $scriptSrc",
-            "style-src $styleSrc",
-            "img-src 'self' data:",
-            "font-src 'self' https://fonts.bunny.net",
-            "connect-src $connectSrc",
+            "default-src 'self'{$ownOrigin}",
+            "script-src {$scriptSrc}{$ownOrigin}",
+            "style-src {$styleSrc}{$ownOrigin}",
+            "img-src 'self' data:{$ownOrigin}",
+            "font-src 'self' https://fonts.bunny.net{$ownOrigin}",
+            "connect-src {$connectSrc}{$ownOrigin}",
             "frame-ancestors 'none'",
-            "form-action 'self'",
-            "base-uri 'self'",
+            "form-action 'self'{$ownOrigin}",
+            "base-uri 'self'{$ownOrigin}",
         ]));
 
         // Strict-Transport-Security (HSTS)
