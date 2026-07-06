@@ -1,10 +1,10 @@
-# CoVa - AI Agent Configuration
+# CoVaRR - AI Agent Configuration
 
 > Configuration Vault: Zero-latency environment setup for modern developers.
 
 ## Project Context
 
-**CoVa** es una plataforma SaaS desarrollada en Laravel 13 con arquitectura modular. Gestiona la creación y compartición de **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos.
+**CoVaRR** es una plataforma SaaS desarrollada en Laravel 13 con arquitectura modular. Gestiona la creación y compartición de **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos.
 
 ### Tech Stack
 
@@ -92,6 +92,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 | **Laravel Routes & Controllers** | `covar-laravel-controller` |
 | **Laravel Tests** | `covar-laravel-test` |
 | **Laravel Value Objects & DTOs** | `covar-laravel-dto` |
+| **Laravel Security / OWASP** | `covar-security` |
 | **SDD workflow (spec-driven)** | `sdd-*` (auto-detectado por prefijo) |
 
 ### Skill Auto-Detection Rules
@@ -103,6 +104,8 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
    - `Models/*` → cargar `covar-laravel-model`
    - `Controllers/*` → cargar `covar-laravel-controller`
    - `Tests/*` → cargar `covar-laravel-test`
+   - `lang/*` → cargar `covar-i18n`
+   - `*.blade.php` → cargar `covar-i18n` (validación de traducciones en vistas)
 
 2. **Por extensión/comportamiento**:
    - extiende `Livewire\Component` → `covar-laravel-livewire`
@@ -114,7 +117,20 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
    - `authenticate` / `LoginUser` → `covar-laravel-action` (Auth context)
    - soft deletes → `covar-laravel-model`
 
-4. **Por idioma**:
+4. **Por consideración de seguridad (SIEMPRE)**:
+   - `covar-security` se carga AUTOMÁTICAMENTE en toda sesión de edición de código
+   - Se combina con cualquier otra skill que aplique (seguridad es transversal)
+   - No requiere un trigger específico — es parte del contexto base del proyecto
+
+5. **Por archivos/patrones de seguridad**:
+   - `bootstrap/app.php` (exceptions handler, middleware) → también `covar-security`
+   - `config/session.php`, `config/sanctum.php`, `config/cors.php` → también `covar-security`
+   - `Middleware/*` → también `covar-security` (configuraciones de seguridad)
+   - rutas con `throttle` o middleware restrictivo → también `covar-security`
+   - operaciones de eliminación/restauración → también `covar-security`
+   - manejo de errores, páginas 403/404/500/419 → también `covar-security`
+
+6. **Por idioma**:
    - Detectar el idioma del mensaje del usuario (español o inglés) y adaptar las preguntas y prompts en el mismo idioma.
    - Cuando el usuario "pida features" —palabras clave como `feature`, `feature request`, `funcionalidad`, `pedir features`, `pedir funcionalidades`— el agente debe:
      - Identificar si el texto está en español o en inglés usando simples heurísticos de palabras clave.
@@ -123,20 +139,29 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
      - "¿Puedes añadir esta feature?" → Detecta español, responde en español.
      - "I want a new feature for blueprints" → Detecta inglés, responde en English.
 
+7. **Por internacionalización (i18n)**:
+   - `lang/*` → cargar `covar-i18n`
+   - `*.blade.php` con texto visible → cargar `covar-i18n` (validar que use `__()`)
+   - Archivos PHP con mensajes para usuarios (exceptions, validations, toasts) → `covar-i18n`
+   - Edición de traducciones existentes → `covar-i18n`
+   - Se combina con cualquier skill de dominio que genere texto nuevo
+
 ---
 
 ## Project Skills
 
 | Skill | Description | Location |
 |-------|-------------|----------|
-| `covar-laravel-action` | Patrones para Actions en CoVa | [.agents/skills/covar-laravel-action/SKILL.md](.agents/skills/covar-laravel-action/SKILL.md) |
-| `covar-laravel-livewire` | Patrones para Livewire en CoVa | [.agents/skills/covar-laravel-livewire/SKILL.md](.agents/skills/covar-laravel-livewire/SKILL.md) |
-| `covar-laravel-policy` | Patrones para Policies en CoVa | [.agents/skills/covar-laravel-policy/SKILL.md](.agents/skills/covar-laravel-policy/SKILL.md) |
-| `covar-laravel-model` | Patrones para Models en CoVa | [.agents/skills/covar-laravel-model/SKILL.md](.agents/skills/covar-laravel-model/SKILL.md) |
-| `covar-laravel-controller` | Patrones para Controllers en CoVa | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
-| `covar-laravel-test` | Patrones para Tests en CoVa | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
+| `covar-laravel-action` | Patrones para Actions en CoVaR | [.agents/skills/covar-laravel-action/SKILL.md](.agents/skills/covar-laravel-action/SKILL.md) |
+| `covar-laravel-livewire` | Patrones para Livewire en CoVaR | [.agents/skills/covar-laravel-livewire/SKILL.md](.agents/skills/covar-laravel-livewire/SKILL.md) |
+| `covar-laravel-policy` | Patrones para Policies en CoVaR | [.agents/skills/covar-laravel-policy/SKILL.md](.agents/skills/covar-laravel-policy/SKILL.md) |
+| `covar-laravel-model` | Patrones para Models en CoVaR | [.agents/skills/covar-laravel-model/SKILL.md](.agents/skills/covar-laravel-model/SKILL.md) |
+| `covar-laravel-controller` | Patrones para Controllers en CoVaR | [.agents/skills/covar-laravel-controller/SKILL.md](.agents/skills/covar-laravel-controller/SKILL.md) |
+| `covar-laravel-test` | Patrones para Tests en CoVaR | [.agents/skills/covar-laravel-test/SKILL.md](.agents/skills/covar-laravel-test/SKILL.md) |
 | `covar-laravel-dto` | Patrones para DTOs y Value Objects | [.agents/skills/covar-laravel-dto/SKILL.md](.agents/skills/covar-laravel-dto/SKILL.md) |
-| `skill-creator` | Crear nuevas skills para CoVa | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
+| `covar-i18n` | Internacionalización: todo texto en castellano + inglés, sincronizado | [.agents/skills/covar-i18n/SKILL.md](.agents/skills/covar-i18n/SKILL.md) |
+| `covar-security` | OWASP Top 10:2025 — Seguridad integral en CoVaR (SIEMPRE activa) | [.agents/skills/covar-security/SKILL.md](.agents/skills/covar-security/SKILL.md) |
+| `skill-creator` | Crear nuevas skills para CoVaR | [~/.config/opencode/skills/skill-creator/SKILL.md](../../.config/opencode/skills/skill-creator/SKILL.md) |
 | `sdd-init` | Inicializar SDD en el proyecto | [~/.config/opencode/skills/sdd-init/SKILL.md](../../.config/opencode/skills/sdd-init/SKILL.md) |
 | `sdd-propose` | Crear propuesta de cambio | [~/.config/opencode/skills/sdd-propose/SKILL.md](../../.config/opencode/skills/sdd-propose/SKILL.md) |
 | `sdd-spec` | Escribir especificaciones | [~/.config/opencode/skills/sdd-spec/SKILL.md](../../.config/opencode/skills/sdd-spec/SKILL.md) |
@@ -162,7 +187,7 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 - Usar `declare(strict_types=1);` en todos los archivos PHP.
 - Aplicar el patrón del módulo correspondiente (Actions, Livewire, etc.).
-- Seguir las convenciones de CoVa documentadas arriba.
+- Seguir las convenciones de CoVaR documentadas arriba.
 - Para decisiones técnicas: (1) explicar el problema, (2) proponer solución con ejemplos, (3) mencionar tools/resources.
 
 ### Cuando el usuario pregunta algo técnico
@@ -173,14 +198,14 @@ Los skills se cargan automáticamente según el contexto detectado. Esta es la m
 
 ---
 
-## CoVa Domain Knowledge
+## CoVaR Domain Knowledge
 
 ### Plans & Limits
 
 | Plan | Orgs | Blueprints/Org | Miembros/Org | Variables/BP | API | Marketplace |
 |------|------|----------------|--------------|--------------|-----|-------------|
-| **Free** | 2 | 3 | 5 | 20 | ❌ | ❌ |
-| **Pro** | 5 | 25 | 50 | 100 | ✅ | ✅ |
+| **Free** | 2 | 3 | 5 | 50 | ❌ | ❌ |
+| **Pro** | 5 | 25 | 50 | 150 | ✅ | ✅ |
 | **Enterprise** | ∞ | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 Los límites se validan en Actions, lanzando excepciones custom:
@@ -216,6 +241,51 @@ Flags: `is_interactive`, `is_secret`
 - `PasswordHasher`: Wrapper sobre `password_hash/verify`
 - `UuidGenerator`: Genera instancias de Uuid VO
 - `JsonValidator`: Valida, decodifica, codifica JSON
+
+---
+
+## Security Roadmap (Next Steps)
+
+| Prioridad | OWASP | Tarea | Estado |
+|-----------|-------|-------|--------|
+| 🔴 Alta | A02 | **Deploy config**: cachear config (`php artisan config:cache`), generar `APP_KEY`, verificar `APP_DEBUG=false` en producción | Pendiente |
+| ✅ Hecho | A02 | **CSP fine-tuning (dev)**: Vite IPv6 no soportado por CSP — se forzó IPv4 en `server.host` y se actualizaron origenes CSP a `127.0.0.1:5173` | Hecho en `fix/csp-vite-ipv6` |
+| 🟡 Media | A09 | **Audit logging**: implementar logging estructurado de operaciones sensibles (login, delete, invite, role changes) con canal separado `audit` | Pendiente |
+| ✅ Hecho | A08 | **Implementar signed URLs** para email verification | Hecho en `security-validation-audit` |
+| 🟢 Baja | A06 | **Revisar rate limits**: ajustar thresholds según uso real en producción | Pendiente |
+| ✅ Hecho | A07 | **MFA**: email-based MFA con código de 6 dígitos, 10min expiry, single-use, rate-limited. UI de challenge + toggle en perfil. | Hecho en `security-validation-audit` |
+| 🟢 Baja | A03 | **Dependency audit automático**: agregar `composer audit` y `npm audit` al pipeline CI/CD | Pendiente |
+
+### Ya implementado (v1.0)
+
+| OWASP | Medida | Archivos |
+|-------|--------|----------|
+| A01 | Slugs en URLs, no IDs auto-incrementales | Organization show, BlueprintController |
+| A01 | Policies por modelo (BlueprintPolicy, OrganizationPolicy) | `app/Modules/*/Policies/` |
+| A01 | Open redirect protection en locale route | `routes/web.php` — `url()->previous()` con validación same-origin |
+| A02 | CSP + HSTS + Referrer-Policy + security headers | `EnsureSecurityHeaders` middleware global |
+| A02 | Locales desde config, no hardcodeados | `routes/web.php`, `SetLocaleFromCookie` — `config('app.supported_locales')` |
+| A04 | `SESSION_ENCRYPT=true`, `SESSION_SECURE_COOKIE=true` | `config/session.php`, `.env.example` |
+| A05 | Blade escaping (`{{ }}`), Alpine `x-text`, Eloquent ORM | Transversal |
+| A05 | XSS prevention: `e()` en raw output con interpolación | `dashboard.blade.php` — `{!! __() !!}` con parámetros escapados |
+| A06 | Rate limiting en POST routes CRUD | Blueprint (30/min), Organization (30/5 min) |
+| A07 | Session regeneration on login, CSRF, httpOnly cookies | Laravel built-in |
+| A10 | Custom error pages + exception logging + JSON API handler | `resources/views/errors/*`, `bootstrap/app.php` |
+
+### Implementado en security-validation-audit (v1.1)
+
+| OWASP | Medida | Archivos |
+|-------|--------|----------|
+| A01 | Role change restringido a owner-only (`isOwner()` + `updateMemberRole` gate) | `UpdateOrganizationUserRole`, `OrganizationPolicy` |
+| A01 | Eliminación de blueprints solo por owner (alineado con SKILL.md) | `BlueprintPolicy::delete()` |
+| A01 | Verificación de email en aceptación de invitaciones + límite de miembros | `AcceptInvitation`, `MaxMembersReachedException` |
+| A01 | Chequeo de límite de blueprints en org destino al transferir | `TransferBlueprint` |
+| A04 | Validación de no duplicación de tipos de tab en blueprints | `TabManager`, `BlueprintCreateForm`, `BlueprintEditForm` |
+| A07 | Rate limiting en MFA challenge (`throttle:5,1` + `RateLimiter` en Livewire) | `Auth/Routes/web.php`, `MfaChallengeForm` |
+| A07 | Email-based MFA: códigos de 6 dígitos, 10min expiry, single-use, rate-limited | `SendMfaCode`, `VerifyMfaCode`, `MfaCode` model, migration |
+| A07 | Email verification con signed URLs (`MustVerifyEmail`, 24h expiry) | `EmailVerificationController`, User model |
+| A07 | Bloqueo de emails desechables/temporales en registro | `DisposableEmail` rule, `propaganistas/laravel-disposable-email` |
+| A08 | Signed URLs para email verification | `EmailVerificationController::verify()` |
 
 ---
 

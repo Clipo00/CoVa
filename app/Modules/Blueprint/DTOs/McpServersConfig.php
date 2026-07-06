@@ -7,12 +7,12 @@ namespace App\Modules\Blueprint\DTOs;
 /**
  * Configuration for MCP Servers tab.
  *
- * @param McpServerEntry[] $servers
+ * @param  McpServerEntry[]  $servers
  */
 final class McpServersConfig
 {
     /**
-     * @param McpServerEntry[] $servers
+     * @param  McpServerEntry[]  $servers
      */
     public function __construct(
         public readonly array $servers = [],
@@ -28,7 +28,7 @@ final class McpServersConfig
 
         return new self(
             servers: array_map(
-                fn(array $server) => McpServerEntry::fromArray($server),
+                fn (array $server) => McpServerEntry::fromArray($server),
                 $rawServers,
             ),
         );
@@ -46,7 +46,7 @@ final class McpServersConfig
     {
         return [
             'mcp_servers' => array_map(
-                fn(McpServerEntry $server) => $server->toArray(),
+                fn (McpServerEntry $server) => $server->toArray(),
                 $this->servers,
             ),
         ];

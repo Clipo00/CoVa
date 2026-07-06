@@ -1,4 +1,4 @@
-# CoVa — Especificación Funcional
+# CoVaR — Especificación Funcional
 
 > Documento de requisitos funcionales y comportamiento del producto.
 > Audiencia: Desarrolladores, product owners, y stakeholders técnicos.
@@ -70,6 +70,37 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 1. User hace click en "Cerrar sesión" (POST a `/logout`)
 2. Sistema invalida sesión y tokens de Sanctum
 3. Redirige a `/login`
+
+### 2.4 API Token Management
+
+**Actor**: User (Pro/Enterprise plan)
+**Precondición**: Usuario autenticado con plan Pro o Enterprise.
+**Postcondición**: Token creado/revocado.
+
+**Flujo de creación**:
+1. User navega a `/profile` → tab Seguridad
+2. Click en "Crear token"
+3. Completa: nombre del token, fecha de expiración (máx 1 año), contraseña actual
+4. Sistema valida plan (Free → CTA upgrade), expiración, contraseña
+5. Token creado via Sanctum `createToken()`
+6. Plain-text token mostrado UNA vez con botón copiar y advertencia
+
+**Flujo de revocación**:
+1. User click en "Revocar" junto al token
+2. Confirma contraseña actual
+3. Token eliminado via Sanctum `delete()`
+4. Toast de confirmación
+
+**Flujo de listado**:
+- Muestra nombre, último uso ("Nunca" si null), fecha de expiración
+- Empty state: "No tienes tokens de API" con CTA
+- Solo tokens del usuario autenticado
+
+**Reglas de negocio**:
+- RN-TOKEN-01: Solo planes Pro/Enterprise pueden crear tokens.
+- RN-TOKEN-02: Expiración obligatoria, máximo 1 año desde creación.
+- RN-TOKEN-03: Contraseña requerida para crear y revocar.
+- RN-TOKEN-04: Plain-text token visible UNA sola vez.
 
 ---
 
@@ -225,7 +256,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 2. Completa:
    - Título (requerido, slug auto-generado)
    - Descripción (opcional)
-   - Categoría (select de categorías globales)
+   - Tags (select de tags)
    - Organización (select, valida acceso)
 3. Sección Variables:
    - Añade variables .env con: key, tipo (Fixed/Empty), default_value, flags (interactive, secret)
@@ -267,10 +298,11 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
    - **AI Context**: Preview de `agent.md` generado con copy-to-clipboard
 4. Si hay `agent.md`, muestra badge y botón de copia
 5. Botón "Copiar comando de instalación" (si aplica)
+6. **Sección Descargas**: Vault fetch CLI card, botones para descargar `agent.md`, `.env` template, y archivos `.md` por segmento (Alpine.js Blob, client-side).
 
 **Reglas de negocio**:
 - RN-BP-05: Solo Owner ve valores de variables secretas. Otros roles ven `***`.
-- RN-BP-06: `ResolveBlueprint` genera `agent.md` combinando presets + skills + custom_rules del tab AI Context.
+- RN-BP-06: `ResolveBlueprint` genera `agent.md` combinando los segments del tab AI Context.
 
 ### 4.3 Editar Blueprint
 
@@ -280,7 +312,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 **Flujo**:
 1. User visita `/blueprints/{uuid}/edit`
 2. Formulario pre-cargado con datos actuales
-3. Edita título, descripción, categoría
+3. Edita título, descripción, tags
 4. Modifica variables (add/edit/delete/reorder)
 5. Modifica tabs (add/remove/reorder/config)
 6. Sistema sincroniza estado de `TabManager` hijo via eventos `tabs-updated`
@@ -354,7 +386,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 
 #### 4.8.1 Todos los Blueprints
 - `/blueprints` — Blueprints de todas las orgs del usuario
-- Filtros: por org, categoría, búsqueda por título
+- Filtros: por org, tags, búsqueda por título
 - Ordenación: recientes, alfabético
 
 #### 4.8.2 Favoritos
@@ -366,6 +398,10 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 - Acciones: Restaurar
 - No se muestra a Developer/Maintainer
 
+#### 4.8.4 Friendly URLs
+- `GET /b/{slug}` — Ver blueprint por slug amigable
+- `GET /b/u/{uuid}` — Legacy redirect (301 a `/b/{slug}`)
+
 ---
 
 ## 5. Dashboard
@@ -375,7 +411,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 
 ### 5.1 Sin Organizaciones
 - CTA grande: "Crear primera organización"
-- Mensaje explicativo del valor de CoVa
+- Mensaje explicativo del valor de CoVaR
 - Link a `/organizations/create`
 
 ### 5.2 Con Organizaciones
@@ -401,11 +437,11 @@ Guest visita /register
   → Ve CTA "Crear primera organización"
   → Click → /organizations/create
   → Completa nombre
-  → Org creada (plan Free: 2 orgs max, 3 BP/org, 5 members, 20 variables/BP)
+  → Org creada (plan Free: 2 orgs max, 3 BP/org, 5 members, 50 variables/BP)
   → Redirect a /organizations/{slug}
   → Click "Nuevo Blueprint"
   → /blueprints/create?org={id}
-  → Completa título, categoría, variables, tabs
+   → Completa título, tags, variables, tabs
   → Blueprint creado con UUID
   → Redirect a /blueprints/{uuid}
   → Ve resolución completa con agent.md
@@ -478,6 +514,10 @@ Developer en /blueprints/{uuid}
 | RN-BP-11 | Validar límite blueprints org destino en transferencia | Blueprint |
 | RN-BP-12 | Favoritos solo de orgs del usuario | Blueprint |
 | RN-BP-13 | Favoritos persisten en soft delete | Blueprint |
+| RN-TOKEN-01 | Solo planes Pro/Enterprise pueden crear tokens | Auth |
+| RN-TOKEN-02 | Expiración obligatoria, máximo 1 año desde creación | Auth |
+| RN-TOKEN-03 | Contraseña requerida para crear y revocar | Auth |
+| RN-TOKEN-04 | Plain-text token visible UNA sola vez | Auth |
 
 ---
 
@@ -498,6 +538,7 @@ Developer en /blueprints/{uuid}
 | Transferir sin ser Owner | "Solo el Owner puede transferir blueprints" | 403 |
 | Blueprint no encontrado | "Blueprint no encontrado" | 404 |
 | Org no encontrada | "Organización no encontrada" | 404 |
+| Slug duplicado | "Ya existe un blueprint con ese slug" | 422 |
 
 ---
 
@@ -516,6 +557,7 @@ Developer en /blueprints/{uuid}
 | Copiar al portapapeles | Icono cambia a ✓ | Toast verde "Copiado" | — |
 | Invitar miembro | Spinner en botón | Toast verde "Invitación enviada" | Toast rojo |
 | Aceptar invitación | Spinner en página | Redirect a org, toast verde | Toast rojo con razón |
+| Crear token | Spinner en botón | One-time display → "Token creado" | Toast rojo |
 
 ---
 
@@ -524,17 +566,35 @@ Developer en /blueprints/{uuid}
 ### 10.1 AI Agents / Skills Configuration
 - **Estado**: 🚧 En progreso
 - **Descripción**: Configuración avanzada de contexto para agentes AI dentro del tab AI Context.
-- **Implementado**: Presets, skills, custom_rules en tab. Generación de `agent.md`.
+- **Implementado**: Segments (skills, custom, agent) en tab AI Context. Generación de `agent.md`.
 - **Pendiente**: Integración con LLM providers, export a formatos específicos de agentes (Claude, GPT, etc.).
 
 ### 10.2 Marketplace
-- **Estado**: 🚧 Preparación
+- **Estado**: ✅ Completo
 - **Descripción**: Publicación de blueprints públicos para la comunidad.
-- **Implementado**: Campo `is_public` en blueprints, flag `has_marketplace_publish` en planes, org de marketplace creada en seeder.
-- **Pendiente**: Landing pública, rating/reviews, búsqueda, filtrado, moderación.
+- **Implementado**: `MarketplaceList` Livewire, `SubscribeToBlueprint` Action, `VoteOnBlueprint` Action, `NotificationBell` Livewire, `NotifySubscribers` Job, rutas `/marketplace`, `/marketplace/{uuid}`, `/notifications`.
+- **Pendiente**: Ranking/reviews, moderación de contenido.
+
+### 10.3 Onboarding Wizard
+- **Estado**: ✅ Completo
+- **Descripción**: Wizard de 4 pasos post-registro (Welcome → Create Org → Invite Team → Complete). Skip-all flow. Email verification banner no bloqueante. `EnsureOnboardingCompleted` middleware.
+- **Implementado**: `OnboardingWizard` Livewire, `onboarding_step` en BD, `lang/{es,en}/onboarding.php`.
+- **Pendiente**: Nada.
+
+### 10.4 Friendly URLs
+- **Estado**: ✅ Completo
+- **Descripción**: URLs de blueprints con slugs legibles (`/b/{slug}`) en lugar de UUIDs. 301 redirects de UUID a slug. Mutation routes mantienen UUID.
+- **Implementado**: Route model binding `{blueprint:slug}`, regex constraint, `BlueprintController@showBySlug`.
+- **Pendiente**: Nada.
+
+### 10.5 API Token Management
+- **Estado**: ✅ Completo
+- **Descripción**: Gestión de tokens de API personales para autenticación del futuro CLI. Integración con Laravel Sanctum, UI en perfil de usuario (tab Seguridad), plan-gating, expiración obligatoria, y rate limiting.
+- **Implementado**: `HasApiTokens` en User, migración `personal_access_tokens`, `ApiTokenManager` Livewire, `CreateApiToken`/`RevokeApiToken` Actions con `VerifiesPassword` trait, perfil con 3 tabs (Alpine.js + URL hash sync), 24 tests.
+- **Pendiente**: CLI (`covar fetch`), notificaciones de expiración.
 
 ---
 
 **Documento generado**: 2026-05-15  
 **Versión**: 1.0  
-**Última actualización**: Fase 2 del plan de documentación
+**Última actualización**: 2026-06-30

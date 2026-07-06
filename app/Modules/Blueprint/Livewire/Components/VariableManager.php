@@ -30,6 +30,27 @@ class VariableManager extends Component
         $this->dispatch('variables-updated', variables: $this->variables);
     }
 
+    /**
+     * Move a variable up (-1) or down (+1) in the list.
+     * Swaps the element with its neighbor. Does nothing at boundaries.
+     */
+    public function moveVariable(int $index, int $direction): void
+    {
+        $newIndex = $index + $direction;
+
+        if ($newIndex < 0 || $newIndex >= count($this->variables)) {
+            return;
+        }
+
+        $temp = $this->variables[$index];
+        $this->variables[$index] = $this->variables[$newIndex];
+        $this->variables[$newIndex] = $temp;
+
+        $this->variables = array_values($this->variables);
+
+        $this->dispatch('variables-updated', variables: $this->variables);
+    }
+
     public function updatedVariables($value, $key): void
     {
         // Validar que no haya keys duplicadas
@@ -37,7 +58,7 @@ class VariableManager extends Component
         $keys = array_filter($keys);
 
         if (count($keys) !== count(array_unique($keys))) {
-            $this->addError('variables', 'Las keys de las variables deben ser únicas.');
+            $this->addError('variables', __('blueprint.unique_variable_keys'));
         }
         $this->dispatch('variables-updated', variables: $this->variables);
     }

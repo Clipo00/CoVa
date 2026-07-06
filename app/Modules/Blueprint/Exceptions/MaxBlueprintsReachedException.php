@@ -11,7 +11,7 @@ class MaxBlueprintsReachedException extends Exception
     public function __construct(int $maxBlueprints, string $planName)
     {
         parent::__construct(
-            "Límite de {$maxBlueprints} blueprints por organización alcanzado en plan {$planName}."
+            __('blueprint.max_blueprints_reached', ['max' => $maxBlueprints, 'plan' => $planName])
         );
     }
 }

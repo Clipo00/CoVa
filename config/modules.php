@@ -14,6 +14,7 @@ return [
         'Auth',
         'Organization',
         'Blueprint',
+        'Marketplace',
         'Shared',
     ],
 ];

@@ -15,24 +15,24 @@ class UpdateOrganizationUserRole
         string $newRole,
         User $actor
     ): void {
-        // El actor debe poder gestionar miembros
-        if (!$actor->canManageMembers($organization)) {
-            abort(403, 'No tienes permisos para gestionar miembros.');
+        // El actor debe ser owner de la organización
+        if (!$actor->isOwnerOf($organization)) {
+            abort(403, __('organization.no_manage_permission'));
         }
 
         // No se puede cambiar el rol del owner
         if ($targetUser->id === $organization->owner_id) {
-            abort(403, 'No puedes cambiar el rol del propietario de la organización.');
+            abort(403, __('organization.cannot_change_owner_role'));
         }
 
         // Validar que el nuevo rol es válido
         if (!in_array($newRole, ['developer', 'maintainer'])) {
-            abort(422, 'El rol debe ser developer o maintainer.');
+            abort(422, __('organization.invalid_role'));
         }
 
         // Verificar que el usuario es miembro de la organización
         if (!$organization->members()->where('user_id', $targetUser->id)->exists()) {
-            abort(422, 'El usuario no es miembro de esta organización.');
+            abort(422, __('organization.not_a_member'));
         }
 
         $organization->members()->updateExistingPivot($targetUser->id, ['role' => $newRole]);

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Blueprint\Livewire\Forms;
 
+use App\Models\Tag;
 use App\Modules\Blueprint\Actions\UpdateBlueprint;
+use App\Modules\Blueprint\Enums\TabType;
 use App\Modules\Blueprint\Livewire\Concerns\ManagesVariables;
 use App\Modules\Blueprint\Models\Blueprint;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -15,11 +19,18 @@ class BlueprintEditForm extends Component
     use ManagesVariables;
 
     public Blueprint $blueprint;
+
     public string $title = '';
+
     public string $slug = '';
+
     public string $description = '';
-    public ?int $categoryId = null;
+
+    public bool $isPublic = false;
+
     public array $tabsConfig = [];
+
+    public array $selectedTags = [];
 
     public function mount(Blueprint $blueprint): void
     {
@@ -27,7 +38,8 @@ class BlueprintEditForm extends Component
         $this->title = $blueprint->title;
         $this->slug = $blueprint->slug;
         $this->description = $blueprint->description ?? '';
-        $this->categoryId = $blueprint->category_id;
+        $this->isPublic = (bool) $blueprint->is_public;
+        $this->selectedTags = $blueprint->tags()->pluck('tags.id')->toArray();
 
         // Ensure tabs_config is a proper array (not null)
         $raw = $blueprint->tabs_config;
@@ -41,6 +53,7 @@ class BlueprintEditForm extends Component
                 'is_interactive' => (bool) $variable->is_interactive,
                 'is_secret' => (bool) $variable->is_secret,
                 'section' => $variable->section,
+                'section_color' => $variable->section_color,
             ];
         })->toArray();
 
@@ -55,7 +68,8 @@ class BlueprintEditForm extends Component
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'categoryId' => ['nullable', 'integer', 'exists:categories,id'],
+            'selectedTags' => ['array', 'max:10'],
+            'selectedTags.*' => ['integer', 'exists:tags,id'],
             'tabsConfig' => ['nullable', 'array'],
         ], $this->variableRules());
     }
@@ -77,25 +91,41 @@ class BlueprintEditForm extends Component
         $this->tabsConfig = $tabs;
     }
 
-    public function updatingCategoryId($value): void
-    {
-        $this->categoryId = $value === '' ? null : $value;
-    }
-
     public function updatedTitle(): void
     {
-        $this->slug = \Illuminate\Support\Str::slug($this->title);
+        $this->slug = Str::slug($this->title);
     }
 
     public function submit(UpdateBlueprint $updateBlueprint): void
     {
-        $this->categoryId = $this->categoryId === '' ? null : $this->categoryId;
         $this->cleanEmptyVariables();
+        $this->assignSectionColors();
 
-        $validated = $this->validate();
+        try {
+            $validated = $this->validate();
+        } catch (ValidationException $e) {
+            $this->dispatch('scroll-to-first-error');
+
+            throw $e;
+        }
 
         if (!auth()->user()->can('update', $this->blueprint)) {
-            $this->addError('title', 'No tienes permisos para editar este blueprint.');
+            $this->addError('title', __('blueprint.no_edit_permission'));
+
+            return;
+        }
+
+        // SEGURIDAD: Verificar permiso de publish si is_public cambió
+        if ($this->isPublic !== (bool) $this->blueprint->is_public) {
+            Gate::authorize('publish', $this->blueprint);
+        }
+
+        // Validar que no haya tipos de pestaña duplicados
+        $tabTypes = array_column($this->tabsConfig, 'type');
+        $duplicates = array_diff_assoc($tabTypes, array_unique($tabTypes));
+        if (!empty($duplicates)) {
+            $this->addError('tabsConfig', __('blueprint.duplicate_tab_type', ['type' => TabType::label(reset($duplicates))]));
+
             return;
         }
 
@@ -103,9 +133,21 @@ class BlueprintEditForm extends Component
             return;
         }
 
+        // Validate unique slug within the organization (excluding self)
+        $slugExists = Blueprint::where('organization_id', $this->blueprint->organization_id)
+            ->where('slug', $validated['slug'])
+            ->where('id', '!=', $this->blueprint->id)
+            ->exists();
+
+        if ($slugExists) {
+            $this->addError('slug', __('blueprint.slug_exists', ['slug' => $validated['slug']]));
+
+            return;
+        }
+
         try {
             // Normalize tabsConfig: ensure each tab has type and config
-            $tabsForDb = array_values(array_map(fn($tab) => [
+            $tabsForDb = array_values(array_map(fn ($tab) => [
                 'type' => $tab['type'],
                 'config' => $tab['config'] ?? [],
             ], $this->tabsConfig));
@@ -116,13 +158,14 @@ class BlueprintEditForm extends Component
                     'title' => $validated['title'],
                     'slug' => $validated['slug'],
                     'description' => $validated['description'] ?: null,
-                    'category_id' => $validated['categoryId'],
+                    'is_public' => $this->isPublic,
                     'tabs_config' => $tabsForDb,
                 ],
                 variables: $this->variables,
+                tagIds: $validated['selectedTags'] ?? [],
             );
 
-            $this->redirect(route('blueprints.show', $this->blueprint->uuid));
+            $this->redirect(route('blueprints.show', $this->blueprint->slug));
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $errors) {
                 foreach ($errors as $error) {
@@ -134,7 +177,16 @@ class BlueprintEditForm extends Component
 
     public function render()
     {
-        $categories = \App\Modules\Shared\Models\Category::all();
-        return view('blueprint::livewire.forms.blueprint-edit-form', compact('categories'));
+        $allTags = Tag::orderBy('name')->get();
+
+        return view('blueprint::livewire.forms.blueprint-edit-form', compact('allTags'));
+    }
+
+    /**
+     * Check if the currently authenticated user is the owner of the blueprint's organization.
+     */
+    public function getIsOwnerProperty(): bool
+    {
+        return auth()->user()->isOwnerOf($this->blueprint->organization);
     }
 }

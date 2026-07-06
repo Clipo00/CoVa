@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Organization\Actions;
 
-use App\Modules\Auth\Actions\RegisterUser;
-use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Models\Organization;
-use Illuminate\Support\Facades\Hash;
+use App\Modules\Organization\Notifications\NewMemberNotification;
+use App\Modules\Shared\Models\Plan;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\ValidationException;
 
 class CreateOrganizationUser
 {
@@ -16,20 +17,66 @@ class CreateOrganizationUser
         Organization $organization,
         string $name,
         string $email,
-        string $role = 'developer'
+        string $role = 'developer',
+        ?string $password = null,
     ): User {
-        $temporaryPassword = bin2hex(random_bytes(8));
+        // Check if user with this email is already a member of the organization
+        $existingMember = User::where('email', $email)
+            ->whereHas('organizations', fn ($q) => $q->where('organization_id', $organization->id))
+            ->first();
 
-        $user = User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($temporaryPassword),
-            'plan_id' => null,
-        ]);
+        if ($existingMember) {
+            throw ValidationException::withMessages([
+                'email' => [__('organization.user_already_member')],
+            ]);
+        }
+
+        // Reuse existing user if they already have an account
+        $user = User::where('email', $email)->first();
+        $isNewUser = false;
+        $plainPassword = null;
+
+        if (!$user) {
+            $isNewUser = true;
+            $plainPassword = $password ?? bin2hex(random_bytes(8));
+
+            $freePlan = Plan::where('slug', 'free')->first();
+
+            if ($freePlan === null) {
+                throw new \RuntimeException('Free plan does not exist. Run database seeders.');
+            }
+
+            $user = User::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => $plainPassword,
+                'password_change_required' => true,
+                'plan_id' => $freePlan->id,
+            ]);
+        }
 
         $user->organizations()->attach($organization->id, [
             'role' => $role,
         ]);
+
+        // Send appropriate notification
+        if ($isNewUser) {
+            Notification::route('mail', $email)
+                ->notify(new NewMemberNotification(
+                    organization: $organization,
+                    user: $user,
+                    role: $role,
+                    password: $plainPassword,
+                ));
+        } else {
+            Notification::route('mail', $email)
+                ->notify(new NewMemberNotification(
+                    organization: $organization,
+                    user: $user,
+                    role: $role,
+                    password: null,
+                ));
+        }
 
         return $user;
     }

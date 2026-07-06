@@ -15,6 +15,7 @@ class Uuid
     {
         if ($uuid === null) {
             $this->value = RamseyUuid::uuid4()->toString();
+
             return;
         }
 
@@ -27,7 +28,7 @@ class Uuid
 
     public static function generate(): self
     {
-        return new self();
+        return new self;
     }
 
     public function __toString(): string

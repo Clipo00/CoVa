@@ -31,11 +31,31 @@ class OrganizationPolicy
 
     public function manageMembers(User $user, Organization $organization): bool
     {
-        return $user->canManageMembers($organization);
+        return $user->isOwnerOf($organization);
     }
 
     public function createBlueprint(User $user, Organization $organization): bool
     {
         return $user->canCreateBlueprints($organization);
+    }
+
+    public function updateMemberRole(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
+
+    public function removeMember(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
+
+    public function revokeInvitation(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
+    }
+
+    public function resendInvitation(User $user, Organization $organization): bool
+    {
+        return $user->isOwnerOf($organization);
     }
 }

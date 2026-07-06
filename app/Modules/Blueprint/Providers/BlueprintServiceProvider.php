@@ -5,22 +5,32 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Providers;
 
 use App\Modules\Blueprint\Actions\ResolveBlueprint;
-use App\Modules\Blueprint\Contracts\TabInterface;
+use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintCreateForm;
 use App\Modules\Blueprint\Livewire\Forms\BlueprintEditForm;
 use App\Modules\Blueprint\Livewire\Tables\BlueprintList;
-use App\Modules\Blueprint\Livewire\Components\TabManager;
 use App\Modules\Blueprint\Models\Blueprint;
 use App\Modules\Blueprint\Policies\BlueprintPolicy;
 use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
+use App\Modules\Blueprint\Models\AgentTemplate;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\AgentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Agents\DatabaseAgent;
 use App\Modules\Blueprint\Tabs\AiContext\AiContextTab;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\CleanArchitecturePreset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\PSR12Preset;
-use App\Modules\Blueprint\Tabs\AiContext\Presets\SOLIDPreset;
 use App\Modules\Blueprint\Tabs\AiContext\SegmentRegistry;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ApiDesignSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\CICDSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\CleanArchitectureSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\DockerSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\LaravelConventionsSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\PSR12Skill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\ReactExpertSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\SOLIDSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\StripeSkill;
 use App\Modules\Blueprint\Tabs\AiContext\Skills\TailwindSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\TypeScriptStrictSkill;
+use App\Modules\Blueprint\Tabs\AiContext\Skills\VueExpertSkill;
 use App\Modules\Blueprint\Tabs\McpServersTab;
+use App\Modules\Blueprint\Tabs\ScriptsTab;
 use App\Modules\Blueprint\Tabs\TabRegistry;
 use App\Modules\Blueprint\Tabs\VscodeExtensionsTab;
 use Illuminate\Support\Facades\Gate;
@@ -32,11 +42,12 @@ class BlueprintServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerTabRegistries();
+        $this->registerTemplates();
     }
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Views', 'blueprint');
+        $this->loadViewsFrom(__DIR__.'/../Views', 'blueprint');
 
         Gate::policy(Blueprint::class, BlueprintPolicy::class);
 
@@ -51,37 +62,56 @@ class BlueprintServiceProvider extends ServiceProvider
      */
     private function registerTabRegistries(): void
     {
-        // Register presets registry
-        $this->app->singleton('blueprint.presets', function () {
-            $registry = new SegmentRegistry();
-            $registry->register(new PSR12Preset());
-            $registry->register(new SOLIDPreset());
-            $registry->register(new CleanArchitecturePreset());
+        // Register skills registry (includes all skills: code conventions + technology skills)
+        $this->app->singleton('blueprint.skills', function () {
+            $registry = new SegmentRegistry;
+
+            // Code convention skills
+            $registry->register(new PSR12Skill);
+            $registry->register(new SOLIDSkill);
+            $registry->register(new CleanArchitectureSkill);
+            $registry->register(new LaravelConventionsSkill);
+            $registry->register(new TypeScriptStrictSkill);
+            $registry->register(new DockerSkill);
+            $registry->register(new CICDSkill);
+
+            // Technology skills
+            $registry->register(new StripeSkill);
+            $registry->register(new TailwindSkill);
+            $registry->register(new ReactExpertSkill);
+            $registry->register(new VueExpertSkill);
+            $registry->register(new ApiDesignSkill);
+
             return $registry;
         });
 
-        // Register skills registry
-        $this->app->singleton('blueprint.skills', function () {
-            $registry = new SegmentRegistry();
-            $registry->register(new StripeSkill());
-            $registry->register(new TailwindSkill());
+        // Register agents registry from database
+        $this->app->singleton('blueprint.agents', function () {
+            $registry = new AgentRegistry;
+
+            foreach (AgentTemplate::all() as $template) {
+                $registry->register(new DatabaseAgent($template));
+            }
+
             return $registry;
         });
 
         // Register agent generator
         $this->app->singleton(AgentGenerator::class, function ($app) {
             return new AgentGenerator(
-                $app->make('blueprint.presets'),
                 $app->make('blueprint.skills'),
+                $app->make('blueprint.agents'),
             );
         });
 
         // Register tabs registry
         $this->app->singleton(TabRegistry::class, function ($app) {
-            $registry = new TabRegistry();
+            $registry = new TabRegistry;
             $registry->register($app->make(VscodeExtensionsTab::class));
             $registry->register($app->make(McpServersTab::class));
+            $registry->register($app->make(ScriptsTab::class));
             $registry->register($app->make(AiContextTab::class));
+
             return $registry;
         });
 
@@ -90,6 +120,73 @@ class BlueprintServiceProvider extends ServiceProvider
             return new ResolveBlueprint(
                 $app->make(TabRegistry::class),
             );
+        });
+    }
+
+    /**
+     * Register blueprint templates for the create form.
+     */
+    private function registerTemplates(): void
+    {
+        $this->app->singleton('blueprint.templates', function () {
+            return [
+                'laravel' => [
+                    'label' => 'Laravel',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
+                            'bmewburn.vscode-intelephense-client',
+                            'amiralizadeh9480.laravel-extra-intellisense',
+                            'shufo.vscode-blade-formatter',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'segments' => [
+                                ['type' => 'skill', 'name' => 'psr12', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'laravel-conventions', 'content' => null],
+                                ['type' => 'skill', 'name' => 'stripe', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
+                        ]],
+                    ],
+                ],
+                'nextjs' => [
+                    'label' => 'Next.js',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
+                            'dsznajder.es7-react-js-snippets',
+                            'bradlc.vscode-tailwindcss',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'segments' => [
+                                ['type' => 'skill', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react-expert', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
+                        ]],
+                    ],
+                ],
+                'remix' => [
+                    'label' => 'Remix',
+                    'tabs' => [
+                        ['type' => 'vscode_extensions', 'config' => ['extensions' => [
+                            'dsznajder.es7-react-js-snippets',
+                            'bradlc.vscode-tailwindcss',
+                        ]]],
+                        ['type' => 'ai_context', 'config' => [
+                            'segments' => [
+                                ['type' => 'skill', 'name' => 'typescript-strict', 'content' => null],
+                                ['type' => 'skill', 'name' => 'solid', 'content' => null],
+                                ['type' => 'skill', 'name' => 'clean-architecture', 'content' => null],
+                                ['type' => 'skill', 'name' => 'react-expert', 'content' => null],
+                                ['type' => 'skill', 'name' => 'tailwind', 'content' => null],
+                            ],
+                        ]],
+                    ],
+                ],
+            ];
         });
     }
 }

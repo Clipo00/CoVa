@@ -23,11 +23,11 @@ final class McpServerEntry
         $command = $data['command'] ?? null;
 
         if (!is_string($name) || $name === '') {
-            throw new InvalidArgumentException('MCP server must have a string "name".');
+            throw new InvalidArgumentException(__('blueprint.mcp_name_required'));
         }
 
         if (!is_string($command) || $command === '') {
-            throw new InvalidArgumentException("MCP server '{$name}' must have a string 'command'.");
+            throw new InvalidArgumentException(__('blueprint.mcp_command_required', ['name' => $name]));
         }
 
         return new self(
@@ -38,12 +38,12 @@ final class McpServerEntry
     }
 
     /**
-     * @param mixed[] $args
+     * @param  mixed[]  $args
      * @return string[]
      */
     private static function filterArgs(array $args): array
     {
-        return array_map(fn($arg) => (string) $arg, $args);
+        return array_map(fn ($arg) => (string) $arg, $args);
     }
 
     public function toArray(): array
@@ -60,7 +60,7 @@ final class McpServerEntry
         $cmd = $this->command;
 
         if (!empty($this->args)) {
-            $cmd .= ' ' . implode(' ', array_map(fn($arg) => escapeshellarg($arg), $this->args));
+            $cmd .= ' '.implode(' ', array_map(fn ($arg) => escapeshellarg($arg), $this->args));
         }
 
         return $cmd;

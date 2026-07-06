@@ -11,7 +11,7 @@ class MaxOrganizationsReachedException extends Exception
     public function __construct(int $maxOrganizations, string $planName)
     {
         parent::__construct(
-            "Límite de {$maxOrganizations} organizaciones alcanzado en plan {$planName}."
+            __('organization.max_reached', ['max' => $maxOrganizations, 'plan' => $planName])
         );
     }
 }

@@ -1,110 +1,138 @@
 @extends('layouts.app')
 
-@section('title', 'Miembros - ' . $organization->name)
+@section('title', __('organization.members_title', ['name' => $organization->name]))
 
 @section('content')
     <div class="max-w-4xl mx-auto">
         {{-- Breadcrumb --}}
-        <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500">
-            <a href="{{ route('dashboard') }}" class="hover:text-gray-700">Dashboard</a>
+        <div class="mb-6 flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+            <a href="{{ route('dashboard') }}" class="hover:text-gray-700 dark:hover:text-gray-200">{{ __('layouts.dashboard') }}</a>
             <span>/</span>
-            <a href="{{ route('organizations.show', $organization->slug) }}" class="hover:text-gray-700">{{ $organization->name }}</a>
+            <a href="{{ route('organizations.show', $organization->slug) }}" class="hover:text-gray-700 dark:hover:text-gray-200">{{ $organization->name }}</a>
             <span>/</span>
-            <span class="text-gray-900">Miembros</span>
+            <span class="text-gray-900 dark:text-gray-100">{{ __('organization.members_breadcrumb') }}</span>
         </div>
 
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-900">Miembros</h1>
-            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                {{ $organization->members->count() }} miembros
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ __('organization.members_heading') }}</h1>
+            <span class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                {{ __('organization.member_count', ['count' => $organization->members->count()]) }}
             </span>
         </div>
 
-        @can('invite', $organization)
+        @can('manageMembers', $organization)
             {{-- Create Member Direct Form --}}
-            <div class="bg-white shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Crear miembro directo</h2>
-                <form method="POST" action="{{ route('organizations.members.store', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4 items-end">
+            <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6 border-l-4 border-indigo-500">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('organization.direct_member_heading') }}</h2>
+                <form method="POST" action="{{ route('organizations.members.store', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4 items-start">
                     @csrf
                     <div class="flex-1">
-                        <label for="name" class="block text-xs font-medium text-gray-500 mb-1">Nombre</label>
-                        <input type="text" name="name" id="name" placeholder="Juan Pérez" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <label for="name" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_name_label') }}</label>
+                        <input type="text" name="name" id="name" placeholder="{{ __('organization.member_name_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="flex-1">
-                        <label for="email" class="block text-xs font-medium text-gray-500 mb-1">Email</label>
-                        <input type="email" name="email" id="email" placeholder="juan@ejemplo.com" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <label for="email" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_email_label') }}</label>
+                        <input type="email" name="email" id="email" placeholder="{{ __('organization.member_email_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
                     <div class="w-full sm:w-40">
-                        <label for="role" class="block text-xs font-medium text-gray-500 mb-1">Rol</label>
-                        <select name="role" id="role" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="developer">Developer</option>
-                            <option value="maintainer">Maintainer</option>
+                        <label for="password" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                            {{ __('organization.member_password_label') }}
+                            <span class="inline-flex items-center text-gray-400 dark:text-gray-500 cursor-help" title="{{ __('organization.member_password_hint') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 ml-0.5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </label>
+                        <input type="password" name="password" id="password" placeholder="{{ __('organization.member_password_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="w-full sm:w-40">
+                        <label for="role" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{{ __('organization.member_role_label') }}</label>
+                        <select name="role" id="role" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="developer">{{ __('organization.role_developer') }}</option>
+                            <option value="maintainer">{{ __('organization.role_maintainer') }}</option>
                         </select>
                     </div>
-                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Crear
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-5">
+                        {{ __('organization.create_member_button') }}
                     </button>
                 </form>
             </div>
+        @endcan
 
+        @can('invite', $organization)
             {{-- Invite Form --}}
-            <div class="bg-white shadow rounded-lg p-6 mb-6">
-                <h2 class="text-lg font-medium text-gray-900 mb-4">Invitar por email</h2>
+            <div class=" bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">{{ __('organization.invite_heading') }}</h2>
                 <form method="POST" action="{{ route('organizations.invite', $organization->slug) }}" class="flex flex-col sm:flex-row gap-4">
                     @csrf
                     <div class="flex-1">
-                        <input type="email" name="email" placeholder="email@ejemplo.com" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        <input type="email" name="email" placeholder="{{ __('organization.invite_email_placeholder') }}" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
                     <div class="w-full sm:w-48">
-                        <select name="role" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="developer">Developer</option>
-                            <option value="maintainer">Maintainer</option>
+                        <select name="role" class="block w-full px-3 py-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="developer">{{ __('organization.role_developer') }}</option>
+                            <option value="maintainer">{{ __('organization.role_maintainer') }}</option>
                         </select>
                     </div>
                     <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Invitar
+                        {{ __('organization.invite_button') }}
                     </button>
                 </form>
             </div>
         @endcan
 
         {{-- Members List --}}
-        <div class="bg-white shadow overflow-hidden sm:rounded-md mb-6">
-            <ul class="divide-y divide-gray-200">
+        <div class=" bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md mb-6">
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($organization->members as $member)
                     <li class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center min-w-0">
-                                <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm">
+                                <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-sm">
                                     {{ strtoupper(substr($member->name, 0, 2)) }}
                                 </div>
                                 <div class="ml-4 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ $member->name }}</p>
-                                    <p class="text-sm text-gray-500 truncate">{{ $member->email }}</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ $member->name }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ $member->email }}</p>
                                 </div>
                             </div>
                             <div class="ml-4 flex-shrink-0 flex items-center space-x-3">
                                 @if($member->id === $organization->owner_id)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                        Owner
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200">
+                                        {{ __('organization.role_owner') }}
                                     </span>
                                 @else
                                     @can('manageMembers', $organization)
                                         <form method="POST" action="{{ route('organizations.members.role', [$organization->slug, $member->id]) }}" class="flex items-center space-x-2">
                                             @csrf
-                                            <select name="role" onchange="this.form.submit()" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1">
-                                                <option value="developer" {{ $member->pivot->role === 'developer' ? 'selected' : '' }}>Developer</option>
-                                                <option value="maintainer" {{ $member->pivot->role === 'maintainer' ? 'selected' : '' }}>Maintainer</option>
+                                            <select name="role" onchange="this.form.submit()" class="block w-full px-2 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs py-1">
+                                                <option value="developer" {{ $member->pivot->role === 'developer' ? 'selected' : '' }}>{{ __('organization.role_developer') }}</option>
+                                                <option value="maintainer" {{ $member->pivot->role === 'maintainer' ? 'selected' : '' }}>{{ __('organization.role_maintainer') }}</option>
                                             </select>
                                         </form>
                                     @else
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            {{ $member->pivot->role === 'maintainer' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                            {{ ucfirst($member->pivot->role) }}
+                                            {{ $member->pivot->role === 'maintainer' ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200' : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-200' }}">
+                                            {{ __('organization.role_' . (in_array($member->pivot->role, ['developer', 'maintainer', 'owner']) ? $member->pivot->role : 'developer')) }}
                                         </span>
+                                    @endcan
+                                    @can('removeMember', $organization)
+                                        @if($member->id !== auth()->id())
+                                            <form method="POST" action="{{ route('organizations.members.remove', [$organization->slug, $member->id]) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('organization.remove_member_confirm', ['name' => $member->name]) }}', onConfirm(){ f.submit(); }})">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    {{ __('organization.remove_member_button') }}
+                                                </button>
+                                            </form>
+                                        @endif
                                     @endcan
                                 @endif
                             </div>
@@ -119,21 +147,46 @@
             $pendingInvitations = $organization->invitations->whereNull('used_at')->where('expires_at', '>', now());
         @endphp
         @if($pendingInvitations->count() > 0)
-            <div class="bg-white shadow overflow-hidden sm:rounded-md">
-                <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                    <h3 class="text-lg font-medium text-gray-900">Invitaciones pendientes</h3>
+            <div class=" bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('organization.pending_invitations') }}</h3>
                 </div>
-                <ul class="divide-y divide-gray-200">
+                <ul class="divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($pendingInvitations as $invitation)
                         <li class="px-4 py-4 sm:px-6">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">{{ $invitation->email }}</p>
-                                    <p class="text-sm text-gray-500">Rol: {{ ucfirst($invitation->role) }} · Expira {{ $invitation->expires_at->diffForHumans() }}</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $invitation->email }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('organization.invitation_info', ['role' => __('organization.role_' . (in_array($invitation->role, ['developer', 'maintainer', 'owner']) ? $invitation->role : 'developer')), 'time' => $invitation->expires_at->diffForHumans()]) }}</p>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    Pendiente
-                                </span>
+                                <div class="flex items-center space-x-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200">
+                                        {{ __('organization.status_pending') }}
+                                    </span>
+                                    @can('manageMembers', $organization)
+                                        {{-- Resend button --}}
+                                        <form method="POST" action="{{ route('organizations.invitations.resend', [$organization->slug, $invitation->id]) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" title="{{ __('organization.resend_invitation_button') }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                                                </svg>
+                                                {{ __('organization.resend_invitation_button') }}
+                                            </button>
+                                        </form>
+                                        {{-- Revoke button with confirmation --}}
+                                        <form method="POST" action="{{ route('organizations.invitations.revoke', [$organization->slug, $invitation->id]) }}" x-data class="inline" @submit.prevent="const f=$el; $store.confirm.ask({message:'{{ __('organization.revoke_invitation_confirm', ['email' => $invitation->email]) }}', confirmText:'{{ __('organization.revoke_invitation_button') }}', onConfirm(){ f.submit(); }})">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center px-2.5 py-1.5 border border-transparent shadow-sm text-xs font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" title="{{ __('organization.revoke_invitation_button') }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                                {{ __('organization.revoke_invitation_button') }}
+                                            </button>
+                                        </form>
+                                    @endcan
+                                </div>
                             </div>
                         </li>
                     @endforeach

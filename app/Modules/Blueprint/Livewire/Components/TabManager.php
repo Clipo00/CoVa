@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Blueprint\Livewire\Components;
 
 use App\Modules\Blueprint\Enums\TabType;
+use App\Modules\Blueprint\Tabs\AiContext\AgentGenerator;
 use Livewire\Component;
 
 /**
@@ -23,14 +24,41 @@ class TabManager extends Component
     /** @var array<string, string> */
     public array $availableTabTypes = [];
 
-    public function mount(?array $tabsConfig = null): void
+    /** @var string[] */
+    public array $availableSkillNames = [];
+
+    /** @var string[] */
+    public array $availableAgentNames = [];
+
+    public string $tabError = '';
+
+    public function mount(?array $tabs = null): void
     {
-        $this->tabs = $tabsConfig ?? [];
+        $this->tabs = $tabs ?? [];
         $this->availableTabTypes = [
-            TabType::VSCODE_EXTENSIONS->value => 'VSCode Extensions',
-            TabType::MCP_SERVERS->value => 'MCP Servers',
-            TabType::AI_CONTEXT->value => 'AI Context',
+            TabType::VSCODE_EXTENSIONS->value => __('blueprint.tab_type_vscode'),
+            TabType::MCP_SERVERS->value => __('blueprint.tab_type_mcp'),
+            TabType::SCRIPTS->value => __('blueprint.tab_type_scripts'),
+            TabType::AI_CONTEXT->value => __('blueprint.tab_type_ai'),
         ];
+
+        /** @var AgentGenerator $generator */
+        $generator = app()->make(AgentGenerator::class);
+        $this->availableSkillNames = $generator->skillNames();
+        $this->availableAgentNames = $generator->agentNames();
+
+        $this->resolveSegmentContent();
+    }
+
+    /**
+     * Livewire hook: fired when $tabs is updated from the parent
+     * (e.g. template selection or edit form load).
+     * Resolves registry content for any segments with null content.
+     */
+    public function updatedTabs(): void
+    {
+        $this->resolveSegmentContent();
+        $this->syncToParent();
     }
 
     /**
@@ -42,10 +70,22 @@ class TabManager extends Component
             return;
         }
 
+        // Validar que no exista ya una pestaña del mismo tipo
+        foreach ($this->tabs as $tab) {
+            if ($tab['type'] === $type) {
+                $this->tabError = __('blueprint.duplicate_tab_type', ['type' => TabType::label($type)]);
+
+                return;
+            }
+        }
+
+        $this->tabError = '';
+
         $defaultConfig = match ($type) {
             TabType::VSCODE_EXTENSIONS->value => ['extensions' => []],
             TabType::MCP_SERVERS->value => ['servers' => []],
-            TabType::AI_CONTEXT->value => ['presets' => [], 'skills' => [], 'custom_rules' => ''],
+            TabType::SCRIPTS->value => ['scripts' => []],
+            TabType::AI_CONTEXT->value => ['segments' => []],
             default => [],
         };
 
@@ -104,7 +144,7 @@ class TabManager extends Component
 
         $extensions = array_values(array_filter(
             array_map('trim', explode("\n", $extensionsText)),
-            fn($ext) => $ext !== ''
+            fn ($ext) => $ext !== ''
         ));
 
         $this->tabs[$tabIndex]['config']['extensions'] = $extensions;
@@ -160,7 +200,7 @@ class TabManager extends Component
         if ($field === 'args') {
             $value = array_values(array_filter(
                 array_map('trim', explode(' ', $value)),
-                fn($arg) => $arg !== ''
+                fn ($arg) => $arg !== ''
             ));
         }
 
@@ -170,70 +210,312 @@ class TabManager extends Component
     }
 
     /**
-     * Toggle a preset for AI Context tab.
+     * Add an empty script entry to a scripts tab.
      */
-    public function togglePreset(int $tabIndex, string $preset): void
+    public function addScript(int $tabIndex): void
     {
         if (!isset($this->tabs[$tabIndex])) {
             return;
         }
 
-        $presets = $this->tabs[$tabIndex]['config']['presets'] ?? [];
-
-        if (in_array($preset, $presets, true)) {
-            $presets = array_values(array_filter($presets, fn($p) => $p !== $preset));
-        } else {
-            $presets[] = $preset;
-        }
-
-        $this->tabs[$tabIndex]['config']['presets'] = $presets;
+        $this->tabs[$tabIndex]['config']['scripts'][] = [
+            'command' => '',
+            'description' => '',
+        ];
 
         $this->syncToParent();
     }
 
     /**
-     * Toggle a skill for AI Context tab.
+     * Remove a script entry from a scripts tab.
      */
-    public function toggleSkill(int $tabIndex, string $skill): void
+    public function removeScript(int $tabIndex, int $scriptIndex): void
     {
-        if (!isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
             return;
         }
 
-        $skills = $this->tabs[$tabIndex]['config']['skills'] ?? [];
-
-        if (in_array($skill, $skills, true)) {
-            $skills = array_values(array_filter($skills, fn($s) => $s !== $skill));
-        } else {
-            $skills[] = $skill;
-        }
-
-        $this->tabs[$tabIndex]['config']['skills'] = $skills;
+        unset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex]);
+        $this->tabs[$tabIndex]['config']['scripts'] = array_values(
+            $this->tabs[$tabIndex]['config']['scripts']
+        );
 
         $this->syncToParent();
     }
 
     /**
-     * Update custom rules for AI Context tab.
+     * Update a script field (command or description) in a scripts tab.
      */
-    public function updateCustomRules(int $tabIndex, string $rules): void
+    public function updateScriptField(int $tabIndex, int $scriptIndex, string $field, string $value): void
     {
-        if (!isset($this->tabs[$tabIndex])) {
+        if (!isset($this->tabs[$tabIndex]['config']['scripts'][$scriptIndex])) {
             return;
         }
 
-        $this->tabs[$tabIndex]['config']['custom_rules'] = $rules;
+        $this->tabs[$tabIndex]['config']['scripts'][$scriptIndex][$field] = $value;
 
         $this->syncToParent();
+    }
+
+    // ──────────────────────────────────────────────
+    //  AI Context: Segment CRUD
+    // ──────────────────────────────────────────────
+
+    /**
+     * Load an agent and its referenced skills into an AI Context tab.
+     *
+     * Inserts an agent segment with the agent's content and router,
+     * followed by skill segments for each skill the agent references.
+     */
+    public function loadAgent(int $tabIndex, string $agentName): void
+    {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
+            return;
+        }
+
+        $registry = app()->make('blueprint.agents');
+        if (!$registry->has($agentName)) {
+            return;
+        }
+
+        $agent = $registry->get($agentName);
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+
+        // Check if this agent is already loaded
+        foreach ($segments as $segment) {
+            if ($segment['type'] === 'agent' && $segment['name'] === $agentName) {
+                return; // Silently ignore duplicate agent load
+            }
+        }
+
+        // Add agent segment with content and skills metadata
+        $segments[] = [
+            'type' => 'agent',
+            'name' => $agentName,
+            'content' => $agent->content(),
+            'skills' => $agent->skills(),
+        ];
+
+        // Add skill segments for each referenced skill
+        foreach ($agent->skills() as $skillName) {
+            $segments[] = [
+                'type' => 'skill',
+                'name' => $skillName,
+                'content' => null,
+            ];
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->resolveSegmentContent();
+        $this->syncToParent();
+    }
+
+    /**
+     * Add a segment to an AI Context tab.
+     *
+     * For skill types, the default content is loaded from the
+     * corresponding registry. For custom type, an empty content segment
+     * with an editable name is created.
+     */
+    public function addSegment(int $tabIndex, string $type, string $name = ''): void
+    {
+        if (!isset($this->tabs[$tabIndex]) || $this->tabs[$tabIndex]['type'] !== 'ai_context') {
+            return;
+        }
+
+        if ($name === '') {
+            $name = $this->suggestSegmentName($type);
+        }
+
+        // Prevent duplicate names within segments
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        foreach ($segments as $segment) {
+            if ($segment['name'] === $name) {
+                return; // Silently reject duplicates
+            }
+        }
+
+        // Load default content from registry for skill
+        $content = null;
+        if ($type === 'skill') {
+            $registry = app()->make('blueprint.skills');
+            if ($registry->has($name)) {
+                $content = $registry->get($name)->content();
+            }
+        } elseif ($type === 'custom') {
+            $content = '';
+        }
+
+        $segments[] = [
+            'type' => $type,
+            'name' => $name,
+            'content' => $content,
+        ];
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Remove a segment from an AI Context tab by index.
+     */
+    public function removeSegment(int $tabIndex, int $segmentIndex): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        unset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex]);
+        $this->tabs[$tabIndex]['config']['segments'] = array_values(
+            $this->tabs[$tabIndex]['config']['segments']
+        );
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Move a segment up or down in the ordered list.
+     */
+    public function moveSegment(int $tabIndex, int $segmentIndex, int $direction): void
+    {
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        $newIndex = $segmentIndex + $direction;
+
+        if ($newIndex < 0 || $newIndex >= count($segments)) {
+            return;
+        }
+
+        $temp = $segments[$segmentIndex];
+        $segments[$segmentIndex] = $segments[$newIndex];
+        $segments[$newIndex] = $temp;
+
+        $this->tabs[$tabIndex]['config']['segments'] = $segments;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update the content of a segment (override for skill, content for custom).
+     */
+    public function updateSegmentContent(int $tabIndex, int $segmentIndex, string $content): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'][$segmentIndex]['content'] = $content;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Update the name of a segment (for custom segments).
+     */
+    public function updateSegmentName(int $tabIndex, int $segmentIndex, string $name): void
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'][$segmentIndex])) {
+            return;
+        }
+
+        if ($name === '') {
+            return;
+        }
+
+        // Prevent duplicate names within segments (excluding the current one)
+        $segments = $this->tabs[$tabIndex]['config']['segments'] ?? [];
+        foreach ($segments as $i => $segment) {
+            if ($i !== $segmentIndex && $segment['name'] === $name) {
+                return; // Silently reject duplicates
+            }
+        }
+
+        $this->tabs[$tabIndex]['config']['segments'][$segmentIndex]['name'] = $name;
+
+        $this->syncToParent();
+    }
+
+    /**
+     * Determine the skills that are NOT yet added, for dropdown display.
+     *
+     * @return string[] Skill names not yet in the current segments
+     */
+    public function getUnusedSkillsProperty(int $tabIndex): array
+    {
+        return $this->unusedNames($tabIndex, 'skill', $this->availableSkillNames);
+    }
+
+    /**
+     * Suggest a unique name for a new segment.
+     */
+    private function suggestSegmentName(string $type): string
+    {
+        return match ($type) {
+            'skill' => 'skill',
+            'custom' => 'custom-skill',
+            default => 'segment',
+        };
+    }
+
+    /**
+     * Filter out names already present in the tab's segments.
+     *
+     * @param  string  $type  Segment type to filter by
+     * @param  string[]  $allNames  All available names
+     * @return string[]
+     */
+    private function unusedNames(int $tabIndex, string $type, array $allNames): array
+    {
+        if (!isset($this->tabs[$tabIndex]['config']['segments'])) {
+            return $allNames;
+        }
+
+        $existingSegments = $this->tabs[$tabIndex]['config']['segments'];
+        $existingNames = array_map(
+            fn (array $s) => $s['name'],
+            array_filter($existingSegments, fn (array $s) => $s['type'] === $type),
+        );
+
+        return array_values(array_diff($allNames, $existingNames));
+    }
+
+    /**
+     * Resolve registry content for skill segments that have null content.
+     *
+     * When tabs are loaded from a template (e.g. on create form), segments only
+     * carry their names — not the registry content. This method pre-fills the
+     * content from the skills registries so the UI shows actual text.
+     */
+    private function resolveSegmentContent(): void
+    {
+        $skills = app()->make('blueprint.skills');
+        $agents = app()->make('blueprint.agents');
+
+        foreach ($this->tabs as $tabIndex => &$tab) {
+            if (($tab['type'] ?? '') !== 'ai_context') {
+                continue;
+            }
+
+            $segments = $tab['config']['segments'] ?? [];
+            foreach ($segments as $segIndex => &$segment) {
+                if ($segment['content'] !== null) {
+                    continue; // Already has content (user override)
+                }
+
+                if ($segment['type'] === 'skill' && $skills->has($segment['name'])) {
+                    $segment['content'] = $skills->get($segment['name'])->content();
+                } elseif ($segment['type'] === 'agent' && $agents->has($segment['name'])) {
+                    $segment['content'] = $agents->get($segment['name'])->content();
+                }
+            }
+            $tab['config']['segments'] = $segments;
+        }
+        unset($tab, $segment); // Break references
     }
 
     /**
      * Sync state to parent component.
-     *
-     * In Livewire 3, we use $this->dispatch() with a named event that
-     * the parent component listens to via getListeners().
-     * The parent (BlueprintEditForm/BlueprintCreateForm) has
-     * 'tabs-updated' => 'onTabsUpdated' in its getListeners().
      */
     private function syncToParent(): void
     {

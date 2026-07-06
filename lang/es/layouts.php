@@ -1,0 +1,23 @@
+<?php
+
+return [
+    'app_name' => 'CoVaR',
+    'app_subtitle' => 'The Config Vault',
+    'site_title' => 'Dashboard',
+
+    'nav_toggle' => 'Abrir menú',
+
+    'dashboard' => 'Dashboard',
+    'organizations' => 'Organizaciones',
+    'blueprints' => 'Blueprints',
+    'marketplace' => 'Marketplace',
+    'deleted' => 'Eliminados',
+    'login' => 'Login',
+    'register' => 'Registro',
+    'profile' => 'Perfil',
+    'logout' => 'Cerrar sesión',
+
+    'confirm_title' => 'Confirmar acción',
+    'confirm_cancel' => 'Cancelar',
+    'confirm_delete' => 'Eliminar',
+];

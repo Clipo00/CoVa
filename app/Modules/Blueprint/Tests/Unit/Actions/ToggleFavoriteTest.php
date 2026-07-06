@@ -9,6 +9,7 @@ use App\Modules\Blueprint\Actions\CreateBlueprint;
 use App\Modules\Blueprint\Actions\ToggleFavorite;
 use App\Modules\Organization\Actions\CreateOrganization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class ToggleFavoriteTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_adds_to_favorites(): void
@@ -32,15 +33,15 @@ class ToggleFavoriteTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'My BP', 'my-bp');
 
-        $toggle = new ToggleFavorite();
+        $toggle = new ToggleFavorite;
         $result = $toggle->execute($blueprint, $user);
 
         $this->assertTrue($result);
@@ -57,15 +58,15 @@ class ToggleFavoriteTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($user, 'Test Org', 'test-org');
 
         $this->actingAs($user);
 
-        $createBp = new CreateBlueprint();
+        $createBp = new CreateBlueprint;
         $blueprint = $createBp->execute($organization, 'My BP', 'my-bp');
 
-        $toggle = new ToggleFavorite();
+        $toggle = new ToggleFavorite;
         $toggle->execute($blueprint, $user); // Add
         $result = $toggle->execute($blueprint, $user); // Remove
 

@@ -9,16 +9,23 @@ use App\Modules\Blueprint\Models\Blueprint;
 
 /**
  * Complete output after resolving a blueprint's tabs.
+ *
+ * Delegates tab accessor methods to ResolvedTabs for reuse across
+ * show page and preview components.
  */
 final class BlueprintOutput
 {
+    private readonly ResolvedTabs $resolvedTabs;
+
     /**
-     * @param TabOutput[] $tabs
+     * @param  TabOutput[]  $tabs
      */
     public function __construct(
         public readonly Blueprint $blueprint,
         public readonly array $tabs,
-    ) {}
+    ) {
+        $this->resolvedTabs = new ResolvedTabs($tabs);
+    }
 
     /**
      * Get all tab outputs as array.
@@ -33,7 +40,7 @@ final class BlueprintOutput
                 'title' => $this->blueprint->title,
             ],
             'tabs' => array_map(
-                fn(TabOutput $tab) => $tab->toArray(),
+                fn (TabOutput $tab) => $tab->toArray(),
                 $this->tabs,
             ),
         ];
@@ -48,67 +55,98 @@ final class BlueprintOutput
     {
         return array_filter(
             $this->tabs,
-            fn(TabOutput $tab) => $tab->isArray(),
+            fn (TabOutput $tab) => $tab->isArray(),
         );
     }
 
-    /**
-     * Get agent.md content if AI Context tab was processed.
-     */
     public function getAgentMdContent(): ?string
     {
-        foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::AI_CONTEXT && $tab->isMarkdown()) {
-                return $tab->content;
-            }
-        }
-
-        return null;
+        return $this->resolvedTabs->getAgentMdContent();
     }
 
     /**
-     * Get VSCode extensions list.
-     *
      * @return string[]
      */
     public function getVscodeExtensions(): array
     {
-        foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::VSCODE_EXTENSIONS && $tab->isArray()) {
-                return $tab->content['extensions'] ?? [];
-            }
-        }
-
-        return [];
+        return $this->resolvedTabs->getVscodeExtensions();
     }
 
-    /**
-     * Get VSCode extensions install command.
-     */
     public function getVscodeInstallCommand(): string
     {
-        $extensions = $this->getVscodeExtensions();
-
-        if (empty($extensions)) {
-            return '';
-        }
-
-        return 'code --install-extension ' . implode(' --install-extension ', $extensions);
+        return $this->resolvedTabs->getVscodeInstallCommand();
     }
 
     /**
-     * Get MCP servers configuration.
-     *
      * @return array<string, mixed>
      */
     public function getMcpServers(): array
     {
+        return $this->resolvedTabs->getMcpServers();
+    }
+
+    /**
+     * Get scripts list.
+     *
+     * @return array<int, array{command: string, description: string, order: int}>
+     */
+    public function getScripts(): array
+    {
         foreach ($this->tabs as $tab) {
-            if ($tab->type === TabType::MCP_SERVERS && $tab->isArray()) {
-                return $tab->content;
+            if ($tab->type === TabType::SCRIPTS && $tab->isArray()) {
+                return $tab->content['scripts'] ?? [];
             }
         }
 
         return [];
+    }
+
+    /**
+     * Get combined shell script for all scripts.
+     */
+    public function getScriptsShellScript(): string
+    {
+        foreach ($this->tabs as $tab) {
+            if ($tab->type === TabType::SCRIPTS && $tab->isArray()) {
+                return $tab->content['shell_script'] ?? '';
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Convert the output to an API-friendly array.
+     *
+     * Returns blueprint metadata, variables with secret masking, and
+     * tab-resolved content (agent.md, VSCode extensions, MCP servers, scripts).
+     * Secret variable values are replaced with empty strings.
+     *
+     * @return array<string, mixed>
+     */
+    public function toApiArray(): array
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Modules\Blueprint\Models\BlueprintVariable> $variables */
+        $variables = $this->blueprint->variables;
+
+        return [
+            'uuid' => $this->blueprint->uuid,
+            'slug' => $this->blueprint->slug,
+            'title' => $this->blueprint->title,
+            'description' => $this->blueprint->description,
+            'variables' => $variables->map(fn ($v) => [
+                'key' => $v->key,
+                'type' => $v->type,
+                'default_value' => $v->is_secret ? '' : $v->default_value,
+                'is_secret' => $v->is_secret,
+                'section' => $v->section,
+            ])->values()->toArray(),
+            'agent_md' => $this->getAgentMdContent(),
+            'vscode_extensions' => $this->getVscodeExtensions(),
+            'vscode_install_command' => $this->getVscodeInstallCommand(),
+            'mcp_servers' => $this->getMcpServers(),
+            'scripts' => $this->getScripts(),
+            'scripts_shell' => $this->getScriptsShellScript(),
+        ];
     }
 }

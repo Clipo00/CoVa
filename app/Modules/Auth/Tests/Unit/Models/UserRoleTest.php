@@ -6,8 +6,8 @@ namespace App\Modules\Auth\Tests\Unit\Models;
 
 use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Actions\CreateOrganization;
-use App\Modules\Organization\Models\Organization;
 use App\Modules\Shared\Models\Plan;
+use Database\Seeders\PlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +18,7 @@ class UserRoleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_user_can_check_role_in_organization(): void
@@ -31,7 +31,7 @@ class UserRoleTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
 
         $this->assertTrue($owner->hasRoleInOrganization($organization, 'owner'));
@@ -49,7 +49,7 @@ class UserRoleTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
 
         $this->assertTrue($owner->isOwnerOf($organization));
@@ -79,7 +79,7 @@ class UserRoleTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($maintainer->id, ['role' => 'maintainer']);
         $organization->members()->attach($developer->id, ['role' => 'developer']);
@@ -106,7 +106,7 @@ class UserRoleTest extends TestCase
             'plan_id' => $plan->id,
         ]);
 
-        $createOrg = new CreateOrganization();
+        $createOrg = new CreateOrganization;
         $organization = $createOrg->execute($owner, 'Test Org', 'test-org');
         $organization->members()->attach($developer->id, ['role' => 'developer']);
 

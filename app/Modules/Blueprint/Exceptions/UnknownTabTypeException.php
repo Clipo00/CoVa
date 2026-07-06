@@ -14,7 +14,7 @@ class UnknownTabTypeException extends InvalidArgumentException
         $message = "Unknown tab type: '{$type}'.";
 
         if ($expected !== null) {
-            $message .= " Expected one of: " . implode(', ', TabType::values()) . '.';
+            $message .= ' Expected one of: '.implode(', ', TabType::values()).'.';
         }
 
         parent::__construct($message);

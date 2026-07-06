@@ -31,7 +31,6 @@ class CreateOrganization
             'slug' => (string) $slug,
             'name' => $name,
             'owner_id' => $user->id,
-            'plan_id' => $plan->id,
         ]);
 
         $organization->members()->attach($user->id, ['role' => 'owner']);

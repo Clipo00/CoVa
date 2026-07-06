@@ -21,6 +21,8 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+/openspec/
+.atl/
 
 /public/build
 /storage/pail
@@ -28,3 +30,8 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# PHAR binary
+public/downloads/*.phar
+cli/builds/*
+

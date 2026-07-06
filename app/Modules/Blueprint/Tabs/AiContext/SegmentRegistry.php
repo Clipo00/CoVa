@@ -8,7 +8,7 @@ use App\Modules\Blueprint\Contracts\AgentContentSegment;
 use App\Modules\Blueprint\Exceptions\UnknownSegmentException;
 
 /**
- * Registry for content segments (presets and skills).
+ * Registry for AI context content segments (skills).
  */
 class SegmentRegistry
 {

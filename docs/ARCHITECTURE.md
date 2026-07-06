@@ -1,4 +1,4 @@
-# CoVa — Arquitectura del Proyecto
+# CoVaR — Arquitectura del Proyecto
 
 > Documento de arquitectura técnica, patrones, y guía de módulos.
 > Audiencia: Desarrolladores nuevos en el proyecto y arquitectos.
@@ -7,7 +7,7 @@
 
 ## 1. Visión de Arquitectura
 
-CoVa es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está autocontenido en un módulo bajo `app/Modules/`. La meta es que cualquier módulo se pueda extraer a un package independiente sin refactorizar 40 archivos.
+CoVaR es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está autocontenido en un módulo bajo `app/Modules/`. La meta es que cualquier módulo se pueda extraer a un package independiente sin refactorizar 40 archivos.
 
 **Principios guía**:
 1. **Un módulo, un dominio**: Auth maneja identidad. Blueprint maneja plantillas. No mezclar.
@@ -28,19 +28,33 @@ CoVa es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está 
         ┌──────────────────┼──────────────────┐
         │                  │                  │
         ▼                  ▼                  ▼
-   ┌─────────┐      ┌──────────┐       ┌──────────┐
-   │  Auth   │◄────►│Organization│◄────►│ Blueprint │
-   │ (base)  │      │ (tenancy)  │       │ (core)    │
-   └────┬────┘      └─────┬────┘       └─────┬─────┘
-        │                 │                  │
-        │                 │                  │
-        └─────────────────┼──────────────────┘
-                          │
-                          ▼
-                   ┌────────────┐
-                   │   Shared   │
-                   │(infra, VO) │
-                   └────────────┘
+   ┌─────────┐      ┌──────────┐       ┌──────────┐      ┌─────────────┐
+   │  Auth   │◄────►│Organization│◄────►│ Blueprint │      │ Marketplace │
+   │ (base)  │      │ (tenancy)  │       │ (core)    │      │  (public)  │
+   └────┬────┘      └─────┬────┘       └─────┬─────┘      └──────┬──────┘
+        │                 │                  │                   │
+        │                 │                  │                   │
+        └─────────────────┼──────────────────┼───────────────────┘
+                          │                  │
+                          │                  │
+                          └────────┬─────────┘
+                                   │
+                                   ▼
+                            ┌────────────┐
+                            │   Shared   │
+                            │(infra, VO) │
+                             └────────────┘
+```
+
+**Módulos activos**:
+
+```
+app/Modules/
+├── Auth/
+├── Organization/
+├── Blueprint/
+├── Marketplace/       # Marketplace público, suscripciones, votación, notificaciones
+└── Shared/
 ```
 
 **Reglas de dependencia**:
@@ -48,6 +62,7 @@ CoVa es un **monolito modular** sobre Laravel 13. Cada dominio de negocio está 
 - **Auth**: Depende de Shared. No depende de Organization ni Blueprint.
 - **Organization**: Depende de Auth (User) y Shared (Plan, VO).
 - **Blueprint**: Depende de Auth (User), Organization (org, roles), y Shared (Plan, Category, VO).
+- **Marketplace**: Depende de Auth (User, votos, suscripciones) y Shared (Plan, VO, notificaciones).
 - **Nunca**: Auth → Blueprint. Organization no conoce Blueprint (solo via relaciones Eloquent, no lógica).
 
 ---
@@ -66,6 +81,7 @@ return [
         'Auth',
         'Organization',
         'Blueprint',
+        'Marketplace',
         'Shared',
     ],
 ];
@@ -289,7 +305,6 @@ final readonly class CreateBlueprintData
         public string $title,
         public ?string $description,
         public int $organizationId,
-        public ?int $categoryId,
     ) {}
 }
 ```
@@ -375,6 +390,27 @@ class BlueprintPolicy
 **Solución**: `TabType` enum + `TabManager` genérico. Cada tipo define su config default.  
 **Beneficio**: Extensible sin migraciones. Para agregar un nuevo tipo: añadir caso al enum + config en `TabManager::addTab()`.
 
+### AiContext Segments (replaces Presets/Skills)
+
+The AI Context tab uses a segment-based model:
+
+- `AiContextSegment` DTO: `type` (skill|custom|agent enum), `name`, `content`
+- `AiContextConfig`: wraps ordered `segments[]` array
+- `AgentGenerator::resolveSegments()`: resolves registry content per segment
+- `AgentGenerator::generate()`: iterates segments, generates per-segment markdown
+- Segments consume variable slots from the plan limit
+
+**Why segments over toggles**: The previous system injected HTML markers into a textarea (fragile regex). Segments are first-class data — typed, ordered, independently editable.
+
+### 5.6 API Token Management (Auth Module)
+
+The Auth module manages API tokens via Laravel Sanctum:
+
+- `HasApiTokens` trait from Sanctum on the `User` model
+- `CreateApiToken` and `RevokeApiToken` Actions, both using the `VerifiesPassword` trait for password confirmation
+- `ApiTokenManager` Livewire component in the Auth module for UI interaction
+- `personal_access_tokens` migration provided by Sanctum
+
 ---
 
 ## 6. Stack y Dependencias Clave
@@ -388,7 +424,7 @@ class BlueprintPolicy
 | Build | Vite | — | Asset bundling |
 | Auth | Laravel Breeze (custom) | — | Login/register/logout |
 | API Ready | Laravel Sanctum | — | API tokens (fase 3) |
-| Testing | PHPUnit | 12.5 | Unit + Feature tests |
+| Testing | PHPUnit | 12.5 (487 tests, 1096 assertions) | Unit + Feature tests |
 | DB Dev | SQLite | 3 | Desarrollo local |
 | DB Prod | MySQL | 8.0+ | Producción |
 
@@ -417,12 +453,12 @@ class BlueprintPolicy
 **Tradeoff**: Menos capas de abstracción. Si en el futuro se necesita cambiar de Eloquent a Doctrine, habría que refactorizar.
 
 ### 7.5 ¿Por qué JSON para Tabs en lugar de Tablas Relacionales?
-**Contexto**: Cada tab tiene estructura diferente (extensions[], servers[], presets[]).  
-**Decisión**: `tabs_config` JSON en tabla `blueprints`.  
+**Contexto**: Cada tab tiene estructura diferente (extensions[], servers[], segments[]).  
+**Decisión**: `tabs_config` JSON en tabla `blueprints` (incluye segments de AI Context).  
 **Tradeoff**: No se puede indexar/search fácilmente por contenido de tab. Pero las tabs son siempre accedidas via blueprint (por UUID), así que el lookup es O(1) por índice.
 
 ---
 
-**Documento generado**: 2026-05-15  
+**Documento generado**: 2026-06-30  
 **Versión**: 1.0  
-**Última actualización**: Fase 3 del plan de documentación
+**Última actualización**: 2026-06-30

@@ -1,10 +1,10 @@
-# CoVa - The Config Vault
+# CoVaR - The Config Vault
 
 > Zero-latency environment setup for modern developers.
 
 ## Visión General
 
-CoVa es una plataforma SaaS desarrollada en Laravel 13 que centraliza la lógica de configuración de entornos de desarrollo. Permite a equipos crear, compartir y ejecutar **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos desde `git clone` hasta productivo en segundos.
+CoVaR es una plataforma SaaS desarrollada en Laravel 13 que centraliza la lógica de configuración de entornos de desarrollo. Permite a equipos crear, compartir y ejecutar **Blueprints** (plantillas de configuración) que automatizan el setup de proyectos desde `git clone` hasta productivo en segundos.
 
 ## Arquitectura
 
@@ -19,7 +19,8 @@ app/Modules/
 ├── Auth/              # Autenticación y usuarios
 ├── Organization/      # Organizaciones, roles, invitaciones
 ├── Blueprint/         # Blueprints, variables, favoritos
-└── Shared/            # Código transversal (planes, categorías, VO)
+├── Marketplace/       # Marketplace público, suscripciones, votación, notificaciones
+└── Shared/            # Código transversal (planes, tags, VO)
 ```
 
 Cada módulo contiene:
@@ -57,8 +58,11 @@ Cada módulo contiene:
 | `RegisterUser` Action | Crea usuario con plan Free por defecto |
 | `LoginUser` Action | Autentica con credenciales |
 | `LogoutUser` Action | Invalida sesión y tokens |
+| `CreateApiToken` Action | Crea token Sanctum con plan-gating |
+| `RevokeApiToken` Action | Revoca token Sanctum del usuario |
 | `LoginForm` Livewire | Formulario reactivo con validación en tiempo real |
 | `RegisterForm` Livewire | Registro con validación y redirect al dashboard |
+| `ApiTokenManager` Livewire | Gestión de tokens API en perfil de usuario |
 
 **Rutas**:
 - `GET /login` — Formulario de login
@@ -133,21 +137,17 @@ organization_invitations (id, organization_id, email, token, role, expires_at, u
 
 ### Módulo Shared
 
-**Responsabilidad**: Infraestructura transversal, planes, categorías, Value Objects.
+**Responsabilidad**: Infraestructura transversal, planes, tags, Value Objects.
 
 #### Planes Configurables
 
 | Plan | Orgs | Blueprints/Org | Miembros/Org | Variables/BP | API | Marketplace |
 |------|------|----------------|--------------|--------------|-----|-------------|
-| **Free** | 2 | 3 | 5 | 20 | ❌ | ❌ |
-| **Pro** | 5 | 25 | 50 | 100 | ✅ | ✅ |
+| **Free** | 2 | 3 | 5 | 50 | ❌ | ❌ |
+| **Pro** | 5 | 25 | 50 | 150 | ✅ | ✅ |
 | **Enterprise** | ∞ | ∞ | ∞ | ∞ | ✅ | ✅ |
 
 Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del usuario se hereda a todas sus organizaciones en cascada.
-
-#### Categorías Globales
-
-8 categorías predefinidas: Laravel, Node.js, Python, DevOps, Frontend, Mobile, Database, Docker.
 
 #### Value Objects
 
@@ -174,7 +174,7 @@ Los planes se definen en BD (tabla `plans`), no están hardcodeados. El plan del
 #### Modelo de Datos
 
 ```
-blueprints (id, uuid, organization_id, category_id, slug, title, description, is_public, tabs_config JSON, created_by, softDeletes)
+blueprints (id, uuid, organization_id, slug, title, description, is_public, tabs_config JSON, created_by, softDeletes)
 blueprint_variables (id, blueprint_id, key, type, default_value, is_interactive, is_secret, section, sort_order)
 blueprint_favorites (id, user_id, blueprint_id)
 ```
@@ -198,7 +198,7 @@ Cada blueprint puede tener N tabs configurables de 3 tipos, guardadas en `tabs_c
 |----------|-------------|---------------|
 | **VSCode Extensions** | Lista de extensiones recomendadas | Array de strings (`extensions`) |
 | **MCP Servers** | Servidores MCP para contexto AI | Array de servidores (`name`, `command`, `args[]`) |
-| **AI Context** | Contexto para agentes AI | `presets[]`, `skills[]`, `custom_rules` |
+| **AI Context** | Contexto para agentes AI | `segments[]` |
 
 Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicación padre-hijo por eventos `tabs-updated`.
 
@@ -213,6 +213,7 @@ Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicaci�
 | `ToggleFavorite` | Agrega/elimina favorito |
 | `TransferBlueprint` | Transfiere blueprint a otra organización |
 | `ResolveBlueprint` | Procesa tabs_config y genera outputs estructurados (`TabOutput[]`, `BlueprintOutput`) incluyendo `agent.md` |
+| `GenerateEnvTemplate` | Genera archivo `.env` a partir de las variables del blueprint |
 
 #### Livewire Components
 
@@ -245,6 +246,8 @@ Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicaci�
 - `POST /blueprints/{uuid}/transfer` — Transferir a otra org
 - `POST /blueprints/{uuid}/delete` — Soft delete
 - `POST /blueprints/{uuid}/restore` — Restaurar
+- `GET /b/{slug}` — Ver blueprint por slug amigable
+- `GET /b/u/{uuid}` — Legacy redirect (301 a `/b/{slug}`)
 
 ---
 
@@ -284,12 +287,15 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 
 | Suite | Tests | Assertions |
 |-------|-------|------------|
-| Auth | 9 | 22 |
+| Auth + Onboarding | 35+ | 90+ |
+| Blueprint | 65+ | 120+ |
+| Organization | 23 | 58 |
 | Shared | 34 | 44 |
-| Organization | 11 | 30 |
-| Blueprint | 7 | 16 |
-| Roles/Policies | 14 | 22 |
-| **Total** | **78** | **134** |
+| Marketplace | 53 | — |
+| Feature (cross-module) | 1 | 56 |
+| Agent Context | 33+ | 70+ |
+| API Tokens | 24 | 67 |
+| **Total** | **487** | **1096** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -338,6 +344,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Feature | Estado |
 |---------|--------|
 | Auth (login/register/logout) | ✅ Completo |
+| API Token Management | ✅ Completo — Sanctum tokens UI, perfil con tabs, plan-gating |
 | Planes configurables | ✅ Completo |
 | CRUD Organizaciones | ✅ Completo |
 | Gestión de miembros (add/invite/roles) | ✅ Completo |
@@ -357,40 +364,28 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 117 tests, 219 assertions |
-| **AI Agents / Skills config** | 🚧 En progreso |
-| **Marketplace** (`is_public`, `has_marketplace_publish`) | 🚧 Preparación |
+| Tests | ✅ 487 tests, 1096 assertions |
+| **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
+| **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos skill/custom/agent |
+| **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
+| **Friendly URLs `/b/{slug}`** | ✅ Completo — Slugs con 301 redirects |
+| **Show page downloads** | ✅ Completo — Vault fetch, .md/.env downloads |
+| **Dashboard polish** | ✅ Completo — 5 UI deliverables |
+| **Onboarding wizard** | ✅ Completo — 4-step wizard, skip-all, email banner |
 
 ## Próximas Fases
 
 ### Fase 2: Wizard de Blueprints (Pulido)
-> Estado: Parcialmente implementado. Tabs dinámicas, variables y preview de `agent.md` ya están en producción.
-
-- Refinar wizard de creación en pasos guiados (actualmente es formulario único)
-- Validación cross-tab (ej: AI Context requiere al menos un preset o skill)
-- Preview en tiempo real de la salida generada antes de guardar
-- Templates de tabs preconfigurados (ej: "Laravel + VSCode + MCP")
+> Estado: ✅ Completo. Tabs dinámicas, variables, templates, preview de `agent.md`, y live preview panel implementados.
 
 ### Fase 3: API REST + CLI
-- Exponer endpoints API con Sanctum
-- Autenticación por API tokens
-- Endpoint `GET /api/v1/blueprints/{uuid}/download` (resuelve tabs y devuelve archivos)
-- Paquete CLI en Node.js/Python que ejecute `cova fetch <uuid>`
-- Rate limiting por plan
+> Friendly URLs y downloads completos. Sanctum instalado, marketplace operativo. Queda exponer API y construir CLI.
 
 ### Fase 4: Marketplace
-- Blueprints públicos (`is_public = true`, controlado por `has_marketplace_publish` del plan)
-- Rating y reviews
-- Templates estándar de la comunidad
-- Landing page para no autenticados
-- Búsqueda y filtros por categoría/tab type
+> ✅ Completo. Marketplace v1 operativo como módulo independiente.
 
 ### Fase 5: Billing
-- Integración con Stripe/PayPal
-- Suscripciones mensuales/anuales
-- Upgrade/downgrade de planes con migración de límites
-- Facturación automática
-- Webhooks para sincronización de estado de suscripción
+> Pendiente. Sin cambios desde planificación original.
 
 ---
 
@@ -423,6 +418,6 @@ php artisan serve
 
 ---
 
-**Documento actualizado**: 2026-05-15  
-**Versión**: MVP Fase 1 + Tabs Dinámicas  
-**Commits**: 25+ en rama `develop`
+**Documento actualizado**: 2026-06-30  
+**Versión**: MVP Completo (web) + Marketplace v1  
+**Commits**: 50+ en rama `develop`

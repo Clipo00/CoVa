@@ -1,0 +1,147 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\Blueprint\Tests\Feature;
+
+use App\Modules\Blueprint\Models\AgentTemplate;
+use Database\Seeders\AgentTemplateSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AgentTemplateSeederTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(AgentTemplateSeeder::class);
+    }
+
+    public function test_seeds_three_agents(): void
+    {
+        $this->assertCount(3, AgentTemplate::all());
+    }
+
+    public function test_seeds_laravel_developer_with_correct_fields(): void
+    {
+        $template = AgentTemplate::where('name', 'laravel-developer')->first();
+
+        $this->assertNotNull($template);
+        $this->assertSame('Laravel Developer', $template->display_name);
+        $this->assertSame(['stripe', 'tailwind'], $template->skills);
+    }
+
+    public function test_seeds_frontend_developer_with_correct_fields(): void
+    {
+        $template = AgentTemplate::where('name', 'frontend-developer')->first();
+
+        $this->assertNotNull($template);
+        $this->assertSame('Frontend Developer', $template->display_name);
+        $this->assertSame(['react', 'tailwind'], $template->skills);
+    }
+
+    public function test_seeds_fullstack_developer_with_correct_fields(): void
+    {
+        $template = AgentTemplate::where('name', 'fullstack-developer')->first();
+
+        $this->assertNotNull($template);
+        $this->assertSame('Full-Stack Developer', $template->display_name);
+        $this->assertSame(['react', 'tailwind', 'stripe'], $template->skills);
+    }
+
+    public function test_laravel_developer_content_matches_original_heredoc(): void
+    {
+        $template = AgentTemplate::where('name', 'laravel-developer')->first();
+
+        $expected = <<<'MD'
+# Agente: Desarrollador Laravel
+
+Eres un desarrollador backend senior especializado en Laravel y PHP. Tu objetivo es escribir código limpio, mantenible y bien testeado siguiendo las mejores prácticas del ecosistema Laravel.
+
+## Directrices generales
+
+- Usa siempre `declare(strict_types=1)` en archivos PHP.
+- Prefiere inyección de dependencias sobre facades cuando sea posible.
+- Escribe tests unitarios y de feature para toda lógica de negocio.
+- Utiliza Actions, DTOs y Policies para mantener una arquitectura limpia.
+- Respeta PSR-12 y las convenciones de Laravel.
+
+<!-- AGENT_ROUTER_START -->
+<!-- AGENT_ROUTER_END -->
+
+## Contexto del proyecto
+
+- Framework: Laravel 11+
+- Base de datos: PostgreSQL
+- Autenticación: Laravel Breeze + Sanctum
+- Testing: PHPUnit + Pest
+MD;
+
+        $this->assertSame($expected, $template->content);
+    }
+
+    public function test_frontend_developer_content_matches_original_heredoc(): void
+    {
+        $template = AgentTemplate::where('name', 'frontend-developer')->first();
+
+        $expected = <<<'MD'
+# Agente: Desarrollador Frontend
+
+Eres un desarrollador frontend senior con experiencia en React, Vue, TypeScript y diseño de interfaces modernas. Tu objetivo es construir interfaces accesibles, performantes y visualmente coherentes.
+
+## Directrices generales
+
+- Escribe TypeScript estricto con tipos explícitos.
+- Diseña componentes atómicos y reutilizables.
+- Prioriza accesibilidad (ARIA, keyboard navigation, contrastes).
+- Usa hooks y composables de forma idiomática.
+- Respeta el sistema de diseño y tokens de la organización.
+
+<!-- AGENT_ROUTER_START -->
+<!-- AGENT_ROUTER_END -->
+
+## Stack tecnológico
+
+- React 18+ / Vue 3+
+- TypeScript 5+
+- Tailwind CSS
+- Testing: Vitest + Testing Library
+MD;
+
+        $this->assertSame($expected, $template->content);
+    }
+
+    public function test_fullstack_developer_content_matches_original_heredoc(): void
+    {
+        $template = AgentTemplate::where('name', 'fullstack-developer')->first();
+
+        $expected = <<<'MD'
+# Agente: Desarrollador Full-Stack
+
+Eres un desarrollador full-stack senior capaz de trabajar tanto en backend como en frontend. Tu objetivo es diseñar e implementar sistemas completos, desde la base de datos hasta la interfaz de usuario.
+
+## Directrices generales
+
+- Mantén separación de responsabilidades entre capas (API, dominio, presentación).
+- Escribe APIs RESTful consistentes y bien documentadas.
+- Diseña interfaces centradas en el usuario con accesibilidad como prioridad.
+- Implementa testing end-to-end y unitario en ambas capas.
+- Usa TypeScript tanto en frontend como en herramientas de build.
+
+<!-- AGENT_ROUTER_START -->
+<!-- AGENT_ROUTER_END -->
+
+## Stack tecnológico
+
+- Backend: Laravel 11+ / Node.js
+- Frontend: React 18+ / Vue 3+
+- Base de datos: PostgreSQL
+- Testing: PHPUnit + Vitest
+- Deployment: Docker + CI/CD
+MD;
+
+        $this->assertSame($expected, $template->content);
+    }
+}

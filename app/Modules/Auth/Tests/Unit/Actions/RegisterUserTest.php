@@ -7,8 +7,12 @@ namespace App\Modules\Auth\Tests\Unit\Actions;
 use App\Modules\Auth\Actions\RegisterUser;
 use App\Modules\Auth\DTOs\RegisterUserData;
 use App\Modules\Auth\Models\User;
+use Database\Seeders\PlanSeeder;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class RegisterUserTest extends TestCase
@@ -18,12 +22,12 @@ class RegisterUserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\PlanSeeder::class);
+        $this->seed(PlanSeeder::class);
     }
 
     public function test_it_creates_a_user(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'John Doe',
             email: 'john@example.com',
@@ -43,7 +47,7 @@ class RegisterUserTest extends TestCase
 
     public function test_it_hashes_password(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Jane Doe',
             email: 'jane@example.com',
@@ -58,7 +62,7 @@ class RegisterUserTest extends TestCase
 
     public function test_it_assigns_free_plan_by_default(): void
     {
-        $action = new RegisterUser();
+        $action = new RegisterUser;
         $data = new RegisterUserData(
             name: 'Free User',
             email: 'free@example.com',
@@ -69,5 +73,38 @@ class RegisterUserTest extends TestCase
 
         $this->assertNotNull($user->plan);
         $this->assertEquals('free', $user->plan->slug);
+    }
+
+    public function test_it_rejects_disposable_email(): void
+    {
+        $this->expectException(ValidationException::class);
+
+        $action = new RegisterUser;
+        $data = new RegisterUserData(
+            name: 'Temp User',
+            email: 'user@mailinator.com',
+            password: 'password123',
+        );
+
+        $action->execute($data);
+    }
+
+    public function test_it_sends_verification_notification_after_registration(): void
+    {
+        Notification::fake();
+
+        $action = new RegisterUser;
+        $data = new RegisterUserData(
+            name: 'Jane Doe',
+            email: 'jane@example.com',
+            password: 'securepass123',
+        );
+
+        $user = $action->execute($data);
+
+        Notification::assertSentTo(
+            [$user],
+            VerifyEmail::class,
+        );
     }
 }

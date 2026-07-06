@@ -1,4 +1,4 @@
-# CoVa — Especificación de Interfaz de Usuario
+# CoVaR — Especificación de Interfaz de Usuario
 
 > Detalle de pantallas, componentes, estados y decisiones de UX.
 > Audiencia: Desarrolladores frontend, diseñadores, y devs implementando nuevas pantallas.
@@ -11,10 +11,10 @@
 
 | Ruta | Nombre | Descripción | Layout |
 |------|--------|-------------|--------|
-| `/` | Home | Landing page (futuro, actualmente redirect a login) | Guest |
-| `/login` | Login | Formulario de inicio de sesión | Guest |
-| `/register` | Register | Formulario de registro | Guest |
-| `/invitations/{token}/accept` | Accept Invitation | Aceptar invitación a org | Guest |
+| `/` | Home | Landing page con hero, pain point, how it works, marketplace preview y CTA | Landing |
+| `/login` | Login | Formulario de inicio de sesión | Auth |
+| `/register` | Register | Formulario de registro | Auth |
+| `/invitations/{token}/accept` | Accept Invitation | Aceptar invitación a org | Auth |
 
 ### 1.2 Páginas Autenticadas (Auth Layout)
 
@@ -32,6 +32,11 @@
 | `/blueprints/deleted` | Deleted Blueprints | `BlueprintList` | Papelera de blueprints |
 | `/blueprints/{uuid}` | Blueprint Show | — | Detalle con resolución y tabs |
 | `/blueprints/{uuid}/edit` | Edit Blueprint | `BlueprintEditForm`, `VariableManager`, `TabManager` | Edición completa |
+| `/onboarding` | Onboarding Wizard | `OnboardingWizard` | 4-step post-registration wizard |
+| `/b/{slug}` | Blueprint Show (slug) | — | Friendly URL for blueprint show |
+| `/marketplace` | Marketplace Index | `MarketplaceList` | Public marketplace listing |
+| `/notifications` | Notifications Inbox | `NotificationBell` | In-app notification feed |
+| `/profile` | Profile | `UserProfileForm`, `ApiTokenManager` | Perfil con tabs (Datos, Cuenta, Seguridad) |
 
 ---
 
@@ -39,20 +44,30 @@
 
 ### 2.1 Guest Layout
 - Sin navegación lateral
-- Header mínimo con logo CoVa
+- Header mínimo con logo CoVaR
 - Footer opcional
 - Fondo claro, centrado verticalmente
 - Responsive: mismo diseño en mobile
 
 ### 2.2 Auth Layout
 - **Sidebar** (desktop): Navegación fija izquierda
-  - Logo CoVa (arriba)
+  - Logo CoVaR (arriba)
   - Links: Dashboard, Organizations, Blueprints, Favorites
   - Separador
   - User dropdown (abajo): Perfil, Settings, Logout
 - **Topbar** (mobile): Hamburger menu + logo
 - **Main Content Area**: Contenido dinámico con padding consistente
-- **Toast Container**: Esquina inferior derecha (desktop), inferior centrado (mobile)
+- **Toast Container**: Esquina superior derecha (z-50, fixed top-4 right-4)
+  - Sistema de notificaciones vía `dispatch('notify', message: '...')`
+  - Auto-dismiss a los 3s con animación slideIn/slideOut
+  - Soporte dark mode
+- **Confirmation Dialog**: Modal Alpine.js global (`Alpine.store('confirm')`)
+  - Backdrop con blur + x-transition
+  - Texto multilinea, botón de acción configurable
+  - Soporte dark mode completo
+- **Theme Toggle**: Componente Livewire `shared.theme-toggle`
+  - Icono sun/moon con animación CSS (700ms rotate+translate)
+  - Persistencia en localStorage, anti-flash en `<head>`
 - Responsive:
   - Desktop (>1024px): Sidebar visible
   - Tablet (768-1024px): Sidebar colapsable
@@ -86,6 +101,24 @@
   - Checkmarks en validación inline
   - Botón "Crear cuenta" con spinner
 
+#### `ApiTokenManager`
+- **Props**: Ninguno (usa estado local + auth()->user())
+- **Estado**: `$tokens` (collection), `$tokenName`, `$expiresAt`, `$password`, `$newPlainTextToken`, `$revokePassword`, `$revokeTokenId`, `$showCreateForm`, `$isFreePlan`
+- **Operaciones**:
+  - `createToken()`: valida → CreateApiToken Action → one-time display
+  - `dismissNewToken()`: limpia plain-text token
+  - `confirmRevoke($tokenId)`: muestra confirmación
+  - `revokeToken()`: verifica password → RevokeApiToken Action
+  - `cancelRevoke()`: limpia estado de revocación
+- **UI**:
+  - Tabla de tokens: columnas Nombre, Último uso, Expira, Acciones
+  - Empty state con CTA localizado
+  - Formulario de creación colapsable (toggle)
+  - One-time token display con warning + botón copiar + botón "Entendido"
+  - Modal de confirmación de revocación con password
+  - Free plan CTA de upgrade
+  - Rate limiting a nivel de componente (RateLimiter 10/min)
+
 ### 3.2 Organization
 
 #### `CreateOrganizationForm`
@@ -112,9 +145,9 @@
 ### 3.3 Blueprint
 
 #### `BlueprintCreateForm` (Wizard)
-- **Estado**: `title`, `description`, `category_id`, `organization_id`, `variables[]`, `tabsConfig[]`
+- **Estado**: `title`, `description`, `organization_id`, `variables[]`, `tabsConfig[]`
 - **Pasos** (wizard implícito en scroll):
-  1. **Info básica**: Título, descripción, categoría, org
+  1. **Info básica**: Título, descripción, tags, org
   2. **Variables**: `VariableManager` embebido
   3. **Tabs**: `TabManager` embebido
 - **Validación por paso**:
@@ -165,7 +198,9 @@
   - `moveTab(index, direction)`: Reordenar (-1 arriba, +1 abajo)
   - `updateVscodeExtensions(index, text)`: Parsea texto a array
   - `addMcpServer(index)`, `removeMcpServer(index, serverIndex)`, `updateMcpServerField(...)`
-  - `togglePreset(index, preset)`, `toggleSkill(index, skill)`, `updateCustomRules(index, rules)`
+  - `addSegment(tabIndex, type, name)`, `removeSegment(tabIndex, segmentIndex)`
+  - `moveSegment(tabIndex, segmentIndex, direction)`
+  - `updateSegmentContent(tabIndex, segmentIndex, content)`, `updateSegmentName(tabIndex, segmentIndex, name)`
 - **Sincronización**:
   - Cada cambio dispara `$this->dispatch('tabs-updated', tabs: $this->tabs)`
   - Padre (`BlueprintCreateForm`/`BlueprintEditForm`) escucha y persiste
@@ -176,10 +211,13 @@
   - Contenido expandido según tipo:
     - **VSCode Extensions**: Textarea (una extensión por línea) + preview de lista
     - **MCP Servers**: Tabla de servidores con inputs name/command/args + botón añadir/quitar
-    - **AI Context**:
-      - Presets: Checkboxes de presets predefinidos
-      - Skills: Checkboxes de skills disponibles
-      - Custom Rules: Textarea libre
+    - **AI Context** (Segment CRUD):
+      - Segments: Collapsible cards, each with type (skill/custom/agent badge), editable name, and content textarea
+      - Operations: addSegment, removeSegment, moveSegment, updateSegmentContent, updateSegmentName
+      - Dropdown "Add skill" loads content from the skill registry
+      - Custom segments: free-text textarea in collapsible card
+      - Segments are ordered and independently collapsible
+      - Content loaded from registry on toggle, editable by the user
   - Dropdown "+ Añadir tab" (solo tipos disponibles en `availableTabTypes`)
   - Máximo de tabs: no hardcodeado, pero UI scrollable
 
@@ -188,11 +226,11 @@
 - **Props**: `favoritesOnly` (boolean, default false), `deletedOnly` (boolean, default false)
 - **UI**:
   - Barra de búsqueda con debounce
-  - Filtros: Org (dropdown), Categoría (dropdown)
+  - Filtros: Org (dropdown), Tags (dropdown)
   - Grid de tarjetas (desktop 3-col, tablet 2-col, mobile 1-col)
   - Cada tarjeta:
     - Título + UUID truncado
-    - Badge de categoría
+    - Badge de tags
     - Badge de org
     - Cantidad de variables
     - ⭐ favorito (toggle)
@@ -221,7 +259,7 @@
 #### Estado: Sin Organizaciones
 - **Layout**: Centrado, ilustración + texto
 - **Contenido**:
-  - Título: "Bienvenido a CoVa"
+  - Título: "Bienvenido a CoVaR"
   - Subtítulo: "Crea tu primera organización para empezar a gestionar blueprints"
   - CTA grande: "Crear organización" → `/organizations/create`
   - Link secundario: "¿Qué es un blueprint?" (tooltip o modal)
@@ -244,7 +282,7 @@
 
 - **Header**:
   - Nombre de org + slug (badge)
-  - Rol del usuario actual (badge color: Owner=rojo, Maintainer=amarillo, Developer=azul)
+  - Rol del usuario actual (badge color: Owner=🟣 purple, Maintainer=🔵 blue, Developer=🟢 green)
   - Acciones:
     - Owner: Editar, Eliminar, Gestionar miembros
     - Maintainer: Gestionar miembros
@@ -262,7 +300,7 @@
 
 - **Header**:
   - Título + UUID (copiable)
-  - Badge categoría
+  - Badge tags
   - Badge org
   - ⭐ Favorito (toggle)
   - Acciones:
@@ -282,16 +320,23 @@
     - Tabla: Name | Command | Args
     - Botón "Copiar configuración"
   - **AI Context** (si existe tab):
-    - Presets activos (badges)
-    - Skills activos (badges)
-    - Custom rules (blockquote)
+    - Segments: lista de segmentos con badge de tipo (skill/custom/agent) y nombre
+    - Contenido de cada segmento renderizado en bloque colapsable
+    - Custom segments muestran contenido libre (blockquote)
     - **agent.md preview**:
       - Badge "agent.md"
       - Bloque de código con syntax highlighting
       - Botón "Copiar agent.md" (CopyToClipboard)
 - **Install Command** (si aplica):
-  - Bloque de código: `cova fetch {uuid}`
+  - Bloque de código: `covar fetch {uuid}`
   - Botón copiar
+
+- **Downloads Section** (new):
+  - Vault Fetch CLI card: shows `covar fetch {slug}` with copy button
+  - Download agent.md: button downloads full agent.md (Alpine.js Blob)
+  - Download per-segment .md: one button per AI Context segment
+  - Download .env template: button downloads generated .env file
+  - All client-side via Alpine.js Blob + URL.createObjectURL()
 
 ### 4.4 Members Page (`/organizations/{slug}/members`)
 
@@ -311,6 +356,31 @@
   - "Añadir miembro" (Owner): Modal con email + rol
   - "Invitar por email" (Owner/Maintainer): Modal con email + rol
 
+### 4.5 Onboarding Wizard (`/onboarding`)
+
+- **Actor**: Newly registered user (has not completed onboarding)
+- **Middleware**: `EnsureOnboardingCompleted` redirects to `/onboarding` from any authenticated route
+- **Steps**:
+  1. Welcome: greeting message + "Skip all" option
+  2. Create Organization: simplified org creation form
+  3. Invite Team: invite members by email (optional, skippable)
+  4. Complete: summary + CTA to dashboard
+- **Skip-all flow**: "Skip" button on step 1 → sets `onboarding_completed_at` → redirect to `/dashboard`
+- **Email verification banner**: shown on all steps if email unverified (non-blocking)
+- **Browser refresh resilience**: `onboarding_step` column preserves current step
+- **Plan-limit handling**: if plan is maxed, shows message and disables creation
+- **UI**: horizontal progress bar (4 dots), step indicator with shortened mobile labels, spinner on Next/Skip buttons, confirmation modal for skip-all
+
+### 4.6 Profile (`/profile`)
+
+- **Layout**: Página de perfil con 3 tabs Alpine.js
+- **Tabs**:
+  - **Datos**: Nombre, avatar (UserProfileForm existente)
+  - **Cuenta**: Cambio de password, MFA toggle (UserProfileForm existente)
+  - **Seguridad**: API tokens (ApiTokenManager Livewire)
+- **URL hash sync**: `#datos`, `#cuenta`, `#seguridad` — deep-linking y restauración al cargar
+- **Tab activo por defecto**: Datos
+
 ---
 
 ## 5. Estados de UI
@@ -324,6 +394,8 @@
 | Blueprint Show | Resolución | Spinner en área de tabs |
 | Modal | Acción en progreso | Overlay semi-transparente + spinner centrado |
 | Page transition | Entre páginas | Fade out/in de 150ms |
+| Download file | Click en descargar | Botón con spinner, toast "Descargado" |
+| Token creation | Creación de API token | Spinner en botón "Generar token" → One-time display o error |
 
 ### 5.2 Empty States
 
@@ -337,6 +409,8 @@
 | Sin invitaciones | "No hay invitaciones pendientes" | 📧 | — |
 | Sin variables | "Este blueprint no tiene variables" | ⚙️ | CTA a editar |
 | Sin tabs | "No hay tabs configuradas" | 📑 | CTA a editar |
+| "Marketplace vacío" | "No hay blueprints públicos todavía" | 🛒 | CTA a crear y publicar |
+| "Sin notificaciones" | "No tienes notificaciones" | 🔔 | — |
 
 ### 5.3 Estados de Error
 
@@ -422,6 +496,23 @@
 - Token en URL = shareable (puede enviarse por Slack, WhatsApp, etc. sin perder funcionalidad).
 - Expiración de 48h mitiga riesgo de tokens expuestos.
 
+### 6.9 Segmentos sobre Toggles para AI Context
+**Decisión**: Reemplazar toggles de presets/skills con segmentos modulares tipo cards colapsables.
+**Razón**: Los toggles inyectaban marcadores HTML en textarea (frágil, regex). Segmentos son ciudadanos de primera clase: tipados, ordenables, editables independientemente. El agent.md generado es un router que incluye segmentos en orden.
+
+### 6.10 Descargas Client-Side con Alpine.js
+**Decisión**: Descargas de archivos con Blob + URL.createObjectURL() en Alpine.js, sin endpoints nuevos.
+**Razón**: Datos ya en el DOM tras autorización. Cero riesgo de exposición (sin endpoint que proteger). Sin requests adicionales = más rápido.
+
+### 6.11 Onboarding Wizard Post-Registro
+**Decisión**: Wizard de 4 pasos post-registro en lugar de soltar al usuario en un dashboard vacío.
+**Razón**: Reduce abandono guiando al usuario. Skip-all disponible para exploradores. Persistencia en BD evita pérdida de progreso. Middleware asegura completitud sin bloquear rutas de utilidad.
+
+### 6.12 One-Time Token Display
+**Decisión**: El plain-text token se muestra UNA sola vez inmediatamente después de la creación, con botón copiar y advertencia prominente. El botón "Entendido" lo descarta permanentemente.
+
+**Razón**: Es el patrón estándar de la industria (GitHub, GitLab, npm, PyPI). El token se hashea con SHA-256 en BD (Sanctum) — nunca se almacena en texto plano. Mostrarlo una vez y forzar al usuario a copiarlo o perderlo es más seguro que permitir re-visualización.
+
 ---
 
 ## 7. Responsive Breakpoints
@@ -475,5 +566,5 @@
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 2 del plan de documentación
+**Versión**: 1.1  
+**Última actualización**: 2026-06-30 — API token management, tabbed profile

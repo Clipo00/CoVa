@@ -47,6 +47,7 @@ class ResolveBlueprint
                     'tab_data' => $tabData,
                     'error' => $e->getMessage(),
                 ]);
+
                 continue;
             }
 
@@ -55,6 +56,7 @@ class ResolveBlueprint
                     'blueprint_uuid' => $blueprint->uuid,
                     'tab_type' => $tabConfig->type->value,
                 ]);
+
                 continue;
             }
 
@@ -70,6 +72,7 @@ class ResolveBlueprint
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
+
                 continue;
             }
         }

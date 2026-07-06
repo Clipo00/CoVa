@@ -1,7 +1,7 @@
 ---
 name: covar-laravel-action
 description: >
-  Patrones y convenciones para Actions en CoVa. Trigger: Cuando se trabaja con archivos en Actions/.
+  Patrones y convenciones para Actions en CoVaR. Trigger: Cuando se trabaja con archivos en Actions/.
 license: Apache-2.0
 metadata:
   author: gentleman-programming
@@ -79,7 +79,7 @@ class CreateBlueprint
             $blueprint->variables()->create([
                 'key' => $variableData['key'],
                 'type' => $variableData['type'] ?? 'fixed',
-                'default_value' => $variableData['default_value'] ?: null,
+                'default_value' => ($variableData['default_value'] ?? null) !== '' ? $variableData['default_value'] : null,
                 'is_interactive' => $variableData['is_interactive'] ?? false,
                 'is_secret' => $variableData['is_secret'] ?? false,
                 'section' => $variableData['section'] ?? null,

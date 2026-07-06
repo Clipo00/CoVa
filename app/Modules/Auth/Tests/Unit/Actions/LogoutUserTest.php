@@ -28,7 +28,7 @@ class LogoutUserTest extends TestCase
         $request = Request::create('/logout', 'POST');
         $request->setLaravelSession($this->app['session']->driver('array'));
 
-        $action = new LogoutUser();
+        $action = new LogoutUser;
         $action->execute($request);
 
         $this->assertGuest();

@@ -27,4 +27,37 @@ class AuthController
 
         return redirect()->route('login');
     }
+
+    public function showProfile(): View
+    {
+        return view('auth::profile');
+    }
+
+    public function showMfaChallenge(): View
+    {
+        return view('auth::mfa-challenge');
+    }
+
+    public function showMfaSetup(): View
+    {
+        return view('auth::mfa-setup');
+    }
+
+    public function showChangePassword(): View
+    {
+        return view('auth::change-password');
+    }
+
+    public function showForgotPassword(): View
+    {
+        return view('auth::forgot-password');
+    }
+
+    public function showResetPassword(Request $request, string $token): View
+    {
+        return view('auth::reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+        ]);
+    }
 }

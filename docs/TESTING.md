@@ -1,6 +1,6 @@
-# CoVa — Estrategia de Testing
+# CoVaR — Estrategia de Testing
 
-> Pirámide de tests, patrones, fixtures, y guía para escribir tests en CoVa.
+> Pirámide de tests, patrones, fixtures, y guía para escribir tests en CoVaR.
 > Audiencia: Desarrolladores escribiendo o manteniendo tests.
 
 ---
@@ -9,7 +9,7 @@
 
 ```
        /\
-      /  \     E2E (no tenemos aún)
+      /  \     E2E (Playwright - browser tests)
      /----\
     /      \   Feature Tests (HTTP, flujos completos)
    /--------\ 
@@ -17,13 +17,13 @@
  /------------\
 ```
 
-**Distribución actual** (117 tests):
+**Distribución actual** (121 tests PHP + 10+ E2E):
 
 | Nivel | Cantidad | % | Ejemplos |
 |-------|----------|---|----------|
-| **Unit** | ~90 | 77% | Actions, Policies, VO, Services, Tabs |
-| **Feature** | ~27 | 23% | Controllers HTTP, Model persistence |
-| **E2E** | 0 | 0% | — |
+| **Unit** | ~94 | 78% | Actions, Policies, VO, Services, Tabs |
+| **Feature** | ~27 | 22% | Controllers HTTP, Model persistence |
+| **E2E** | 10+ | — | Auth, Navigation, Profile (Playwright) |
 
 **Objetivo**: Mantener la proporción ~70% Unit / 30% Feature. E2E se evaluará en Fase 3 (API REST).
 
@@ -113,7 +113,7 @@ class CreateEntityTest extends TestCase
 **Reglas**:
 - Testear el happy path y al menos 1 edge case (límites, permisos, excepciones)
 - No mockear Eloquent salvo estrictamente necesario (usar BD en memoria es rápido)
-- Seeders en `setUp()` para datos base (planes, categorías)
+- Seeders en `setUp()` para datos base (planes)
 - Usar `actingAs()` si la action verifica autenticación
 
 ### 3.2 Tests de Policies
@@ -250,7 +250,7 @@ class BlueprintControllerTest extends TestCase
     {
         parent::setUp();
         $this->seed(\Database\Seeders\PlanSeeder::class);
-        $this->seed(\Database\Seeders\CategorySeeder::class);
+        // Seed domain-specific data as needed
     }
 
     public function test_authenticated_user_can_view_blueprint(): void
@@ -366,7 +366,6 @@ private function createBlueprint(Organization $org, string $title = 'Test'): Blu
 | Seeder | Datos | Cuándo usar |
 |--------|-------|-------------|
 | `PlanSeeder` | Free, Pro, Enterprise | Siempre (en `setUp()`) |
-| `CategorySeeder` | 8 categorías predefinidas | Si el test usa categorías |
 | `MarketplaceSeeder` | Org de marketplace | Si el test usa marketplace |
 
 ---
@@ -530,7 +529,88 @@ public function test_creates_blueprint_within_plan_limit(): void
 
 ---
 
-## 9. Comandos de Testing
+## 9. Tests E2E con Playwright
+
+> Playwright tests viven en `tests/e2e/` y corren contra la aplicación real en un navegador.
+
+### 9.1 Configuración
+
+**Archivo**: `playwright.config.ts`
+
+- Base URL: `http://localhost:8000`
+- Navegador: Chromium (headless en CI, headed en dev)
+- Auto-start: `php artisan serve --env=testing` antes de los tests
+- Screenshots: Solo en fallos
+- Traces: Solo en primer retry
+
+### 9.2 Instalación
+
+```bash
+# Instalar Playwright
+npm install --save-dev @playwright/test
+
+# Instalar browsers
+npx playwright install chromium
+```
+
+### 9.3 Ejecutar Tests E2E
+
+```bash
+# Headless (default)
+npm run test:e2e
+
+# Con UI interactiva
+npm run test:e2e:ui
+
+# Con navegador visible
+npm run test:e2e:headed
+
+# Debug paso a paso
+npm run test:e2e:debug
+
+# Un archivo específico
+npx playwright test tests/e2e/auth.spec.ts
+```
+
+### 9.4 Suite de Tests E2E
+
+| Archivo | Cobertura |
+|---------|-----------|
+| `tests/e2e/auth.spec.ts` | Login, registro, logout, redirecciones |
+| `tests/e2e/navigation.spec.ts` | Dashboard, sidebar, dropdown de usuario, responsive |
+| `tests/e2e/profile.spec.ts` | Editar perfil, cambiar contraseña, validaciones |
+
+### 9.5 Patrones de Tests E2E
+
+**Independencia**: Cada test se registra con un email único (timestamp) para evitar conflictos.
+
+**Setup por test**:
+```typescript
+test.beforeEach(async ({ page }) => {
+    // Register fresh user
+    await page.goto('/register');
+    await page.fill('input#name', 'Test');
+    await page.fill('input[type="email"]', `test-${Date.now()}@example.com`);
+    await page.fill('input[type="password"]', 'password123');
+    await page.fill('input#password_confirmation', 'password123');
+    await page.click('button[type="submit"]');
+});
+```
+
+**Selectores**: Usar `data-testid` para elementos interactivos (dropdowns, botones).
+
+**Aserciones**: Verificar URL + texto visible en página.
+
+### 9.6 CI/CD
+
+En CI, Playwright corre con:
+- `workers: 1` (evitar conflictos de BD)
+- `retries: 2` (flake tolerance)
+- `fullyParallel: false` (secuencial para BD compartida)
+
+---
+
+## 10. Comandos de Testing
 
 ```bash
 # Suite completa
@@ -564,5 +644,5 @@ php artisan test --parallel
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 3 del plan de documentación
+**Versión**: 1.1  
+**Última actualización**: Tests E2E con Playwright
