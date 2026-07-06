@@ -7,6 +7,7 @@ namespace App\Modules\Organization\Actions;
 use App\Modules\Auth\Models\User;
 use App\Modules\Organization\Models\Organization;
 use App\Modules\Organization\Notifications\NewMemberNotification;
+use App\Modules\Shared\Models\Plan;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
@@ -39,12 +40,18 @@ class CreateOrganizationUser
             $isNewUser = true;
             $plainPassword = $password ?? bin2hex(random_bytes(8));
 
+            $freePlan = Plan::where('slug', 'free')->first();
+
+            if ($freePlan === null) {
+                throw new \RuntimeException('Free plan does not exist. Run database seeders.');
+            }
+
             $user = User::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => $plainPassword,
                 'password_change_required' => true,
-                'plan_id' => null,
+                'plan_id' => $freePlan->id,
             ]);
         }
 
