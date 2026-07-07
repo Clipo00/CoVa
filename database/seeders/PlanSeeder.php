@@ -9,7 +9,7 @@ class PlanSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('plans')->insert([
+        $plans = [
             [
                 'slug' => 'free',
                 'name' => 'Free',
@@ -22,8 +22,6 @@ class PlanSeeder extends Seeder
                 'has_marketplace_publish' => false,
                 'price_monthly' => 0.00,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'slug' => 'pro',
@@ -37,8 +35,6 @@ class PlanSeeder extends Seeder
                 'has_marketplace_publish' => true,
                 'price_monthly' => 9.99,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'slug' => 'enterprise',
@@ -52,9 +48,17 @@ class PlanSeeder extends Seeder
                 'has_marketplace_publish' => true,
                 'price_monthly' => null,
                 'is_active' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($plans as $plan) {
+            DB::table('plans')->updateOrInsert(
+                ['slug' => $plan['slug']],
+                array_merge($plan, [
+                    'updated_at' => now(),
+                    'created_at' => DB::table('plans')->where('slug', $plan['slug'])->value('created_at') ?? now(),
+                ]),
+            );
+        }
     }
 }

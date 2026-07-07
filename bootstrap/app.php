@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Railway terminates TLS at edge → trust proxy headers to generate HTTPS URLs
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'api.access' => EnsureApiAccess::class,
             'org.access' => EnsureOrganizationAccess::class,
