@@ -6,6 +6,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Registration
+    |--------------------------------------------------------------------------
+    |
+    | Toggle user self-registration. Set to false to disable the register
+    | page and registration form — only login remains available.
+    | Useful during bot attacks or invite-only periods.
+    |
+    */
+
+    'registration_enabled' => env('FEATURE_REGISTRATION_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Authentication Defaults
     |--------------------------------------------------------------------------
     |

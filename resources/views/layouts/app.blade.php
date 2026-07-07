@@ -99,7 +99,9 @@
                             <livewire:auth.components.user-dropdown />
                         @else
                             <a href="{{ route('login') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">{{ __('layouts.login') }}</a>
+                            @if(config('auth.registration_enabled', true))
                             <a href="{{ route('register') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200">{{ __('layouts.register') }}</a>
+                            @endif
                         @endauth
                     </div>
                 </div>
