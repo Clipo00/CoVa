@@ -20,6 +20,13 @@ class RegisterForm extends Component
 
     public string $password_confirmation = '';
 
+    public function mount(): void
+    {
+        if (!config('auth.registration_enabled', true)) {
+            $this->redirect(route('login'));
+        }
+    }
+
     protected function rules(): array
     {
         return RegisterRequest::rules();
@@ -32,6 +39,12 @@ class RegisterForm extends Component
 
     public function submit(RegisterUser $registerUser): void
     {
+        if (!config('auth.registration_enabled', true)) {
+            throw ValidationException::withMessages([
+                'email' => [__('auth.registration_disabled')],
+            ]);
+        }
+
         $validated = $this->validate();
 
         try {

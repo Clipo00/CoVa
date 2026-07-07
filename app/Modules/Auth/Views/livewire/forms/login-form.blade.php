@@ -80,11 +80,13 @@
             </div>
         </div>
 
+        @if(config('auth.registration_enabled', true))
         <div class="mt-6">
             <a href="{{ route('register') }}"
                 class="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 {{ __('auth.create_account_link') }}
             </a>
         </div>
+        @endif
     </div>
 </div>

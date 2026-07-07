@@ -16,8 +16,12 @@ class AuthController
         return view('auth::login');
     }
 
-    public function showRegister(): View
+    public function showRegister(): View|RedirectResponse
     {
+        if (!config('auth.registration_enabled', true)) {
+            return redirect()->route('login');
+        }
+
         return view('auth::register');
     }
 

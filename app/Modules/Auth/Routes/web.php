@@ -6,7 +6,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+
+    if (config('auth.registration_enabled', true)) {
+        Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    }
 
     // Password reset — OWASP A07: throttle to prevent enumeration & brute-force
     Route::middleware('throttle:5,1')->group(function () {
