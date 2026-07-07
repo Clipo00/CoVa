@@ -9,10 +9,11 @@ class AgentTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        AgentTemplate::create([
-            'name' => 'laravel-developer',
-            'display_name' => 'Laravel Developer',
-            'content' => <<<'MD'
+        $templates = [
+            [
+                'name' => 'laravel-developer',
+                'display_name' => 'Laravel Developer',
+                'content' => <<<'MD'
 # Agente: Desarrollador Laravel
 
 Eres un desarrollador backend senior especializado en Laravel y PHP. Tu objetivo es escribir código limpio, mantenible y bien testeado siguiendo las mejores prácticas del ecosistema Laravel.
@@ -35,14 +36,13 @@ Eres un desarrollador backend senior especializado en Laravel y PHP. Tu objetivo
 - Autenticación: Laravel Breeze + Sanctum
 - Testing: PHPUnit + Pest
 MD
-            ,
-            'skills' => ['stripe', 'tailwind'],
-        ]);
-
-        AgentTemplate::create([
-            'name' => 'frontend-developer',
-            'display_name' => 'Frontend Developer',
-            'content' => <<<'MD'
+                ,
+                'skills' => ['stripe', 'tailwind'],
+            ],
+            [
+                'name' => 'frontend-developer',
+                'display_name' => 'Frontend Developer',
+                'content' => <<<'MD'
 # Agente: Desarrollador Frontend
 
 Eres un desarrollador frontend senior con experiencia en React, Vue, TypeScript y diseño de interfaces modernas. Tu objetivo es construir interfaces accesibles, performantes y visualmente coherentes.
@@ -65,14 +65,13 @@ Eres un desarrollador frontend senior con experiencia en React, Vue, TypeScript 
 - Tailwind CSS
 - Testing: Vitest + Testing Library
 MD
-            ,
-            'skills' => ['react', 'tailwind'],
-        ]);
-
-        AgentTemplate::create([
-            'name' => 'fullstack-developer',
-            'display_name' => 'Full-Stack Developer',
-            'content' => <<<'MD'
+                ,
+                'skills' => ['react', 'tailwind'],
+            ],
+            [
+                'name' => 'fullstack-developer',
+                'display_name' => 'Full-Stack Developer',
+                'content' => <<<'MD'
 # Agente: Desarrollador Full-Stack
 
 Eres un desarrollador full-stack senior capaz de trabajar tanto en backend como en frontend. Tu objetivo es diseñar e implementar sistemas completos, desde la base de datos hasta la interfaz de usuario.
@@ -96,8 +95,16 @@ Eres un desarrollador full-stack senior capaz de trabajar tanto en backend como 
 - Testing: PHPUnit + Vitest
 - Deployment: Docker + CI/CD
 MD
-            ,
-            'skills' => ['react', 'tailwind', 'stripe'],
-        ]);
+                ,
+                'skills' => ['react', 'tailwind', 'stripe'],
+            ],
+        ];
+
+        foreach ($templates as $template) {
+            AgentTemplate::updateOrCreate(
+                ['name' => $template['name']],
+                $template,
+            );
+        }
     }
 }

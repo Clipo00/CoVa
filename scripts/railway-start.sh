@@ -12,8 +12,8 @@ php artisan optimize:clear
 echo "[3/7] Running migrations..."
 php artisan migrate --force
 
-echo "[4/7] Seeding plans..."
-php artisan db:seed --class=PlanSeeder --force
+echo "[4/7] Seeding data..."
+php artisan db:seed --force
 
 echo "[5/7] Building CLI PHAR..."
 cd /app/cli
