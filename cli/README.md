@@ -4,7 +4,7 @@ A command-line tool to list and fetch CoVaR blueprints from your terminal.
 
 ## Requirements
 
-- **PHP 8.3** or higher
+- **PHP 8.4** or higher
 - A **CoVaR API token** (generated from your CoVaR profile settings)
 
 ## Installation

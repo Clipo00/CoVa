@@ -38,7 +38,7 @@ Cada módulo contiene:
 
 | Capa | Tecnología |
 |------|------------|
-| **Framework** | Laravel 13 (PHP 8.3+) |
+| **Framework** | Laravel 13 (PHP 8.4+) |
 | **Frontend** | Blade + Livewire 3 + Tailwind CSS |
 | **Auth** | Laravel Breeze-like (custom) + Sanctum (listo para API) |
 | **BD** | SQLite (dev) / MySQL (prod) |
