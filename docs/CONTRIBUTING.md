@@ -118,7 +118,7 @@ covar/
 - **State público**: Propiedades `public` para binding con Blade.
 - **Métodos públicos**: Acciones del usuario (camelCase).
 - **Métodos privados**: Helpers internos (camelCase, prefijo descriptivo).
-- **Validación**: Usar `$rules` property o `#[Validate]` attributes (Livewire 3).
+- **Validación**: Usar `$rules` property o `#[Validate]` attributes (Livewire).
 - **Eventos**: Nombre en kebab-case (`tabs-updated`), payload como array asociativo.
 
 ### 2.4 Blade / Tailwind
@@ -389,5 +389,5 @@ Si hay tests fallidos, NO commitear (excepto si estás en medio de un refactor y
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 3 del plan de documentación
+**Versión**: 1.1  
+**Última actualización**: 2026-07-08 — Stack actualizado a Livewire 4, Tailwind 4, Vite 8

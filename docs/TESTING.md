@@ -17,15 +17,15 @@
  /------------\
 ```
 
-**Distribución actual** (121 tests PHP + 10+ E2E):
+**Distribución actual** (487 tests PHP + 10+ E2E):
 
 | Nivel | Cantidad | % | Ejemplos |
 |-------|----------|---|----------|
-| **Unit** | ~94 | 78% | Actions, Policies, VO, Services, Tabs |
-| **Feature** | ~27 | 22% | Controllers HTTP, Model persistence |
+| **Unit** | ~380 | 78% | Actions, Policies, VO, Services, Tabs |
+| **Feature** | ~107 | 22% | Controllers HTTP, Model persistence |
 | **E2E** | 10+ | — | Auth, Navigation, Profile (Playwright) |
 
-**Objetivo**: Mantener la proporción ~70% Unit / 30% Feature. E2E se evaluará en Fase 3 (API REST).
+**Objetivo**: Mantener la proporción ~70% Unit / 30% Feature. Suite E2E implementada con Playwright.
 
 ---
 
@@ -376,13 +376,16 @@ private function createBlueprint(Organization $org, string $title = 'Test'): Blu
 
 | Suite | Tests | Assertions |
 |-------|-------|------------|
-| Auth | 9 | 22 |
+| Auth + Onboarding | 35+ | 90+ |
+| Blueprint | 65+ | 120+ |
+| Organization | 23 | 58 |
 | Shared | 34 | 44 |
-| Organization | 11 | 30 |
-| Blueprint | 7 | 16 |
-| Roles/Policies | 14 | 22 |
-| **Tab/AI Tests** | ~30+ | ~60+ |
-| **Total** | **117** | **219** |
+| Marketplace | 53 | — |
+| Feature (cross-module) | 1 | 56 |
+| Agent Context | 33+ | 70+ |
+| API Tokens | 24 | 67 |
+| **CLI** | 3+ suites | — |
+| **Total** | **487** | **1096** |
 
 ### 6.2 Cobertura por Capa (estimada)
 
@@ -644,5 +647,5 @@ php artisan test --parallel
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.1  
-**Última actualización**: Tests E2E con Playwright
+**Versión**: 1.2  
+**Última actualización**: 2026-07-08 — Conteos actualizados a 487 tests / 1096 assertions, CLI suite agregada

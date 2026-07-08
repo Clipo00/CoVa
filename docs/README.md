@@ -50,19 +50,19 @@
 
 | Documento | Qué contiene | Estado | Última actualización |
 |-----------|-------------|--------|---------------------|
-| [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) | Visión general, arquitectura, módulos, estado actual | ✅ Actualizado | 2026-05-15 |
-| [`FUNCTIONAL.md`](FUNCTIONAL.md) | Requisitos funcionales, actores, user stories, reglas de negocio | ✅ Generado | 2026-05-15 |
-| [`UI_SPECIFICATION.md`](UI_SPECIFICATION.md) | Especificación de interfaz, componentes, estados, decisiones UX | ✅ Generado | 2026-05-15 |
+| [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) | Visión general, arquitectura, módulos, estado actual | ✅ Actualizado | 2026-07-08 |
+| [`FUNCTIONAL.md`](FUNCTIONAL.md) | Requisitos funcionales, actores, user stories, reglas de negocio | ✅ Actualizado | 2026-07-08 |
+| [`UI_SPECIFICATION.md`](UI_SPECIFICATION.md) | Especificación de interfaz, componentes, estados, decisiones UX | ✅ Generado | 2026-06-30 |
 | [`CHANGELOG.md`](../CHANGELOG.md) | Historial de cambios por versión (Keep a Changelog) | ✅ Generado | 2026-05-15 |
-| [`FEATURE_HISTORY.md`](FEATURE_HISTORY.md) | Narrativa de evolución, decisiones, lecciones aprendidas | ✅ Generado | 2026-05-15 |
+| [`FEATURE_HISTORY.md`](FEATURE_HISTORY.md) | Narrativa de evolución, decisiones, lecciones aprendidas | ✅ Actualizado | 2026-07-08 |
 
 ### Documentos Técnicos
 
 | Documento | Qué contiene | Estado | Última actualización |
 |-----------|-------------|--------|---------------------|
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Arquitectura modular, patrones, flujo de request, decisiones | ✅ Generado | 2026-05-15 |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Setup, convenciones, flujo de trabajo, troubleshooting | ✅ Generado | 2026-05-15 |
-| [`TESTING.md`](TESTING.md) | Pirámide de tests, patrones, cobertura, anti-patrones | ✅ Generado | 2026-05-15 |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Arquitectura modular, patrones, flujo de request, decisiones | ✅ Actualizado | 2026-07-08 |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Setup, convenciones, flujo de trabajo, troubleshooting | ✅ Actualizado | 2026-07-08 |
+| [`TESTING.md`](TESTING.md) | Pirámide de tests, patrones, cobertura, anti-patrones | ✅ Actualizado | 2026-07-08 |
 
 ### Otros
 
@@ -98,5 +98,5 @@ Esta documentación se mantiene como código:
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: Fase 5 del plan de documentación
+**Versión**: 1.1  
+**Última actualización**: 2026-07-08 — Fechas de documentos actualizadas post-CLI

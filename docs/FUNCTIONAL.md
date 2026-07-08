@@ -564,7 +564,7 @@ Developer en /blueprints/{uuid}
 ## 10. Features en Progreso
 
 ### 10.1 AI Agents / Skills Configuration
-- **Estado**: 🚧 En progreso
+- **Estado**: ✅ Completo
 - **Descripción**: Configuración avanzada de contexto para agentes AI dentro del tab AI Context.
 - **Implementado**: Segments (skills, custom, agent) en tab AI Context. Generación de `agent.md`.
 - **Pendiente**: Integración con LLM providers, export a formatos específicos de agentes (Claude, GPT, etc.).
@@ -589,12 +589,20 @@ Developer en /blueprints/{uuid}
 
 ### 10.5 API Token Management
 - **Estado**: ✅ Completo
-- **Descripción**: Gestión de tokens de API personales para autenticación del futuro CLI. Integración con Laravel Sanctum, UI en perfil de usuario (tab Seguridad), plan-gating, expiración obligatoria, y rate limiting.
+- **Descripción**: Gestión de tokens de API personales para autenticación del CLI. Integración con Laravel Sanctum, UI en perfil de usuario (tab Seguridad), plan-gating, expiración obligatoria, y rate limiting.
 - **Implementado**: `HasApiTokens` en User, migración `personal_access_tokens`, `ApiTokenManager` Livewire, `CreateApiToken`/`RevokeApiToken` Actions con `VerifiesPassword` trait, perfil con 3 tabs (Alpine.js + URL hash sync), 24 tests.
-- **Pendiente**: CLI (`covar fetch`), notificaciones de expiración.
+- **Pendiente**: Notificaciones de expiración.
+
+### 10.6 API REST + CLI
+- **Estado**: ✅ Completo
+- **Descripción**: API JSON con autenticación Sanctum y CLI `covar` para scaffolding de blueprints desde terminal.
+- **API**: `GET /api/blueprints`, `GET /api/blueprints/{slug}`, `GET /api/me`, `POST /api/fetch/{slug}/verify`. Rate limiting (60 req/min), plan-gating, RFC 7807 errors.
+- **CLI**: Laravel Zero 2.0 con PHAR autocontenido (~11.5 MB). Comandos: `config:set-key`, `vault:list`, `vault:fetch <slug>`. Secret double-auth flow para variables encriptadas.
+- **Implementado**: `cli/app/Commands/`, tests CLI, builds en `cli/builds/covar`.
+- **Pendiente**: Nada.
 
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.0  
-**Última actualización**: 2026-06-30
+**Versión**: 1.1  
+**Última actualización**: 2026-07-08 — CLI completado, API REST operativa, estados actualizados

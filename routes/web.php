@@ -43,6 +43,21 @@ Route::get('/welcome', function () {
 
 /*
 |--------------------------------------------------------------------------
+| TFM Presentation (token-gated public route)
+|--------------------------------------------------------------------------
+*/
+Route::get('/tfm', function () {
+    $expected = env('TFM_PRESENTATION_TOKEN');
+
+    if (!$expected || request()->query('key') !== $expected) {
+        abort(404);
+    }
+
+    return view('tfm.presentacion');
+})->name('tfm.presentacion');
+
+/*
+|--------------------------------------------------------------------------
 | Locale Switcher (sin auth — disponible para guests en login/register)
 |--------------------------------------------------------------------------
 */
