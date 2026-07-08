@@ -354,7 +354,7 @@ El seeder `TestUserSeeder` crea dos usuarios listos para probar la aplicación:
 
 ## Despliegue
 
-**URL de producción**: [PENDIENTE — Añadir tras desplegar en Railway]
+**URL de producción**: [https://covarapp.com](https://covarapp.com)
 
 La aplicación está configurada para desplegar en [Railway](https://railway.app) con Railpack (detección automática de Laravel):
 
