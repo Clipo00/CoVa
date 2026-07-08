@@ -339,6 +339,18 @@ Toda la documentación vive en `docs/`. Si no sabes por dónde empezar, [`docs/R
 
 ---
 
+## Despliegue
+
+**URL de producción**: [https://covarapp.com](https://covarapp.com)
+
+La aplicación está configurada para desplegar en [Railway](https://railway.app) con Railpack (detección automática de Laravel):
+
+- `railway.toml` — Configuración de build y start
+- `scripts/railway-build.sh` — Compilación de assets y CLI PHAR
+- `scripts/railway-start.sh` — Migraciones, seeders, y generación de PHAR
+
+---
+
 ## Licencia
 
 Proprietary — Todos los derechos reservados.
