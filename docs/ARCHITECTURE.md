@@ -418,7 +418,7 @@ The Auth module manages API tokens via Laravel Sanctum:
 | Capa | Tecnología | Versión | Propósito |
 |------|-----------|---------|-----------|
 | Framework | Laravel | 13.x | HTTP, routing, ORM, auth |
-| Language | PHP | 8.3+ | Typing, readonly, enums |
+| Language | PHP | 8.4+ | Typing, readonly, enums |
 | Frontend | Livewire | 3.x | Reactividad sin JS |
 | Styling | Tailwind CSS | 3.x+ | Utility-first CSS |
 | Build | Vite | — | Asset bundling |

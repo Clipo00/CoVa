@@ -11,7 +11,7 @@
 
 | Software | Versión | Notas |
 |----------|---------|-------|
-| PHP | 8.3+ | Requerido para `readonly` classes, enums |
+| PHP | 8.4+ | Requerido por Laravel 13 |
 | Composer | 2.6+ | Gestión de dependencias PHP |
 | Node.js | 20+ | Build de assets frontend |
 | SQLite | 3 | Base de datos de desarrollo |

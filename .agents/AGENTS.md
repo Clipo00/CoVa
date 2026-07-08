@@ -10,7 +10,7 @@
 
 | Capa | Tecnología |
 |------|------------|
-| **Framework** | Laravel 13 (PHP 8.3+) |
+| **Framework** | Laravel 13 (PHP 8.4+) |
 | **Frontend** | Blade + Livewire 3 + Tailwind CSS |
 | **Auth** | Custom (Breeze-like) + Sanctum (API-ready) |
 | **BD** | SQLite (dev) / MySQL (prod) |

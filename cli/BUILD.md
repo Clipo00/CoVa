@@ -4,7 +4,7 @@ This document explains how to build the standalone PHAR binary for the covar CLI
 
 ## Prerequisites
 
-- PHP 8.3+ with the `phar` extension enabled
+- PHP 8.4+ with the `phar` extension enabled
 - Composer dependencies installed (`php composer install` from `cli/`)
 - The build was tested on PHP 8.4.19 on Windows
 
