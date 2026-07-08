@@ -339,6 +339,42 @@ Toda la documentación vive en `docs/`. Si no sabes por dónde empezar, [`docs/R
 
 ---
 
+## Credenciales de Prueba
+
+El seeder `TestUserSeeder` crea dos usuarios listos para probar la aplicación:
+
+| Email | Contraseña | Plan | Notas |
+|-------|-----------|------|-------|
+| `admin@covar.dev` | `password` | Free | Email verificado, onboarding completado |
+| `pro@covar.dev` | `password` | Pro | Email verificado, onboarding completado, acceso a API tokens y marketplace |
+
+> Si despliegas desde cero, ejecuta `php artisan migrate:fresh --seed` para crear estos usuarios automáticamente.
+
+---
+
+## Despliegue
+
+**URL de producción**: [PENDIENTE — Añadir tras desplegar en Railway]
+
+La aplicación está configurada para desplegar en [Railway](https://railway.app) con Railpack (detección automática de Laravel):
+
+- `railway.toml` — Configuración de build y start
+- `scripts/railway-build.sh` — Compilación de assets y CLI PHAR
+- `scripts/railway-start.sh` — Migraciones, seeders, y generación de PHAR
+
+Ver [`railway.toml`](railway.toml) para los detalles de configuración.
+
+---
+
+## TFM — Recursos de Evaluación
+
+| Recurso | Enlace |
+|---------|--------|
+| **Presentación (Slides)** | [PENDIENTE — Añadir enlace a Google Slides] |
+| **Vídeo de demostración** | [PENDIENTE — Añadir enlace a YouTube/Drive] |
+
+---
+
 ## Licencia
 
 Proprietary — Todos los derechos reservados.

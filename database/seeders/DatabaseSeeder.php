@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             MarketplaceSeeder::class,
             AgentTemplateSeeder::class,
+            TestUserSeeder::class,
         ]);
     }
 }
