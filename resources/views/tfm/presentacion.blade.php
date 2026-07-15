@@ -434,7 +434,7 @@
             </div>
             <div class="p-5 bg-slate-900/40 border border-slate-800 rounded-lg text-sm text-slate-400 text-center max-w-2xl mx-auto">
                 <p>La plataforma está actualmente desplegada y plenamente operativa de forma pública bajo una arquitectura de servidores estables en la URL oficial:</p>
-                <p class="text-indigo-400 font-bold mt-2 text-lg font-mono">https://covarapp.com</p>
+                <a href="https://covarapp.com" target="_blank" rel="noopener noreferrer" class="text-indigo-400 font-bold mt-2 text-lg font-mono hover:text-indigo-300 transition-colors cursor-pointer inline-block">https://covarapp.com</a>
             </div>
         </div>
         <div class="text-xs text-slate-600 font-mono">Base de Datos: MySQL Gestionado en la nube con réplicas seguras</div>
