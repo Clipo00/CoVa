@@ -434,7 +434,7 @@
             </div>
             <div class="p-5 bg-slate-900/40 border border-slate-800 rounded-lg text-sm text-slate-400 text-center max-w-2xl mx-auto">
                 <p>La plataforma está actualmente desplegada y plenamente operativa de forma pública bajo una arquitectura de servidores estables en la URL oficial:</p>
-                <p class="text-indigo-400 font-bold mt-2 text-lg font-mono">https://covarapp.com</p>
+                <a href="https://covarapp.com" target="_blank" rel="noopener noreferrer" class="text-indigo-400 font-bold mt-2 text-lg font-mono hover:text-indigo-300 transition-colors cursor-pointer inline-block">https://covarapp.com</a>
             </div>
         </div>
         <div class="text-xs text-slate-600 font-mono">Base de Datos: MySQL Gestionado en la nube con réplicas seguras</div>
@@ -502,8 +502,8 @@
             <h2 class="text-6xl font-black text-white tracking-tight">Muchas Gracias</h2>
             <p class="text-slate-400 text-lg max-w-md mx-auto font-light">Quedo a su entera disposición para cualquier pregunta o aclaración por parte del tribunal.</p>
             <div class="pt-6 flex flex-col sm:flex-row justify-center gap-4 text-xs font-mono">
-                <span class="px-4 py-2 bg-slate-900 border border-slate-800 rounded text-slate-300">🌐 Web: https://covarapp.com</span>
-                <span class="px-4 py-2 bg-slate-900 border border-slate-800 rounded text-slate-300">📦 Código: github.com/Clipo00/CoVa</span>
+                <a href="https://covarapp.com" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-900 border border-slate-800 rounded text-slate-300 hover:bg-indigo-950 hover:border-indigo-500/40 hover:text-indigo-300 transition-colors cursor-pointer">🌐 Web: covarapp.com</a>
+                <a href="https://github.com/Clipo00/CoVa" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-slate-900 border border-slate-800 rounded text-slate-300 hover:bg-indigo-950 hover:border-indigo-500/40 hover:text-indigo-300 transition-colors cursor-pointer">📦 Código: github.com/Clipo00/CoVa</a>
             </div>
         </div>
         <div class="flex justify-between text-xs text-slate-600 font-mono">
