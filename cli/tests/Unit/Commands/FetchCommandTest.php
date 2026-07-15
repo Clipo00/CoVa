@@ -289,7 +289,7 @@ class FetchCommandTest extends TestCase
         string $returnPassword,
     ): CommandTester {
         $command = $this->getMockBuilder(FetchCommand::class)
-            ->setConstructorArgs([$client])
+            ->setConstructorArgs([])
             ->onlyMethods(['promptPassword'])
             ->getMock();
 
@@ -297,6 +297,9 @@ class FetchCommandTest extends TestCase
             ->method('promptPassword')
             ->willReturn($returnPassword);
 
+        if ($client !== null) {
+            $command->setApiClient($client);
+        }
         $command->setLaravel($this->container);
 
         return new CommandTester($command);
