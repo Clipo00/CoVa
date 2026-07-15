@@ -28,7 +28,7 @@ After building, verify the PHAR works:
 
 ```bash
 # Set up a test API key (required for all commands)
-php builds/covar config:set-key YOUR_API_KEY --base-url=https://api.CoVaR.app
+php builds/covar config:set-key YOUR_API_KEY --base-url=https://covarapp.com
 
 # Verify the binary shows help
 php builds/covar help

@@ -129,7 +129,7 @@ class ConfigSetKeyCommand extends Command
         $config['api_key'] = $key;
 
         if (!isset($config['base_url'])) {
-            $config['base_url'] = $this->option('base-url') ?? 'https://api.CoVaR.app';
+            $config['base_url'] = $this->option('base-url') ?: ($this->laravel['config']['app.url'] ?? 'https://covarapp.com');
         }
 
         file_put_contents(

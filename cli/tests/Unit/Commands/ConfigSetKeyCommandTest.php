@@ -125,7 +125,7 @@ class ConfigSetKeyCommandTest extends TestCase
 
         $this->assertIsArray($config);
         $this->assertSame('covar_valid1234567', $config['api_key']);
-        $this->assertSame('https://api.CoVaR.app', $config['base_url']);
+        $this->assertSame('https://covarapp.com', $config['base_url']);
     }
 
     #[Test]
@@ -151,7 +151,7 @@ class ConfigSetKeyCommandTest extends TestCase
     {
         // Create an existing config file with a valid key
         file_put_contents($this->configPath, json_encode([
-            'base_url' => 'https://api.CoVaR.app',
+            'base_url' => 'https://covarapp.com',
             'api_key' => 'covar_existing_valid_key',
         ]));
 
