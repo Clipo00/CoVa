@@ -387,14 +387,14 @@
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 my-auto items-center">
             <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
-                <p class="text-6xl font-black text-emerald-400">487</p>
+                <p class="text-6xl font-black text-emerald-400">568</p>
                 <p class="text-sm font-mono text-slate-400">Tests Automatizados Ejecutados</p>
                 <div class="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden mt-4">
                     <div class="h-full bg-emerald-400 w-full"></div>
                 </div>
             </div>
             <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
-                <p class="text-6xl font-black text-indigo-400">1,096</p>
+                <p class="text-6xl font-black text-indigo-400">1,373</p>
                 <p class="text-sm font-mono text-slate-400">Aseveraciones Totales</p>
                 <div class="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden mt-4">
                     <div class="h-full bg-indigo-400 w-full"></div>
