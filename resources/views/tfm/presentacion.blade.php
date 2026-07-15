@@ -86,7 +86,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="lg:col-span-2 bg-gradient-to-b from-indigo-950/30 to-slate-900 border border-indigo-500/20 rounded-2xl p-8 text-center shadow-2xl">
+            <div class="lg:col-span-2 bg-gradient-to-b from-indigo-950/30 to-slate-900 border border-indigo-500/20 rounded-2xl p-8 text-center shadow-2xl transition-transform duration-300 hover:scale-105">
                 <p class="text-7xl font-black text-indigo-400">67%</p>
                 <p class="text-md text-slate-300 font-semibold mt-4">De los desarrolladores encuestados</p>
                 <p class="text-sm text-slate-400 mt-2 font-light">Pierde más de **4 horas críticas** configurando su primer entorno de trabajo local.</p>
@@ -102,23 +102,23 @@
             <span class="text-xs tracking-widest text-slate-600 font-mono">CoVaR v1.0</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-auto">
-            <div class="p-8 bg-slate-900/60 border border-slate-800 rounded-xl space-y-4">
+            <div class="p-8 bg-slate-900/60 border border-slate-800 rounded-xl space-y-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <div class="h-10 w-10 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 font-bold">01</div>
                 <h4 class="text-xl font-bold text-white">Plataforma SaaS Centralizada</h4>
                 <p class="text-slate-400 text-sm leading-relaxed">Gestión unificada y segura de configuraciones organizacionales sin exponer credenciales críticas en texto plano.</p>
             </div>
-            <div class="p-8 bg-slate-900/60 border border-slate-800 rounded-xl space-y-4">
+            <div class="p-8 bg-slate-900/60 border border-slate-800 rounded-xl space-y-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <div class="h-10 w-10 rounded-lg bg-cyan-600/20 flex items-center justify-center text-cyan-400 font-bold">02</div>
                 <h4 class="text-xl font-bold text-white">Blueprints Ejecutables</h4>
                 <p class="text-slate-400 text-sm leading-relaxed">Plantillas vivas que inyectan de forma dinámica variables de entorno, extensiones recomendadas y contexto optimizado para IA (<code class="text-xs font-mono text-cyan-300">.agent.md</code>).</p>
             </div>
-            <div class="p-8 bg-indigo-950/40 border border-indigo-500/30 rounded-xl space-y-4">
+            <div class="p-8 bg-indigo-950/40 border border-indigo-500/30 rounded-xl space-y-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-400/50">
                 <div class="h-10 w-10 rounded-lg bg-emerald-600/20 flex items-center justify-center text-emerald-400 font-bold">03</div>
                 <h4 class="text-xl font-bold text-white">CLI de un Solo Comando</h4>
                 <p class="text-slate-400 text-sm leading-relaxed">Pasa de un <code class="text-xs font-mono text-slate-300">git clone</code> a un entorno listo y productivo en segundos mediante comandos nativos optimizados.</p>
             </div>
         </div>
-        <div class="text-center font-mono text-indigo-400 text-sm bg-indigo-950/20 py-2 rounded-lg border border-indigo-900/40">
+        <div class="text-center font-mono text-indigo-400 text-sm bg-indigo-950/20 py-2 rounded-lg border border-indigo-900/40 transition-all duration-300 hover:bg-indigo-950/40 hover:border-indigo-500/40 hover:scale-[1.02]">
             $ covar vault:fetch laravel-api-starter
         </div>
     </div>
@@ -132,22 +132,22 @@
         <div class="my-auto space-y-8">
             <h3 class="text-3xl font-bold text-white text-center">Arquitectura de Stack Avanzado e Innovador</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
-                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center">
+                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                     <p class="text-xs text-indigo-400 font-mono mb-1">CORE BACKEND</p>
                     <p class="text-lg font-bold text-white">Laravel 13</p>
                     <p class="text-xs text-slate-500">PHP 8.4 Strict Types</p>
                 </div>
-                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center">
+                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                     <p class="text-xs text-cyan-400 font-mono mb-1">FRONTEND REACTIVO</p>
                     <p class="text-lg font-bold text-white">Livewire 4</p>
                     <p class="text-xs text-slate-500">Tailwind 4 + Vite 8</p>
                 </div>
-                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center">
+                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                     <p class="text-xs text-emerald-400 font-mono mb-1">INTERFAZ CLI</p>
                     <p class="text-lg font-bold text-white">Laravel Zero</p>
                     <p class="text-xs text-slate-500">Distribución PHAR compilada</p>
                 </div>
-                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center">
+                <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                     <p class="text-xs text-amber-400 font-mono mb-1">INFRAESTRUCTURA</p>
                     <p class="text-lg font-bold text-white">Railway</p>
                     <p class="text-xs text-slate-500">Automated Railpacks</p>
@@ -178,7 +178,7 @@
                     <div class="flex gap-2 items-center text-slate-300"><span class="text-emerald-400">✓</span> <span>Migración a microservicios con refactorización cero</span></div>
                 </div>
             </div>
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl space-y-4">
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl space-y-4 transition-all duration-300 hover:shadow-lg hover:border-indigo-500/30">
                 <p class="text-xs text-slate-500 font-mono">MAPA DE MÓDULOS DEL PROYECTO</p>
                 <div class="grid grid-cols-2 gap-3 text-xs font-mono">
                     <div class="p-3 bg-indigo-950/40 border border-indigo-500/20 text-indigo-300 rounded text-center font-bold">Auth Module</div>
@@ -201,25 +201,25 @@
             <span class="text-xs tracking-widest text-slate-600 font-mono">Patrones Utilizados</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto max-w-6xl mx-auto">
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <h4 class="text-md font-bold text-white flex items-center gap-2">
                     <span class="h-2 w-2 rounded-full bg-indigo-500"></span> Action Pattern
                 </h4>
                 <p class="text-xs text-slate-400 mt-2">Casos de uso atómicos, con una sola responsabilidad pública ejecutable. Totalmente aislados del contexto y peticiones HTTP de la aplicación.</p>
             </div>
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <h4 class="text-md font-bold text-white flex items-center gap-2">
                     <span class="h-2 w-2 rounded-full bg-cyan-500"></span> DTO Pattern (Data Transfer Objects)
                 </h4>
                 <p class="text-xs text-slate-400 mt-2">Uso de clases nativas <code class="text-xs font-mono text-cyan-300">final readonly</code> para el transporte inmutable de datos seguros entre las capas lógicas.</p>
             </div>
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <h4 class="text-md font-bold text-white flex items-center gap-2">
                     <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Value Objects Autoverificables
                 </h4>
                 <p class="text-xs text-slate-400 mt-2">Encapsulación de lógica semántica compleja como <code class="text-xs font-mono text-emerald-300">Email</code>, <code class="text-xs font-mono text-emerald-300">Uuid</code> o <code class="text-xs font-mono text-emerald-300">Slug</code>, garantizando validez en la fase de construcción.</p>
             </div>
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl">
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <h4 class="text-md font-bold text-white flex items-center gap-2">
                     <span class="h-2 w-2 rounded-full bg-amber-500"></span> Arquitectura de Plugins Extensible
                 </h4>
@@ -250,7 +250,7 @@
                 </div>
             </div>
             <!-- Mockup basado en la demo del landing page — modo oscuro -->
-            <div class="lg:col-span-8 bg-gray-800 rounded-xl shadow-2xl overflow-hidden aspect-video flex flex-col border border-gray-700">
+            <div class="lg:col-span-8 bg-gray-800 rounded-xl shadow-2xl overflow-hidden aspect-video flex flex-col border border-gray-700 transition-transform duration-300 hover:scale-[1.02] hover:shadow-indigo-500/20">
                 <div class="flex items-center gap-2 px-4 py-3 bg-gray-700 border-b border-gray-600">
                     <div class="flex gap-1.5">
                         <div class="w-3 h-3 rounded-full bg-red-400"></div>
@@ -331,7 +331,7 @@
                 </div>
             </div>
             <!-- Consola al estilo de la landing page -->
-            <div class="lg:col-span-3 bg-gray-900 rounded-xl border border-gray-700/50 shadow-2xl overflow-hidden font-mono text-sm">
+            <div class="lg:col-span-3 bg-gray-900 rounded-xl border border-gray-700/50 shadow-2xl overflow-hidden font-mono text-sm transition-transform duration-300 hover:scale-[1.02] hover:shadow-indigo-500/20">
                 <div class="flex items-center gap-1.5 px-4 py-3 bg-gray-800/50 border-b border-gray-700/50">
                     <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
                     <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
@@ -359,19 +359,19 @@
             <span class="text-xs tracking-widest text-slate-600 font-mono">Características</span>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 my-auto">
-            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
+            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <p class="text-lg font-bold text-white">🔒 Seguridad OWASP</p>
                 <p class="text-xs text-slate-400">Estándar OWASP Top 10:2025 aplicado. Cabeceras CSP estrictas, protección contra inyecciones y Rate Limiting avanzado.</p>
             </div>
-            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
+            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <p class="text-lg font-bold text-white">👥 Colaboración B2B</p>
                 <p class="text-xs text-slate-400">Invitaciones por Token seguro, roles avanzados y lógicas transaccionales limpias con Soft Deletes.</p>
             </div>
-            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
+            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <p class="text-lg font-bold text-white">🌍 Soporte i18n</p>
                 <p class="text-xs text-slate-400">Traducción completa Nativa (Español/Inglés) con más de 339 claves lingüísticas y persistencia en sesión.</p>
             </div>
-            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2">
+            <div class="p-5 bg-slate-900 border border-slate-800 rounded-lg space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                 <p class="text-lg font-bold text-white">🎨 UX / UI Premium</p>
                 <p class="text-xs text-slate-400">Control total del Modo Oscuro nativo, transiciones animadas fluidas, Toasts dinámicos y diseño Responsive.</p>
             </div>
@@ -386,15 +386,15 @@
             <span class="text-xs tracking-widest text-slate-600 font-mono">Testing Suite</span>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 my-auto items-center">
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
-                <p class="text-6xl font-black text-emerald-400">487</p>
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                <p class="text-6xl font-black text-emerald-400">568</p>
                 <p class="text-sm font-mono text-slate-400">Tests Automatizados Ejecutados</p>
                 <div class="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden mt-4">
                     <div class="h-full bg-emerald-400 w-full"></div>
                 </div>
             </div>
-            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
-                <p class="text-6xl font-black text-indigo-400">1,096</p>
+            <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                <p class="text-6xl font-black text-indigo-400">1,373</p>
                 <p class="text-sm font-mono text-slate-400">Aseveraciones Totales</p>
                 <div class="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden mt-4">
                     <div class="h-full bg-indigo-400 w-full"></div>
@@ -408,10 +408,78 @@
         <div class="text-xs text-slate-600 font-mono">Entorno de ejecución de pruebas: PHPUnit Avanzado sobre base de datos en memoria</div>
     </div>
 
-    <!-- Diapositiva 11: Despliegue en Producción -->
+    <!-- Diapositiva 11: Seguridad OWASP -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">10.</span> DevOps e Infraestructura</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">10.</span> Seguridad por Diseño</h2>
+            <span class="text-xs tracking-widest text-slate-600 font-mono">OWASP Top 10:2025</span>
+        </div>
+        <div class="my-auto max-w-5xl mx-auto">
+            <h3 class="text-3xl font-bold text-white text-center mb-10">La seguridad como primer principio, no como parche</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>CSP + HSTS + Referrer-Policy
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Middleware global con Content-Security-Policy estricta, HSTS forzado en producción y políticas de referrer restrictivas.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>CSRF + Rate Limiting
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Protección anti-CSRF en todas las rutas web. Throttle en login, registro, CRUD e invitaciones.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Autorización Granular
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Policies por módulo con roles Owner/Maintainer/Developer. Verificación de membresía antes de cada operación.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Email Verification + MFA
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Verificación de email obligatoria. Autenticación de doble factor con códigos TOTP de 6 dígitos.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Cifrado en Tránsito y Reposo
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">HTTPS forzado. Passwords con bcrypt (12 rounds). Descargas ZIP cifradas con AES-256.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Prevención de Inyección
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Eloquent ORM con binding automático. Escape XSS en Blade {{ }}. Validación server-side con regex en slugs.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>URLs y Datos no Expuestos
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">UUIDs y slugs en rutas públicas (nunca IDs auto-incrementales). DTOs final readonly sin fugas de datos.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Value Objects Autovalidados
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Email, Uuid y Slug encapsulan validación y normalización en su constructor. Imposible crear instancias inválidas.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Manejo de Errores sin Fugas
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Excepciones de dominio tipadas. Handler custom en bootstrap/app.php. Sin stack traces en producción.</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-xs text-slate-600 font-mono">Implementación completa del estándar OWASP Top 10:2025 — 568 tests con cobertura de seguridad</div>
+    </div>
+
+    <!-- Diapositiva 12: Despliegue en Producción -->
+    <div class="slide flex-col justify-between p-16 bg-slate-950">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">11.</span> DevOps e Infraestructura</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Despliegue Continuo</span>
         </div>
         <div class="my-auto max-w-4xl mx-auto space-y-8">
@@ -440,10 +508,10 @@
         <div class="text-xs text-slate-600 font-mono">Base de Datos: MySQL Gestionado en la nube con réplicas seguras</div>
     </div>
 
-    <!-- Diapositiva 12: Lecciones Aprendidas -->
+    <!-- Diapositiva 13: Lecciones Aprendidas -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">11.</span> Conclusiones de Ingeniería</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">12.</span> Conclusiones de Ingeniería</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Lecciones Aprendidas</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto max-w-5xl mx-auto text-sm">
@@ -467,24 +535,24 @@
          <div class="text-xs text-slate-600 font-mono">TFM — Máster en Desarrollo con IA</div>
     </div>
 
-    <!-- Diapositiva 13: Futuro de la Plataforma -->
+    <!-- Diapositiva 14: Futuro de la Plataforma -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">12.</span> Próximos Pasos</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">13.</span> Próximos Pasos</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Roadmap</span>
         </div>
         <div class="my-auto max-w-3xl mx-auto space-y-6">
             <h3 class="text-3xl font-bold text-white">Evolución y Escalabilidad del Producto</h3>
             <div class="space-y-4 text-sm">
-                <div class="p-4 bg-slate-900 border-l-4 border-indigo-500 rounded-r-lg">
+                <div class="p-4 bg-slate-900 border-l-4 border-indigo-500 rounded-r-lg transition-all duration-300 hover:-translate-x-1 hover:shadow-lg">
                     <p class="font-bold text-white">💳 Planificación de Monetización (Próximamente)</p>
                     <p class="text-slate-400 text-xs mt-1">Línea estratégica de trabajo futuro para la integración completa de pasarelas de pago con Stripe, habilitando planes Pro y Enterprise para organizaciones.</p>
                 </div>
-                <div class="p-4 bg-slate-900 border-l-4 border-cyan-500 rounded-r-lg">
+                <div class="p-4 bg-slate-900 border-l-4 border-cyan-500 rounded-r-lg transition-all duration-300 hover:-translate-x-1 hover:shadow-lg">
                     <p class="font-bold text-white">🔗 API Pública y Webhooks Avanzados</p>
                     <p class="text-slate-400 text-xs mt-1">Apertura de la plataforma a través de REST para integraciones con plataformas de CI/CD de terceros y notificaciones en tiempo real.</p>
                 </div>
-                <div class="p-4 bg-slate-900 border-l-4 border-emerald-500 rounded-r-lg">
+                <div class="p-4 bg-slate-900 border-l-4 border-emerald-500 rounded-r-lg transition-all duration-300 hover:-translate-x-1 hover:shadow-lg">
                     <p class="font-bold text-white">🤖 Ampliación de Comandos en el CLI Core</p>
                     <p class="text-slate-400 text-xs mt-1">Evolución del binario actual (basado en <code class="text-xs font-mono text-emerald-300">vault:fetch</code>) hacia un catálogo interactivo que permita comparar y sincronizar diferencias locales.</p>
                 </div>
@@ -493,7 +561,7 @@
         <div class="text-xs text-slate-600 font-mono">Próximos lanzamientos planificados para Q4 2026</div>
     </div>
 
-    <!-- Diapositiva 14: Cierre Oficial -->
+    <!-- Diapositiva 15: Cierre Oficial -->
     <div class="slide flex-col justify-between p-16 bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950">
         <div class="w-full flex justify-end">
             <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Fin de la Presentación</span>
@@ -515,7 +583,7 @@
     <!-- Barra de Navegación inferior fija -->
     <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur border border-slate-800 px-6 py-3 rounded-full flex items-center gap-6 shadow-xl z-50">
         <button onclick="prevSlide()" class="text-slate-400 hover:text-white font-bold text-sm cursor-pointer transition-colors">◀ Anterior</button>
-        <span id="slide-indicator" class="text-xs font-mono text-indigo-400 font-semibold min-w-16 text-center">1 / 14</span>
+        <span id="slide-indicator" class="text-xs font-mono text-indigo-400 font-semibold min-w-16 text-center">1 / 15</span>
         <button onclick="nextSlide()" class="text-slate-400 hover:text-white font-bold text-sm cursor-pointer transition-colors">Siguiente ▶</button>
     </div>
 
