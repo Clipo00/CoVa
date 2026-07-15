@@ -419,14 +419,17 @@ The Auth module manages API tokens via Laravel Sanctum:
 |------|-----------|---------|-----------|
 | Framework | Laravel | 13.x | HTTP, routing, ORM, auth |
 | Language | PHP | 8.4+ | Typing, readonly, enums |
-| Frontend | Livewire | 3.x | Reactividad sin JS |
-| Styling | Tailwind CSS | 3.x+ | Utility-first CSS |
-| Build | Vite | — | Asset bundling |
-| Auth | Laravel Breeze (custom) | — | Login/register/logout |
-| API Ready | Laravel Sanctum | — | API tokens (fase 3) |
+| Frontend | Livewire | 4.x | Reactividad sin JS |
+| Styling | Tailwind CSS | 4.x | Utility-first CSS |
+| Build | Vite | 8.x | Asset bundling |
+| Auth | Laravel Breeze (custom) + Sanctum | 4.x | Login/register/logout, API tokens |
+| CLI | Laravel Zero | 2.0 | Herramienta CLI `covar`, PHAR compilado (~11.5 MB) |
 | Testing | PHPUnit | 12.5 (487 tests, 1096 assertions) | Unit + Feature tests |
+| Testing E2E | Playwright | 1.60 | Navegador Chromium |
 | DB Dev | SQLite | 3 | Desarrollo local |
 | DB Prod | MySQL | 8.0+ | Producción |
+| i18n | Laravel Localization | — | ES + EN (339+ claves) |
+| Deploy | Railway | — | Railpack auto-detect, PHAR build |
 
 ---
 
@@ -460,5 +463,5 @@ The Auth module manages API tokens via Laravel Sanctum:
 ---
 
 **Documento generado**: 2026-06-30  
-**Versión**: 1.0  
-**Última actualización**: 2026-06-30
+**Versión**: 1.1  
+**Última actualización**: 2026-07-08 — Stack actualizado a Livewire 4, Tailwind 4, Vite 8, CLI Laravel Zero 2.0 completado

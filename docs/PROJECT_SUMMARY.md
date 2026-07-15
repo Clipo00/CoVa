@@ -39,11 +39,13 @@ Cada módulo contiene:
 | Capa | Tecnología |
 |------|------------|
 | **Framework** | Laravel 13 (PHP 8.4+) |
-| **Frontend** | Blade + Livewire 3 + Tailwind CSS |
-| **Auth** | Laravel Breeze-like (custom) + Sanctum (listo para API) |
+| **Frontend** | Blade + Livewire 4 + Tailwind CSS 4 |
+| **Auth** | Laravel Breeze (custom) + Sanctum 4.x |
+| **CLI** | Laravel Zero 2.0 — PHAR compilado (~11.5 MB) |
 | **BD** | SQLite (dev) / MySQL (prod) |
-| **Tests** | PHPUnit 12.5 |
-| **Build** | Vite |
+| **Tests** | PHPUnit 12.5 + Playwright 1.60 (E2E) |
+| **Build** | Vite 8 |
+| **Deploy** | Railway (Railpack auto-detect) |
 
 ## Módulos Implementados
 
@@ -379,7 +381,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 > Estado: ✅ Completo. Tabs dinámicas, variables, templates, preview de `agent.md`, y live preview panel implementados.
 
 ### Fase 3: API REST + CLI
-> Friendly URLs y downloads completos. Sanctum instalado, marketplace operativo. Queda exponer API y construir CLI.
+> ✅ Completo. API JSON con Sanctum, rate limiting, endpoints REST. CLI `covar` con comandos `vault:fetch`, `vault:list`, `config:set-key`. PHAR autocontenido (~11.5 MB) con secret double-auth flow.
 
 ### Fase 4: Marketplace
 > ✅ Completo. Marketplace v1 operativo como módulo independiente.
@@ -418,6 +420,6 @@ php artisan serve
 
 ---
 
-**Documento actualizado**: 2026-06-30  
-**Versión**: MVP Completo (web) + Marketplace v1  
+**Documento actualizado**: 2026-07-08  
+**Versión**: MVP Completo + Marketplace v1 + CLI v1 + API REST  
 **Commits**: 50+ en rama `develop`

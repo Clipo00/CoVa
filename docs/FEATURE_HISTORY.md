@@ -235,8 +235,8 @@ El valor de CoVaR se multiplica si los blueprints pueden compartirse públicamen
 | Feature | Razón del descarte | Alternativa implementada |
 |---------|-------------------|-------------------------|
 | Wizard de 4 pasos explícito | Complejidad de UI alta para MVP | Formulario único con secciones colapsables |
-| API REST en MVP | No crítico para validación del producto | Sanctum instalado, API en Fase 3 |
-| CLI Node.js/Python | Depende de API REST | Preparado para Fase 3 |
+| API REST en MVP | No crítico para validación del producto | Sanctum instalado, API completada en Fase 3 ✅ |
+| CLI Node.js/Python | Depende de API REST | CLI Laravel Zero completado en Fase 13 ✅ |
 | Billing/Stripe | MVP necesita validación de uso primero | Planes en BD listos para integración |
 | SSO/SAML | Overkill para MVP | Auth básica con registro email |
 | Real-time colaboración | WebSockets añaden complejidad | Livewire polling suficiente por ahora |
@@ -591,6 +591,33 @@ Antes del marketplace, se cerraron gaps para dejar la app lista para la Fase 3 (
 
 ---
 
+## Fase 13: CLI (`covar`) + API REST (Julio 2026)
+
+**El Problema**: Los usuarios solo podían interactuar con CoVaR vía web. Para hacer scaffolding de un blueprint necesitaban copiar archivos manualmente desde la UI. El `git clone → entorno productivo` en segundos era el pitch central del producto pero no existía sin CLI.
+
+**La Solución**: CLI autocontenido basado en Laravel Zero 2.0 compilado como PHAR (~11.5 MB). API REST JSON con Sanctum como backing layer.
+
+**Decisiones Clave**:
+- **Laravel Zero sobre Node.js/Python**: Mantener el stack PHP. Sin dependencias de runtime externas.
+- **PHAR autocontenido**: Sin requisitos de instalación — descargar, chmod, ejecutar.
+- **Secret double-auth flow**: Variables secretas se desencriptan con contraseña adicional, no se exponen en el token de API.
+- **API rate-limited con plan-gating**: Free bloqueado, Pro/Enterprise con 60 req/min. RFC 7807 errors.
+
+**Lo Que Se Hizo**:
+- Comandos CLI: `config:set-key`, `vault:list`, `vault:fetch <slug>`
+- `vault:fetch` genera `.env` con variables resueltas, `.vscode/extensions.json`, y `.agent.md`
+- API endpoints: `GET /api/blueprints`, `GET /api/blueprints/{slug}`, `GET /api/me`, `POST /api/fetch/{slug}/verify`
+- Autenticación Sanctum `auth:sanctum` con prefijo `covar_`
+- Tests CLI: 3+ suites de comandos
+- Builds compilados en `cli/builds/covar`
+- Script `railway-build.sh` genera el PHAR en cada deploy
+
+**Aprendizajes Clave**:
+27. **PHAR > binario nativo para PHP**: Compilar a PHAR con `box` permite distribución cross-platform sin compilación por SO. El overhead de ~11.5 MB es aceptable para una tool de desarrollo.
+28. **Secret double-auth es necesario**: Las variables marcadas como secretas no pueden viajar en el token de API. Un segundo factor (contraseña del usuario) desencripta los valores en el momento del fetch, no antes.
+
+---
+
 ## 2026-07-03 — Refactor: Presets → Skills, Categories → Tags
 
 ### El Problema
@@ -618,5 +645,6 @@ El módulo Blueprint mantenía dos conceptos redundantes: **Presets** (como segm
 ---
 
 **Documento generado**: 2026-05-23  
-**Versión**: 1.6  
+**Versión**: 1.7  
+**Última actualización**: 2026-07-08 — Fase 13 CLI + API REST documentada, de-scoping actualizado  
 **Última actualización**: 2026-07-03 — Presets→Skills, Categories→Tags
