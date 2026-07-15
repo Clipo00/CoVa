@@ -408,10 +408,78 @@
         <div class="text-xs text-slate-600 font-mono">Entorno de ejecución de pruebas: PHPUnit Avanzado sobre base de datos en memoria</div>
     </div>
 
-    <!-- Diapositiva 11: Despliegue en Producción -->
+    <!-- Diapositiva 11: Seguridad OWASP -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">10.</span> DevOps e Infraestructura</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">10.</span> Seguridad por Diseño</h2>
+            <span class="text-xs tracking-widest text-slate-600 font-mono">OWASP Top 10:2025</span>
+        </div>
+        <div class="my-auto max-w-5xl mx-auto">
+            <h3 class="text-3xl font-bold text-white text-center mb-10">La seguridad como primer principio, no como parche</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>CSP + HSTS + Referrer-Policy
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Middleware global con Content-Security-Policy estricta, HSTS forzado en producción y políticas de referrer restrictivas.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>CSRF + Rate Limiting
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Protección anti-CSRF en todas las rutas web. Throttle en login, registro, CRUD e invitaciones.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Autorización Granular
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Policies por módulo con roles Owner/Maintainer/Developer. Verificación de membresía antes de cada operación.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Email Verification + MFA
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Verificación de email obligatoria. Autenticación de doble factor con códigos TOTP de 6 dígitos.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Cifrado en Tránsito y Reposo
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">HTTPS forzado. Passwords con bcrypt (12 rounds). Descargas ZIP cifradas con AES-256.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Prevención de Inyección
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Eloquent ORM con binding automático. Escape XSS en Blade {{ }}. Validación server-side con regex en slugs.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>URLs y Datos no Expuestos
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">UUIDs y slugs en rutas públicas (nunca IDs auto-incrementales). DTOs final readonly sin fugas de datos.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Value Objects Autovalidados
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Email, Uuid y Slug encapsulan validación y normalización en su constructor. Imposible crear instancias inválidas.</p>
+                </div>
+                <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg">
+                    <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
+                        <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Manejo de Errores sin Fugas
+                    </p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Excepciones de dominio tipadas. Handler custom en bootstrap/app.php. Sin stack traces en producción.</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-xs text-slate-600 font-mono">Implementación completa del estándar OWASP Top 10:2025 — 568 tests con cobertura de seguridad</div>
+    </div>
+
+    <!-- Diapositiva 12: Despliegue en Producción -->
+    <div class="slide flex-col justify-between p-16 bg-slate-950">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">11.</span> DevOps e Infraestructura</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Despliegue Continuo</span>
         </div>
         <div class="my-auto max-w-4xl mx-auto space-y-8">
@@ -440,10 +508,10 @@
         <div class="text-xs text-slate-600 font-mono">Base de Datos: MySQL Gestionado en la nube con réplicas seguras</div>
     </div>
 
-    <!-- Diapositiva 12: Lecciones Aprendidas -->
+    <!-- Diapositiva 13: Lecciones Aprendidas -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">11.</span> Conclusiones de Ingeniería</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">12.</span> Conclusiones de Ingeniería</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Lecciones Aprendidas</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto max-w-5xl mx-auto text-sm">
@@ -467,10 +535,10 @@
          <div class="text-xs text-slate-600 font-mono">TFM — Máster en Desarrollo con IA</div>
     </div>
 
-    <!-- Diapositiva 13: Futuro de la Plataforma -->
+    <!-- Diapositiva 14: Futuro de la Plataforma -->
     <div class="slide flex-col justify-between p-16 bg-slate-950">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">12.</span> Próximos Pasos</h2>
+            <h2 class="text-2xl font-bold text-slate-400"><span class="text-indigo-400">13.</span> Próximos Pasos</h2>
             <span class="text-xs tracking-widest text-slate-600 font-mono">Roadmap</span>
         </div>
         <div class="my-auto max-w-3xl mx-auto space-y-6">
@@ -493,7 +561,7 @@
         <div class="text-xs text-slate-600 font-mono">Próximos lanzamientos planificados para Q4 2026</div>
     </div>
 
-    <!-- Diapositiva 14: Cierre Oficial -->
+    <!-- Diapositiva 15: Cierre Oficial -->
     <div class="slide flex-col justify-between p-16 bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950">
         <div class="w-full flex justify-end">
             <span class="text-indigo-400 font-mono text-xs uppercase tracking-widest">Fin de la Presentación</span>
@@ -515,7 +583,7 @@
     <!-- Barra de Navegación inferior fija -->
     <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur border border-slate-800 px-6 py-3 rounded-full flex items-center gap-6 shadow-xl z-50">
         <button onclick="prevSlide()" class="text-slate-400 hover:text-white font-bold text-sm cursor-pointer transition-colors">◀ Anterior</button>
-        <span id="slide-indicator" class="text-xs font-mono text-indigo-400 font-semibold min-w-16 text-center">1 / 14</span>
+        <span id="slide-indicator" class="text-xs font-mono text-indigo-400 font-semibold min-w-16 text-center">1 / 15</span>
         <button onclick="nextSlide()" class="text-slate-400 hover:text-white font-bold text-sm cursor-pointer transition-colors">Siguiente ▶</button>
     </div>
 
