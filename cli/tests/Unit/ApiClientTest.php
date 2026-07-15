@@ -256,7 +256,7 @@ class ApiClientTest extends TestCase
     {
         $mock = new MockHandler([
             function (Request $request) {
-                $this->assertStringStartsWith('https://custom.CoVaR.app', (string) $request->getUri());
+                $this->assertStringStartsWith('https://staging.covarapp.com', (string) $request->getUri());
 
                 return new Response(200, [], '{}');
             },
@@ -265,11 +265,11 @@ class ApiClientTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $http = new Client([
             'handler' => $handlerStack,
-            'base_uri' => 'https://custom.CoVaR.app',
+            'base_uri' => 'https://staging.covarapp.com',
         ]);
 
         $client = new ApiClient($http, [
-            'base_url' => 'https://custom.CoVaR.app',
+            'base_url' => 'https://staging.covarapp.com',
             'api_key' => self::TEST_API_KEY,
         ]);
 
