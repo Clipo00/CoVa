@@ -38,6 +38,11 @@ class EnsureSecurityHeaders
             $connectSrc .= ' '.implode(' ', array_merge($viteHttp, $viteWs));
         }
 
+        // TFM presentation: standalone page using Tailwind CDN browser build
+        if ($request->is('tfm*')) {
+            $scriptSrc .= ' https://cdn.jsdelivr.net';
+        }
+
         // Allow the app's own domain explicitly (belt-and-suspenders for reverse proxies)
         $appUrl = rtrim((string) config('app.url'), '/');
         $ownOrigin = $appUrl ? " $appUrl" : '';

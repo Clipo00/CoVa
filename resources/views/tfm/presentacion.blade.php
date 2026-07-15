@@ -7,9 +7,8 @@
     <!-- Tailwind CSS para el renderizado exacto de estilos del proyecto -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts: Fuentes especificadas en UI_SPECIFICATION.md -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght=0,100..800;1,100..800&family=Plus+Jakarta+Sans:ital,wght=0,200..800;1,200..800&family=Poppins:ital,wght=0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css2?family=JetBrains+Mono:ital,wght=0,100..800;1,100..800&family=Plus+Jakarta+Sans:ital,wght=0,200..800;1,200..800&family=Poppins:ital,wght=0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
