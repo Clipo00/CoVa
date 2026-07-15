@@ -451,7 +451,7 @@
                     <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
                         <span class="h-2 w-2 rounded-full bg-indigo-500"></span>Prevención de Inyección
                     </p>
-                    <p class="text-slate-400 text-[11px] leading-relaxed">Eloquent ORM con binding automático. Escape XSS en Blade {{ }}. Validación server-side con regex en slugs.</p>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">Eloquent ORM con binding automático. Escape XSS en Blade @{{ }}. Validación server-side con regex en slugs.</p>
                 </div>
                 <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-500/30">
                     <p class="font-bold text-white text-xs mb-1.5 flex items-center gap-1.5">
