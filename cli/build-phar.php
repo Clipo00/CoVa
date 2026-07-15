@@ -39,6 +39,23 @@ $structure = [
 
 echo "Building: $name\n";
 
+// Patch Laravel Zero Application.php for PHP 8.4 compatibility
+// method_exists() is strict about null in PHP 8.4+, and service providers
+// return void from register(). See: cli/BUILD.md
+$applicationPath = BASE_PATH . '/vendor/laravel-zero/laravel-zero/app/Console/Application.php';
+$applicationOriginal = file_get_contents($applicationPath);
+$applicationPatched = str_replace(
+    "if (method_exists(\$instance, 'boot')) {",
+    "if (\$instance !== null && method_exists(\$instance, 'boot')) {",
+    $applicationOriginal
+);
+if ($applicationPatched !== $applicationOriginal) {
+    file_put_contents($applicationPath, $applicationPatched);
+    echo "  Patched Application.php for PHP 8.4 compatibility\n";
+} else {
+    echo "  Application.php already patched (or fix not needed)\n";
+}
+
 // Read APP_URL from parent project's .env for default base URL
 $envPath = dirname(__DIR__) . '/.env';
 $baseUrl = 'http://127.0.0.1:8000';
@@ -81,5 +98,8 @@ rename($pharFile, $buildPath . '/' . $name);
 
 // Restore original config (don't commit local URL)
 file_put_contents($configPath, $originalContent);
+
+// Restore original Application.php (don't commit patched vendor)
+file_put_contents($applicationPath, $applicationOriginal);
 
 echo "Standalone application compiled into: builds/$name\n";
