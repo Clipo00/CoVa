@@ -128,8 +128,13 @@ class ConfigSetKeyCommand extends Command
 
         $config['api_key'] = $key;
 
-        if (!isset($config['base_url'])) {
-            $config['base_url'] = $this->option('base-url') ?: ($this->laravel['config']['app.url'] ?? 'https://covarapp.com');
+        // Only update base_url when explicitly passed, or when not yet configured.
+        // This preserves custom staging/local URLs users may have set manually.
+        $explicitBaseUrl = $this->option('base-url');
+        if ($explicitBaseUrl !== null) {
+            $config['base_url'] = $explicitBaseUrl;
+        } elseif (!isset($config['base_url'])) {
+            $config['base_url'] = $this->laravel['config']['app.url'] ?? 'https://covarapp.com';
         }
 
         file_put_contents(
