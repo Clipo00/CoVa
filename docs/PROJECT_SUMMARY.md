@@ -41,7 +41,7 @@ Cada módulo contiene:
 | **Framework** | Laravel 13 (PHP 8.4+) |
 | **Frontend** | Blade + Livewire 4 + Tailwind CSS 4 |
 | **Auth** | Laravel Breeze (custom) + Sanctum 4.x |
-| **CLI** | Laravel Zero 2.0 — PHAR compilado (~11.5 MB) |
+| **CLI** | Laravel Zero 2.0 — PHAR compilado (~11.5 MB), post-install script execution |
 | **BD** | SQLite (dev) / MySQL (prod) |
 | **Tests** | PHPUnit 12.5 + Playwright 1.60 (E2E) |
 | **Build** | Vite 8 |
@@ -70,6 +70,11 @@ Cada módulo contiene:
 - `GET /login` — Formulario de login
 - `GET /register` — Formulario de registro
 - `POST /logout` — Cierre de sesión
+
+**Seguridad adicional**:
+- Email verification via signed URLs (24h expiry) — `MustVerifyEmail` trait, bloqueo de emails desechables
+- MFA con código de 6 dígitos por email (10min expiry, single-use, rate-limited 5/min)
+- Password change enforced for invited users on first login
 
 ---
 
@@ -216,6 +221,7 @@ Las tabs se gestionan via `TabManager` Livewire: add/remove/reorder. Comunicaci�
 | `TransferBlueprint` | Transfiere blueprint a otra organización |
 | `ResolveBlueprint` | Procesa tabs_config y genera outputs estructurados (`TabOutput[]`, `BlueprintOutput`) incluyendo `agent.md` |
 | `GenerateEnvTemplate` | Genera archivo `.env` a partir de las variables del blueprint |
+| `GenerateBlueprintZip` | Genera ZIP completo con todos los assets, encriptación AES-256 cuando hay secretos |
 
 #### Livewire Components
 
@@ -297,7 +303,7 @@ En /organizations/{slug} → Click "Nuevo Blueprint"
 | Feature (cross-module) | 1 | 56 |
 | Agent Context | 33+ | 70+ |
 | API Tokens | 24 | 67 |
-| **Total** | **487** | **1096** |
+| **Total** | **568** | **1373** |
 
 Cobertura:
 - **Unitarios**: Actions, DTOs, ValueObjects, Policies, Model helpers
@@ -366,7 +372,7 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | Toasts/Notificaciones | ✅ Completo |
 | Copy to clipboard | ✅ Completo |
 | Collapsible sections en UI | ✅ Completo |
-| Tests | ✅ 487 tests, 1096 assertions |
+| Tests | ✅ 568 tests, 1373 assertions |
 | **Security (OWASP Top 10:2025)** | ✅ Implementado v1.0 (CSP, rate limiting, exception handler, session encrypt, slugs) |
 | **AI Agents / Skills config** | ✅ Completo — Segment CRUD con tipos skill/custom/agent |
 | **Marketplace** (`is_public`, `has_marketplace_publish`) | ✅ Completo — Módulo Marketplace v1 |
@@ -374,6 +380,10 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 | **Show page downloads** | ✅ Completo — Vault fetch, .md/.env downloads |
 | **Dashboard polish** | ✅ Completo — 5 UI deliverables |
 | **Onboarding wizard** | ✅ Completo — 4-step wizard, skip-all, email banner |
+| **ZIP Download with AES-256** | ✅ Completo — Full blueprint ZIP, AES-256 for secrets, password via email |
+| **CLI post-install script execution** | ✅ Completo — `vault:fetch` scaffolds and executes `scripts/install.sh` |
+| **TFM Presentation (token-gated)** | ✅ Completo — 11 slides interactive, token-gated, Bunny CDN |
+| **Railway Production Deploy (covarapp.com)** | ✅ Completo — MySQL, Resend, daily backups, HSTS |
 
 ## Próximas Fases
 
@@ -388,6 +398,15 @@ Blueprints y Organizations usan soft deletes. Esto permite:
 
 ### Fase 5: Billing
 > Pendiente. Sin cambios desde planificación original.
+
+### Fase 6: Full Blueprint ZIP Download
+> ✅ Completo. ZIP con todos los assets del blueprint, encriptación AES-256 para secretos, contraseña por email.
+
+### Fase 7: TFM Presentation
+> ✅ Completo. 11 slides token-gated, diseño interactivo, Bunny CDN, OWASP security slide.
+
+### Fase 8: Railway Production Deploy
+> ✅ Completo. covarapp.com live con MySQL, Resend, backups diarios, HSTS.
 
 ---
 
@@ -420,6 +439,6 @@ php artisan serve
 
 ---
 
-**Documento actualizado**: 2026-07-08  
-**Versión**: MVP Completo + Marketplace v1 + CLI v1 + API REST  
+**Documento actualizado**: 2026-07-17  
+**Versión**: MVP Completo + CLI v1.1 + ZIP Download + Production Deploy  
 **Commits**: 50+ en rama `develop`

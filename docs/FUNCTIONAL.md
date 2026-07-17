@@ -299,6 +299,7 @@ Los roles **Developer**, **Maintainer** y **Owner** son mutuamente excluyentes d
 4. Si hay `agent.md`, muestra badge y botón de copia
 5. Botón "Copiar comando de instalación" (si aplica)
 6. **Sección Descargas**: Vault fetch CLI card, botones para descargar `agent.md`, `.env` template, y archivos `.md` por segmento (Alpine.js Blob, client-side).
+   - Si el blueprint tiene variables secretas (`is_secret=true`), el ZIP se encripta con AES-256. La contraseña de 16 caracteres se envía al email verificado del usuario vía notificación `BlueprintZipPassword`, nunca en la respuesta HTTP. Usuarios sin email verificado reciben un toast informativo. La descarga usa POST con confirmación modal y spinner de progreso.
 
 **Reglas de negocio**:
 - RN-BP-05: Solo Owner ve valores de variables secretas. Otros roles ven `***`.
@@ -597,12 +598,30 @@ Developer en /blueprints/{uuid}
 - **Estado**: ✅ Completo
 - **Descripción**: API JSON con autenticación Sanctum y CLI `covar` para scaffolding de blueprints desde terminal.
 - **API**: `GET /api/blueprints`, `GET /api/blueprints/{slug}`, `GET /api/me`, `POST /api/fetch/{slug}/verify`. Rate limiting (60 req/min), plan-gating, RFC 7807 errors.
-- **CLI**: Laravel Zero 2.0 con PHAR autocontenido (~11.5 MB). Comandos: `config:set-key`, `vault:list`, `vault:fetch <slug>`. Secret double-auth flow para variables encriptadas.
+- **CLI**: Laravel Zero 2.0 con PHAR autocontenido (~11.5 MB). Comandos: `config:set-key`, `vault:list`, `vault:fetch <slug>`. Secret double-auth flow para variables encriptadas. Post-install script execution: `vault:fetch` ahora genera `scripts/install.sh` y lo ejecuta automáticamente.
 - **Implementado**: `cli/app/Commands/`, tests CLI, builds en `cli/builds/covar`.
+- **Pendiente**: Nada.
+
+### 10.7 ZIP Download
+- **Estado**: ✅ Completo
+- **Descripción**: ZIP con todos los assets del blueprint (.env, .mcp/servers.json, .vscode/extensions.json, scripts/install.sh), encriptación AES-256 para secretos, contraseña por email, email gate.
+- **Implementado**: Endpoint POST, `GenerateBlueprintZip` Action, `BlueprintZipPassword` Notification.
+- **Pendiente**: Nada.
+
+### 10.8 TFM Presentation
+- **Estado**: ✅ Completo
+- **Descripción**: 11 slides token-gated, diseño interactivo, Bunny CDN, OWASP security slide.
+- **Implementado**: Rutas `/tfm/*`, 11 partials Blade, middleware de token.
+- **Pendiente**: Nada.
+
+### 10.9 Production Deploy
+- **Estado**: ✅ Completo
+- **Descripción**: Railway con MySQL, Resend, backups diarios, HSTS, proxy trust.
+- **Implementado**: covarapp.com live, automated daily backups, cache clearing on startup.
 - **Pendiente**: Nada.
 
 ---
 
 **Documento generado**: 2026-05-15  
-**Versión**: 1.1  
-**Última actualización**: 2026-07-08 — CLI completado, API REST operativa, estados actualizados
+**Versión**: 1.2  
+**Última actualización**: 2026-07-17 — ZIP Download, TFM Presentation, Production Deploy

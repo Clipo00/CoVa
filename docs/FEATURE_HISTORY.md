@@ -248,15 +248,15 @@ El valor de CoVaR se multiplica si los blueprints pueden compartirse públicamen
 
 | Métrica | 3 May (v0.1) | 4 May (v0.3) | 5 May (v0.4) | Actual |
 |---------|-------------|-------------|-------------|--------|
-| Tests | 60 | 90 | 117 | 117 |
-| Assertions | 100 | 160 | 219 | 219 |
-| Módulos | 4 | 4 | 4 | 4 |
-| Actions | 12 | 20 | 26 | 26 |
-| Livewire Components | 6 | 10 | 14 | 14 |
-| Policies | 2 | 4 | 4 | 4 |
-| Rutas | 15 | 25 | 30 | 30 |
-| Features completas | 8 | 14 | 20 | 20 |
-| Features en progreso | 2 | 2 | 2 | 2 |
+| Tests | 60 | 90 | 117 | 568 |
+| Assertions | 100 | 160 | 219 | 1373 |
+| Módulos | 4 | 4 | 4 | 5 |
+| Actions | 12 | 20 | 26 | ~35 |
+| Livewire Components | 6 | 10 | 14 | ~18 |
+| Policies | 2 | 4 | 4 | 5 |
+| Rutas | 15 | 25 | 30 | ~45 |
+| Features completas | 8 | 14 | 20 | 25+ |
+| Features en progreso | 2 | 2 | 2 | 0 |
 
 ---
 
@@ -644,7 +644,96 @@ El módulo Blueprint mantenía dos conceptos redundantes: **Presets** (como segm
 
 ---
 
+## Fase 14: Full Blueprint ZIP Download (Julio 2026)
+
+### El Problema
+El ZIP descargable del blueprint solo incluía `agent.md`. Los usuarios necesitaban un paquete completo con `.env`, `.vscode/extensions.json`, `.vscode/mcp.json`, y `scripts/install.sh` para tener un entorno listo en un solo archivo. Las variables secretas viajaban en texto plano.
+
+### La Solución
+ZIP expandido con todos los assets del blueprint. Encriptación AES-256 (ZipCrypto EM_TRAD_PKWARE) cuando existen variables secretas. La contraseña se envía por email (notificación `BlueprintZipPassword`), nunca en UI ni respuesta HTTP.
+
+### Decisiones Clave
+- **POST en lugar de GET** para el endpoint de descarga: previene CSRF y permite email gate (verificación de email requerida para ZIP encriptado).
+- **ZipCrypto sobre AES-256 nativo**: Compatibilidad cross-platform garantizada. AES-256 de ZipArchive requiere PHP 8.0+ con libzip 1.8+ que no todos los entornos tienen.
+- **Notificación diferida**: La contraseña se envía DESPUÉS de la respuesta HTTP (vía `dispatchAfterResponse`) para evitar corrupción del stream ZIP.
+- **Email gate para ZIP encriptado**: Usuarios sin email verificado reciben toast informativo, no el ZIP. Previene envío de contraseñas a emails no verificados.
+
+### Lo Que Se Hizo
+- `POST /blueprints/{uuid}/download-zip` con confirmación modal (spinner + estado)
+- `GenerateBlueprintZip` Action: escanea todos los assets del blueprint
+- `BlueprintZipPassword` notification: envía contraseña de 16 caracteres al email del usuario
+- i18n: 9 claves nuevas (ES/EN) para modal, spinner, y mensajes de verificación
+- 41 tests (39 unitarios + 2 feature)
+- 2 PRs stacked en `refactor/remove-categories-and-presets`
+
+### Aprendizajes Clave
+27. **ZipCrypto > AES-256 para distribución**: La encriptación AES-256 de ZipArchive requiere libzip ≥ 1.8.0 con soporte de encriptación que muchas distros LTS no tienen. ZipCrypto (PKWARE) es universal.
+28. **Nunca enviar contraseñas en la respuesta HTTP**: Si el stream del ZIP se corrompe por un header de notificación, el usuario pierde el archivo Y la contraseña. `dispatchAfterResponse` garantiza que el ZIP se entregue completo antes de enviar el email.
+29. **Email gate es un control de integridad**: Sin verificación de email, un atacante podría solicitar ZIPs encriptados para emails que no controla. El gate previene el envío de contraseñas a destinos no verificados.
+
+---
+
+## Fase 15: TFM Presentation (Julio 2026)
+
+### El Problema
+CoVaR necesitaba una presentación académica (TFM) que demostrara el producto completo: problema, solución, arquitectura, seguridad, testing, CLI, y deploy. La presentación debía ser accesible vía web con control de acceso.
+
+### La Solución
+11 slides HTML interactivas con diseño consistente, navegación por dots, y acceso token-gated. La presentación incluye: problema, solución, arquitectura modular, seguridad OWASP Top 10:2025, stack tecnológico, CLI + API, testing (568 tests, 1373 assertions), CI/CD con Railway, y enlaces interactivos.
+
+### Decisiones Clave
+- **Token-gated con rutas dedicadas**: Rutas `/tfm/*` con middleware de validación de token. Sin token → 403.
+- **Bunny CDN para fuentes**: Migración de Google Fonts a Bunny CDN para cumplir con GDPR sin cookie consent. CSP actualizado para permitir jsDelivr y Bunny en rutas TFM.
+- **Slides como partials Blade**: Cada slide es un partial independiente, facilitando edición y reordenamiento sin tocar la estructura.
+
+### Lo Que Se Hizo
+- 11 slides: Hero, Problem, Solution, Demo, Architecture, Security (OWASP), Stack, CLI/API, Testing, CI/CD, Closing
+- Navegación: dots + flechas + keyboard (← →)
+- Hover animations sutiles en cards y contenedores
+- Production URL clickeable en slide 11
+- Links interactivos en slide de cierre
+- CSP permisivo para rutas TFM (Bunny CDN + jsDelivr)
+- README actualizado con stack real y sección de deploy
+
+---
+
+## Fase 16: QA & Production Polish (Julio 2026)
+
+### El Problema
+Tras el deploy a producción (covarapp.com) y la integración de todas las features, surgieron bugs de entorno, tests rotos, y gaps de configuración que impedían una experiencia de desarrollo fluida.
+
+### Lo Que Se Hizo
+
+**CLI Fixes (5 commits)**:
+- Base URL default → covarapp.com (antes placeholder obsoleto)
+- `--base-url` siempre permite override preservando URLs custom existentes
+- Vendor `Application.php` patch para PHP 8.4 en build PHAR
+- Test fixes: 3 failures por refactors de ApiClient
+
+**Blueprint Fixes (2 commits)**:
+- Custom skill name ahora se guarda en cada keystroke (no solo en blur)
+- `ext-zip` agregado a composer.json (requerido por ZipArchive)
+
+**Test Suite Recovery**:
+- 39 tests pre-existentes rotos por CSRF middleware y mocks de Resend API
+- Suite completa: 568 tests, 1373 assertions
+
+**TFM Polish (7 commits)**:
+- Escape de curly braces de Blade en slide de seguridad
+- Hover animations sutiles en elementos de slides
+- Slide 11: URL de producción clickeable
+- Slide de cierre: links interactivos
+- Fuentes migradas a Bunny CDN (GDPR-compliant)
+- CSP con jsDelivr para rutas TFM
+- Stats de testing actualizados en slide 10
+
+### Aprendizajes Clave
+30. **Los tests de integración se rompen en cadena**: Un cambio en CSRF middleware + un cambio en Resend mock → 39 tests fallando. La suite completa debe correrse después de cualquier cambio transversal.
+31. **El vendor patch de PHP 8.4 es frágil**: Laravel Zero v2.0 tiene un `method_exists(null, ...)` que PHP 8.4 depreca. El build script debe aplicar el patch antes de compilar el PHAR, y el patch debe verificarse en cada actualización del vendor.
+
+---
+
 **Documento generado**: 2026-05-23  
-**Versión**: 1.7  
-**Última actualización**: 2026-07-08 — Fase 13 CLI + API REST documentada, de-scoping actualizado  
+**Versión**: 1.8  
+**Última actualización**: 2026-07-17 — Fases 14-16 documentadas (ZIP download, TFM Presentation, QA & Production Polish)  
 **Última actualización**: 2026-07-03 — Presets→Skills, Categories→Tags

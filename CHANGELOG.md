@@ -7,7 +7,7 @@
 
 ---
 
-## [Unreleased]
+## [0.5.0] — 2026-07-15
 
 ### Changed
 - **🦶 Footer de landing alineado con tabs del nav** — La sección "Producto" ahora refleja los tabs de navegación (Demo, Precios, Marketplace, Guía rápida). Marketplace ahora es un link clickeable. Agregado scroll suave al tope cuando se hace clic en links del footer estando scrolleado abajo.
@@ -348,6 +348,29 @@
 
 ---
 
+## [Unreleased]
+
+### Added
+- **📦 Full Blueprint ZIP Download** — ZIP now includes all blueprint assets (.env, .mcp/servers.json, .vscode/extensions.json, scripts/install.sh). AES-256 encryption when secret variables exist with password delivered via email notification. POST endpoint with email verification gate. 2 stacked PRs, 41 tests.
+- **🎓 TFM Presentation (token-gated)** — Interactive presentation with 11 slides covering the full CoVaR story: problem, solution, architecture, security (OWASP Top 10:2025), testing (568 passed, 1373 assertions), CLI, and production deployment. Token-gated access with dedicated TFM routes. Fonts migrated to Bunny CDN.
+- **🔧 CLI Post-Install Script Execution** — `vault:fetch` now scaffolds and executes post-install scripts from blueprints. `scaffoldScripts()` creates `scripts/install.sh`, `executeScripts()` runs them in order with bash detection. 47 tests, 191 assertions.
+- **🚀 Railway Production Deploy** — covarapp.com live with MySQL, Resend email, automated daily backups, HSTS, session security hardening, cache clearing on startup, proxy trust for HTTPS.
+
+### Fixed
+- **CLI base URL** — Default to covarapp.com instead of stale placeholder. `--base-url` always allowed to override while preserving existing custom URLs.
+- **CLI PHAR build** — Vendor `Application.php` patched for PHP 8.4 compatibility before PHAR build.
+- **Blueprint ZIP requirements** — Added `ext-zip` to composer.json requirements.
+- **Custom skill name** — Now saves on keystroke (not just on blur) in the blueprint editor.
+- **39 pre-existing test failures** — CSRF middleware and Resend API mocks fixed.
+- **3 CLI test failures** — Fixed after base URL and ApiClient refactors.
+- **TFM slides** — Escaped Blade curly braces in security slide, added hover animations, production URL now clickable, closing slide links interactive.
+
+### Changed
+- **TFM Docs** — Updated slide 10 test stats to 568 passed (1373 assertions).
+- **TFM CSP** — jsDelivr allowed in CSP for TFM routes (Bunny CDN fonts).
+
+---
+
 ## [0.4.0] — 2026-05-05
 
 ### Added
@@ -506,10 +529,10 @@ Este proyecto no sigue estrictamente [Semantic Versioning](https://semver.org/la
 - **0.2.x**: MVP Core (dashboard, roles, variables, UI)
 - **0.3.x**: Colaboración (invitaciones, soft delete, transfer)
 - **0.4.x**: Tabs & AI (sistema dinámico, agent.md, marketplace prep)
-- **0.5.x** (próximo): API REST + CLI (Fase 3 del roadmap)
+- **0.5.x**: API REST + CLI + Marketplace + Production Deploy
 
 ---
 
 **Formato**: [Keep a Changelog](https://keepachangelog.com/)  
 **Changelog generado desde**: Conventional commits del repo (git log)  
-**Última actualización**: 2026-05-28
+**Última actualización**: 2026-07-17

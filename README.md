@@ -39,7 +39,7 @@ CoVaR convierte ese conocimiento en **Blueprints**: plantillas autocontenidas qu
 | **Testing unitario/feature** | PHPUnit | 12.5 |
 | **Testing E2E** | Playwright | 1.60 |
 | **CLI** | Laravel Zero | 2.0 |
-| **i18n** | Laravel Localization (`lang/`) | ES + EN (339+ claves) |
+| **i18n** | Laravel Localization (`lang/`) | ES + EN (350+ claves) |
 | **Validación de email** | Disposable Email Guard | 2.x |
 
 ---
@@ -82,7 +82,7 @@ php artisan serve
 Accede a `http://localhost:8000` y regístrate. El seeder crea:
 
 - **Planes**: Free (2 orgs, 3 BP/org, 5 miembros, 50 variables), Pro (5 orgs, 25 BP, 50 miembros, 150 variables), Enterprise (ilimitado).
-- **Categorías**: 8 categorías predefinidas para clasificar blueprints.
+- **Tags**: sistema de etiquetas para clasificar blueprints.
 - **Organización de marketplace**: `covar-marketplace` como repositorio público.
 
 ### Desarrollo con hot reload
@@ -210,7 +210,7 @@ Cada módulo bajo `app/Modules/{Modulo}/` sigue esta organización:
 - Transferencia de blueprints entre organizaciones
 - Soft deletes con papelera y restauración
 - Filtros avanzados por organización, categoría, tags y búsqueda
-- Descargas: `.env`, `agent.md`, archivos `.md` por segmento
+- Descargas: `.env`, `agent.md`, archivos `.md` por segmento, ZIP completo con todos los assets (encriptación AES-256 para secretos con contraseña por email)
 
 ### Marketplace
 
@@ -240,7 +240,8 @@ Cada módulo bajo `app/Modules/{Modulo}/` sigue esta organización:
   - `covar config:set-key` — configura API key con validación
   - `covar vault:list` — lista blueprints accesibles con tabla formateada
   - `covar vault:fetch <slug>` — scaffold completo: `.agent.md`, `.vscode/`, `.env` con variables resueltas
-  - Secret double-auth flow: desencripta variables secretas con contraseña
+   - Secret double-auth flow: desencripta variables secretas con contraseña
+   - Post-install scripts: scaffolding y ejecución de `scripts/install.sh` desde el blueprint
 
 ### Gestión de API Tokens
 
@@ -268,7 +269,7 @@ Cada módulo bajo `app/Modules/{Modulo}/` sigue esta organización:
 - **Unitarios**: Actions, Policies, Value Objects, Services, Tabs
 - **Feature**: Controllers HTTP, flujos completos, validación, autorización
 - **E2E**: Playwright sobre Chromium (auth, navegación, perfil)
-- **Estado actual**: 487 tests, 1096 assertions
+- **Estado actual**: 568 tests, 1373 assertions
 - Cobertura objetivo: 100% Actions/Policies/VO, 85%+ Controllers, 80%+ Livewire
 
 ---
@@ -316,7 +317,7 @@ npm run test:e2e:ui      # con interfaz visual
 npm run test:e2e:headed   # con navegador visible
 ```
 
-**Estado actual**: 487 tests, 1096 assertions. Ver [`docs/TESTING.md`](docs/TESTING.md) para la estrategia completa.
+**Estado actual**: 568 tests, 1373 assertions. Ver [`docs/TESTING.md`](docs/TESTING.md) para la estrategia completa.
 
 ---
 
