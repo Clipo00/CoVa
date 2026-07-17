@@ -80,6 +80,9 @@ class FetchCommand extends Command
             $this->handleSecrets($slug, $client, $secrets, $envPath);
         }
 
+        $this->scaffoldScripts($result, $outputDir);
+        $this->executeScripts($result);
+
         $this->showSummary($result);
 
         return 0;
@@ -469,6 +472,131 @@ class FetchCommand extends Command
 
         file_put_contents($envPath, $envContent);
         $this->info('✓ Secrets decrypted and written to ' . basename($envPath));
+    }
+
+    /**
+     * Execute a shell command via bash -c and return exit code + output.
+     *
+     * Protected so tests can mock it without invoking real shell commands.
+     * The command is wrapped with escapeshellarg() for OWASP A05 defense-in-depth
+     * against shell injection.
+     *
+     * @return array{exit_code: int, output: array<int, string>}
+     */
+    protected function runShellCommand(string $command): array
+    {
+        $output = [];
+        $exitCode = -1;
+
+        exec(
+            'bash -c ' . escapeshellarg($command),
+            $output,
+            $exitCode,
+        );
+
+        return [
+            'exit_code' => $exitCode,
+            'output' => $output,
+        ];
+    }
+
+    /**
+     * Check whether bash is available on the system PATH.
+     *
+     * Uses `which bash` on Unix/macOS and `where bash` on Windows.
+     * Exit code 0 means bash was found.
+     */
+    protected function isBashAvailable(): bool
+    {
+        $checkCommand = PHP_OS_FAMILY === 'Windows' ? 'where bash 2>NUL' : 'which bash 2>/dev/null';
+        $output = [];
+        $exitCode = -1;
+
+        exec($checkCommand, $output, $exitCode);
+
+        return $exitCode === 0;
+    }
+
+    /**
+     * Write scripts/install.sh from the scripts_shell field.
+     *
+     * Creates the scripts/ directory with 0755 permissions if it does not
+     * exist. Skips entirely when scripts_shell is absent or empty.
+     */
+    private function scaffoldScripts(array $result, string $outputDir): void
+    {
+        $scriptsShell = $result['scripts_shell'] ?? '';
+
+        if ($scriptsShell === '' || $scriptsShell === null) {
+            return;
+        }
+
+        $scriptsDir = $outputDir . '/scripts';
+
+        if (!is_dir($scriptsDir)) {
+            $mkdirResult = mkdir($scriptsDir, 0755, true);
+
+            if (!$mkdirResult) {
+                $this->error("Failed to create directory: {$scriptsDir}");
+
+                return;
+            }
+        }
+
+        file_put_contents($scriptsDir . '/install.sh', $scriptsShell);
+        $this->line('  <info>✓</info> scripts/install.sh');
+    }
+
+    /**
+     * Execute script commands from the blueprint response.
+     *
+     * Iterates scripts[] sorted by order, runs each via runShellCommand(),
+     * displays description and output. Warns on non-zero exit but continues
+     * to the next command. Skips entirely when bash is not available or
+     * when scripts[] is empty.
+     */
+    private function executeScripts(array $result): void
+    {
+        $scripts = $result['scripts'] ?? [];
+
+        if (empty($scripts)) {
+            return;
+        }
+
+        if (!$this->isBashAvailable()) {
+            $this->warn('Bash not found — skipping script execution. Install Git Bash or WSL to run post-install scripts.');
+
+            return;
+        }
+
+        usort($scripts, fn (array $a, array $b): int => ($a['order'] ?? 0) - ($b['order'] ?? 0));
+
+        foreach ($scripts as $script) {
+            $command = $script['command'] ?? '';
+            $description = $script['description'] ?? '';
+
+            if ($command === '') {
+                $this->warn('Empty command skipped');
+
+                continue;
+            }
+
+            if ($description !== '') {
+                $this->line("  <info>→</info> {$description}");
+            }
+
+            $shellResult = $this->runShellCommand($command);
+
+            if (!empty($shellResult['output'])) {
+                foreach ($shellResult['output'] as $line) {
+                    $this->line("    {$line}");
+                }
+            }
+
+            if ($shellResult['exit_code'] !== 0) {
+                $this->warn("⚠ Script \"{$description}\" failed (exit code {$shellResult['exit_code']})");
+            }
+        }
     }
 
     /**

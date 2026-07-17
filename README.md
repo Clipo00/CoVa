@@ -354,4 +354,10 @@ La aplicación está configurada para desplegar en [Railway](https://railway.app
 
 ## Licencia
 
-Proprietary — Todos los derechos reservados.
+© 2026 **CoVaR**. Todos los derechos reservados.
+
+Este software es propiedad exclusiva de CoVaR. Queda prohibida su copia, modificación, distribución, o uso no autorizado sin consentimiento previo por escrito.
+
+Para consultas de licenciamiento: [covarapp@gmail.com](mailto:covarapp@gmail.com).
+
+Ver [`LICENSE`](LICENSE) para el texto legal completo.
