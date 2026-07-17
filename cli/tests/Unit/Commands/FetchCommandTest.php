@@ -234,9 +234,26 @@ class FetchCommandTest extends TestCase
             'vscode_extensions' => [],
             'vscode_install_command' => '',
             'mcp_servers' => [],
-            'scripts' => [],
-            'scripts_shell' => '',
-        ];
+        'scripts' => [],
+        'scripts_shell' => '',
+    ];
+}
+
+    /**
+     * Create a blueprint response with scripts and scripts_shell.
+     *
+     * Extends the base blueprint with the given script data for testing
+     * scaffoldScripts and executeScripts behavior.
+     *
+     * @param array<int, array{order?: int, command?: string, description?: string}> $scripts
+     */
+    private function makeBlueprintWithScripts(array $scripts = [], string $scriptsShell = ''): array
+    {
+        $blueprint = $this->makeBlueprintWithoutSecrets();
+        $blueprint['scripts'] = $scripts;
+        $blueprint['scripts_shell'] = $scriptsShell;
+
+        return $blueprint;
     }
 
     /**
@@ -692,5 +709,233 @@ class FetchCommandTest extends TestCase
 
         // .env should still be created (empty)
         $this->assertFileExists($this->tempDir . '/.env');
+    }
+
+    // ----------------------------------------------------------------
+    //  3.2 — scaffoldScripts writes install.sh when scripts_shell is present
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function scaffold_scripts_writes_install_sh(): void
+    {
+        $data = $this->makeBlueprintWithScripts(
+            scriptsShell: "#!/bin/bash\ncomposer install --no-dev\n",
+        );
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertFileExists($this->tempDir . '/scripts/install.sh');
+        $this->assertStringEqualsFile(
+            $this->tempDir . '/scripts/install.sh',
+            "#!/bin/bash\ncomposer install --no-dev\n",
+        );
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('scripts/install.sh', $display);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.3 — scaffoldScripts skips when scripts_shell is empty
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function scaffold_scripts_skips_when_empty(): void
+    {
+        $data = $this->makeBlueprintWithoutSecrets(); // scripts_shell: ''
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertDirectoryDoesNotExist($this->tempDir . '/scripts');
+        $display = $tester->getDisplay();
+        $this->assertStringNotContainsString('install.sh', $display);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.4 — executeScripts runs commands in order
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function execute_scripts_runs_in_order(): void
+    {
+        $data = $this->makeBlueprintWithScripts(
+            scripts: [
+                ['order' => 2, 'command' => 'npm install', 'description' => 'Install JS deps'],
+                ['order' => 1, 'command' => 'composer install', 'description' => 'Install PHP deps'],
+            ],
+            scriptsShell: '',
+        );
+
+        $callLog = [];
+
+        $command = $this->getMockBuilder(FetchCommand::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['runShellCommand', 'isBashAvailable'])
+            ->getMock();
+
+        $command->method('isBashAvailable')->willReturn(true);
+
+        $command->expects($this->exactly(2))
+            ->method('runShellCommand')
+            ->willReturnCallback(function (string $cmd) use (&$callLog) {
+                $callLog[] = $cmd;
+
+                return ['exit_code' => 0, 'output' => []];
+            });
+
+        $mock = $this->mockApiClient($data);
+        $command->setApiClient($mock);
+        $command->setLaravel($this->container);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertCount(2, $callLog);
+        $this->assertSame('composer install', $callLog[0]);
+        $this->assertSame('npm install', $callLog[1]);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.5 — executeScripts warns on non-zero exit and continues
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function execute_scripts_warns_on_failure_and_continues(): void
+    {
+        $data = $this->makeBlueprintWithScripts(
+            scripts: [
+                ['order' => 1, 'command' => 'failing', 'description' => 'Failing Command'],
+                ['order' => 2, 'command' => 'passing', 'description' => 'Passing Command'],
+            ],
+            scriptsShell: '',
+        );
+
+        $callLog = [];
+
+        $command = $this->getMockBuilder(FetchCommand::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['runShellCommand', 'isBashAvailable'])
+            ->getMock();
+
+        $command->method('isBashAvailable')->willReturn(true);
+
+        $command->expects($this->exactly(2))
+            ->method('runShellCommand')
+            ->willReturnCallback(function (string $cmd) use (&$callLog) {
+                $callLog[] = $cmd;
+                $isFailing = $cmd === 'failing';
+
+                return [
+                    'exit_code' => $isFailing ? 1 : 0,
+                    'output' => [],
+                ];
+            });
+
+        $mock = $this->mockApiClient($data);
+        $command->setApiClient($mock);
+        $command->setLaravel($this->container);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+        $this->assertCount(2, $callLog);
+        $this->assertSame('failing', $callLog[0]);
+        $this->assertSame('passing', $callLog[1]);
+
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('failed', $display);
+        $this->assertStringContainsString('exit code 1', $display);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.6 — executeScripts skips when scripts array is empty
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function execute_scripts_skips_when_empty(): void
+    {
+        $data = $this->makeBlueprintWithoutSecrets(); // scripts: []
+        $mock = $this->mockApiClient($data);
+        $tester = $this->createCommandTester($mock);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+
+        $display = $tester->getDisplay();
+        $this->assertStringNotContainsString('→', $display);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.7 — bash unavailable skips execution, still writes install.sh
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function bash_unavailable_skips_execution(): void
+    {
+        $data = $this->makeBlueprintWithScripts(
+            scripts: [
+                ['order' => 1, 'command' => 'composer install', 'description' => 'Install PHP deps'],
+            ],
+            scriptsShell: "#!/bin/bash\necho 'hello'\n",
+        );
+
+        $command = $this->getMockBuilder(FetchCommand::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['runShellCommand', 'isBashAvailable'])
+            ->getMock();
+
+        $command->method('isBashAvailable')->willReturn(false);
+        $command->expects($this->never())->method('runShellCommand');
+
+        $mock = $this->mockApiClient($data);
+        $command->setApiClient($mock);
+        $command->setLaravel($this->container);
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute(['slug' => 'laravel-api']);
+
+        $this->assertSame(0, $exitCode);
+
+        // install.sh should still be written despite bash not being available
+        $this->assertFileExists($this->tempDir . '/scripts/install.sh');
+
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('Bash not found', $display);
+        $this->assertStringContainsString('scripts/install.sh', $display);
+    }
+
+    // ----------------------------------------------------------------
+    //  3.8 — runShellCommand returns exit code + output
+    // ----------------------------------------------------------------
+
+    #[Test]
+    public function run_shell_command_returns_exit_code_and_output(): void
+    {
+        $bashCheck = [];
+        $bashExitCode = -1;
+        exec('bash -c "echo test" 2>&1', $bashCheck, $bashExitCode);
+
+        if ($bashExitCode !== 0) {
+            $this->markTestSkipped('This test requires bash to be available on PATH');
+        }
+
+        $command = new FetchCommand();
+        $command->setLaravel($this->container);
+
+        $reflection = new \ReflectionMethod(FetchCommand::class, 'runShellCommand');
+        $result = $reflection->invoke($command, 'echo "hello world"');
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('exit_code', $result);
+        $this->assertArrayHasKey('output', $result);
+        $this->assertSame(0, $result['exit_code']);
+        $this->assertStringContainsString('hello world', implode("\n", $result['output']));
     }
 }
